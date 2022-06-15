@@ -8,6 +8,22 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>UI5 Application githubfollower</title>
+	<script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
+<script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+<script>
+	window["sap-ui-config"] = {};
+	// determine the proper theme for UI5 from current color scheme
+	window["sap-ui-config"]["theme"] = (function () {
+		try {
+			return window.matchMedia("(prefers-color-scheme: dark)").matches ? "sap_horizon_dark" : "sap_horizon";
+		} catch (ex) {
+			console.warn("window.matchMedia not supported - keep default theme");
+			return "sap_horizon";
+		}
+	})();
+</script>
 
 	<script id="sap-ui-bootstrap"
 			src="resources/sap-ui-core.js"
@@ -17,15 +33,24 @@
 			data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
 			data-sap-ui-compatVersion="edge"
 			data-sap-ui-async="true"
+			data-sap-ui-language="en"
 			data-sap-ui-frameOptions="trusted"
-			data-sap-ui-theme="sap_fiori_3"
 			data-sap-ui-xx-waitForTheme="true"
-			data-sap-ui-xx-supportedLanguages="en,de">
+			data-sap-ui-xx-supportedLanguages="en"
+			data-sap-ui-theme-roots='{
+				"sap_horizon" : "https://openui5.hana.ondemand.com/1.103.0/resources/",
+				"sap_horizon_dark" : "https://openui5.hana.ondemand.com/1.103.0/resources/"
+			}'>
 	</script>
 
 </head>
 
 <body class="sapUiBody">
 	<div data-sap-ui-component data-name="de.marianzeis.githubfollower"></div>
+	<script type="module">
+		import { Octokit } from "https://cdn.skypack.dev/@octokit/core";
+		window.Octokit = Octokit;
+		</script>
+		
 </body>
 </html>

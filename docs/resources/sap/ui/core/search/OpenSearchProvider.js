@@ -1,0 +1,6 @@
+/*!
+ * OpenUI5
+ * (c) Copyright 2009-2022 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+sap.ui.define(["./SearchProvider","sap/base/Log","sap/base/security/encodeURL","sap/ui/thirdparty/jquery","sap/ui/core/library"],function(e,r,s,t){"use strict";var a=e.extend("sap.ui.core.search.OpenSearchProvider",{metadata:{library:"sap.ui.core",properties:{suggestUrl:{type:"sap.ui.core.URI",group:"Misc",defaultValue:null},suggestType:{type:"string",group:"Misc",defaultValue:"json"}}}});a.prototype.suggest=function(e,a){var u=this.getSuggestUrl();if(!u){return}u=u.replace("{searchTerms}",s(e));var i=this.getSuggestType();var o;if(i&&i.toLowerCase()==="xml"){i="xml";o=function(r){var s=t(r);var u=s.find("Text");var i=[];u.each(function(){i.push(t(this).text())});a(e,i)}}else{i="json";o=function(r){a(e,r[1])}}t.ajax({url:u,dataType:i,success:o,error:function(e,s,t){r.fatal("The following problem occurred: "+s,e.responseText+","+e.status)}})};return a});
