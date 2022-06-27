@@ -3,7 +3,7 @@ import BaseController from "./BaseController";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import MessageBox from "sap/m/MessageBox";
 import { Octokit } from "@octokit/core";
-import { initializeApp, getAuth} from "githubfollower/lib/firebase";
+import { initializeApp, getAuth, GithubAuthProvider, signInWithPopup } from "githubfollower/lib/firebase";
 
 /**
  * @namespace de.marianzeis.githubfollower.controller
@@ -24,7 +24,7 @@ export default class Main extends BaseController {
 
     // // // Initialize Firebase Authentication and get a reference to the service
     this.auth = getAuth(this.app);
-    this.provider = new this.auth.GithubAuthProvider();
+    this.provider = new GithubAuthProvider();
 	this.provider.setCustomParameters({
 		'allow_signup': 'false'
 	  });
@@ -98,20 +98,14 @@ export default class Main extends BaseController {
   }
   public githubSignInPopup(provider): void {
 	// [START auth_github_signin_popup]
-	firebase
-	  .auth()
-	  .signInWithPopup(provider)
+	const auth = getAuth();
+	  signInWithPopup(auth,provider)
 	  .then((result) => {
 		/** @type {firebase.auth.OAuthCredential} */
-		var credential = result.credential;
   
 		// This gives you a GitHub Access Token. You can use it to access the GitHub API.
-		var token = credential.accessToken;
-		this.token = token;
-		this.getModel("data").setProperty("/token", token);
-  
-		// The signed-in user info.
-		var user = result.user;
+		this.token = result._tokenResponse.oauthAccessToken
+		this.getModel("data").setProperty("/token", this.token);
 		// ...
 	  }).catch((error) => {
 		// Handle Errors here.
