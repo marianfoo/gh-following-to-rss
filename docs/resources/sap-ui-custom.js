@@ -14,2145 +14,3386 @@
  */
 (function(){"use strict";var r=window.sap&&window.sap.ui&&window.sap.ui.loader,e=window["sap-ui-config"]||{},i,t,a,s,u,p,o,d=false;function n(r,e){var a=r&&r.getAttribute("src"),s=e.exec(a);if(s){i=s[1]||"";p=r;o=a;t=/sap-ui-core-nojQuery\.js(?:[?#]|$)/.test(a);return true}}function y(r){return r&&r[r.length-1]!=="/"?r+"/":r}if(r==null){throw new Error("ui5loader-autoconfig.js: ui5loader is needed, but could not be found")}if(!n(document.querySelector("SCRIPT[src][id=sap-ui-bootstrap]"),/^((?:[^?#]*\/)?resources\/)/)){s=/^([^?#]*\/)?(?:sap-ui-(?:core|custom|boot|merged)(?:-[^?#/]*)?|jquery.sap.global|ui5loader(?:-autoconfig)?)\.js(?:[?#]|$)/;a=document.scripts;for(u=0;u<a.length;u++){if(n(a[u],s)){break}}}if(typeof e==="object"&&typeof e.resourceRoots==="object"&&typeof e.resourceRoots[""]==="string"){i=e.resourceRoots[""]}if(i==null){throw new Error("ui5loader-autoconfig.js: could not determine base URL. No known script tag and no configuration found!")}(function(){var r;try{r=window.localStorage.getItem("sap-ui-reboot-URL")}catch(r){}if(/sap-bootstrap-debug=(true|x|X)/.test(location.search)){debugger}if(r){var e=y(i)+"sap/ui/core/support/debugReboot.js";document.write('<script src="'+e+'"><\/script>');var t=new Error("This is not a real error. Aborting UI5 bootstrap and rebooting from: "+r);t.name="Restart";throw t}})();(function(){var e=/(?:^|\?|&)sap-ui-debug=([^&]*)(?:&|$)/.exec(window.location.search),t=e&&decodeURIComponent(e[1]);try{t=t||window.localStorage.getItem("sap-ui-debug")}catch(r){}t=t||p&&p.getAttribute("data-sap-ui-debug");if(typeof t==="string"){if(/^(?:false|true|x|X)$/.test(t)){t=t!=="false"}}else{t=!!t}if(/-dbg\.js([?#]|$)/.test(o)){window["sap-ui-loaddbg"]=true;t=t||true}window["sap-ui-debug"]=t;window["sap-ui-optimized"]=window["sap-ui-optimized"]||/\.location/.test(l)&&!/oBootstrapScript/.test(l);if(window["sap-ui-optimized"]&&t){window["sap-ui-loaddbg"]=true;if(t===true&&!window["sap-ui-debug-no-reboot"]){var a;if(o!=null){a=o.replace(/\/(?:sap-ui-cachebuster\/)?([^\/]+)\.js/,"/$1-dbg.js")}else{a=y(i)+"sap-ui-core.js"}r.config({amd:false});window["sap-ui-optimized"]=false;if(r.config().async){var s=document.createElement("script");s.src=a;document.head.appendChild(s)}else{document.write('<script src="'+a+'"><\/script>')}var u=new Error("This is not a real error. Aborting UI5 bootstrap and restarting from: "+a);u.name="Restart";throw u}}function d(r){if(!/\/\*\*\/$/.test(r)){r=r.replace(/\/$/,"/**/")}return r.replace(/\*\*\/|\*|[[\]{}()+?.\\^$|]/g,function(r){switch(r){case"**/":return"(?:[^/]+/)*";case"*":return"[^/]*";default:return"\\"+r}})}var n;if(typeof t==="string"){var c="^(?:"+t.split(/,/).map(d).join("|")+")",h=new RegExp(c);n=function(r){return h.test(r)};r._.logger.debug("Modules that should be excluded from preload: '"+c+"'")}else if(t===true){n=function(){return true};r._.logger.debug("All modules should be excluded from preload")}r.config({debugSources:!!window["sap-ui-loaddbg"],ignoreBundledResources:n})})();function l(r,i,t){var a=window.location.search.match(new RegExp("(?:^\\??|&)sap-ui-"+r+"=([^&]*)(?:&|$)"));if(a&&(t==null||t.test(a[1]))){return a[1]}var s=p&&p.getAttribute("data-sap-ui-"+r.toLowerCase());if(s!=null&&(t==null||t.test(s))){return s}if(Object.prototype.hasOwnProperty.call(e,r)&&(t==null||t.test(e[r]))){return e[r]}if(r.slice(0,3)!=="xx-"){return l("xx-"+r,i,t)}return i}function c(r,e){return/^(?:true|x|X)$/.test(l(r,e,/^(?:true|x|X|false)$/))}if(c("async",false)){r.config({async:true})}d=c("amd",!c("noLoaderConflict",true));r.config({baseUrl:i,amd:d,map:{"*":{blanket:"sap/ui/thirdparty/blanket",crossroads:"sap/ui/thirdparty/crossroads",d3:"sap/ui/thirdparty/d3",handlebars:"sap/ui/thirdparty/handlebars",hasher:"sap/ui/thirdparty/hasher",IPv6:"sap/ui/thirdparty/IPv6",jquery:"sap/ui/thirdparty/jquery",jszip:"sap/ui/thirdparty/jszip",less:"sap/ui/thirdparty/less",OData:"sap/ui/thirdparty/datajs",punycode:"sap/ui/thirdparty/punycode",SecondLevelDomains:"sap/ui/thirdparty/SecondLevelDomains",sinon:"sap/ui/thirdparty/sinon",signals:"sap/ui/thirdparty/signals",URI:"sap/ui/thirdparty/URI",URITemplate:"sap/ui/thirdparty/URITemplate",esprima:"sap/ui/documentation/sdk/thirdparty/esprima"}},shim:{"sap/ui/thirdparty/bignumber":{amd:true,exports:"BigNumber"},"sap/ui/thirdparty/blanket":{amd:true,exports:"blanket"},"sap/ui/thirdparty/caja-html-sanitizer":{amd:false,exports:"html"},"sap/ui/thirdparty/crossroads":{amd:true,exports:"crossroads",deps:["sap/ui/thirdparty/signals"]},"sap/ui/thirdparty/d3":{amd:true,exports:"d3"},"sap/ui/thirdparty/datajs":{amd:true,exports:"OData"},"sap/ui/thirdparty/handlebars":{amd:true,exports:"Handlebars"},"sap/ui/thirdparty/hasher":{amd:true,exports:"hasher",deps:["sap/ui/thirdparty/signals"]},"sap/ui/thirdparty/IPv6":{amd:true,exports:"IPv6"},"sap/ui/thirdparty/iscroll-lite":{amd:false,exports:"iScroll"},"sap/ui/thirdparty/iscroll":{amd:false,exports:"iScroll"},"sap/ui/thirdparty/jquery":{amd:true,exports:"jQuery",deps:["sap/ui/thirdparty/jquery-compat"]},"sap/ui/thirdparty/jqueryui/jquery-ui-datepicker":{deps:["sap/ui/thirdparty/jqueryui/jquery-ui-core"],exports:"jQuery"},"sap/ui/thirdparty/jqueryui/jquery-ui-draggable":{deps:["sap/ui/thirdparty/jqueryui/jquery-ui-mouse"],exports:"jQuery"},"sap/ui/thirdparty/jqueryui/jquery-ui-droppable":{deps:["sap/ui/thirdparty/jqueryui/jquery-ui-mouse","sap/ui/thirdparty/jqueryui/jquery-ui-draggable"],exports:"jQuery"},"sap/ui/thirdparty/jqueryui/jquery-ui-effect":{deps:["sap/ui/thirdparty/jquery"],exports:"jQuery"},"sap/ui/thirdparty/jqueryui/jquery-ui-mouse":{deps:["sap/ui/thirdparty/jqueryui/jquery-ui-core","sap/ui/thirdparty/jqueryui/jquery-ui-widget"],exports:"jQuery"},"sap/ui/thirdparty/jqueryui/jquery-ui-position":{deps:["sap/ui/thirdparty/jquery"],exports:"jQuery"},"sap/ui/thirdparty/jqueryui/jquery-ui-resizable":{deps:["sap/ui/thirdparty/jqueryui/jquery-ui-mouse"],exports:"jQuery"},"sap/ui/thirdparty/jqueryui/jquery-ui-selectable":{deps:["sap/ui/thirdparty/jqueryui/jquery-ui-mouse"],exports:"jQuery"},"sap/ui/thirdparty/jqueryui/jquery-ui-sortable":{deps:["sap/ui/thirdparty/jqueryui/jquery-ui-mouse"],exports:"jQuery"},"sap/ui/thirdparty/jqueryui/jquery-ui-widget":{deps:["sap/ui/thirdparty/jquery"],exports:"jQuery"},"sap/ui/thirdparty/jquery-mobile-custom":{amd:true,deps:["sap/ui/thirdparty/jquery","sap/ui/Device"],exports:"jQuery.mobile"},"sap/ui/thirdparty/jszip":{amd:true,exports:"JSZip"},"sap/ui/thirdparty/less":{amd:true,exports:"less"},"sap/ui/thirdparty/mobify-carousel":{amd:false,exports:"Mobify"},"sap/ui/thirdparty/qunit-2":{amd:false,exports:"QUnit"},"sap/ui/thirdparty/punycode":{amd:true,exports:"punycode"},"sap/ui/thirdparty/RequestRecorder":{amd:true,exports:"RequestRecorder",deps:["sap/ui/thirdparty/URI","sap/ui/thirdparty/sinon"]},"sap/ui/thirdparty/require":{exports:"define"},"sap/ui/thirdparty/SecondLevelDomains":{amd:true,exports:"SecondLevelDomains"},"sap/ui/thirdparty/signals":{amd:true,exports:"signals"},"sap/ui/thirdparty/sinon":{amd:true,exports:"sinon"},"sap/ui/thirdparty/sinon-4":{amd:true,exports:"sinon"},"sap/ui/thirdparty/sinon-server":{amd:true,exports:"sinon"},"sap/ui/thirdparty/URI":{amd:true,exports:"URI"},"sap/ui/thirdparty/URITemplate":{amd:true,exports:"URITemplate",deps:["sap/ui/thirdparty/URI"]},"sap/ui/thirdparty/vkbeautify":{amd:false,exports:"vkbeautify"},"sap/ui/thirdparty/zyngascroll":{amd:false,exports:"Scroller"},"sap/ui/demokit/js/esprima":{amd:true,exports:"esprima"},"sap/ui/documentation/sdk/thirdparty/esprima":{amd:true,exports:"esprima"},"sap/viz/libs/canvg":{deps:["sap/viz/libs/rgbcolor"]},"sap/viz/libs/rgbcolor":{},"sap/viz/libs/sap-viz":{deps:["sap/viz/library","sap/ui/thirdparty/jquery","sap/ui/thirdparty/d3","sap/viz/libs/canvg"]},"sap/viz/libs/sap-viz-info-charts":{deps:["sap/viz/libs/sap-viz-info-framework"]},"sap/viz/libs/sap-viz-info-framework":{deps:["sap/ui/thirdparty/jquery","sap/ui/thirdparty/d3"]},"sap/viz/ui5/container/libs/sap-viz-controls-vizcontainer":{deps:["sap/viz/libs/sap-viz","sap/viz/ui5/container/libs/common/libs/rgbcolor/rgbcolor_static"]},"sap/viz/ui5/controls/libs/sap-viz-vizframe/sap-viz-vizframe":{deps:["sap/viz/libs/sap-viz-info-charts"]},"sap/viz/ui5/controls/libs/sap-viz-vizservices/sap-viz-vizservices":{deps:["sap/viz/libs/sap-viz-info-charts"]},"sap/viz/resources/chart/templates/standard_fiori/template":{deps:["sap/viz/libs/sap-viz-info-charts"]}}});var h=r._.defineModuleSync;h("ui5loader.js",null);h("ui5loader-autoconfig.js",null);if(t&&typeof jQuery==="function"){h("sap/ui/thirdparty/jquery.js",jQuery);if(jQuery.ui&&jQuery.ui.position){h("sap/ui/thirdparty/jqueryui/jquery-ui-position.js",jQuery)}}var m=p&&p.getAttribute("data-sap-ui-main");if(m){sap.ui.require(m.trim().split(/\s*,\s*/))}})();
 sap.ui.require.preload({
+	"@octokit/core.js":function(){sap.ui.define(["exports"],function(e){"use strict";(function(){const e={NODE_ENV:"production"};try{if(process){process.env=Object.assign({},process.env);Object.assign(process.env,e);return}}catch(e){}globalThis.process={env:e}})();var t=typeof global!=="undefined"?global:typeof self!=="undefined"?self:typeof window!=="undefined"?window:{};function r(){throw new Error("setTimeout has not been defined")}function n(){throw new Error("clearTimeout has not been defined")}var o=r;var s=n;if(typeof t.setTimeout==="function"){o=setTimeout}if(typeof t.clearTimeout==="function"){s=clearTimeout}function i(e){if(o===setTimeout){return setTimeout(e,0)}if((o===r||!o)&&setTimeout){o=setTimeout;return setTimeout(e,0)}try{return o(e,0)}catch(t){try{return o.call(null,e,0)}catch(t){return o.call(this,e,0)}}}function a(e){if(s===clearTimeout){return clearTimeout(e)}if((s===n||!s)&&clearTimeout){s=clearTimeout;return clearTimeout(e)}try{return s(e)}catch(t){try{return s.call(null,e)}catch(t){return s.call(this,e)}}}var u=[];var c=false;var f;var l=-1;function p(){if(!c||!f){return}c=false;if(f.length){u=f.concat(u)}else{l=-1}if(u.length){d()}}function d(){if(c){return}var e=i(p);c=true;var t=u.length;while(t){f=u;u=[];while(++l<t){if(f){f[l].run()}}l=-1;t=u.length}f=null;c=false;a(e)}function h(e){var t=new Array(arguments.length-1);if(arguments.length>1){for(var r=1;r<arguments.length;r++){t[r-1]=arguments[r]}}u.push(new g(e,t));if(u.length===1&&!c){i(d)}}function g(e,t){this.fun=e;this.array=t}g.prototype.run=function(){this.fun.apply(null,this.array)};var v="browser";var b="browser";var y=true;var m={};var w=[];var j="";var k={};var T={};var q={};function O(){}var E=O;var $=O;var A=O;var x=O;var S=O;var U=O;var D=O;function P(e){throw new Error("process.binding is not supported")}function C(){return"/"}function R(e){throw new Error("process.chdir is not supported")}function N(){return 0}var F=t.performance||{};var H=F.now||F.mozNow||F.msNow||F.oNow||F.webkitNow||function(){return(new Date).getTime()};function _(e){var t=H.call(F)*.001;var r=Math.floor(t);var n=Math.floor(t%1*1e9);if(e){r=r-e[0];n=n-e[1];if(n<0){r--;n+=1e9}}return[r,n]}var z=new Date;function I(){var e=new Date;var t=e-z;return t/1e3}var L={nextTick:h,title:v,browser:y,env:m,argv:w,version:j,versions:k,on:E,addListener:$,once:A,off:x,removeListener:S,removeAllListeners:U,emit:D,binding:P,cwd:C,chdir:R,umask:N,hrtime:_,platform:b,release:T,config:q,uptime:I};function B(){if(typeof navigator==="object"&&"userAgent"in navigator){return navigator.userAgent}if(typeof L==="object"&&"version"in L){return`Node.js/${L.version.substr(1)} (${L.platform}; ${L.arch})`}return"<environment undetectable>"}var G={exports:{}};var J=M;function M(e,t,r,n){if(typeof r!=="function"){throw new Error("method for before hook must be a function")}if(!n){n={}}if(Array.isArray(t)){return t.reverse().reduce(function(t,r){return M.bind(null,e,r,t,n)},r)()}return Promise.resolve().then(function(){if(!e.registry[t]){return r(n)}return e.registry[t].reduce(function(e,t){return t.hook.bind(null,e,n)},r)()})}var V=W;function W(e,t,r,n){var o=n;if(!e.registry[r]){e.registry[r]=[]}if(t==="before"){n=function(e,t){return Promise.resolve().then(o.bind(null,t)).then(e.bind(null,t))}}if(t==="after"){n=function(e,t){var r;return Promise.resolve().then(e.bind(null,t)).then(function(e){r=e;return o(r,t)}).then(function(){return r})}}if(t==="error"){n=function(e,t){return Promise.resolve().then(e.bind(null,t)).catch(function(e){return o(e,t)})}}e.registry[r].push({hook:n,orig:o})}var Z=K;function K(e,t,r){if(!e.registry[t]){return}var n=e.registry[t].map(function(e){return e.orig}).indexOf(r);if(n===-1){return}e.registry[t].splice(n,1)}var Q=J;var X=V;var Y=Z;var ee=Function.bind;var te=ee.bind(ee);function re(e,t,r){var n=te(Y,null).apply(null,r?[t,r]:[t]);e.api={remove:n};e.remove=n;["before","error","after","wrap"].forEach(function(n){var o=r?[t,n,r]:[t,n];e[n]=e.api[n]=te(X,null).apply(null,o)})}function ne(){var e="h";var t={registry:{}};var r=Q.bind(null,t,e);re(r,t,e);return r}function oe(){var e={registry:{}};var t=Q.bind(null,e);re(t,e);return t}var se=false;function ie(){if(!se){console.warn('[before-after-hook]: "Hook()" repurposing warning, use "Hook.Collection()". Read more: https://git.io/upgrade-before-after-hook-to-1.4');se=true}return oe()}ie.Singular=ne.bind();ie.Collection=oe.bind();G.exports=ie;G.exports.Hook=ie;G.exports.Singular=ie.Singular;var ae=G.exports.Collection=ie.Collection;
+/*!
+     * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
+     *
+     * Copyright (c) 2014-2017, Jon Schlinkert.
+     * Released under the MIT License.
+     */function ue(e){return Object.prototype.toString.call(e)==="[object Object]"}function ce(e){var t,r;if(ue(e)===false)return false;t=e.constructor;if(t===undefined)return true;r=t.prototype;if(ue(r)===false)return false;if(r.hasOwnProperty("isPrototypeOf")===false){return false}return true}function fe(e){if(!e){return{}}return Object.keys(e).reduce((t,r)=>{t[r.toLowerCase()]=e[r];return t},{})}function le(e,t){const r=Object.assign({},e);Object.keys(t).forEach(n=>{if(ce(t[n])){if(!(n in e))Object.assign(r,{[n]:t[n]});else r[n]=le(e[n],t[n])}else{Object.assign(r,{[n]:t[n]})}});return r}function pe(e){for(const t in e){if(e[t]===undefined){delete e[t]}}return e}function de(e,t,r){if(typeof t==="string"){let[e,n]=t.split(" ");r=Object.assign(n?{method:e,url:n}:{url:e},r)}else{r=Object.assign({},t)}r.headers=fe(r.headers);pe(r);pe(r.headers);const n=le(e||{},r);if(e&&e.mediaType.previews.length){n.mediaType.previews=e.mediaType.previews.filter(e=>!n.mediaType.previews.includes(e)).concat(n.mediaType.previews)}n.mediaType.previews=n.mediaType.previews.map(e=>e.replace(/-preview/,""));return n}function he(e,t){const r=/\?/.test(e)?"&":"?";const n=Object.keys(t);if(n.length===0){return e}return e+r+n.map(e=>{if(e==="q"){return"q="+t.q.split("+").map(encodeURIComponent).join("+")}return`${e}=${encodeURIComponent(t[e])}`}).join("&")}const ge=/\{[^}]+\}/g;function ve(e){return e.replace(/^\W+|\W+$/g,"").split(/,/)}function be(e){const t=e.match(ge);if(!t){return[]}return t.map(ve).reduce((e,t)=>e.concat(t),[])}function ye(e,t){return Object.keys(e).filter(e=>!t.includes(e)).reduce((t,r)=>{t[r]=e[r];return t},{})}
+// Based on https://github.com/bramstein/url-template, licensed under BSD
+// Copyright (c) 2012-2014, Bram Stein
+//  1. Redistributions of source code must retain the above copyright
+//  2. Redistributions in binary form must reproduce the above copyright
+// EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+function me(e){return e.split(/(%[0-9A-Fa-f]{2})/g).map(function(e){if(!/%[0-9A-Fa-f]/.test(e)){e=encodeURI(e).replace(/%5B/g,"[").replace(/%5D/g,"]")}return e}).join("")}function we(e){return encodeURIComponent(e).replace(/[!'()*]/g,function(e){return"%"+e.charCodeAt(0).toString(16).toUpperCase()})}function je(e,t,r){t=e==="+"||e==="#"?me(t):we(t);if(r){return we(r)+"="+t}else{return t}}function ke(e){return e!==undefined&&e!==null}function Te(e){return e===";"||e==="&"||e==="?"}function qe(e,t,r,n){var o=e[r],s=[];if(ke(o)&&o!==""){if(typeof o==="string"||typeof o==="number"||typeof o==="boolean"){o=o.toString();if(n&&n!=="*"){o=o.substring(0,parseInt(n,10))}s.push(je(t,o,Te(t)?r:""))}else{if(n==="*"){if(Array.isArray(o)){o.filter(ke).forEach(function(e){s.push(je(t,e,Te(t)?r:""))})}else{Object.keys(o).forEach(function(e){if(ke(o[e])){s.push(je(t,o[e],e))}})}}else{const e=[];if(Array.isArray(o)){o.filter(ke).forEach(function(r){e.push(je(t,r))})}else{Object.keys(o).forEach(function(r){if(ke(o[r])){e.push(we(r));e.push(je(t,o[r].toString()))}})}if(Te(t)){s.push(we(r)+"="+e.join(","))}else if(e.length!==0){s.push(e.join(","))}}}}else{if(t===";"){if(ke(o)){s.push(we(r))}}else if(o===""&&(t==="&"||t==="?")){s.push(we(r)+"=")}else if(o===""){s.push("")}}return s}function Oe(e){return{expand:Ee.bind(null,e)}}function Ee(e,t){var r=["+","#",".","/",";","?","&"];return e.replace(/\{([^\{\}]+)\}|([^\{\}]+)/g,function(e,n,o){if(n){let e="";const o=[];if(r.indexOf(n.charAt(0))!==-1){e=n.charAt(0);n=n.substr(1)}n.split(/,/g).forEach(function(r){var n=/([^:\*]*)(?::(\d+)|(\*))?/.exec(r);o.push(qe(t,e,n[1],n[2]||n[3]))});if(e&&e!=="+"){var s=",";if(e==="?"){s="&"}else if(e!=="#"){s=e}return(o.length!==0?e:"")+o.join(s)}else{return o.join(",")}}else{return me(o)}})}function $e(e){let t=e.method.toUpperCase();let r=(e.url||"/").replace(/:([a-z]\w+)/g,"{$1}");let n=Object.assign({},e.headers);let o;let s=ye(e,["method","baseUrl","url","headers","request","mediaType"]);const i=be(r);r=Oe(r).expand(s);if(!/^http/.test(r)){r=e.baseUrl+r}const a=Object.keys(e).filter(e=>i.includes(e)).concat("baseUrl");const u=ye(s,a);const c=/application\/octet-stream/i.test(n.accept);if(!c){if(e.mediaType.format){n.accept=n.accept.split(/,/).map(t=>t.replace(/application\/vnd(\.\w+)(\.v3)?(\.\w+)?(\+json)?$/,`application/vnd$1$2.${e.mediaType.format}`)).join(",")}if(e.mediaType.previews.length){const t=n.accept.match(/[\w-]+(?=-preview)/g)||[];n.accept=t.concat(e.mediaType.previews).map(t=>{const r=e.mediaType.format?`.${e.mediaType.format}`:"+json";return`application/vnd.github.${t}-preview${r}`}).join(",")}}if(["GET","HEAD"].includes(t)){r=he(r,u)}else{if("data"in u){o=u.data}else{if(Object.keys(u).length){o=u}else{n["content-length"]=0}}}if(!n["content-type"]&&typeof o!=="undefined"){n["content-type"]="application/json; charset=utf-8"}if(["PATCH","PUT"].includes(t)&&typeof o==="undefined"){o=""}return Object.assign({method:t,url:r,headers:n},typeof o!=="undefined"?{body:o}:null,e.request?{request:e.request}:null)}function Ae(e,t,r){return $e(de(e,t,r))}function xe(e,t){const r=de(e,t);const n=Ae.bind(null,r);return Object.assign(n,{DEFAULTS:r,defaults:xe.bind(null,r),merge:de.bind(null,r),parse:$e})}const Se="6.0.12";const Ue=`octokit-endpoint.js/${Se} ${B()}`;const De={method:"GET",baseUrl:"https://api.github.com",headers:{accept:"application/vnd.github.v3+json","user-agent":Ue},mediaType:{format:"",previews:[]}};const Pe=xe(null,De);var Ce={exports:{}};(function(e,t){var r=function(){if(typeof self!=="undefined"){return self}if(typeof window!=="undefined"){return window}if(typeof n!=="undefined"){return n}throw new Error("unable to locate global object")};var n=r();e.exports=t=n.fetch;if(n.fetch){t.default=n.fetch.bind(n)}t.Headers=n.Headers;t.Request=n.Request;t.Response=n.Response})(Ce,Ce.exports);var Re=Ce.exports;class Ne extends Error{constructor(e){super(e);if(Error.captureStackTrace){Error.captureStackTrace(this,this.constructor)}this.name="Deprecation"}}var Fe={exports:{}};var He=_e;function _e(e,t){if(e&&t)return _e(e)(t);if(typeof e!=="function")throw new TypeError("need wrapper function");Object.keys(e).forEach(function(t){r[t]=e[t]});return r;function r(){var t=new Array(arguments.length);for(var r=0;r<t.length;r++){t[r]=arguments[r]}var n=e.apply(this,t);var o=t[t.length-1];if(typeof n==="function"&&n!==o){Object.keys(o).forEach(function(e){n[e]=o[e]})}return n}}var ze=He;Fe.exports=ze(Ie);Fe.exports.strict=ze(Le);Ie.proto=Ie(function(){Object.defineProperty(Function.prototype,"once",{value:function(){return Ie(this)},configurable:true});Object.defineProperty(Function.prototype,"onceStrict",{value:function(){return Le(this)},configurable:true})});function Ie(e){var t=function(){if(t.called)return t.value;t.called=true;return t.value=e.apply(this,arguments)};t.called=false;return t}function Le(e){var t=function(){if(t.called)throw new Error(t.onceError);t.called=true;return t.value=e.apply(this,arguments)};var r=e.name||"Function wrapped with `once`";t.onceError=r+" shouldn't be called more than once";t.called=false;return t}const Be=Fe.exports(e=>console.warn(e));const Ge=Fe.exports(e=>console.warn(e));class Je extends Error{constructor(e,t,r){super(e);if(Error.captureStackTrace){Error.captureStackTrace(this,this.constructor)}this.name="HttpError";this.status=t;let n;if("headers"in r&&typeof r.headers!=="undefined"){n=r.headers}if("response"in r){this.response=r.response;n=r.response.headers}const o=Object.assign({},r.request);if(r.request.headers.authorization){o.headers=Object.assign({},r.request.headers,{authorization:r.request.headers.authorization.replace(/ .*$/," [REDACTED]")})}o.url=o.url.replace(/\bclient_secret=\w+/g,"client_secret=[REDACTED]").replace(/\baccess_token=\w+/g,"access_token=[REDACTED]");this.request=o;Object.defineProperty(this,"code",{get(){Be(new Ne("[@octokit/request-error] `error.code` is deprecated, use `error.status`."));return t}});Object.defineProperty(this,"headers",{get(){Ge(new Ne("[@octokit/request-error] `error.headers` is deprecated, use `error.response.headers`."));return n||{}}})}}const Me="5.6.3";function Ve(e){return e.arrayBuffer()}function We(e){const t=e.request&&e.request.log?e.request.log:console;if(ce(e.body)||Array.isArray(e.body)){e.body=JSON.stringify(e.body)}let r={};let n;let o;const s=e.request&&e.request.fetch||Re;return s(e.url,Object.assign({method:e.method,body:e.body,headers:e.headers,redirect:e.redirect},e.request)).then(async s=>{o=s.url;n=s.status;for(const e of s.headers){r[e[0]]=e[1]}if("deprecation"in r){const n=r.link&&r.link.match(/<([^>]+)>; rel="deprecation"/);const o=n&&n.pop();t.warn(`[@octokit/request] "${e.method} ${e.url}" is deprecated. It is scheduled to be removed on ${r.sunset}${o?`. See ${o}`:""}`)}if(n===204||n===205){return}if(e.method==="HEAD"){if(n<400){return}throw new Je(s.statusText,n,{response:{url:o,status:n,headers:r,data:undefined},request:e})}if(n===304){throw new Je("Not modified",n,{response:{url:o,status:n,headers:r,data:await Ze(s)},request:e})}if(n>=400){const t=await Ze(s);const i=new Je(Ke(t),n,{response:{url:o,status:n,headers:r,data:t},request:e});throw i}return Ze(s)}).then(e=>({status:n,url:o,headers:r,data:e})).catch(t=>{if(t instanceof Je)throw t;throw new Je(t.message,500,{request:e})})}async function Ze(e){const t=e.headers.get("content-type");if(/application\/json/.test(t)){return e.json()}if(!t||/^text\/|charset=utf-8$/.test(t)){return e.text()}return Ve(e)}function Ke(e){if(typeof e==="string")return e;if("message"in e){if(Array.isArray(e.errors)){return`${e.message}: ${e.errors.map(JSON.stringify).join(", ")}`}return e.message}return`Unknown error: ${JSON.stringify(e)}`}function Qe(e,t){const r=e.defaults(t);const n=function(e,t){const n=r.merge(e,t);if(!n.request||!n.request.hook){return We(r.parse(n))}const o=(e,t)=>We(r.parse(r.merge(e,t)));Object.assign(o,{endpoint:r,defaults:Qe.bind(null,r)});return n.request.hook(o,n)};return Object.assign(n,{endpoint:r,defaults:Qe.bind(null,r)})}const Xe=Qe(Pe,{headers:{"user-agent":`octokit-request.js/${Me} ${B()}`}});const Ye="4.8.0";function et(e){return`Request failed due to following response errors:\n`+e.errors.map(e=>` - ${e.message}`).join("\n")}class tt extends Error{constructor(e,t,r){super(et(r));this.request=e;this.headers=t;this.response=r;this.name="GraphqlResponseError";this.errors=r.errors;this.data=r.data;if(Error.captureStackTrace){Error.captureStackTrace(this,this.constructor)}}}const rt=["method","baseUrl","url","headers","request","query","mediaType"];const nt=["query","method","url"];const ot=/\/api\/v3\/?$/;function st(e,t,r){if(r){if(typeof t==="string"&&"query"in r){return Promise.reject(new Error(`[@octokit/graphql] "query" cannot be used as variable name`))}for(const e in r){if(!nt.includes(e))continue;return Promise.reject(new Error(`[@octokit/graphql] "${e}" cannot be used as variable name`))}}const n=typeof t==="string"?Object.assign({query:t},r):t;const o=Object.keys(n).reduce((e,t)=>{if(rt.includes(t)){e[t]=n[t];return e}if(!e.variables){e.variables={}}e.variables[t]=n[t];return e},{});const s=n.baseUrl||e.endpoint.DEFAULTS.baseUrl;if(ot.test(s)){o.url=s.replace(ot,"/api/graphql")}return e(o).then(e=>{if(e.data.errors){const t={};for(const r of Object.keys(e.headers)){t[r]=e.headers[r]}throw new tt(o,t,e.data)}return e.data.data})}function it(e,t){const r=e.defaults(t);const n=(e,t)=>st(r,e,t);return Object.assign(n,{defaults:it.bind(null,r),endpoint:Xe.endpoint})}it(Xe,{headers:{"user-agent":`octokit-graphql.js/${Ye} ${B()}`},method:"POST",url:"/graphql"});function at(e){return it(e,{method:"POST",url:"/graphql"})}const ut=/^v1\./;const ct=/^ghs_/;const ft=/^ghu_/;async function lt(e){const t=e.split(/\./).length===3;const r=ut.test(e)||ct.test(e);const n=ft.test(e);const o=t?"app":r?"installation":n?"user-to-server":"oauth";return{type:"token",token:e,tokenType:o}}function pt(e){if(e.split(/\./).length===3){return`bearer ${e}`}return`token ${e}`}async function dt(e,t,r,n){const o=t.endpoint.merge(r,n);o.headers.authorization=pt(e);return t(o)}const ht=function e(t){if(!t){throw new Error("[@octokit/auth-token] No token passed to createTokenAuth")}if(typeof t!=="string"){throw new Error("[@octokit/auth-token] Token passed to createTokenAuth is not a string")}t=t.replace(/^(token|bearer) +/i,"");return Object.assign(lt.bind(null,t),{hook:dt.bind(null,t)})};const gt="3.6.0";class vt{constructor(e={}){const t=new ae;const r={baseUrl:Xe.endpoint.DEFAULTS.baseUrl,headers:{},request:Object.assign({},e.request,{hook:t.bind(null,"request")}),mediaType:{previews:[],format:""}};r.headers["user-agent"]=[e.userAgent,`octokit-core.js/${gt} ${B()}`].filter(Boolean).join(" ");if(e.baseUrl){r.baseUrl=e.baseUrl}if(e.previews){r.mediaType.previews=e.previews}if(e.timeZone){r.headers["time-zone"]=e.timeZone}this.request=Xe.defaults(r);this.graphql=at(this.request).defaults(r);this.log=Object.assign({debug:()=>{},info:()=>{},warn:console.warn.bind(console),error:console.error.bind(console)},e.log);this.hook=t;if(!e.authStrategy){if(!e.auth){this.auth=async()=>({type:"unauthenticated"})}else{const r=ht(e.auth);t.wrap("request",r.hook);this.auth=r}}else{const{authStrategy:r,...n}=e;const o=r(Object.assign({request:this.request,log:this.log,octokit:this,octokitOptions:n},e.auth));t.wrap("request",o.hook);this.auth=o}const n=this.constructor;n.plugins.forEach(t=>{Object.assign(this,t(this,e))})}static defaults(e){const t=class extends(this){constructor(...t){const r=t[0]||{};if(typeof e==="function"){super(e(r));return}super(Object.assign({},e,r,r.userAgent&&e.userAgent?{userAgent:`${r.userAgent} ${e.userAgent}`}:null))}};return t}static plugin(...e){var t;const r=this.plugins;const n=(t=class extends(this){},t.plugins=r.concat(e.filter(e=>!r.includes(e))),t);return n}}vt.VERSION=gt;vt.plugins=[];e.Octokit=vt;Object.defineProperty(e,"__esModule",{value:true})});
+},
 	"de/marianzeis/githubfollower/Component.js":function(){sap.ui.define(["sap/ui/core/UIComponent","sap/ui/Device"],function(t,i){const n=i["support"];const s=t.extend("de.marianzeis.githubfollower.Component",{metadata:{manifest:"json"},init:function i(){t.prototype.init.call(this);this.getRouter().initialize()},getContentDensityClass:function t(){if(this.contentDensityClass===undefined){if(document.body.classList.contains("sapUiSizeCozy")||document.body.classList.contains("sapUiSizeCompact")){this.contentDensityClass=""}else if(!n.touch){this.contentDensityClass="sapUiSizeCompact"}else{this.contentDensityClass="sapUiSizeCozy"}}return this.contentDensityClass}});return s});
 },
 	"de/marianzeis/githubfollower/controller/App.controller.js":function(){sap.ui.define(["./BaseController"],function(e){function n(e){return e&&e.__esModule&&typeof e.default!=="undefined"?e.default:e}const t=n(e);const o=t.extend("de.marianzeis.githubfollower.controller.App",{onInit:function e(){this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass())}});return o});
 },
 	"de/marianzeis/githubfollower/controller/BaseController.js":function(){sap.ui.define(["sap/ui/core/mvc/Controller","sap/ui/core/UIComponent","sap/ui/core/routing/History"],function(e,t,n){const o=e.extend("de.marianzeis.githubfollower.controller.BaseController",{getOwnerComponent:function t(){return e.prototype.getOwnerComponent.call(this)},getRouter:function e(){return t.getRouterFor(this)},getResourceBundle:function e(){const t=this.getOwnerComponent().getModel("i18n");return t.getResourceBundle()},getModel:function e(t){return this.getView().getModel(t)},setModel:function e(t,n){this.getView().setModel(t,n);return this},navTo:function e(t,n,o){this.getRouter().navTo(t,n,undefined,o)},onNavBack:function e(){const t=n.getInstance().getPreviousHash();if(t!==undefined){window.history.go(-1)}else{this.getRouter().navTo("main",{},undefined,true)}}});return o});
 },
-	"de/marianzeis/githubfollower/controller/Main.controller.js":function(){sap.ui.define(["./BaseController","sap/ui/model/json/JSONModel","sap/m/MessageBox"],function(e,t,o){function a(e){return e&&e.__esModule&&typeof e.default!=="undefined"?e.default:e}const l=a(e);const i=l.extend("de.marianzeis.githubfollower.controller.Main",{onInit:function e(){const o={apiKey:"AIzaSyCy1d13pYC79sOgUZnn4-sJ5VM9QY6TjqM",authDomain:"github-followers-281ea.firebaseapp.com",projectId:"github-followers-281ea",storageBucket:"github-followers-281ea.appspot.com",messagingSenderId:"576057379323",appId:"1:576057379323:web:4fb59feea548cdefa1235e"};this.app=firebase.initializeApp(o);this.auth=firebase.auth(this.app);this.provider=new firebase.auth.GithubAuthProvider;this.provider.setCustomParameters({allow_signup:"false"});this.token="";this.getView().setModel(new t({token:"",busyOPMLButton:false}),"data")},signInToGitHub:function e(){this.githubSignInPopup(this.provider)},createAndDownloadOPMLFile:async function e(){this.getModel("data").setProperty("/busyOPMLButton",true);let t=1;let a=[];let l=[];const i=new Octokit({auth:this.token});const n=await i.request("GET /user/followers");a=n.data;let s=await i.request("GET /user/following");l=s.data;while(s.data.length>=30){t+=1;s=await i.request("GET /user/following",{page:t});l=[...l,...s.data]}this.opml(l);this.getModel("data").setProperty("/busyOPMLButton",false);o.success("Your OPML file is ready!")},opml:function e(t){let o=[];var a={title:"title-text",dateCreated:new Date(2014,2,9),ownerName:"azu"};for(var l=0;l<t.length;l++){o.push({text:t[l].login,title:t[l].login,type:"rss",xmlUrl:t[l].html_url+".atom",htmlUrl:t[l].html_url})}let i="<head><title>Sample OPML file for RSSReader</title></head>";let n=[];for(let e=0;e<o.length;e++){let t='<outline text="'+o[e].text+'" title="'+o[e].title+'" type="'+o[e].type+'" xmlUrl="'+o[e].xmlUrl+'" htmlUrl="'+o[e].htmlUrl+'" />';n.push(t)}let s='<?xml version="1.0" encoding="UTF-8"?><opml version="2.0">'+i+"<body>"+n+"</body>"+"</opml>";this.downloadFile("opml.xml",s)},githubSignInPopup:function e(t){firebase.auth().signInWithPopup(t).then(e=>{var t=e.credential;var o=t.accessToken;this.token=o;this.getModel("data").setProperty("/token",o);var a=e.user}).catch(e=>{var t=e.code;var o=e.message;var a=e.email;var l=e.credential})},downloadFile:function e(t,o){var a=document.createElement("a");a.setAttribute("href","data:text/plain;charset=utf-8,"+encodeURIComponent(o));a.setAttribute("download",t);a.style.display="none";document.body.appendChild(a);a.click();document.body.removeChild(a)}});return i});
+	"de/marianzeis/githubfollower/controller/Main.controller.js":function(){sap.ui.define(["./BaseController","sap/ui/model/json/JSONModel","sap/m/MessageBox","@octokit/core","githubfollower/lib/firebase"],function(t,e,o,n,l){function i(t){return t&&t.__esModule&&typeof t.default!=="undefined"?t.default:t}const a=i(t);const s=n["Octokit"];const r=l["initializeApp"];const u=l["getAuth"];const d=l["GithubAuthProvider"];const h=l["signInWithPopup"];const p=a.extend("de.marianzeis.githubfollower.controller.Main",{onInit:function t(){const o={apiKey:"AIzaSyCy1d13pYC79sOgUZnn4-sJ5VM9QY6TjqM",authDomain:"github-followers-281ea.firebaseapp.com",projectId:"github-followers-281ea",storageBucket:"github-followers-281ea.appspot.com",messagingSenderId:"576057379323",appId:"1:576057379323:web:4fb59feea548cdefa1235e"};this.app=r(o);this.auth=u(this.app);this.provider=new d;this.provider.setCustomParameters({allow_signup:"false"});this.token="";this.getView().setModel(new e({token:"",busyOPMLButton:false}),"data")},signInToGitHub:function t(){this.githubSignInPopup(this.provider)},createAndDownloadOPMLFile:async function t(){this.getModel("data").setProperty("/busyOPMLButton",true);let e=1;let n=[];let l=[];const i=new s({auth:this.token});const a=await i.request("GET /user/followers");n=a.data;let r=await i.request("GET /user/following");l=r.data;while(r.data.length>=30){e+=1;r=await i.request("GET /user/following",{page:e});l=[...l,...r.data]}this.opml(l);this.getModel("data").setProperty("/busyOPMLButton",false);o.success("Your OPML file is ready!")},opml:function t(e){let o=[];var n={title:"title-text",dateCreated:new Date(2014,2,9),ownerName:"azu"};for(var l=0;l<e.length;l++){o.push({text:e[l].login,title:e[l].login,type:"rss",xmlUrl:e[l].html_url+".atom",htmlUrl:e[l].html_url})}let i="<head><title>Sample OPML file for RSSReader</title></head>";let a=[];for(let t=0;t<o.length;t++){let e='<outline text="'+o[t].text+'" title="'+o[t].title+'" type="'+o[t].type+'" xmlUrl="'+o[t].xmlUrl+'" htmlUrl="'+o[t].htmlUrl+'" />';a.push(e)}let s='<?xml version="1.0" encoding="UTF-8"?><opml version="2.0">'+i+"<body>"+a+"</body>"+"</opml>";this.downloadFile("opml.xml",s)},githubSignInPopup:function t(e){const o=u();h(o,e).then(t=>{this.token=t._tokenResponse.oauthAccessToken;this.getModel("data").setProperty("/token",this.token)}).catch(t=>{var e=t.code;var o=t.message;var n=t.email;var l=t.credential})},downloadFile:function t(e,o){var n=document.createElement("a");n.setAttribute("href","data:text/plain;charset=utf-8,"+encodeURIComponent(o));n.setAttribute("download",e);n.style.display="none";document.body.appendChild(n);n.click();document.body.removeChild(n)}});return p});
 },
 	"de/marianzeis/githubfollower/i18n/i18n.properties":'appTitle=githubfollower\nappDescription=UI5 Application githubfollower\nbtnText=Say Hello',
 	"de/marianzeis/githubfollower/i18n/i18n_de.properties":'appTitle=GitHub Following to RSS\nappDescription=GitHub Following to RSS\nbtnTextGitHub=Sag Hallo\nbtnTextGenerateOPML=Sag Hallo',
 	"de/marianzeis/githubfollower/i18n/i18n_en.properties":'appTitle=GitHub Following to RSS\nappDescription=GitHub Following to RSS\nbtnText=Say Hello',
-	"de/marianzeis/githubfollower/lib/firebase-app.js":function(){sap.ui.define([],function(){
-/**
-   * @license
-   * Copyright 2017 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */
-/**
-   * @license
-   * Copyright 2017 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */
-const e=function(e){const t=[];let n=0;for(let r=0;r<e.length;r++){let s=e.charCodeAt(r);if(s<128){t[n++]=s}else if(s<2048){t[n++]=s>>6|192;t[n++]=s&63|128}else if((s&64512)===55296&&r+1<e.length&&(e.charCodeAt(r+1)&64512)===56320){s=65536+((s&1023)<<10)+(e.charCodeAt(++r)&1023);t[n++]=s>>18|240;t[n++]=s>>12&63|128;t[n++]=s>>6&63|128;t[n++]=s&63|128}else{t[n++]=s>>12|224;t[n++]=s>>6&63|128;t[n++]=s&63|128}}return t};const t=function(e){const t=[];let n=0,r=0;while(n<e.length){const s=e[n++];if(s<128){t[r++]=String.fromCharCode(s)}else if(s>191&&s<224){const i=e[n++];t[r++]=String.fromCharCode((s&31)<<6|i&63)}else if(s>239&&s<365){const i=e[n++];const a=e[n++];const o=e[n++];const c=((s&7)<<18|(i&63)<<12|(a&63)<<6|o&63)-65536;t[r++]=String.fromCharCode(55296+(c>>10));t[r++]=String.fromCharCode(56320+(c&1023))}else{const i=e[n++];const a=e[n++];t[r++]=String.fromCharCode((s&15)<<12|(i&63)<<6|a&63)}}return t.join("")};const n={byteToCharMap_:null,charToByteMap_:null,byteToCharMapWebSafe_:null,charToByteMapWebSafe_:null,ENCODED_VALS_BASE:"ABCDEFGHIJKLMNOPQRSTUVWXYZ"+"abcdefghijklmnopqrstuvwxyz"+"0123456789",get ENCODED_VALS(){return this.ENCODED_VALS_BASE+"+/="},get ENCODED_VALS_WEBSAFE(){return this.ENCODED_VALS_BASE+"-_."},HAS_NATIVE_SUPPORT:typeof atob==="function",encodeByteArray(e,t){if(!Array.isArray(e)){throw Error("encodeByteArray takes an array as a parameter")}this.init_();const n=t?this.byteToCharMapWebSafe_:this.byteToCharMap_;const r=[];for(let t=0;t<e.length;t+=3){const s=e[t];const i=t+1<e.length;const a=i?e[t+1]:0;const o=t+2<e.length;const c=o?e[t+2]:0;const h=s>>2;const l=(s&3)<<4|a>>4;let f=(a&15)<<2|c>>6;let u=c&63;if(!o){u=64;if(!i){f=64}}r.push(n[h],n[l],n[f],n[u])}return r.join("")},encodeString(t,n){if(this.HAS_NATIVE_SUPPORT&&!n){return btoa(t)}return this.encodeByteArray(e(t),n)},decodeString(e,n){if(this.HAS_NATIVE_SUPPORT&&!n){return atob(e)}return t(this.decodeStringToByteArray(e,n))},decodeStringToByteArray(e,t){this.init_();const n=t?this.charToByteMapWebSafe_:this.charToByteMap_;const r=[];for(let t=0;t<e.length;){const s=n[e.charAt(t++)];const i=t<e.length;const a=i?n[e.charAt(t)]:0;++t;const o=t<e.length;const c=o?n[e.charAt(t)]:64;++t;const h=t<e.length;const l=h?n[e.charAt(t)]:64;++t;if(s==null||a==null||c==null||l==null){throw Error()}const f=s<<2|a>>4;r.push(f);if(c!==64){const e=a<<4&240|c>>2;r.push(e);if(l!==64){const e=c<<6&192|l;r.push(e)}}}return r},init_(){if(!this.byteToCharMap_){this.byteToCharMap_={};this.charToByteMap_={};this.byteToCharMapWebSafe_={};this.charToByteMapWebSafe_={};for(let e=0;e<this.ENCODED_VALS.length;e++){this.byteToCharMap_[e]=this.ENCODED_VALS.charAt(e);this.charToByteMap_[this.byteToCharMap_[e]]=e;this.byteToCharMapWebSafe_[e]=this.ENCODED_VALS_WEBSAFE.charAt(e);this.charToByteMapWebSafe_[this.byteToCharMapWebSafe_[e]]=e;if(e>=this.ENCODED_VALS_BASE.length){this.charToByteMap_[this.ENCODED_VALS_WEBSAFE.charAt(e)]=e;this.charToByteMapWebSafe_[this.ENCODED_VALS.charAt(e)]=e}}}}};const r=function(t){const r=e(t);return n.encodeByteArray(r,true)};const s=function(e){return r(e).replace(/\./g,"")};
-/**
-   * @license
-   * Copyright 2017 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class i{constructor(){this.reject=()=>{};this.resolve=()=>{};this.promise=new Promise((e,t)=>{this.resolve=e;this.reject=t})}wrapCallback(e){return(t,n)=>{if(t){this.reject(t)}else{this.resolve(n)}if(typeof e==="function"){this.promise.catch(()=>{});if(e.length===1){e(t)}else{e(t,n)}}}}}function a(){return typeof indexedDB==="object"}function o(){return new Promise((e,t)=>{try{let n=true;const r="validate-browser-context-for-indexeddb-analytics-module";const s=self.indexedDB.open(r);s.onsuccess=()=>{s.result.close();if(!n){self.indexedDB.deleteDatabase(r)}e(true)};s.onupgradeneeded=()=>{n=false};s.onerror=()=>{var e;t(((e=s.error)===null||e===void 0?void 0:e.message)||"")}}catch(e){t(e)}})}
-/**
-   * @license
-   * Copyright 2017 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const c="FirebaseError";class h extends Error{constructor(e,t,n){super(t);this.code=e;this.customData=n;this.name=c;Object.setPrototypeOf(this,h.prototype);if(Error.captureStackTrace){Error.captureStackTrace(this,l.prototype.create)}}}class l{constructor(e,t,n){this.service=e;this.serviceName=t;this.errors=n}create(e,...t){const n=t[0]||{};const r=`${this.service}/${e}`;const s=this.errors[e];const i=s?f(s,n):"Error";const a=`${this.serviceName}: ${i} (${r}).`;const o=new h(r,a,n);return o}}function f(e,t){return e.replace(u,(e,n)=>{const r=t[n];return r!=null?String(r):`<${n}?>`})}const u=/\{\$([^}]+)}/g;function d(e,t){if(e===t){return true}const n=Object.keys(e);const r=Object.keys(t);for(const s of n){if(!r.includes(s)){return false}const n=e[s];const i=t[s];if(p(n)&&p(i)){if(!d(n,i)){return false}}else if(n!==i){return false}}for(const e of r){if(!n.includes(e)){return false}}return true}function p(e){return e!==null&&typeof e==="object"}class g{constructor(e,t,n){this.name=e;this.instanceFactory=t;this.type=n;this.multipleInstances=false;this.serviceProps={};this.instantiationMode="LAZY";this.onInstanceCreated=null}setInstantiationMode(e){this.instantiationMode=e;return this}setMultipleInstances(e){this.multipleInstances=e;return this}setServiceProps(e){this.serviceProps=e;return this}setInstanceCreatedCallback(e){this.onInstanceCreated=e;return this}}
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const m="[DEFAULT]";
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class b{constructor(e,t){this.name=e;this.container=t;this.component=null;this.instances=new Map;this.instancesDeferred=new Map;this.instancesOptions=new Map;this.onInitCallbacks=new Map}get(e){const t=this.normalizeInstanceIdentifier(e);if(!this.instancesDeferred.has(t)){const e=new i;this.instancesDeferred.set(t,e);if(this.isInitialized(t)||this.shouldAutoInitialize()){try{const n=this.getOrInitializeService({instanceIdentifier:t});if(n){e.resolve(n)}}catch(e){}}}return this.instancesDeferred.get(t).promise}getImmediate(e){var t;const n=this.normalizeInstanceIdentifier(e===null||e===void 0?void 0:e.identifier);const r=(t=e===null||e===void 0?void 0:e.optional)!==null&&t!==void 0?t:false;if(this.isInitialized(n)||this.shouldAutoInitialize()){try{return this.getOrInitializeService({instanceIdentifier:n})}catch(e){if(r){return null}else{throw e}}}else{if(r){return null}else{throw Error(`Service ${this.name} is not available`)}}}getComponent(){return this.component}setComponent(e){if(e.name!==this.name){throw Error(`Mismatching Component ${e.name} for Provider ${this.name}.`)}if(this.component){throw Error(`Component for ${this.name} has already been provided`)}this.component=e;if(!this.shouldAutoInitialize()){return}if(E(e)){try{this.getOrInitializeService({instanceIdentifier:m})}catch(e){}}for(const[e,t]of this.instancesDeferred.entries()){const n=this.normalizeInstanceIdentifier(e);try{const e=this.getOrInitializeService({instanceIdentifier:n});t.resolve(e)}catch(e){}}}clearInstance(e=m){this.instancesDeferred.delete(e);this.instancesOptions.delete(e);this.instances.delete(e)}async delete(){const e=Array.from(this.instances.values());await Promise.all([...e.filter(e=>"INTERNAL"in e).map(e=>e.INTERNAL.delete()),...e.filter(e=>"_delete"in e).map(e=>e._delete())])}isComponentSet(){return this.component!=null}isInitialized(e=m){return this.instances.has(e)}getOptions(e=m){return this.instancesOptions.get(e)||{}}initialize(e={}){const{options:t={}}=e;const n=this.normalizeInstanceIdentifier(e.instanceIdentifier);if(this.isInitialized(n)){throw Error(`${this.name}(${n}) has already been initialized`)}if(!this.isComponentSet()){throw Error(`Component ${this.name} has not been registered yet`)}const r=this.getOrInitializeService({instanceIdentifier:n,options:t});for(const[e,t]of this.instancesDeferred.entries()){const s=this.normalizeInstanceIdentifier(e);if(n===s){t.resolve(r)}}return r}onInit(e,t){var n;const r=this.normalizeInstanceIdentifier(t);const s=(n=this.onInitCallbacks.get(r))!==null&&n!==void 0?n:new Set;s.add(e);this.onInitCallbacks.set(r,s);const i=this.instances.get(r);if(i){e(i,r)}return()=>{s.delete(e)}}invokeOnInitCallbacks(e,t){const n=this.onInitCallbacks.get(t);if(!n){return}for(const r of n){try{r(e,t)}catch(e){}}}getOrInitializeService({instanceIdentifier:e,options:t={}}){let n=this.instances.get(e);if(!n&&this.component){n=this.component.instanceFactory(this.container,{instanceIdentifier:v(e),options:t});this.instances.set(e,n);this.instancesOptions.set(e,t);this.invokeOnInitCallbacks(n,e);if(this.component.onInstanceCreated){try{this.component.onInstanceCreated(this.container,e,n)}catch(e){}}}return n||null}normalizeInstanceIdentifier(e=m){if(this.component){return this.component.multipleInstances?e:m}else{return e}}shouldAutoInitialize(){return!!this.component&&this.component.instantiationMode!=="EXPLICIT"}}function v(e){return e===m?undefined:e}function E(e){return e.instantiationMode==="EAGER"}
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class _{constructor(e){this.name=e;this.providers=new Map}addComponent(e){const t=this.getProvider(e.name);if(t.isComponentSet()){throw new Error(`Component ${e.name} has already been registered with ${this.name}`)}t.setComponent(e)}addOrOverwriteComponent(e){const t=this.getProvider(e.name);if(t.isComponentSet()){this.providers.delete(e.name)}this.addComponent(e)}getProvider(e){if(this.providers.has(e)){return this.providers.get(e)}const t=new b(e,this);this.providers.set(e,t);return t}getProviders(){return Array.from(this.providers.values())}}
-/**
-   * @license
-   * Copyright 2017 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const w=[];var y;(function(e){e[e["DEBUG"]=0]="DEBUG";e[e["VERBOSE"]=1]="VERBOSE";e[e["INFO"]=2]="INFO";e[e["WARN"]=3]="WARN";e[e["ERROR"]=4]="ERROR";e[e["SILENT"]=5]="SILENT"})(y||(y={}));const I={debug:y.DEBUG,verbose:y.VERBOSE,info:y.INFO,warn:y.WARN,error:y.ERROR,silent:y.SILENT};const C=y.INFO;const D={[y.DEBUG]:"log",[y.VERBOSE]:"log",[y.INFO]:"info",[y.WARN]:"warn",[y.ERROR]:"error"};const S=(e,t,...n)=>{if(t<e.logLevel){return}const r=(new Date).toISOString();const s=D[t];if(s){console[s](`[${r}]  ${e.name}:`,...n)}else{throw new Error(`Attempted to log a message with an invalid logType (value: ${t})`)}};class A{constructor(e){this.name=e;this._logLevel=C;this._logHandler=S;this._userLogHandler=null;w.push(this)}get logLevel(){return this._logLevel}set logLevel(e){if(!(e in y)){throw new TypeError(`Invalid value "${e}" assigned to \`logLevel\``)}this._logLevel=e}setLogLevel(e){this._logLevel=typeof e==="string"?I[e]:e}get logHandler(){return this._logHandler}set logHandler(e){if(typeof e!=="function"){throw new TypeError("Value assigned to `logHandler` must be a function")}this._logHandler=e}get userLogHandler(){return this._userLogHandler}set userLogHandler(e){this._userLogHandler=e}debug(...e){this._userLogHandler&&this._userLogHandler(this,y.DEBUG,...e);this._logHandler(this,y.DEBUG,...e)}log(...e){this._userLogHandler&&this._userLogHandler(this,y.VERBOSE,...e);this._logHandler(this,y.VERBOSE,...e)}info(...e){this._userLogHandler&&this._userLogHandler(this,y.INFO,...e);this._logHandler(this,y.INFO,...e)}warn(...e){this._userLogHandler&&this._userLogHandler(this,y.WARN,...e);this._logHandler(this,y.WARN,...e)}error(...e){this._userLogHandler&&this._userLogHandler(this,y.ERROR,...e);this._logHandler(this,y.ERROR,...e)}}function O(e){w.forEach(t=>{t.setLogLevel(e)})}function L(e,t){for(const n of w){let r=null;if(t&&t.level){r=I[t.level]}if(e===null){n.userLogHandler=null}else{n.userLogHandler=(t,n,...s)=>{const i=s.map(e=>{if(e==null){return null}else if(typeof e==="string"){return e}else if(typeof e==="number"||typeof e==="boolean"){return e.toString()}else if(e instanceof Error){return e.message}else{try{return JSON.stringify(e)}catch(e){return null}}}).filter(e=>e).join(" ");if(n>=(r!==null&&r!==void 0?r:t.logLevel)){e({level:y[n].toLowerCase(),message:i,args:s,type:t.name})}}}}}const B=(e,t)=>t.some(t=>e instanceof t);let N;let T;function M(){return N||(N=[IDBDatabase,IDBObjectStore,IDBIndex,IDBCursor,IDBTransaction])}function P(){return T||(T=[IDBCursor.prototype.advance,IDBCursor.prototype.continue,IDBCursor.prototype.continuePrimaryKey])}const H=new WeakMap;const R=new WeakMap;const j=new WeakMap;const $=new WeakMap;const k=new WeakMap;function V(e){const t=new Promise((t,n)=>{const r=()=>{e.removeEventListener("success",s);e.removeEventListener("error",i)};const s=()=>{t(G(e.result));r()};const i=()=>{n(e.error);r()};e.addEventListener("success",s);e.addEventListener("error",i)});t.then(t=>{if(t instanceof IDBCursor){H.set(t,e)}}).catch(()=>{});k.set(t,e);return t}function F(e){if(R.has(e))return;const t=new Promise((t,n)=>{const r=()=>{e.removeEventListener("complete",s);e.removeEventListener("error",i);e.removeEventListener("abort",i)};const s=()=>{t();r()};const i=()=>{n(e.error||new DOMException("AbortError","AbortError"));r()};e.addEventListener("complete",s);e.addEventListener("error",i);e.addEventListener("abort",i)});R.set(e,t)}let z={get(e,t,n){if(e instanceof IDBTransaction){if(t==="done")return R.get(e);if(t==="objectStoreNames"){return e.objectStoreNames||j.get(e)}if(t==="store"){return n.objectStoreNames[1]?undefined:n.objectStore(n.objectStoreNames[0])}}return G(e[t])},set(e,t,n){e[t]=n;return true},has(e,t){if(e instanceof IDBTransaction&&(t==="done"||t==="store")){return true}return t in e}};function W(e){z=e(z)}function x(e){if(e===IDBDatabase.prototype.transaction&&!("objectStoreNames"in IDBTransaction.prototype)){return function(t,...n){const r=e.call(K(this),t,...n);j.set(r,t.sort?t.sort():[t]);return G(r)}}if(P().includes(e)){return function(...t){e.apply(K(this),t);return G(H.get(this))}}return function(...t){return G(e.apply(K(this),t))}}function U(e){if(typeof e==="function")return x(e);if(e instanceof IDBTransaction)F(e);if(B(e,M()))return new Proxy(e,z);return e}function G(e){if(e instanceof IDBRequest)return V(e);if($.has(e))return $.get(e);const t=U(e);if(t!==e){$.set(e,t);k.set(t,e)}return t}const K=e=>k.get(e);function J(e,t,{blocked:n,upgrade:r,blocking:s,terminated:i}={}){const a=indexedDB.open(e,t);const o=G(a);if(r){a.addEventListener("upgradeneeded",e=>{r(G(a.result),e.oldVersion,e.newVersion,G(a.transaction))})}if(n)a.addEventListener("blocked",()=>n());o.then(e=>{if(i)e.addEventListener("close",()=>i());if(s)e.addEventListener("versionchange",()=>s())}).catch(()=>{});return o}const Y=["get","getKey","getAll","getAllKeys","count"];const q=["put","add","delete","clear"];const X=new Map;function Z(e,t){if(!(e instanceof IDBDatabase&&!(t in e)&&typeof t==="string")){return}if(X.get(t))return X.get(t);const n=t.replace(/FromIndex$/,"");const r=t!==n;const s=q.includes(n);if(!(n in(r?IDBIndex:IDBObjectStore).prototype)||!(s||Y.includes(n))){return}const i=async function(e,...t){const i=this.transaction(e,s?"readwrite":"readonly");let a=i.store;if(r)a=a.index(t.shift());return(await Promise.all([a[n](...t),s&&i.done]))[0]};X.set(t,i);return i}W(e=>({...e,get:(t,n,r)=>Z(t,n)||e.get(t,n,r),has:(t,n)=>!!Z(t,n)||e.has(t,n)}));
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class Q{constructor(e){this.container=e}getPlatformInfoString(){const e=this.container.getProviders();return e.map(e=>{if(ee(e)){const t=e.getImmediate();return`${t.library}/${t.version}`}else{return null}}).filter(e=>e).join(" ")}}function ee(e){const t=e.getComponent();return(t===null||t===void 0?void 0:t.type)==="VERSION"}const te="https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js";const ne="0.7.26";
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const re=new A("https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js");const se="https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js-compat";const ie="@firebase/analytics-compat";const ae="@firebase/analytics";const oe="https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js-check-compat";const ce="https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js-check";const he="@firebase/auth";const le="@firebase/auth-compat";const fe="@firebase/database";const ue="@firebase/database-compat";const de="@firebase/functions";const pe="@firebase/functions-compat";const ge="@firebase/installations";const me="@firebase/installations-compat";const be="@firebase/messaging";const ve="@firebase/messaging-compat";const Ee="@firebase/performance";const _e="@firebase/performance-compat";const we="@firebase/remote-config";const ye="@firebase/remote-config-compat";const Ie="@firebase/storage";const Ce="@firebase/storage-compat";const De="@firebase/firestore";const Se="@firebase/firestore-compat";const Ae="firebase";const Oe="9.8.3";
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const Le="[DEFAULT]";const Be={[te]:"fire-core",[se]:"fire-core-compat",[ae]:"fire-analytics",[ie]:"fire-analytics-compat",[ce]:"fire-app-check",[oe]:"fire-app-check-compat",[he]:"fire-auth",[le]:"fire-auth-compat",[fe]:"fire-rtdb",[ue]:"fire-rtdb-compat",[de]:"fire-fn",[pe]:"fire-fn-compat",[ge]:"fire-iid",[me]:"fire-iid-compat",[be]:"fire-fcm",[ve]:"fire-fcm-compat",[Ee]:"fire-perf",[_e]:"fire-perf-compat",[we]:"fire-rc",[ye]:"fire-rc-compat",[Ie]:"fire-gcs",[Ce]:"fire-gcs-compat",[De]:"fire-fst",[Se]:"fire-fst-compat","fire-js":"fire-js",[Ae]:"fire-js-all"};
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const Ne=new Map;const Te=new Map;function Me(e,t){try{e.container.addComponent(t)}catch(n){re.debug(`Component ${t.name} failed to register with FirebaseApp ${e.name}`,n)}}function Pe(e,t){e.container.addOrOverwriteComponent(t)}function He(e){const t=e.name;if(Te.has(t)){re.debug(`There were multiple attempts to register component ${t}.`);return false}Te.set(t,e);for(const t of Ne.values()){Me(t,e)}return true}function Re(e,t){const n=e.container.getProvider("heartbeat").getImmediate({optional:true});if(n){void n.triggerHeartbeat()}return e.container.getProvider(t)}function je(e,t,n=Le){Re(e,t).clearInstance(n)}function $e(){Te.clear()}
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const ke={["no-app"]:"No Firebase App '{$appName}' has been created - "+"call Firebase App.initializeApp()",["bad-app-name"]:"Illegal App name: '{$appName}",["duplicate-app"]:"Firebase App named '{$appName}' already exists with different options or config",["app-deleted"]:"Firebase App named '{$appName}' already deleted",["invalid-app-argument"]:"firebase.{$appName}() takes either no argument or a "+"Firebase App instance.",["invalid-log-argument"]:"First argument to `onLog` must be null or a function.",["storage-open"]:"Error thrown when opening storage. Original error: {$originalErrorMessage}.",["storage-get"]:"Error thrown when reading from storage. Original error: {$originalErrorMessage}.",["storage-set"]:"Error thrown when writing to storage. Original error: {$originalErrorMessage}.",["storage-delete"]:"Error thrown when deleting from storage. Original error: {$originalErrorMessage}."};const Ve=new l("app","Firebase",ke);
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class Fe{constructor(e,t,n){this._isDeleted=false;this._options=Object.assign({},e);this._config=Object.assign({},t);this._name=t.name;this._automaticDataCollectionEnabled=t.automaticDataCollectionEnabled;this._container=n;this.container.addComponent(new g("app",()=>this,"PUBLIC"))}get automaticDataCollectionEnabled(){this.checkDestroyed();return this._automaticDataCollectionEnabled}set automaticDataCollectionEnabled(e){this.checkDestroyed();this._automaticDataCollectionEnabled=e}get name(){this.checkDestroyed();return this._name}get options(){this.checkDestroyed();return this._options}get config(){this.checkDestroyed();return this._config}get container(){return this._container}get isDeleted(){return this._isDeleted}set isDeleted(e){this._isDeleted=e}checkDestroyed(){if(this.isDeleted){throw Ve.create("app-deleted",{appName:this._name})}}}
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const ze=Oe;function We(e,t={}){if(typeof t!=="object"){const e=t;t={name:e}}const n=Object.assign({name:Le,automaticDataCollectionEnabled:false},t);const r=n.name;if(typeof r!=="string"||!r){throw Ve.create("bad-app-name",{appName:String(r)})}const s=Ne.get(r);if(s){if(d(e,s.options)&&d(n,s.config)){return s}else{throw Ve.create("duplicate-app",{appName:r})}}const i=new _(r);for(const e of Te.values()){i.addComponent(e)}const a=new Fe(e,n,i);Ne.set(r,a);return a}function xe(e=Le){const t=Ne.get(e);if(!t){throw Ve.create("no-app",{appName:e})}return t}function Ue(){return Array.from(Ne.values())}async function Ge(e){const t=e.name;if(Ne.has(t)){Ne.delete(t);await Promise.all(e.container.getProviders().map(e=>e.delete()));e.isDeleted=true}}function Ke(e,t,n){var r;let s=(r=Be[e])!==null&&r!==void 0?r:e;if(n){s+=`-${n}`}const i=s.match(/\s|\//);const a=t.match(/\s|\//);if(i||a){const e=[`Unable to register library "${s}" with version "1.0.0":`];if(i){e.push(`library name "${s}" contains illegal characters (whitespace or "/")`)}if(i&&a){e.push("and")}if(a){e.push(`version name "1.0.0" contains illegal characters (whitespace or "/")`)}re.warn(e.join(" "));return}He(new g(`${s}-version`,()=>({library:s,version:t}),"VERSION"))}function Je(e,t){if(e!==null&&typeof e!=="function"){throw Ve.create("invalid-log-argument")}L(e,t)}function Ye(e){O(e)}
-/**
-   * @license
-   * Copyright 2021 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const qe="firebase-heartbeat-database";const Xe=1;const Ze="firebase-heartbeat-store";let Qe=null;function et(){if(!Qe){Qe=J(qe,Xe,{upgrade:(e,t)=>{switch(t){case 0:e.createObjectStore(Ze)}}}).catch(e=>{throw Ve.create("storage-open",{originalErrorMessage:e.message})})}return Qe}async function tt(e){var t;try{const t=await et();return t.transaction(Ze).objectStore(Ze).get(rt(e))}catch(e){throw Ve.create("storage-get",{originalErrorMessage:(t=e)===null||t===void 0?void 0:t.message})}}async function nt(e,t){var n;try{const n=await et();const r=n.transaction(Ze,"readwrite");const s=r.objectStore(Ze);await s.put(t,rt(e));return r.done}catch(e){throw Ve.create("storage-set",{originalErrorMessage:(n=e)===null||n===void 0?void 0:n.message})}}function rt(e){return`${e.name}!${e.options.appId}`}
-/**
-   * @license
-   * Copyright 2021 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const st=1024;const it=30*24*60*60*1e3;class at{constructor(e){this.container=e;this._heartbeatsCache=null;const t=this.container.getProvider("app").getImmediate();this._storage=new ht(t);this._heartbeatsCachePromise=this._storage.read().then(e=>{this._heartbeatsCache=e;return e})}async triggerHeartbeat(){const e=this.container.getProvider("platform-logger").getImmediate();const t=e.getPlatformInfoString();const n=ot();if(this._heartbeatsCache===null){this._heartbeatsCache=await this._heartbeatsCachePromise}if(this._heartbeatsCache.lastSentHeartbeatDate===n||this._heartbeatsCache.heartbeats.some(e=>e.date===n)){return}else{this._heartbeatsCache.heartbeats.push({date:n,agent:t})}this._heartbeatsCache.heartbeats=this._heartbeatsCache.heartbeats.filter(e=>{const t=new Date(e.date).valueOf();const n=Date.now();return n-t<=it});return this._storage.overwrite(this._heartbeatsCache)}async getHeartbeatsHeader(){if(this._heartbeatsCache===null){await this._heartbeatsCachePromise}if(this._heartbeatsCache===null||this._heartbeatsCache.heartbeats.length===0){return""}const e=ot();const{heartbeatsToSend:t,unsentEntries:n}=ct(this._heartbeatsCache.heartbeats);const r=s(JSON.stringify({version:2,heartbeats:t}));this._heartbeatsCache.lastSentHeartbeatDate=e;if(n.length>0){this._heartbeatsCache.heartbeats=n;await this._storage.overwrite(this._heartbeatsCache)}else{this._heartbeatsCache.heartbeats=[];void this._storage.overwrite(this._heartbeatsCache)}return r}}function ot(){const e=new Date;return e.toISOString().substring(0,10)}function ct(e,t=st){const n=[];let r=e.slice();for(const s of e){const e=n.find(e=>e.agent===s.agent);if(!e){n.push({agent:s.agent,dates:[s.date]});if(lt(n)>t){n.pop();break}}else{e.dates.push(s.date);if(lt(n)>t){e.dates.pop();break}}r=r.slice(1)}return{heartbeatsToSend:n,unsentEntries:r}}class ht{constructor(e){this.app=e;this._canUseIndexedDBPromise=this.runIndexedDBEnvironmentCheck()}async runIndexedDBEnvironmentCheck(){if(!a()){return false}else{return o().then(()=>true).catch(()=>false)}}async read(){const e=await this._canUseIndexedDBPromise;if(!e){return{heartbeats:[]}}else{const e=await tt(this.app);return e||{heartbeats:[]}}}async overwrite(e){var t;const n=await this._canUseIndexedDBPromise;if(!n){return}else{const n=await this.read();return nt(this.app,{lastSentHeartbeatDate:(t=e.lastSentHeartbeatDate)!==null&&t!==void 0?t:n.lastSentHeartbeatDate,heartbeats:e.heartbeats})}}async add(e){var t;const n=await this._canUseIndexedDBPromise;if(!n){return}else{const n=await this.read();return nt(this.app,{lastSentHeartbeatDate:(t=e.lastSentHeartbeatDate)!==null&&t!==void 0?t:n.lastSentHeartbeatDate,heartbeats:[...n.heartbeats,...e.heartbeats]})}}}function lt(e){return s(JSON.stringify({version:2,heartbeats:e})).length}
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function ft(e){He(new g("platform-logger",e=>new Q(e),"PRIVATE"));He(new g("heartbeat",e=>new at(e),"PRIVATE"));Ke(te,ne,e);Ke(te,ne,"esm2017");Ke("fire-js","")}ft("");var ut="firebase";var dt="9.8.3";
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */Ke(ut,dt,"cdn");var pt={__esModule:true};pt.FirebaseError=h;pt.SDK_VERSION=ze;pt._DEFAULT_ENTRY_NAME=Le;pt._addComponent=Me;pt._addOrOverwriteComponent=Pe;pt._apps=Ne;pt._clearComponents=$e;pt._components=Te;pt._getProvider=Re;pt._registerComponent=He;pt._removeServiceInstance=je;pt.deleteApp=Ge;pt.getApp=xe;pt.getApps=Ue;pt.initializeApp=We;pt.onLog=Je;pt.registerVersion=Ke;pt.setLogLevel=Ye;return pt});
+	"de/marianzeis/githubfollower/lib/firebase.js":function(){sap.ui.define(["firebase/app","firebase/auth"],function(e,i){const t=e["initializeApp"];const a=i["getAuth"];var n={__esModule:true};n.initializeApp=t;n.getAuth=a;return n});
 },
-	"de/marianzeis/githubfollower/lib/firebase-auth.js":function(){sap.ui.define([],function(){
-/**
-   * @license
-   * Copyright 2017 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */
-/**
-   * @license
-   * Copyright 2017 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */
-const e=function(e){const t=[];let n=0;for(let i=0;i<e.length;i++){let r=e.charCodeAt(i);if(r<128){t[n++]=r}else if(r<2048){t[n++]=r>>6|192;t[n++]=r&63|128}else if((r&64512)===55296&&i+1<e.length&&(e.charCodeAt(i+1)&64512)===56320){r=65536+((r&1023)<<10)+(e.charCodeAt(++i)&1023);t[n++]=r>>18|240;t[n++]=r>>12&63|128;t[n++]=r>>6&63|128;t[n++]=r&63|128}else{t[n++]=r>>12|224;t[n++]=r>>6&63|128;t[n++]=r&63|128}}return t};const t=function(e){const t=[];let n=0,i=0;while(n<e.length){const r=e[n++];if(r<128){t[i++]=String.fromCharCode(r)}else if(r>191&&r<224){const s=e[n++];t[i++]=String.fromCharCode((r&31)<<6|s&63)}else if(r>239&&r<365){const s=e[n++];const o=e[n++];const a=e[n++];const c=((r&7)<<18|(s&63)<<12|(o&63)<<6|a&63)-65536;t[i++]=String.fromCharCode(55296+(c>>10));t[i++]=String.fromCharCode(56320+(c&1023))}else{const s=e[n++];const o=e[n++];t[i++]=String.fromCharCode((r&15)<<12|(s&63)<<6|o&63)}}return t.join("")};const n={byteToCharMap_:null,charToByteMap_:null,byteToCharMapWebSafe_:null,charToByteMapWebSafe_:null,ENCODED_VALS_BASE:"ABCDEFGHIJKLMNOPQRSTUVWXYZ"+"abcdefghijklmnopqrstuvwxyz"+"0123456789",get ENCODED_VALS(){return this.ENCODED_VALS_BASE+"+/="},get ENCODED_VALS_WEBSAFE(){return this.ENCODED_VALS_BASE+"-_."},HAS_NATIVE_SUPPORT:typeof atob==="function",encodeByteArray(e,t){if(!Array.isArray(e)){throw Error("encodeByteArray takes an array as a parameter")}this.init_();const n=t?this.byteToCharMapWebSafe_:this.byteToCharMap_;const i=[];for(let t=0;t<e.length;t+=3){const r=e[t];const s=t+1<e.length;const o=s?e[t+1]:0;const a=t+2<e.length;const c=a?e[t+2]:0;const u=r>>2;const d=(r&3)<<4|o>>4;let l=(o&15)<<2|c>>6;let h=c&63;if(!a){h=64;if(!s){l=64}}i.push(n[u],n[d],n[l],n[h])}return i.join("")},encodeString(t,n){if(this.HAS_NATIVE_SUPPORT&&!n){return btoa(t)}return this.encodeByteArray(e(t),n)},decodeString(e,n){if(this.HAS_NATIVE_SUPPORT&&!n){return atob(e)}return t(this.decodeStringToByteArray(e,n))},decodeStringToByteArray(e,t){this.init_();const n=t?this.charToByteMapWebSafe_:this.charToByteMap_;const i=[];for(let t=0;t<e.length;){const r=n[e.charAt(t++)];const s=t<e.length;const o=s?n[e.charAt(t)]:0;++t;const a=t<e.length;const c=a?n[e.charAt(t)]:64;++t;const u=t<e.length;const d=u?n[e.charAt(t)]:64;++t;if(r==null||o==null||c==null||d==null){throw Error()}const l=r<<2|o>>4;i.push(l);if(c!==64){const e=o<<4&240|c>>2;i.push(e);if(d!==64){const e=c<<6&192|d;i.push(e)}}}return i},init_(){if(!this.byteToCharMap_){this.byteToCharMap_={};this.charToByteMap_={};this.byteToCharMapWebSafe_={};this.charToByteMapWebSafe_={};for(let e=0;e<this.ENCODED_VALS.length;e++){this.byteToCharMap_[e]=this.ENCODED_VALS.charAt(e);this.charToByteMap_[this.byteToCharMap_[e]]=e;this.byteToCharMapWebSafe_[e]=this.ENCODED_VALS_WEBSAFE.charAt(e);this.charToByteMapWebSafe_[this.byteToCharMapWebSafe_[e]]=e;if(e>=this.ENCODED_VALS_BASE.length){this.charToByteMap_[this.ENCODED_VALS_WEBSAFE.charAt(e)]=e;this.charToByteMapWebSafe_[this.ENCODED_VALS.charAt(e)]=e}}}}};const i=function(e){try{return n.decodeString(e,true)}catch(e){console.error("base64Decode failed: ",e)}return null};
-/**
-   * @license
-   * Copyright 2017 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function r(){if(typeof navigator!=="undefined"&&typeof navigator["userAgent"]==="string"){return navigator["userAgent"]}else{return""}}function s(){return typeof window!=="undefined"&&!!(window["cordova"]||window["phonegap"]||window["PhoneGap"])&&/ios|iphone|ipod|ipad|android|blackberry|iemobile/i.test(r())}function o(){const e=typeof chrome==="object"?chrome.runtime:typeof browser==="object"?browser.runtime:undefined;return typeof e==="object"&&e.id!==undefined}function a(){return typeof navigator==="object"&&navigator["product"]==="ReactNative"}function c(){const e=r();return e.indexOf("MSIE ")>=0||e.indexOf("Trident/")>=0}
-/**
-   * @license
-   * Copyright 2017 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const u="FirebaseError";class d extends Error{constructor(e,t,n){super(t);this.code=e;this.customData=n;this.name=u;Object.setPrototypeOf(this,d.prototype);if(Error.captureStackTrace){Error.captureStackTrace(this,l.prototype.create)}}}class l{constructor(e,t,n){this.service=e;this.serviceName=t;this.errors=n}create(e,...t){const n=t[0]||{};const i=`${this.service}/${e}`;const r=this.errors[e];const s=r?h(r,n):"Error";const o=`${this.serviceName}: ${s} (${i}).`;const a=new d(i,o,n);return a}}function h(e,t){return e.replace(f,(e,n)=>{const i=t[n];return i!=null?String(i):`<${n}?>`})}const f=/\{\$([^}]+)}/g;function p(e){for(const t in e){if(Object.prototype.hasOwnProperty.call(e,t)){return false}}return true}function m(e,t){if(e===t){return true}const n=Object.keys(e);const i=Object.keys(t);for(const r of n){if(!i.includes(r)){return false}const n=e[r];const s=t[r];if(g(n)&&g(s)){if(!m(n,s)){return false}}else if(n!==s){return false}}for(const e of i){if(!n.includes(e)){return false}}return true}function g(e){return e!==null&&typeof e==="object"}
-/**
-   * @license
-   * Copyright 2017 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function v(e){const t=[];for(const[n,i]of Object.entries(e)){if(Array.isArray(i)){i.forEach(e=>{t.push(encodeURIComponent(n)+"="+encodeURIComponent(e))})}else{t.push(encodeURIComponent(n)+"="+encodeURIComponent(i))}}return t.length?"&"+t.join("&"):""}function I(e){const t={};const n=e.replace(/^\?/,"").split("&");n.forEach(e=>{if(e){const[n,i]=e.split("=");t[decodeURIComponent(n)]=decodeURIComponent(i)}});return t}function _(e){const t=e.indexOf("?");if(!t){return""}const n=e.indexOf("#",t);return e.substring(t,n>0?n:undefined)}function y(e,t){const n=new T(e,t);return n.subscribe.bind(n)}class T{constructor(e,t){this.observers=[];this.unsubscribes=[];this.observerCount=0;this.task=Promise.resolve();this.finalized=false;this.onNoObservers=t;this.task.then(()=>{e(this)}).catch(e=>{this.error(e)})}next(e){this.forEachObserver(t=>{t.next(e)})}error(e){this.forEachObserver(t=>{t.error(e)});this.close(e)}complete(){this.forEachObserver(e=>{e.complete()});this.close()}subscribe(e,t,n){let i;if(e===undefined&&t===undefined&&n===undefined){throw new Error("Missing Observer.")}if(E(e,["next","error","complete"])){i=e}else{i={next:e,error:t,complete:n}}if(i.next===undefined){i.next=w}if(i.error===undefined){i.error=w}if(i.complete===undefined){i.complete=w}const r=this.unsubscribeOne.bind(this,this.observers.length);if(this.finalized){this.task.then(()=>{try{if(this.finalError){i.error(this.finalError)}else{i.complete()}}catch(e){}return})}this.observers.push(i);return r}unsubscribeOne(e){if(this.observers===undefined||this.observers[e]===undefined){return}delete this.observers[e];this.observerCount-=1;if(this.observerCount===0&&this.onNoObservers!==undefined){this.onNoObservers(this)}}forEachObserver(e){if(this.finalized){return}for(let t=0;t<this.observers.length;t++){this.sendOne(t,e)}}sendOne(e,t){this.task.then(()=>{if(this.observers!==undefined&&this.observers[e]!==undefined){try{t(this.observers[e])}catch(e){if(typeof console!=="undefined"&&console.error){console.error(e)}}}})}close(e){if(this.finalized){return}this.finalized=true;if(e!==undefined){this.finalError=e}this.task.then(()=>{this.observers=undefined;this.onNoObservers=undefined})}}function E(e,t){if(typeof e!=="object"||e===null){return false}for(const n of t){if(n in e&&typeof e[n]==="function"){return true}}return false}function w(){}
-/**
-   * @license
-   * Copyright 2021 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function k(e){if(e&&e._delegate){return e._delegate}else{return e}}
-/*! *****************************************************************************
-  Copyright (c) Microsoft Corporation.
-  
-  Permission to use, copy, modify, and/or distribute this software for any
-  purpose with or without fee is hereby granted.
-  
-  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-  REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-  AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-  INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-  LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-  OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-  PERFORMANCE OF THIS SOFTWARE.
-  ***************************************************************************** */function b(e,t){var n={};for(var i in e)if(Object.prototype.hasOwnProperty.call(e,i)&&t.indexOf(i)<0)n[i]=e[i];if(e!=null&&typeof Object.getOwnPropertySymbols==="function")for(var r=0,i=Object.getOwnPropertySymbols(e);r<i.length;r++){if(t.indexOf(i[r])<0&&Object.prototype.propertyIsEnumerable.call(e,i[r]))n[i[r]]=e[i[r]]}return n}
-/**
-   * @license
-   * Copyright 2017 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */var A;(function(e){e[e["DEBUG"]=0]="DEBUG";e[e["VERBOSE"]=1]="VERBOSE";e[e["INFO"]=2]="INFO";e[e["WARN"]=3]="WARN";e[e["ERROR"]=4]="ERROR";e[e["SILENT"]=5]="SILENT"})(A||(A={}));const R={debug:A.DEBUG,verbose:A.VERBOSE,info:A.INFO,warn:A.WARN,error:A.ERROR,silent:A.SILENT};const S=A.INFO;const N={[A.DEBUG]:"log",[A.VERBOSE]:"log",[A.INFO]:"info",[A.WARN]:"warn",[A.ERROR]:"error"};const O=(e,t,...n)=>{if(t<e.logLevel){return}const i=(new Date).toISOString();const r=N[t];if(r){console[r](`[${i}]  ${e.name}:`,...n)}else{throw new Error(`Attempted to log a message with an invalid logType (value: ${t})`)}};class P{constructor(e){this.name=e;this._logLevel=S;this._logHandler=O;this._userLogHandler=null}get logLevel(){return this._logLevel}set logLevel(e){if(!(e in A)){throw new TypeError(`Invalid value "${e}" assigned to \`logLevel\``)}this._logLevel=e}setLogLevel(e){this._logLevel=typeof e==="string"?R[e]:e}get logHandler(){return this._logHandler}set logHandler(e){if(typeof e!=="function"){throw new TypeError("Value assigned to `logHandler` must be a function")}this._logHandler=e}get userLogHandler(){return this._userLogHandler}set userLogHandler(e){this._userLogHandler=e}debug(...e){this._userLogHandler&&this._userLogHandler(this,A.DEBUG,...e);this._logHandler(this,A.DEBUG,...e)}log(...e){this._userLogHandler&&this._userLogHandler(this,A.VERBOSE,...e);this._logHandler(this,A.VERBOSE,...e)}info(...e){this._userLogHandler&&this._userLogHandler(this,A.INFO,...e);this._logHandler(this,A.INFO,...e)}warn(...e){this._userLogHandler&&this._userLogHandler(this,A.WARN,...e);this._logHandler(this,A.WARN,...e)}error(...e){this._userLogHandler&&this._userLogHandler(this,A.ERROR,...e);this._logHandler(this,A.ERROR,...e)}}class C{constructor(e,t,n){this.name=e;this.instanceFactory=t;this.type=n;this.multipleInstances=false;this.serviceProps={};this.instantiationMode="LAZY";this.onInstanceCreated=null}setInstantiationMode(e){this.instantiationMode=e;return this}setMultipleInstances(e){this.multipleInstances=e;return this}setServiceProps(e){this.serviceProps=e;return this}setInstanceCreatedCallback(e){this.onInstanceCreated=e;return this}}
-/**
-   * @license
-   * Copyright 2021 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const D={PHONE:"phone"};const L={FACEBOOK:"facebook.com",GITHUB:"github.com",GOOGLE:"google.com",PASSWORD:"password",PHONE:"phone",TWITTER:"twitter.com"};const M={EMAIL_LINK:"emailLink",EMAIL_PASSWORD:"password",FACEBOOK:"facebook.com",GITHUB:"github.com",GOOGLE:"google.com",PHONE:"phone",TWITTER:"twitter.com"};const U={LINK:"link",REAUTHENTICATE:"reauthenticate",SIGN_IN:"signIn"};const F={EMAIL_SIGNIN:"EMAIL_SIGNIN",PASSWORD_RESET:"PASSWORD_RESET",RECOVER_EMAIL:"RECOVER_EMAIL",REVERT_SECOND_FACTOR_ADDITION:"REVERT_SECOND_FACTOR_ADDITION",VERIFY_AND_CHANGE_EMAIL:"VERIFY_AND_CHANGE_EMAIL",VERIFY_EMAIL:"VERIFY_EMAIL"};
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function V(){return{["admin-restricted-operation"]:"This operation is restricted to administrators only.",["argument-error"]:"",["app-not-authorized"]:"This app, identified by the domain where it's hosted, is not "+"authorized to use Firebase Authentication with the provided API key. "+"Review your key configuration in the Google API console.",["app-not-installed"]:"The requested mobile application corresponding to the identifier ("+"Android package name or iOS bundle ID) provided is not installed on "+"this device.",["captcha-check-failed"]:"The reCAPTCHA response token provided is either invalid, expired, "+"already used or the domain associated with it does not match the list "+"of whitelisted domains.",["code-expired"]:"The SMS code has expired. Please re-send the verification code to try "+"again.",["cordova-not-ready"]:"Cordova framework is not ready.",["cors-unsupported"]:"This browser is not supported.",["credential-already-in-use"]:"This credential is already associated with a different user account.",["custom-token-mismatch"]:"The custom token corresponds to a different audience.",["requires-recent-login"]:"This operation is sensitive and requires recent authentication. Log in "+"again before retrying this request.",["dependent-sdk-initialized-before-auth"]:"Another Firebase SDK was initialized and is trying to use Auth before Auth is "+"initialized. Please be sure to call `initializeAuth` or `getAuth` before "+"starting any other Firebase SDK.",["dynamic-link-not-activated"]:"Please activate Dynamic Links in the Firebase Console and agree to the terms and "+"conditions.",["email-change-needs-verification"]:"Multi-factor users must always have a verified email.",["email-already-in-use"]:"The email address is already in use by another account.",["emulator-config-failed"]:"Auth instance has already been used to make a network call. Auth can "+"no longer be configured to use the emulator. Try calling "+'"connectAuthEmulator()" sooner.',["expired-action-code"]:"The action code has expired.",["cancelled-popup-request"]:"This operation has been cancelled due to another conflicting popup being opened.",["internal-error"]:"An internal AuthError has occurred.",["invalid-app-credential"]:"The phone verification request contains an invalid application verifier."+" The reCAPTCHA token response is either invalid or expired.",["invalid-app-id"]:"The mobile app identifier is not registed for the current project.",["invalid-user-token"]:"This user's credential isn't valid for this project. This can happen "+"if the user's token has been tampered with, or if the user isn't for "+"the project associated with this API key.",["invalid-auth-event"]:"An internal AuthError has occurred.",["invalid-verification-code"]:"The SMS verification code used to create the phone auth credential is "+"invalid. Please resend the verification code sms and be sure to use the "+"verification code provided by the user.",["invalid-continue-uri"]:"The continue URL provided in the request is invalid.",["invalid-cordova-configuration"]:"The following Cordova plugins must be installed to enable OAuth sign-in: "+"cordova-plugin-buildinfo, cordova-universal-links-plugin, "+"cordova-plugin-browsertab, cordova-plugin-inappbrowser and "+"cordova-plugin-customurlscheme.",["invalid-custom-token"]:"The custom token format is incorrect. Please check the documentation.",["invalid-dynamic-link-domain"]:"The provided dynamic link domain is not configured or authorized for the current project.",["invalid-email"]:"The email address is badly formatted.",["invalid-emulator-scheme"]:"Emulator URL must start with a valid scheme (http:// or https://).",["invalid-api-key"]:"Your API key is invalid, please check you have copied it correctly.",["invalid-cert-hash"]:"The SHA-1 certificate hash provided is invalid.",["invalid-credential"]:"The supplied auth credential is malformed or has expired.",["invalid-message-payload"]:"The email template corresponding to this action contains invalid characters in its message. "+"Please fix by going to the Auth email templates section in the Firebase Console.",["invalid-multi-factor-session"]:"The request does not contain a valid proof of first factor successful sign-in.",["invalid-oauth-provider"]:"EmailAuthProvider is not supported for this operation. This operation "+"only supports OAuth providers.",["invalid-oauth-client-id"]:"The OAuth client ID provided is either invalid or does not match the "+"specified API key.",["unauthorized-domain"]:"This domain is not authorized for OAuth operations for your Firebase "+"project. Edit the list of authorized domains from the Firebase console.",["invalid-action-code"]:"The action code is invalid. This can happen if the code is malformed, "+"expired, or has already been used.",["wrong-password"]:"The password is invalid or the user does not have a password.",["invalid-persistence-type"]:"The specified persistence type is invalid. It can only be local, session or none.",["invalid-phone-number"]:"The format of the phone number provided is incorrect. Please enter the "+"phone number in a format that can be parsed into E.164 format. E.164 "+"phone numbers are written in the format [+][country code][subscriber "+"number including area code].",["invalid-provider-id"]:"The specified provider ID is invalid.",["invalid-recipient-email"]:"The email corresponding to this action failed to send as the provided "+"recipient email address is invalid.",["invalid-sender"]:"The email template corresponding to this action contains an invalid sender email or name. "+"Please fix by going to the Auth email templates section in the Firebase Console.",["invalid-verification-id"]:"The verification ID used to create the phone auth credential is invalid.",["invalid-tenant-id"]:"The Auth instance's tenant ID is invalid.",["login-blocked"]:"Login blocked by user-provided method: {$originalMessage}",["missing-android-pkg-name"]:"An Android Package Name must be provided if the Android App is required to be installed.",["auth-domain-config-required"]:"Be sure to include authDomain when calling firebase.initializeApp(), "+"by following the instructions in the Firebase console.",["missing-app-credential"]:"The phone verification request is missing an application verifier "+"assertion. A reCAPTCHA response token needs to be provided.",["missing-verification-code"]:"The phone auth credential was created with an empty SMS verification code.",["missing-continue-uri"]:"A continue URL must be provided in the request.",["missing-iframe-start"]:"An internal AuthError has occurred.",["missing-ios-bundle-id"]:"An iOS Bundle ID must be provided if an App Store ID is provided.",["missing-or-invalid-nonce"]:"The request does not contain a valid nonce. This can occur if the "+"SHA-256 hash of the provided raw nonce does not match the hashed nonce "+"in the ID token payload.",["missing-multi-factor-info"]:"No second factor identifier is provided.",["missing-multi-factor-session"]:"The request is missing proof of first factor successful sign-in.",["missing-phone-number"]:"To send verification codes, provide a phone number for the recipient.",["missing-verification-id"]:"The phone auth credential was created with an empty verification ID.",["app-deleted"]:"This instance of FirebaseApp has been deleted.",["multi-factor-info-not-found"]:"The user does not have a second factor matching the identifier provided.",["multi-factor-auth-required"]:"Proof of ownership of a second factor is required to complete sign-in.",["account-exists-with-different-credential"]:"An account already exists with the same email address but different "+"sign-in credentials. Sign in using a provider associated with this "+"email address.",["network-request-failed"]:"A network AuthError (such as timeout, interrupted connection or unreachable host) has occurred.",["no-auth-event"]:"An internal AuthError has occurred.",["no-such-provider"]:"User was not linked to an account with the given provider.",["null-user"]:"A null user object was provided as the argument for an operation which "+"requires a non-null user object.",["operation-not-allowed"]:"The given sign-in provider is disabled for this Firebase project. "+"Enable it in the Firebase console, under the sign-in method tab of the "+"Auth section.",["operation-not-supported-in-this-environment"]:"This operation is not supported in the environment this application is "+'running on. "location.protocol" must be http, https or chrome-extension'+" and web storage must be enabled.",["popup-blocked"]:"Unable to establish a connection with the popup. It may have been blocked by the browser.",["popup-closed-by-user"]:"The popup has been closed by the user before finalizing the operation.",["provider-already-linked"]:"User can only be linked to one identity for the given provider.",["quota-exceeded"]:"The project's quota for this operation has been exceeded.",["redirect-cancelled-by-user"]:"The redirect operation has been cancelled by the user before finalizing.",["redirect-operation-pending"]:"A redirect sign-in operation is already pending.",["rejected-credential"]:"The request contains malformed or mismatching credentials.",["second-factor-already-in-use"]:"The second factor is already enrolled on this account.",["maximum-second-factor-count-exceeded"]:"The maximum allowed number of second factors on a user has been exceeded.",["tenant-id-mismatch"]:"The provided tenant ID does not match the Auth instance's tenant ID",["timeout"]:"The operation has timed out.",["user-token-expired"]:"The user's credential is no longer valid. The user must sign in again.",["too-many-requests"]:"We have blocked all requests from this device due to unusual activity. "+"Try again later.",["unauthorized-continue-uri"]:"The domain of the continue URL is not whitelisted.  Please whitelist "+"the domain in the Firebase console.",["unsupported-first-factor"]:"Enrolling a second factor or signing in with a multi-factor account requires sign-in with a supported first factor.",["unsupported-persistence-type"]:"The current environment does not support the specified persistence type.",["unsupported-tenant-operation"]:"This operation is not supported in a multi-tenant context.",["unverified-email"]:"The operation requires a verified email.",["user-cancelled"]:"The user did not grant your application the permissions it requested.",["user-not-found"]:"There is no user record corresponding to this identifier. The user may "+"have been deleted.",["user-disabled"]:"The user account has been disabled by an administrator.",["user-mismatch"]:"The supplied credentials do not correspond to the previously signed in user.",["user-signed-out"]:"",["weak-password"]:"The password must be 6 characters long or more.",["web-storage-unsupported"]:"This browser is not supported or 3rd party cookies and data may be disabled.",["already-initialized"]:"initializeAuth() has already been called with "+"different options. To avoid this error, call initializeAuth() with the "+"same options as when it was originally called, or call getAuth() to return the"+" already initialized instance."}}function x(){return{["dependent-sdk-initialized-before-auth"]:"Another Firebase SDK was initialized and is trying to use Auth before Auth is "+"initialized. Please be sure to call `initializeAuth` or `getAuth` before "+"starting any other Firebase SDK."}}const H=V;const j=x;const W=new l("auth","Firebase",x());const q={ADMIN_ONLY_OPERATION:"auth/admin-restricted-operation",ARGUMENT_ERROR:"auth/argument-error",APP_NOT_AUTHORIZED:"auth/app-not-authorized",APP_NOT_INSTALLED:"auth/app-not-installed",CAPTCHA_CHECK_FAILED:"auth/captcha-check-failed",CODE_EXPIRED:"auth/code-expired",CORDOVA_NOT_READY:"auth/cordova-not-ready",CORS_UNSUPPORTED:"auth/cors-unsupported",CREDENTIAL_ALREADY_IN_USE:"auth/credential-already-in-use",CREDENTIAL_MISMATCH:"auth/custom-token-mismatch",CREDENTIAL_TOO_OLD_LOGIN_AGAIN:"auth/requires-recent-login",DEPENDENT_SDK_INIT_BEFORE_AUTH:"auth/dependent-sdk-initialized-before-auth",DYNAMIC_LINK_NOT_ACTIVATED:"auth/dynamic-link-not-activated",EMAIL_CHANGE_NEEDS_VERIFICATION:"auth/email-change-needs-verification",EMAIL_EXISTS:"auth/email-already-in-use",EMULATOR_CONFIG_FAILED:"auth/emulator-config-failed",EXPIRED_OOB_CODE:"auth/expired-action-code",EXPIRED_POPUP_REQUEST:"auth/cancelled-popup-request",INTERNAL_ERROR:"auth/internal-error",INVALID_API_KEY:"auth/invalid-api-key",INVALID_APP_CREDENTIAL:"auth/invalid-app-credential",INVALID_APP_ID:"auth/invalid-app-id",INVALID_AUTH:"auth/invalid-user-token",INVALID_AUTH_EVENT:"auth/invalid-auth-event",INVALID_CERT_HASH:"auth/invalid-cert-hash",INVALID_CODE:"auth/invalid-verification-code",INVALID_CONTINUE_URI:"auth/invalid-continue-uri",INVALID_CORDOVA_CONFIGURATION:"auth/invalid-cordova-configuration",INVALID_CUSTOM_TOKEN:"auth/invalid-custom-token",INVALID_DYNAMIC_LINK_DOMAIN:"auth/invalid-dynamic-link-domain",INVALID_EMAIL:"auth/invalid-email",INVALID_EMULATOR_SCHEME:"auth/invalid-emulator-scheme",INVALID_IDP_RESPONSE:"auth/invalid-credential",INVALID_MESSAGE_PAYLOAD:"auth/invalid-message-payload",INVALID_MFA_SESSION:"auth/invalid-multi-factor-session",INVALID_OAUTH_CLIENT_ID:"auth/invalid-oauth-client-id",INVALID_OAUTH_PROVIDER:"auth/invalid-oauth-provider",INVALID_OOB_CODE:"auth/invalid-action-code",INVALID_ORIGIN:"auth/unauthorized-domain",INVALID_PASSWORD:"auth/wrong-password",INVALID_PERSISTENCE:"auth/invalid-persistence-type",INVALID_PHONE_NUMBER:"auth/invalid-phone-number",INVALID_PROVIDER_ID:"auth/invalid-provider-id",INVALID_RECIPIENT_EMAIL:"auth/invalid-recipient-email",INVALID_SENDER:"auth/invalid-sender",INVALID_SESSION_INFO:"auth/invalid-verification-id",INVALID_TENANT_ID:"auth/invalid-tenant-id",MFA_INFO_NOT_FOUND:"auth/multi-factor-info-not-found",MFA_REQUIRED:"auth/multi-factor-auth-required",MISSING_ANDROID_PACKAGE_NAME:"auth/missing-android-pkg-name",MISSING_APP_CREDENTIAL:"auth/missing-app-credential",MISSING_AUTH_DOMAIN:"auth/auth-domain-config-required",MISSING_CODE:"auth/missing-verification-code",MISSING_CONTINUE_URI:"auth/missing-continue-uri",MISSING_IFRAME_START:"auth/missing-iframe-start",MISSING_IOS_BUNDLE_ID:"auth/missing-ios-bundle-id",MISSING_OR_INVALID_NONCE:"auth/missing-or-invalid-nonce",MISSING_MFA_INFO:"auth/missing-multi-factor-info",MISSING_MFA_SESSION:"auth/missing-multi-factor-session",MISSING_PHONE_NUMBER:"auth/missing-phone-number",MISSING_SESSION_INFO:"auth/missing-verification-id",MODULE_DESTROYED:"auth/app-deleted",NEED_CONFIRMATION:"auth/account-exists-with-different-credential",NETWORK_REQUEST_FAILED:"auth/network-request-failed",NULL_USER:"auth/null-user",NO_AUTH_EVENT:"auth/no-auth-event",NO_SUCH_PROVIDER:"auth/no-such-provider",OPERATION_NOT_ALLOWED:"auth/operation-not-allowed",OPERATION_NOT_SUPPORTED:"auth/operation-not-supported-in-this-environment",POPUP_BLOCKED:"auth/popup-blocked",POPUP_CLOSED_BY_USER:"auth/popup-closed-by-user",PROVIDER_ALREADY_LINKED:"auth/provider-already-linked",QUOTA_EXCEEDED:"auth/quota-exceeded",REDIRECT_CANCELLED_BY_USER:"auth/redirect-cancelled-by-user",REDIRECT_OPERATION_PENDING:"auth/redirect-operation-pending",REJECTED_CREDENTIAL:"auth/rejected-credential",SECOND_FACTOR_ALREADY_ENROLLED:"auth/second-factor-already-in-use",SECOND_FACTOR_LIMIT_EXCEEDED:"auth/maximum-second-factor-count-exceeded",TENANT_ID_MISMATCH:"auth/tenant-id-mismatch",TIMEOUT:"auth/timeout",TOKEN_EXPIRED:"auth/user-token-expired",TOO_MANY_ATTEMPTS_TRY_LATER:"auth/too-many-requests",UNAUTHORIZED_DOMAIN:"auth/unauthorized-continue-uri",UNSUPPORTED_FIRST_FACTOR:"auth/unsupported-first-factor",UNSUPPORTED_PERSISTENCE:"auth/unsupported-persistence-type",UNSUPPORTED_TENANT_OPERATION:"auth/unsupported-tenant-operation",UNVERIFIED_EMAIL:"auth/unverified-email",USER_CANCELLED:"auth/user-cancelled",USER_DELETED:"auth/user-not-found",USER_DISABLED:"auth/user-disabled",USER_MISMATCH:"auth/user-mismatch",USER_SIGNED_OUT:"auth/user-signed-out",WEAK_PASSWORD:"auth/weak-password",WEB_STORAGE_UNSUPPORTED:"auth/web-storage-unsupported",ALREADY_INITIALIZED:"auth/already-initialized"};
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const G=new P("@firebase/auth");function z(e,...t){if(G.logLevel<=A.ERROR){G.error(`Auth (${SDK_VERSION}): ${e}`,...t)}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function B(e,...t){throw Y(e,...t)}function K(e,...t){return Y(e,...t)}function $(e,t,n){const i=Object.assign(Object.assign({},j()),{[t]:n});const r=new l("auth","Firebase",i);return r.create(t,{appName:e.name})}function J(e,t,n){const i=n;if(!(t instanceof i)){if(i.name!==t.constructor.name){B(e,"argument-error")}throw $(e,"argument-error",`Type of ${t.constructor.name} does not match expected instance.`+`Did you pass a reference from a different Auth SDK?`)}}function Y(e,...t){if(typeof e!=="string"){const n=t[0];const i=[...t.slice(1)];if(i[0]){i[0].appName=e.name}return e._errorFactory.create(n,...i)}return W.create(e,...t)}function X(e,t,...n){if(!e){throw Y(t,...n)}}function Q(e){const t=`INTERNAL ASSERTION FAILED: `+e;z(t);throw new Error(t)}function Z(e,t){if(!e){Q(t)}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const ee=new Map;function te(e){Z(e instanceof Function,"Expected a class definition");let t=ee.get(e);if(t){Z(t instanceof e,"Instance stored in cache mismatched with class");return t}t=new e;ee.set(e,t);return t}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function ne(e,t){const n=_getProvider(e,"auth");if(n.isInitialized()){const e=n.getImmediate();const i=n.getOptions();if(m(i,t!==null&&t!==void 0?t:{})){return e}else{B(e,"already-initialized")}}const i=n.initialize({options:t});return i}function ie(e,t){const n=(t===null||t===void 0?void 0:t.persistence)||[];const i=(Array.isArray(n)?n:[n]).map(te);if(t===null||t===void 0?void 0:t.errorMap){e._updateErrorMap(t.errorMap)}e._initializeWithPersistence(i,t===null||t===void 0?void 0:t.popupRedirectResolver)}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function re(){var e;return typeof self!=="undefined"&&((e=self.location)===null||e===void 0?void 0:e.href)||""}function se(){return oe()==="http:"||oe()==="https:"}function oe(){var e;return typeof self!=="undefined"&&((e=self.location)===null||e===void 0?void 0:e.protocol)||null}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function ae(){if(typeof navigator!=="undefined"&&navigator&&"onLine"in navigator&&typeof navigator.onLine==="boolean"&&(se()||o()||"connection"in navigator)){return navigator.onLine}return true}function ce(){if(typeof navigator==="undefined"){return null}const e=navigator;return e.languages&&e.languages[0]||e.language||null}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class ue{constructor(e,t){this.shortDelay=e;this.longDelay=t;Z(t>e,"Short delay should be less than long delay!");this.isMobile=s()||a()}get(){if(!ae()){return Math.min(5e3,this.shortDelay)}return this.isMobile?this.longDelay:this.shortDelay}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function de(e,t){Z(e.emulator,"Emulator should always be set here");const{url:n}=e.emulator;if(!t){return n}return`${n}${t.startsWith("/")?t.slice(1):t}`}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class le{static initialize(e,t,n){this.fetchImpl=e;if(t){this.headersImpl=t}if(n){this.responseImpl=n}}static fetch(){if(this.fetchImpl){return this.fetchImpl}if(typeof self!=="undefined"&&"fetch"in self){return self.fetch}Q("Could not find fetch implementation, make sure you call FetchProvider.initialize() with an appropriate polyfill")}static headers(){if(this.headersImpl){return this.headersImpl}if(typeof self!=="undefined"&&"Headers"in self){return self.Headers}Q("Could not find Headers implementation, make sure you call FetchProvider.initialize() with an appropriate polyfill")}static response(){if(this.responseImpl){return this.responseImpl}if(typeof self!=="undefined"&&"Response"in self){return self.Response}Q("Could not find Response implementation, make sure you call FetchProvider.initialize() with an appropriate polyfill")}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const he={["CREDENTIAL_MISMATCH"]:"custom-token-mismatch",["MISSING_CUSTOM_TOKEN"]:"internal-error",["INVALID_IDENTIFIER"]:"invalid-email",["MISSING_CONTINUE_URI"]:"internal-error",["INVALID_PASSWORD"]:"wrong-password",["MISSING_PASSWORD"]:"internal-error",["EMAIL_EXISTS"]:"email-already-in-use",["PASSWORD_LOGIN_DISABLED"]:"operation-not-allowed",["INVALID_IDP_RESPONSE"]:"invalid-credential",["INVALID_PENDING_TOKEN"]:"invalid-credential",["FEDERATED_USER_ID_ALREADY_LINKED"]:"credential-already-in-use",["MISSING_REQ_TYPE"]:"internal-error",["EMAIL_NOT_FOUND"]:"user-not-found",["RESET_PASSWORD_EXCEED_LIMIT"]:"too-many-requests",["EXPIRED_OOB_CODE"]:"expired-action-code",["INVALID_OOB_CODE"]:"invalid-action-code",["MISSING_OOB_CODE"]:"internal-error",["CREDENTIAL_TOO_OLD_LOGIN_AGAIN"]:"requires-recent-login",["INVALID_ID_TOKEN"]:"invalid-user-token",["TOKEN_EXPIRED"]:"user-token-expired",["USER_NOT_FOUND"]:"user-token-expired",["TOO_MANY_ATTEMPTS_TRY_LATER"]:"too-many-requests",["INVALID_CODE"]:"invalid-verification-code",["INVALID_SESSION_INFO"]:"invalid-verification-id",["INVALID_TEMPORARY_PROOF"]:"invalid-credential",["MISSING_SESSION_INFO"]:"missing-verification-id",["SESSION_EXPIRED"]:"code-expired",["MISSING_ANDROID_PACKAGE_NAME"]:"missing-android-pkg-name",["UNAUTHORIZED_DOMAIN"]:"unauthorized-continue-uri",["INVALID_OAUTH_CLIENT_ID"]:"invalid-oauth-client-id",["ADMIN_ONLY_OPERATION"]:"admin-restricted-operation",["INVALID_MFA_PENDING_CREDENTIAL"]:"invalid-multi-factor-session",["MFA_ENROLLMENT_NOT_FOUND"]:"multi-factor-info-not-found",["MISSING_MFA_ENROLLMENT_ID"]:"missing-multi-factor-info",["MISSING_MFA_PENDING_CREDENTIAL"]:"missing-multi-factor-session",["SECOND_FACTOR_EXISTS"]:"second-factor-already-in-use",["SECOND_FACTOR_LIMIT_EXCEEDED"]:"maximum-second-factor-count-exceeded",["BLOCKING_FUNCTION_ERROR_RESPONSE"]:"internal-error"};
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const fe=new ue(3e4,6e4);function pe(e,t){if(e.tenantId&&!t.tenantId){return Object.assign(Object.assign({},t),{tenantId:e.tenantId})}return t}async function me(e,t,n,i,r={}){return ge(e,r,async()=>{let r={};let s={};if(i){if(t==="GET"){s=i}else{r={body:JSON.stringify(i)}}}const o=v(Object.assign({key:e.config.apiKey},s)).slice(1);const a=await e._getAdditionalHeaders();a["Content-Type"]="application/json";if(e.languageCode){a["X-Firebase-Locale"]=e.languageCode}return le.fetch()(Ie(e,e.config.apiHost,n,o),Object.assign({method:t,headers:a,referrerPolicy:"no-referrer"},r))})}async function ge(e,t,n){e._canInitEmulator=false;const i=Object.assign(Object.assign({},he),t);try{const t=new _e(e);const r=await Promise.race([n(),t.promise]);t.clearNetworkTimeout();const s=await r.json();if("needConfirmation"in s){throw ye(e,"account-exists-with-different-credential",s)}if(r.ok&&!("errorMessage"in s)){return s}else{const t=r.ok?s.errorMessage:s.error.message;const[n,o]=t.split(" : ");if(n==="FEDERATED_USER_ID_ALREADY_LINKED"){throw ye(e,"credential-already-in-use",s)}else if(n==="EMAIL_EXISTS"){throw ye(e,"email-already-in-use",s)}else if(n==="USER_DISABLED"){throw ye(e,"user-disabled",s)}const a=i[n]||n.toLowerCase().replace(/[_\s]+/g,"-");if(o){throw $(e,a,o)}else{B(e,a)}}}catch(t){if(t instanceof d){throw t}B(e,"network-request-failed")}}async function ve(e,t,n,i,r={}){const s=await me(e,t,n,i,r);if("mfaPendingCredential"in s){B(e,"multi-factor-auth-required",{_serverResponse:s})}return s}function Ie(e,t,n,i){const r=`${t}${n}?${i}`;if(!e.config.emulator){return`${e.config.apiScheme}://${r}`}return de(e.config,r)}class _e{constructor(e){this.auth=e;this.timer=null;this.promise=new Promise((e,t)=>{this.timer=setTimeout(()=>t(K(this.auth,"network-request-failed")),fe.get())})}clearNetworkTimeout(){clearTimeout(this.timer)}}function ye(e,t,n){const i={appName:e.name};if(n.email){i.email=n.email}if(n.phoneNumber){i.phoneNumber=n.phoneNumber}const r=K(e,t,i);r.customData._tokenResponse=n;return r}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function Te(e,t){return me(e,"POST","/v1/accounts:delete",t)}async function Ee(e,t){return me(e,"POST","/v1/accounts:update",t)}async function we(e,t){return me(e,"POST","/v1/accounts:lookup",t)}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function ke(e){if(!e){return undefined}try{const t=new Date(Number(e));if(!isNaN(t.getTime())){return t.toUTCString()}}catch(e){}return undefined}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function be(e,t=false){return k(e).getIdToken(t)}async function Ae(e,t=false){const n=k(e);const i=await n.getIdToken(t);const r=Se(i);X(r&&r.exp&&r.auth_time&&r.iat,n.auth,"internal-error");const s=typeof r.firebase==="object"?r.firebase:undefined;const o=s===null||s===void 0?void 0:s["sign_in_provider"];return{claims:r,token:i,authTime:ke(Re(r.auth_time)),issuedAtTime:ke(Re(r.iat)),expirationTime:ke(Re(r.exp)),signInProvider:o||null,signInSecondFactor:(s===null||s===void 0?void 0:s["sign_in_second_factor"])||null}}function Re(e){return Number(e)*1e3}function Se(e){const[t,n,r]=e.split(".");if(t===undefined||n===undefined||r===undefined){z("JWT malformed, contained fewer than 3 sections");return null}try{const e=i(n);if(!e){z("Failed to decode base64 JWT payload");return null}return JSON.parse(e)}catch(e){z("Caught error parsing JWT payload as JSON",e);return null}}function Ne(e){const t=Se(e);X(t,"internal-error");X(typeof t.exp!=="undefined","internal-error");X(typeof t.iat!=="undefined","internal-error");return Number(t.exp)-Number(t.iat)}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function Oe(e,t,n=false){if(n){return t}try{return await t}catch(t){if(t instanceof d&&Pe(t)){if(e.auth.currentUser===e){await e.auth.signOut()}}throw t}}function Pe({code:e}){return e===`auth/${"user-disabled"}`||e===`auth/${"user-token-expired"}`}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class Ce{constructor(e){this.user=e;this.isRunning=false;this.timerId=null;this.errorBackoff=3e4}_start(){if(this.isRunning){return}this.isRunning=true;this.schedule()}_stop(){if(!this.isRunning){return}this.isRunning=false;if(this.timerId!==null){clearTimeout(this.timerId)}}getInterval(e){var t;if(e){const e=this.errorBackoff;this.errorBackoff=Math.min(this.errorBackoff*2,96e4);return e}else{this.errorBackoff=3e4;const e=(t=this.user.stsTokenManager.expirationTime)!==null&&t!==void 0?t:0;const n=e-Date.now()-3e5;return Math.max(0,n)}}schedule(e=false){if(!this.isRunning){return}const t=this.getInterval(e);this.timerId=setTimeout(async()=>{await this.iteration()},t)}async iteration(){try{await this.user.getIdToken(true)}catch(e){if(e.code===`auth/${"network-request-failed"}`){this.schedule(true)}return}this.schedule()}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class De{constructor(e,t){this.createdAt=e;this.lastLoginAt=t;this._initializeTime()}_initializeTime(){this.lastSignInTime=ke(this.lastLoginAt);this.creationTime=ke(this.createdAt)}_copy(e){this.createdAt=e.createdAt;this.lastLoginAt=e.lastLoginAt;this._initializeTime()}toJSON(){return{createdAt:this.createdAt,lastLoginAt:this.lastLoginAt}}}
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function Le(e){var t;const n=e.auth;const i=await e.getIdToken();const r=await Oe(e,we(n,{idToken:i}));X(r===null||r===void 0?void 0:r.users.length,n,"internal-error");const s=r.users[0];e._notifyReloadListener(s);const o=((t=s.providerUserInfo)===null||t===void 0?void 0:t.length)?Fe(s.providerUserInfo):[];const a=Ue(e.providerData,o);const c=e.isAnonymous;const u=!(e.email&&s.passwordHash)&&!(a===null||a===void 0?void 0:a.length);const d=!c?false:u;const l={uid:s.localId,displayName:s.displayName||null,photoURL:s.photoUrl||null,email:s.email||null,emailVerified:s.emailVerified||false,phoneNumber:s.phoneNumber||null,tenantId:s.tenantId||null,providerData:a,metadata:new De(s.createdAt,s.lastLoginAt),isAnonymous:d};Object.assign(e,l)}async function Me(e){const t=k(e);await Le(t);await t.auth._persistUserIfCurrent(t);t.auth._notifyListenersIfCurrent(t)}function Ue(e,t){const n=e.filter(e=>!t.some(t=>t.providerId===e.providerId));return[...n,...t]}function Fe(e){return e.map(e=>{var{providerId:t}=e,n=b(e,["providerId"]);return{providerId:t,uid:n.rawId||"",displayName:n.displayName||null,email:n.email||null,phoneNumber:n.phoneNumber||null,photoURL:n.photoUrl||null}})}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function Ve(e,t){const n=await ge(e,{},async()=>{const n=v({grant_type:"refresh_token",refresh_token:t}).slice(1);const{tokenApiHost:i,apiKey:r}=e.config;const s=Ie(e,i,"/v1/token",`key=${r}`);const o=await e._getAdditionalHeaders();o["Content-Type"]="application/x-www-form-urlencoded";return le.fetch()(s,{method:"POST",headers:o,body:n})});return{accessToken:n.access_token,expiresIn:n.expires_in,refreshToken:n.refresh_token}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class xe{constructor(){this.refreshToken=null;this.accessToken=null;this.expirationTime=null}get isExpired(){return!this.expirationTime||Date.now()>this.expirationTime-3e4}updateFromServerResponse(e){X(e.idToken,"internal-error");X(typeof e.idToken!=="undefined","internal-error");X(typeof e.refreshToken!=="undefined","internal-error");const t="expiresIn"in e&&typeof e.expiresIn!=="undefined"?Number(e.expiresIn):Ne(e.idToken);this.updateTokensAndExpiration(e.idToken,e.refreshToken,t)}async getToken(e,t=false){X(!this.accessToken||this.refreshToken,e,"user-token-expired");if(!t&&this.accessToken&&!this.isExpired){return this.accessToken}if(this.refreshToken){await this.refresh(e,this.refreshToken);return this.accessToken}return null}clearRefreshToken(){this.refreshToken=null}async refresh(e,t){const{accessToken:n,refreshToken:i,expiresIn:r}=await Ve(e,t);this.updateTokensAndExpiration(n,i,Number(r))}updateTokensAndExpiration(e,t,n){this.refreshToken=t||null;this.accessToken=e||null;this.expirationTime=Date.now()+n*1e3}static fromJSON(e,t){const{refreshToken:n,accessToken:i,expirationTime:r}=t;const s=new xe;if(n){X(typeof n==="string","internal-error",{appName:e});s.refreshToken=n}if(i){X(typeof i==="string","internal-error",{appName:e});s.accessToken=i}if(r){X(typeof r==="number","internal-error",{appName:e});s.expirationTime=r}return s}toJSON(){return{refreshToken:this.refreshToken,accessToken:this.accessToken,expirationTime:this.expirationTime}}_assign(e){this.accessToken=e.accessToken;this.refreshToken=e.refreshToken;this.expirationTime=e.expirationTime}_clone(){return Object.assign(new xe,this.toJSON())}_performRefresh(){return Q("not implemented")}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function He(e,t){X(typeof e==="string"||typeof e==="undefined","internal-error",{appName:t})}class je{constructor(e){var{uid:t,auth:n,stsTokenManager:i}=e,r=b(e,["uid","auth","stsTokenManager"]);this.providerId="firebase";this.proactiveRefresh=new Ce(this);this.reloadUserInfo=null;this.reloadListener=null;this.uid=t;this.auth=n;this.stsTokenManager=i;this.accessToken=i.accessToken;this.displayName=r.displayName||null;this.email=r.email||null;this.emailVerified=r.emailVerified||false;this.phoneNumber=r.phoneNumber||null;this.photoURL=r.photoURL||null;this.isAnonymous=r.isAnonymous||false;this.tenantId=r.tenantId||null;this.providerData=r.providerData?[...r.providerData]:[];this.metadata=new De(r.createdAt||undefined,r.lastLoginAt||undefined)}async getIdToken(e){const t=await Oe(this,this.stsTokenManager.getToken(this.auth,e));X(t,this.auth,"internal-error");if(this.accessToken!==t){this.accessToken=t;await this.auth._persistUserIfCurrent(this);this.auth._notifyListenersIfCurrent(this)}return t}getIdTokenResult(e){return Ae(this,e)}reload(){return Me(this)}_assign(e){if(this===e){return}X(this.uid===e.uid,this.auth,"internal-error");this.displayName=e.displayName;this.photoURL=e.photoURL;this.email=e.email;this.emailVerified=e.emailVerified;this.phoneNumber=e.phoneNumber;this.isAnonymous=e.isAnonymous;this.tenantId=e.tenantId;this.providerData=e.providerData.map(e=>Object.assign({},e));this.metadata._copy(e.metadata);this.stsTokenManager._assign(e.stsTokenManager)}_clone(e){return new je(Object.assign(Object.assign({},this),{auth:e,stsTokenManager:this.stsTokenManager._clone()}))}_onReload(e){X(!this.reloadListener,this.auth,"internal-error");this.reloadListener=e;if(this.reloadUserInfo){this._notifyReloadListener(this.reloadUserInfo);this.reloadUserInfo=null}}_notifyReloadListener(e){if(this.reloadListener){this.reloadListener(e)}else{this.reloadUserInfo=e}}_startProactiveRefresh(){this.proactiveRefresh._start()}_stopProactiveRefresh(){this.proactiveRefresh._stop()}async _updateTokensIfNecessary(e,t=false){let n=false;if(e.idToken&&e.idToken!==this.stsTokenManager.accessToken){this.stsTokenManager.updateFromServerResponse(e);n=true}if(t){await Le(this)}await this.auth._persistUserIfCurrent(this);if(n){this.auth._notifyListenersIfCurrent(this)}}async delete(){const e=await this.getIdToken();await Oe(this,Te(this.auth,{idToken:e}));this.stsTokenManager.clearRefreshToken();return this.auth.signOut()}toJSON(){return Object.assign(Object.assign({uid:this.uid,email:this.email||undefined,emailVerified:this.emailVerified,displayName:this.displayName||undefined,isAnonymous:this.isAnonymous,photoURL:this.photoURL||undefined,phoneNumber:this.phoneNumber||undefined,tenantId:this.tenantId||undefined,providerData:this.providerData.map(e=>Object.assign({},e)),stsTokenManager:this.stsTokenManager.toJSON(),_redirectEventId:this._redirectEventId},this.metadata.toJSON()),{apiKey:this.auth.config.apiKey,appName:this.auth.name})}get refreshToken(){return this.stsTokenManager.refreshToken||""}static _fromJSON(e,t){var n,i,r,s,o,a,c,u;const d=(n=t.displayName)!==null&&n!==void 0?n:undefined;const l=(i=t.email)!==null&&i!==void 0?i:undefined;const h=(r=t.phoneNumber)!==null&&r!==void 0?r:undefined;const f=(s=t.photoURL)!==null&&s!==void 0?s:undefined;const p=(o=t.tenantId)!==null&&o!==void 0?o:undefined;const m=(a=t._redirectEventId)!==null&&a!==void 0?a:undefined;const g=(c=t.createdAt)!==null&&c!==void 0?c:undefined;const v=(u=t.lastLoginAt)!==null&&u!==void 0?u:undefined;const{uid:I,emailVerified:_,isAnonymous:y,providerData:T,stsTokenManager:E}=t;X(I&&E,e,"internal-error");const w=xe.fromJSON(this.name,E);X(typeof I==="string",e,"internal-error");He(d,e.name);He(l,e.name);X(typeof _==="boolean",e,"internal-error");X(typeof y==="boolean",e,"internal-error");He(h,e.name);He(f,e.name);He(p,e.name);He(m,e.name);He(g,e.name);He(v,e.name);const k=new je({uid:I,auth:e,email:l,emailVerified:_,displayName:d,isAnonymous:y,photoURL:f,phoneNumber:h,tenantId:p,stsTokenManager:w,createdAt:g,lastLoginAt:v});if(T&&Array.isArray(T)){k.providerData=T.map(e=>Object.assign({},e))}if(m){k._redirectEventId=m}return k}static async _fromIdTokenResponse(e,t,n=false){const i=new xe;i.updateFromServerResponse(t);const r=new je({uid:t.localId,auth:e,stsTokenManager:i,isAnonymous:n});await Le(r);return r}}
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class We{constructor(){this.type="NONE";this.storage={}}async _isAvailable(){return true}async _set(e,t){this.storage[e]=t}async _get(e){const t=this.storage[e];return t===undefined?null:t}async _remove(e){delete this.storage[e]}_addListener(e,t){return}_removeListener(e,t){return}}We.type="NONE";const qe=We;
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function Ge(e,t,n){return`${"firebase"}:${e}:${t}:${n}`}class ze{constructor(e,t,n){this.persistence=e;this.auth=t;this.userKey=n;const{config:i,name:r}=this.auth;this.fullUserKey=Ge(this.userKey,i.apiKey,r);this.fullPersistenceKey=Ge("persistence",i.apiKey,r);this.boundEventHandler=t._onStorageEvent.bind(t);this.persistence._addListener(this.fullUserKey,this.boundEventHandler)}setCurrentUser(e){return this.persistence._set(this.fullUserKey,e.toJSON())}async getCurrentUser(){const e=await this.persistence._get(this.fullUserKey);return e?je._fromJSON(this.auth,e):null}removeCurrentUser(){return this.persistence._remove(this.fullUserKey)}savePersistenceForRedirect(){return this.persistence._set(this.fullPersistenceKey,this.persistence.type)}async setPersistence(e){if(this.persistence===e){return}const t=await this.getCurrentUser();await this.removeCurrentUser();this.persistence=e;if(t){return this.setCurrentUser(t)}}delete(){this.persistence._removeListener(this.fullUserKey,this.boundEventHandler)}static async create(e,t,n="authUser"){if(!t.length){return new ze(te(qe),e,n)}const i=(await Promise.all(t.map(async e=>{if(await e._isAvailable()){return e}return undefined}))).filter(e=>e);let r=i[0]||te(qe);const s=Ge(n,e.config.apiKey,e.name);let o=null;for(const n of t){try{const t=await n._get(s);if(t){const i=je._fromJSON(e,t);if(n!==r){o=i}r=n;break}}catch(e){}}const a=i.filter(e=>e._shouldAllowMigration);if(!r._shouldAllowMigration||!a.length){return new ze(r,e,n)}r=a[0];if(o){await r._set(s,o.toJSON())}await Promise.all(t.map(async e=>{if(e!==r){try{await e._remove(s)}catch(e){}}}));return new ze(r,e,n)}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function Be(e){const t=e.toLowerCase();if(t.includes("opera/")||t.includes("opr/")||t.includes("opios/")){return"Opera"}else if(Ye(t)){return"IEMobile"}else if(t.includes("msie")||t.includes("trident/")){return"IE"}else if(t.includes("edge/")){return"Edge"}else if(Ke(t)){return"Firefox"}else if(t.includes("silk/")){return"Silk"}else if(Qe(t)){return"Blackberry"}else if(Ze(t)){return"Webos"}else if($e(t)){return"Safari"}else if((t.includes("chrome/")||Je(t))&&!t.includes("edge/")){return"Chrome"}else if(Xe(t)){return"Android"}else{const t=/([a-zA-Z\d\.]+)\/[a-zA-Z\d\.]*$/;const n=e.match(t);if((n===null||n===void 0?void 0:n.length)===2){return n[1]}}return"Other"}function Ke(e=r()){return/firefox\//i.test(e)}function $e(e=r()){const t=e.toLowerCase();return t.includes("safari/")&&!t.includes("chrome/")&&!t.includes("crios/")&&!t.includes("android")}function Je(e=r()){return/crios\//i.test(e)}function Ye(e=r()){return/iemobile/i.test(e)}function Xe(e=r()){return/android/i.test(e)}function Qe(e=r()){return/blackberry/i.test(e)}function Ze(e=r()){return/webos/i.test(e)}function et(e=r()){return/iphone|ipad|ipod/i.test(e)}function tt(e=r()){var t;return et(e)&&!!((t=window.navigator)===null||t===void 0?void 0:t.standalone)}function nt(){return c()&&document.documentMode===10}function it(e=r()){return et(e)||Xe(e)||Ze(e)||Qe(e)||/windows phone/i.test(e)||Ye(e)}function rt(){try{return!!(window&&window!==window.top)}catch(e){return false}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function st(e,t=[]){let n;switch(e){case"Browser":n=Be(r());break;case"Worker":n=`${Be(r())}-${e}`;break;default:n=e}const i=t.length?t.join(","):"FirebaseCore-web";return`${n}/${"JsCore"}/${SDK_VERSION}/${i}`}
-/**
-   * @license
-   * Copyright 2022 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class ot{constructor(e){this.auth=e;this.queue=[]}pushCallback(e,t){const n=t=>new Promise((n,i)=>{try{const i=e(t);n(i)}catch(e){i(e)}});n.onAbort=t;this.queue.push(n);const i=this.queue.length-1;return()=>{this.queue[i]=()=>Promise.resolve()}}async runMiddleware(e){var t;if(this.auth.currentUser===e){return}const n=[];try{for(const t of this.queue){await t(e);if(t.onAbort){n.push(t.onAbort)}}}catch(e){n.reverse();for(const e of n){try{e()}catch(e){}}throw this.auth._errorFactory.create("login-blocked",{originalMessage:(t=e)===null||t===void 0?void 0:t.message})}}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class at{constructor(e,t,n){this.app=e;this.heartbeatServiceProvider=t;this.config=n;this.currentUser=null;this.emulatorConfig=null;this.operations=Promise.resolve();this.authStateSubscription=new ut(this);this.idTokenSubscription=new ut(this);this.beforeStateQueue=new ot(this);this.redirectUser=null;this.isProactiveRefreshEnabled=false;this._canInitEmulator=true;this._isInitialized=false;this._deleted=false;this._initializationPromise=null;this._popupRedirectResolver=null;this._errorFactory=W;this.lastNotifiedUid=undefined;this.languageCode=null;this.tenantId=null;this.settings={appVerificationDisabledForTesting:false};this.frameworks=[];this.name=e.name;this.clientVersion=n.sdkClientVersion}_initializeWithPersistence(e,t){if(t){this._popupRedirectResolver=te(t)}this._initializationPromise=this.queue(async()=>{var n,i;if(this._deleted){return}this.persistenceManager=await ze.create(this,e);if(this._deleted){return}if((n=this._popupRedirectResolver)===null||n===void 0?void 0:n._shouldInitProactively){try{await this._popupRedirectResolver._initialize(this)}catch(e){}}await this.initializeCurrentUser(t);this.lastNotifiedUid=((i=this.currentUser)===null||i===void 0?void 0:i.uid)||null;if(this._deleted){return}this._isInitialized=true});return this._initializationPromise}async _onStorageEvent(){if(this._deleted){return}const e=await this.assertedPersistence.getCurrentUser();if(!this.currentUser&&!e){return}if(this.currentUser&&e&&this.currentUser.uid===e.uid){this._currentUser._assign(e);await this.currentUser.getIdToken();return}await this._updateCurrentUser(e,true)}async initializeCurrentUser(e){var t;const n=await this.assertedPersistence.getCurrentUser();let i=n;let r=false;if(e&&this.config.authDomain){await this.getOrInitRedirectPersistenceManager();const n=(t=this.redirectUser)===null||t===void 0?void 0:t._redirectEventId;const s=i===null||i===void 0?void 0:i._redirectEventId;const o=await this.tryRedirectSignIn(e);if((!n||n===s)&&(o===null||o===void 0?void 0:o.user)){i=o.user;r=true}}if(!i){return this.directlySetCurrentUser(null)}if(!i._redirectEventId){if(r){try{await this.beforeStateQueue.runMiddleware(i)}catch(e){i=n;this._popupRedirectResolver._overrideRedirectResult(this,()=>Promise.reject(e))}}if(i){return this.reloadAndSetCurrentUserOrClear(i)}else{return this.directlySetCurrentUser(null)}}X(this._popupRedirectResolver,this,"argument-error");await this.getOrInitRedirectPersistenceManager();if(this.redirectUser&&this.redirectUser._redirectEventId===i._redirectEventId){return this.directlySetCurrentUser(i)}return this.reloadAndSetCurrentUserOrClear(i)}async tryRedirectSignIn(e){let t=null;try{t=await this._popupRedirectResolver._completeRedirectFn(this,e,true)}catch(e){await this._setRedirectUser(null)}return t}async reloadAndSetCurrentUserOrClear(e){try{await Le(e)}catch(e){if(e.code!==`auth/${"network-request-failed"}`){return this.directlySetCurrentUser(null)}}return this.directlySetCurrentUser(e)}useDeviceLanguage(){this.languageCode=ce()}async _delete(){this._deleted=true}async updateCurrentUser(e){const t=e?k(e):null;if(t){X(t.auth.config.apiKey===this.config.apiKey,this,"invalid-user-token")}return this._updateCurrentUser(t&&t._clone(this))}async _updateCurrentUser(e,t=false){if(this._deleted){return}if(e){X(this.tenantId===e.tenantId,this,"tenant-id-mismatch")}if(!t){await this.beforeStateQueue.runMiddleware(e)}return this.queue(async()=>{await this.directlySetCurrentUser(e);this.notifyAuthListeners()})}async signOut(){await this.beforeStateQueue.runMiddleware(null);if(this.redirectPersistenceManager||this._popupRedirectResolver){await this._setRedirectUser(null)}return this._updateCurrentUser(null,true)}setPersistence(e){return this.queue(async()=>{await this.assertedPersistence.setPersistence(te(e))})}_getPersistence(){return this.assertedPersistence.persistence.type}_updateErrorMap(e){this._errorFactory=new l("auth","Firebase",e())}onAuthStateChanged(e,t,n){return this.registerStateListener(this.authStateSubscription,e,t,n)}beforeAuthStateChanged(e,t){return this.beforeStateQueue.pushCallback(e,t)}onIdTokenChanged(e,t,n){return this.registerStateListener(this.idTokenSubscription,e,t,n)}toJSON(){var e;return{apiKey:this.config.apiKey,authDomain:this.config.authDomain,appName:this.name,currentUser:(e=this._currentUser)===null||e===void 0?void 0:e.toJSON()}}async _setRedirectUser(e,t){const n=await this.getOrInitRedirectPersistenceManager(t);return e===null?n.removeCurrentUser():n.setCurrentUser(e)}async getOrInitRedirectPersistenceManager(e){if(!this.redirectPersistenceManager){const t=e&&te(e)||this._popupRedirectResolver;X(t,this,"argument-error");this.redirectPersistenceManager=await ze.create(this,[te(t._redirectPersistence)],"redirectUser");this.redirectUser=await this.redirectPersistenceManager.getCurrentUser()}return this.redirectPersistenceManager}async _redirectUserForId(e){var t,n;if(this._isInitialized){await this.queue(async()=>{})}if(((t=this._currentUser)===null||t===void 0?void 0:t._redirectEventId)===e){return this._currentUser}if(((n=this.redirectUser)===null||n===void 0?void 0:n._redirectEventId)===e){return this.redirectUser}return null}async _persistUserIfCurrent(e){if(e===this.currentUser){return this.queue(async()=>this.directlySetCurrentUser(e))}}_notifyListenersIfCurrent(e){if(e===this.currentUser){this.notifyAuthListeners()}}_key(){return`${this.config.authDomain}:${this.config.apiKey}:${this.name}`}_startProactiveRefresh(){this.isProactiveRefreshEnabled=true;if(this.currentUser){this._currentUser._startProactiveRefresh()}}_stopProactiveRefresh(){this.isProactiveRefreshEnabled=false;if(this.currentUser){this._currentUser._stopProactiveRefresh()}}get _currentUser(){return this.currentUser}notifyAuthListeners(){var e,t;if(!this._isInitialized){return}this.idTokenSubscription.next(this.currentUser);const n=(t=(e=this.currentUser)===null||e===void 0?void 0:e.uid)!==null&&t!==void 0?t:null;if(this.lastNotifiedUid!==n){this.lastNotifiedUid=n;this.authStateSubscription.next(this.currentUser)}}registerStateListener(e,t,n,i){if(this._deleted){return()=>{}}const r=typeof t==="function"?t:t.next.bind(t);const s=this._isInitialized?Promise.resolve():this._initializationPromise;X(s,this,"internal-error");s.then(()=>r(this.currentUser));if(typeof t==="function"){return e.addObserver(t,n,i)}else{return e.addObserver(t)}}async directlySetCurrentUser(e){if(this.currentUser&&this.currentUser!==e){this._currentUser._stopProactiveRefresh();if(e&&this.isProactiveRefreshEnabled){e._startProactiveRefresh()}}this.currentUser=e;if(e){await this.assertedPersistence.setCurrentUser(e)}else{await this.assertedPersistence.removeCurrentUser()}}queue(e){this.operations=this.operations.then(e,e);return this.operations}get assertedPersistence(){X(this.persistenceManager,this,"internal-error");return this.persistenceManager}_logFramework(e){if(!e||this.frameworks.includes(e)){return}this.frameworks.push(e);this.frameworks.sort();this.clientVersion=st(this.config.clientPlatform,this._getFrameworks())}_getFrameworks(){return this.frameworks}async _getAdditionalHeaders(){var e;const t={["X-Client-Version"]:this.clientVersion};if(this.app.options.appId){t["X-Firebase-gmpid"]=this.app.options.appId}const n=await((e=this.heartbeatServiceProvider.getImmediate({optional:true}))===null||e===void 0?void 0:e.getHeartbeatsHeader());if(n){t["X-Firebase-Client"]=n}return t}}function ct(e){return k(e)}class ut{constructor(e){this.auth=e;this.observer=null;this.addObserver=y(e=>this.observer=e)}get next(){X(this.observer,this.auth,"internal-error");return this.observer.next.bind(this.observer)}}function dt(e,t,n){const i=ct(e);X(i._canInitEmulator,i,"emulator-config-failed");X(/^https?:\/\//.test(t),i,"invalid-emulator-scheme");const r=!!(n===null||n===void 0?void 0:n.disableWarnings);const s=lt(t);const{host:o,port:a}=ht(t);const c=a===null?"":`:${a}`;i.config.emulator={url:`${s}//${o}${c}/`};i.settings.appVerificationDisabledForTesting=true;i.emulatorConfig=Object.freeze({host:o,port:a,protocol:s.replace(":",""),options:Object.freeze({disableWarnings:r})});if(!r){pt()}}function lt(e){const t=e.indexOf(":");return t<0?"":e.substr(0,t+1)}function ht(e){const t=lt(e);const n=/(\/\/)?([^?#/]+)/.exec(e.substr(t.length));if(!n){return{host:"",port:null}}const i=n[2].split("@").pop()||"";const r=/^(\[[^\]]+\])(:|$)/.exec(i);if(r){const e=r[1];return{host:e,port:ft(i.substr(e.length+1))}}else{const[e,t]=i.split(":");return{host:e,port:ft(t)}}}function ft(e){if(!e){return null}const t=Number(e);if(isNaN(t)){return null}return t}function pt(){function e(){const e=document.createElement("p");const t=e.style;e.innerText="Running in emulator mode. Do not use with production credentials.";t.position="fixed";t.width="100%";t.backgroundColor="#ffffff";t.border=".1em solid #000000";t.color="#b50000";t.bottom="0px";t.left="0px";t.margin="0px";t.zIndex="10000";t.textAlign="center";e.classList.add("firebase-emulator-warning");document.body.appendChild(e)}if(typeof console!=="undefined"&&typeof console.info==="function"){console.info("WARNING: You are using the Auth Emulator,"+" which is intended for local testing only.  Do not use with"+" production credentials.")}if(typeof window!=="undefined"&&typeof document!=="undefined"){if(document.readyState==="loading"){window.addEventListener("DOMContentLoaded",e)}else{e()}}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class mt{constructor(e,t){this.providerId=e;this.signInMethod=t}toJSON(){return Q("not implemented")}_getIdTokenResponse(e){return Q("not implemented")}_linkToIdToken(e,t){return Q("not implemented")}_getReauthenticationResolver(e){return Q("not implemented")}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function gt(e,t){return me(e,"POST","/v1/accounts:resetPassword",pe(e,t))}async function vt(e,t){return me(e,"POST","/v1/accounts:update",t)}async function It(e,t){return me(e,"POST","/v1/accounts:update",pe(e,t))}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function _t(e,t){return ve(e,"POST","/v1/accounts:signInWithPassword",pe(e,t))}async function yt(e,t){return me(e,"POST","/v1/accounts:sendOobCode",pe(e,t))}async function Tt(e,t){return yt(e,t)}async function Et(e,t){return yt(e,t)}async function wt(e,t){return yt(e,t)}async function kt(e,t){return yt(e,t)}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function bt(e,t){return ve(e,"POST","/v1/accounts:signInWithEmailLink",pe(e,t))}async function At(e,t){return ve(e,"POST","/v1/accounts:signInWithEmailLink",pe(e,t))}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class Rt extends mt{constructor(e,t,n,i=null){super("password",n);this._email=e;this._password=t;this._tenantId=i}static _fromEmailAndPassword(e,t){return new Rt(e,t,"password")}static _fromEmailAndCode(e,t,n=null){return new Rt(e,t,"emailLink",n)}toJSON(){return{email:this._email,password:this._password,signInMethod:this.signInMethod,tenantId:this._tenantId}}static fromJSON(e){const t=typeof e==="string"?JSON.parse(e):e;if((t===null||t===void 0?void 0:t.email)&&(t===null||t===void 0?void 0:t.password)){if(t.signInMethod==="password"){return this._fromEmailAndPassword(t.email,t.password)}else if(t.signInMethod==="emailLink"){return this._fromEmailAndCode(t.email,t.password,t.tenantId)}}return null}async _getIdTokenResponse(e){switch(this.signInMethod){case"password":return _t(e,{returnSecureToken:true,email:this._email,password:this._password});case"emailLink":return bt(e,{email:this._email,oobCode:this._password});default:B(e,"internal-error")}}async _linkToIdToken(e,t){switch(this.signInMethod){case"password":return vt(e,{idToken:t,returnSecureToken:true,email:this._email,password:this._password});case"emailLink":return At(e,{idToken:t,email:this._email,oobCode:this._password});default:B(e,"internal-error")}}_getReauthenticationResolver(e){return this._getIdTokenResponse(e)}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function St(e,t){return ve(e,"POST","/v1/accounts:signInWithIdp",pe(e,t))}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const Nt="http://localhost";class Ot extends mt{constructor(){super(...arguments);this.pendingToken=null}static _fromParams(e){const t=new Ot(e.providerId,e.signInMethod);if(e.idToken||e.accessToken){if(e.idToken){t.idToken=e.idToken}if(e.accessToken){t.accessToken=e.accessToken}if(e.nonce&&!e.pendingToken){t.nonce=e.nonce}if(e.pendingToken){t.pendingToken=e.pendingToken}}else if(e.oauthToken&&e.oauthTokenSecret){t.accessToken=e.oauthToken;t.secret=e.oauthTokenSecret}else{B("argument-error")}return t}toJSON(){return{idToken:this.idToken,accessToken:this.accessToken,secret:this.secret,nonce:this.nonce,pendingToken:this.pendingToken,providerId:this.providerId,signInMethod:this.signInMethod}}static fromJSON(e){const t=typeof e==="string"?JSON.parse(e):e;const{providerId:n,signInMethod:i}=t,r=b(t,["providerId","signInMethod"]);if(!n||!i){return null}const s=new Ot(n,i);s.idToken=r.idToken||undefined;s.accessToken=r.accessToken||undefined;s.secret=r.secret;s.nonce=r.nonce;s.pendingToken=r.pendingToken||null;return s}_getIdTokenResponse(e){const t=this.buildRequest();return St(e,t)}_linkToIdToken(e,t){const n=this.buildRequest();n.idToken=t;return St(e,n)}_getReauthenticationResolver(e){const t=this.buildRequest();t.autoCreate=false;return St(e,t)}buildRequest(){const e={requestUri:Nt,returnSecureToken:true};if(this.pendingToken){e.pendingToken=this.pendingToken}else{const t={};if(this.idToken){t["id_token"]=this.idToken}if(this.accessToken){t["access_token"]=this.accessToken}if(this.secret){t["oauth_token_secret"]=this.secret}t["providerId"]=this.providerId;if(this.nonce&&!this.pendingToken){t["nonce"]=this.nonce}e.postBody=v(t)}return e}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function Pt(e,t){return me(e,"POST","/v1/accounts:sendVerificationCode",pe(e,t))}async function Ct(e,t){return ve(e,"POST","/v1/accounts:signInWithPhoneNumber",pe(e,t))}async function Dt(e,t){const n=await ve(e,"POST","/v1/accounts:signInWithPhoneNumber",pe(e,t));if(n.temporaryProof){throw ye(e,"account-exists-with-different-credential",n)}return n}const Lt={["USER_NOT_FOUND"]:"user-not-found"};async function Mt(e,t){const n=Object.assign(Object.assign({},t),{operation:"REAUTH"});return ve(e,"POST","/v1/accounts:signInWithPhoneNumber",pe(e,n),Lt)}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class Ut extends mt{constructor(e){super("phone","phone");this.params=e}static _fromVerification(e,t){return new Ut({verificationId:e,verificationCode:t})}static _fromTokenResponse(e,t){return new Ut({phoneNumber:e,temporaryProof:t})}_getIdTokenResponse(e){return Ct(e,this._makeVerificationRequest())}_linkToIdToken(e,t){return Dt(e,Object.assign({idToken:t},this._makeVerificationRequest()))}_getReauthenticationResolver(e){return Mt(e,this._makeVerificationRequest())}_makeVerificationRequest(){const{temporaryProof:e,phoneNumber:t,verificationId:n,verificationCode:i}=this.params;if(e&&t){return{temporaryProof:e,phoneNumber:t}}return{sessionInfo:n,code:i}}toJSON(){const e={providerId:this.providerId};if(this.params.phoneNumber){e.phoneNumber=this.params.phoneNumber}if(this.params.temporaryProof){e.temporaryProof=this.params.temporaryProof}if(this.params.verificationCode){e.verificationCode=this.params.verificationCode}if(this.params.verificationId){e.verificationId=this.params.verificationId}return e}static fromJSON(e){if(typeof e==="string"){e=JSON.parse(e)}const{verificationId:t,verificationCode:n,phoneNumber:i,temporaryProof:r}=e;if(!n&&!t&&!i&&!r){return null}return new Ut({verificationId:t,verificationCode:n,phoneNumber:i,temporaryProof:r})}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function Ft(e){switch(e){case"recoverEmail":return"RECOVER_EMAIL";case"resetPassword":return"PASSWORD_RESET";case"signIn":return"EMAIL_SIGNIN";case"verifyEmail":return"VERIFY_EMAIL";case"verifyAndChangeEmail":return"VERIFY_AND_CHANGE_EMAIL";case"revertSecondFactorAddition":return"REVERT_SECOND_FACTOR_ADDITION";default:return null}}function Vt(e){const t=I(_(e))["link"];const n=t?I(_(t))["deep_link_id"]:null;const i=I(_(e))["deep_link_id"];const r=i?I(_(i))["link"]:null;return r||i||n||t||e}class xt{constructor(e){var t,n,i,r,s,o;const a=I(_(e));const c=(t=a["apiKey"])!==null&&t!==void 0?t:null;const u=(n=a["oobCode"])!==null&&n!==void 0?n:null;const d=Ft((i=a["mode"])!==null&&i!==void 0?i:null);X(c&&u&&d,"argument-error");this.apiKey=c;this.operation=d;this.code=u;this.continueUrl=(r=a["continueUrl"])!==null&&r!==void 0?r:null;this.languageCode=(s=a["languageCode"])!==null&&s!==void 0?s:null;this.tenantId=(o=a["tenantId"])!==null&&o!==void 0?o:null}static parseLink(e){const t=Vt(e);try{return new xt(t)}catch(e){return null}}}function Ht(e){return xt.parseLink(e)}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class jt{constructor(){this.providerId=jt.PROVIDER_ID}static credential(e,t){return Rt._fromEmailAndPassword(e,t)}static credentialWithLink(e,t){const n=xt.parseLink(t);X(n,"argument-error");return Rt._fromEmailAndCode(e,n.code,n.tenantId)}}jt.PROVIDER_ID="password";jt.EMAIL_PASSWORD_SIGN_IN_METHOD="password";jt.EMAIL_LINK_SIGN_IN_METHOD="emailLink";
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class Wt{constructor(e){this.providerId=e;this.defaultLanguageCode=null;this.customParameters={}}setDefaultLanguage(e){this.defaultLanguageCode=e}setCustomParameters(e){this.customParameters=e;return this}getCustomParameters(){return this.customParameters}}
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class qt extends Wt{constructor(){super(...arguments);this.scopes=[]}addScope(e){if(!this.scopes.includes(e)){this.scopes.push(e)}return this}getScopes(){return[...this.scopes]}}class Gt extends qt{static credentialFromJSON(e){const t=typeof e==="string"?JSON.parse(e):e;X("providerId"in t&&"signInMethod"in t,"argument-error");return Ot._fromParams(t)}credential(e){return this._credential(Object.assign(Object.assign({},e),{nonce:e.rawNonce}))}_credential(e){X(e.idToken||e.accessToken,"argument-error");return Ot._fromParams(Object.assign(Object.assign({},e),{providerId:this.providerId,signInMethod:this.providerId}))}static credentialFromResult(e){return Gt.oauthCredentialFromTaggedObject(e)}static credentialFromError(e){return Gt.oauthCredentialFromTaggedObject(e.customData||{})}static oauthCredentialFromTaggedObject({_tokenResponse:e}){if(!e){return null}const{oauthIdToken:t,oauthAccessToken:n,oauthTokenSecret:i,pendingToken:r,nonce:s,providerId:o}=e;if(!n&&!i&&!t&&!r){return null}if(!o){return null}try{return new Gt(o)._credential({idToken:t,accessToken:n,nonce:s,pendingToken:r})}catch(e){return null}}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class zt extends qt{constructor(){super("facebook.com")}static credential(e){return Ot._fromParams({providerId:zt.PROVIDER_ID,signInMethod:zt.FACEBOOK_SIGN_IN_METHOD,accessToken:e})}static credentialFromResult(e){return zt.credentialFromTaggedObject(e)}static credentialFromError(e){return zt.credentialFromTaggedObject(e.customData||{})}static credentialFromTaggedObject({_tokenResponse:e}){if(!e||!("oauthAccessToken"in e)){return null}if(!e.oauthAccessToken){return null}try{return zt.credential(e.oauthAccessToken)}catch(e){return null}}}zt.FACEBOOK_SIGN_IN_METHOD="facebook.com";zt.PROVIDER_ID="facebook.com";
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class Bt extends qt{constructor(){super("google.com");this.addScope("profile")}static credential(e,t){return Ot._fromParams({providerId:Bt.PROVIDER_ID,signInMethod:Bt.GOOGLE_SIGN_IN_METHOD,idToken:e,accessToken:t})}static credentialFromResult(e){return Bt.credentialFromTaggedObject(e)}static credentialFromError(e){return Bt.credentialFromTaggedObject(e.customData||{})}static credentialFromTaggedObject({_tokenResponse:e}){if(!e){return null}const{oauthIdToken:t,oauthAccessToken:n}=e;if(!t&&!n){return null}try{return Bt.credential(t,n)}catch(e){return null}}}Bt.GOOGLE_SIGN_IN_METHOD="google.com";Bt.PROVIDER_ID="google.com";
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class Kt extends qt{constructor(){super("github.com")}static credential(e){return Ot._fromParams({providerId:Kt.PROVIDER_ID,signInMethod:Kt.GITHUB_SIGN_IN_METHOD,accessToken:e})}static credentialFromResult(e){return Kt.credentialFromTaggedObject(e)}static credentialFromError(e){return Kt.credentialFromTaggedObject(e.customData||{})}static credentialFromTaggedObject({_tokenResponse:e}){if(!e||!("oauthAccessToken"in e)){return null}if(!e.oauthAccessToken){return null}try{return Kt.credential(e.oauthAccessToken)}catch(e){return null}}}Kt.GITHUB_SIGN_IN_METHOD="github.com";Kt.PROVIDER_ID="github.com";
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const $t="http://localhost";class Jt extends mt{constructor(e,t){super(e,e);this.pendingToken=t}_getIdTokenResponse(e){const t=this.buildRequest();return St(e,t)}_linkToIdToken(e,t){const n=this.buildRequest();n.idToken=t;return St(e,n)}_getReauthenticationResolver(e){const t=this.buildRequest();t.autoCreate=false;return St(e,t)}toJSON(){return{signInMethod:this.signInMethod,providerId:this.providerId,pendingToken:this.pendingToken}}static fromJSON(e){const t=typeof e==="string"?JSON.parse(e):e;const{providerId:n,signInMethod:i,pendingToken:r}=t;if(!n||!i||!r||n!==i){return null}return new Jt(n,r)}static _create(e,t){return new Jt(e,t)}buildRequest(){return{requestUri:$t,returnSecureToken:true,pendingToken:this.pendingToken}}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const Yt="saml.";class Xt extends Wt{constructor(e){X(e.startsWith(Yt),"argument-error");super(e)}static credentialFromResult(e){return Xt.samlCredentialFromTaggedObject(e)}static credentialFromError(e){return Xt.samlCredentialFromTaggedObject(e.customData||{})}static credentialFromJSON(e){const t=Jt.fromJSON(e);X(t,"argument-error");return t}static samlCredentialFromTaggedObject({_tokenResponse:e}){if(!e){return null}const{pendingToken:t,providerId:n}=e;if(!t||!n){return null}try{return Jt._create(n,t)}catch(e){return null}}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class Qt extends qt{constructor(){super("twitter.com")}static credential(e,t){return Ot._fromParams({providerId:Qt.PROVIDER_ID,signInMethod:Qt.TWITTER_SIGN_IN_METHOD,oauthToken:e,oauthTokenSecret:t})}static credentialFromResult(e){return Qt.credentialFromTaggedObject(e)}static credentialFromError(e){return Qt.credentialFromTaggedObject(e.customData||{})}static credentialFromTaggedObject({_tokenResponse:e}){if(!e){return null}const{oauthAccessToken:t,oauthTokenSecret:n}=e;if(!t||!n){return null}try{return Qt.credential(t,n)}catch(e){return null}}}Qt.TWITTER_SIGN_IN_METHOD="twitter.com";Qt.PROVIDER_ID="twitter.com";
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function Zt(e,t){return ve(e,"POST","/v1/accounts:signUp",pe(e,t))}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class en{constructor(e){this.user=e.user;this.providerId=e.providerId;this._tokenResponse=e._tokenResponse;this.operationType=e.operationType}static async _fromIdTokenResponse(e,t,n,i=false){const r=await je._fromIdTokenResponse(e,n,i);const s=tn(n);const o=new en({user:r,providerId:s,_tokenResponse:n,operationType:t});return o}static async _forOperation(e,t,n){await e._updateTokensIfNecessary(n,true);const i=tn(n);return new en({user:e,providerId:i,_tokenResponse:n,operationType:t})}}function tn(e){if(e.providerId){return e.providerId}if("phoneNumber"in e){return"phone"}return null}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function nn(e){var t;const n=ct(e);await n._initializationPromise;if((t=n.currentUser)===null||t===void 0?void 0:t.isAnonymous){return new en({user:n.currentUser,providerId:null,operationType:"signIn"})}const i=await Zt(n,{returnSecureToken:true});const r=await en._fromIdTokenResponse(n,"signIn",i,true);await n._updateCurrentUser(r.user);return r}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class rn extends d{constructor(e,t,n,i){var r;super(t.code,t.message);this.operationType=n;this.user=i;Object.setPrototypeOf(this,rn.prototype);this.customData={appName:e.name,tenantId:(r=e.tenantId)!==null&&r!==void 0?r:undefined,_serverResponse:t.customData._serverResponse,operationType:n}}static _fromErrorAndOperation(e,t,n,i){return new rn(e,t,n,i)}}function sn(e,t,n,i){const r=t==="reauthenticate"?n._getReauthenticationResolver(e):n._getIdTokenResponse(e);return r.catch(n=>{if(n.code===`auth/${"multi-factor-auth-required"}`){throw rn._fromErrorAndOperation(e,n,t,i)}throw n})}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function on(e){return new Set(e.map(({providerId:e})=>e).filter(e=>!!e))}
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function an(e,t){const n=k(e);await un(true,n,t);const{providerUserInfo:i}=await Ee(n.auth,{idToken:await n.getIdToken(),deleteProvider:[t]});const r=on(i||[]);n.providerData=n.providerData.filter(e=>r.has(e.providerId));if(!r.has("phone")){n.phoneNumber=null}await n.auth._persistUserIfCurrent(n);return n}async function cn(e,t,n=false){const i=await Oe(e,t._linkToIdToken(e.auth,await e.getIdToken()),n);return en._forOperation(e,"link",i)}async function un(e,t,n){await Le(t);const i=on(t.providerData);const r=e===false?"provider-already-linked":"no-such-provider";X(i.has(n)===e,t.auth,r)}
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function dn(e,t,n=false){const{auth:i}=e;const r="reauthenticate";try{const s=await Oe(e,sn(i,r,t,e),n);X(s.idToken,i,"internal-error");const o=Se(s.idToken);X(o,i,"internal-error");const{sub:a}=o;X(e.uid===a,i,"user-mismatch");return en._forOperation(e,r,s)}catch(e){if((e===null||e===void 0?void 0:e.code)===`auth/${"user-not-found"}`){B(i,"user-mismatch")}throw e}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function ln(e,t,n=false){const i="signIn";const r=await sn(e,i,t);const s=await en._fromIdTokenResponse(e,i,r);if(!n){await e._updateCurrentUser(s.user)}return s}async function hn(e,t){return ln(ct(e),t)}async function fn(e,t){const n=k(e);await un(false,n,t.providerId);return cn(n,t)}async function pn(e,t){return dn(k(e),t)}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function mn(e,t){return ve(e,"POST","/v1/accounts:signInWithCustomToken",pe(e,t))}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function gn(e,t){const n=ct(e);const i=await mn(n,{token:t,returnSecureToken:true});const r=await en._fromIdTokenResponse(n,"signIn",i);await n._updateCurrentUser(r.user);return r}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class vn{constructor(e,t){this.factorId=e;this.uid=t.mfaEnrollmentId;this.enrollmentTime=new Date(t.enrolledAt).toUTCString();this.displayName=t.displayName}static _fromServerResponse(e,t){if("phoneInfo"in t){return In._fromServerResponse(e,t)}return B(e,"internal-error")}}class In extends vn{constructor(e){super("phone",e);this.phoneNumber=e.phoneInfo}static _fromServerResponse(e,t){return new In(t)}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function _n(e,t,n){var i;X(((i=n.url)===null||i===void 0?void 0:i.length)>0,e,"invalid-continue-uri");X(typeof n.dynamicLinkDomain==="undefined"||n.dynamicLinkDomain.length>0,e,"invalid-dynamic-link-domain");t.continueUrl=n.url;t.dynamicLinkDomain=n.dynamicLinkDomain;t.canHandleCodeInApp=n.handleCodeInApp;if(n.iOS){X(n.iOS.bundleId.length>0,e,"missing-ios-bundle-id");t.iOSBundleId=n.iOS.bundleId}if(n.android){X(n.android.packageName.length>0,e,"missing-android-pkg-name");t.androidInstallApp=n.android.installApp;t.androidMinimumVersionCode=n.android.minimumVersion;t.androidPackageName=n.android.packageName}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function yn(e,t,n){const i=k(e);const r={requestType:"PASSWORD_RESET",email:t};if(n){_n(i,r,n)}await Et(i,r)}async function Tn(e,t,n){await gt(k(e),{oobCode:t,newPassword:n})}async function En(e,t){await It(k(e),{oobCode:t})}async function wn(e,t){const n=k(e);const i=await gt(n,{oobCode:t});const r=i.requestType;X(r,n,"internal-error");switch(r){case"EMAIL_SIGNIN":break;case"VERIFY_AND_CHANGE_EMAIL":X(i.newEmail,n,"internal-error");break;case"REVERT_SECOND_FACTOR_ADDITION":X(i.mfaInfo,n,"internal-error");default:X(i.email,n,"internal-error")}let s=null;if(i.mfaInfo){s=vn._fromServerResponse(ct(n),i.mfaInfo)}return{data:{email:(i.requestType==="VERIFY_AND_CHANGE_EMAIL"?i.newEmail:i.email)||null,previousEmail:(i.requestType==="VERIFY_AND_CHANGE_EMAIL"?i.email:i.newEmail)||null,multiFactorInfo:s},operation:r}}async function kn(e,t){const{data:n}=await wn(k(e),t);return n.email}async function bn(e,t,n){const i=ct(e);const r=await Zt(i,{returnSecureToken:true,email:t,password:n});const s=await en._fromIdTokenResponse(i,"signIn",r);await i._updateCurrentUser(s.user);return s}function An(e,t,n){return hn(k(e),jt.credential(t,n))}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function Rn(e,t,n){const i=k(e);const r={requestType:"EMAIL_SIGNIN",email:t};X(n.handleCodeInApp,i,"argument-error");if(n){_n(i,r,n)}await wt(i,r)}function Sn(e,t){const n=xt.parseLink(t);return(n===null||n===void 0?void 0:n.operation)==="EMAIL_SIGNIN"}async function Nn(e,t,n){const i=k(e);const r=jt.credentialWithLink(t,n||re());X(r._tenantId===(i.tenantId||null),i,"tenant-id-mismatch");return hn(i,r)}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function On(e,t){return me(e,"POST","/v1/accounts:createAuthUri",pe(e,t))}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function Pn(e,t){const n=se()?re():"http://localhost";const i={identifier:t,continueUri:n};const{signinMethods:r}=await On(k(e),i);return r||[]}async function Cn(e,t){const n=k(e);const i=await e.getIdToken();const r={requestType:"VERIFY_EMAIL",idToken:i};if(t){_n(n.auth,r,t)}const{email:s}=await Tt(n.auth,r);if(s!==e.email){await e.reload()}}async function Dn(e,t,n){const i=k(e);const r=await e.getIdToken();const s={requestType:"VERIFY_AND_CHANGE_EMAIL",idToken:r,newEmail:t};if(n){_n(i.auth,s,n)}const{email:o}=await kt(i.auth,s);if(o!==e.email){await e.reload()}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function Ln(e,t){return me(e,"POST","/v1/accounts:update",t)}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function Mn(e,{displayName:t,photoURL:n}){if(t===undefined&&n===undefined){return}const i=k(e);const r=await i.getIdToken();const s={idToken:r,displayName:t,photoUrl:n,returnSecureToken:true};const o=await Oe(i,Ln(i.auth,s));i.displayName=o.displayName||null;i.photoURL=o.photoUrl||null;const a=i.providerData.find(({providerId:e})=>e==="password");if(a){a.displayName=i.displayName;a.photoURL=i.photoURL}await i._updateTokensIfNecessary(o)}function Un(e,t){return Vn(k(e),t,null)}function Fn(e,t){return Vn(k(e),null,t)}async function Vn(e,t,n){const{auth:i}=e;const r=await e.getIdToken();const s={idToken:r,returnSecureToken:true};if(t){s.email=t}if(n){s.password=n}const o=await Oe(e,vt(i,s));await e._updateTokensIfNecessary(o,true)}
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function xn(e){var t,n;if(!e){return null}const{providerId:i}=e;const r=e.rawUserInfo?JSON.parse(e.rawUserInfo):{};const s=e.isNewUser||e.kind==="identitytoolkit#SignupNewUserResponse";if(!i&&(e===null||e===void 0?void 0:e.idToken)){const i=(n=(t=Se(e.idToken))===null||t===void 0?void 0:t.firebase)===null||n===void 0?void 0:n["sign_in_provider"];if(i){const e=i!=="anonymous"&&i!=="custom"?i:null;return new Hn(s,e)}}if(!i){return null}switch(i){case"facebook.com":return new Wn(s,r);case"github.com":return new qn(s,r);case"google.com":return new Gn(s,r);case"twitter.com":return new zn(s,r,e.screenName||null);case"custom":case"anonymous":return new Hn(s,null);default:return new Hn(s,i,r)}}class Hn{constructor(e,t,n={}){this.isNewUser=e;this.providerId=t;this.profile=n}}class jn extends Hn{constructor(e,t,n,i){super(e,t,n);this.username=i}}class Wn extends Hn{constructor(e,t){super(e,"facebook.com",t)}}class qn extends jn{constructor(e,t){super(e,"github.com",t,typeof(t===null||t===void 0?void 0:t.login)==="string"?t===null||t===void 0?void 0:t.login:null)}}class Gn extends Hn{constructor(e,t){super(e,"google.com",t)}}class zn extends jn{constructor(e,t,n){super(e,"twitter.com",t,n)}}function Bn(e){const{user:t,_tokenResponse:n}=e;if(t.isAnonymous&&!n){return{providerId:null,isNewUser:false,profile:null}}return xn(n)}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function Kn(e,t){return k(e).setPersistence(t)}function $n(e,t,n,i){return k(e).onIdTokenChanged(t,n,i)}function Jn(e,t,n){return k(e).beforeAuthStateChanged(t,n)}function Yn(e,t,n,i){return k(e).onAuthStateChanged(t,n,i)}function Xn(e){k(e).useDeviceLanguage()}function Qn(e,t){return k(e).updateCurrentUser(t)}function Zn(e){return k(e).signOut()}async function ei(e){return k(e).delete()}class ti{constructor(e,t){this.type=e;this.credential=t}static _fromIdtoken(e){return new ti("enroll",e)}static _fromMfaPendingCredential(e){return new ti("signin",e)}toJSON(){const e=this.type==="enroll"?"idToken":"pendingCredential";return{multiFactorSession:{[e]:this.credential}}}static fromJSON(e){var t,n;if(e===null||e===void 0?void 0:e.multiFactorSession){if((t=e.multiFactorSession)===null||t===void 0?void 0:t.pendingCredential){return ti._fromMfaPendingCredential(e.multiFactorSession.pendingCredential)}else if((n=e.multiFactorSession)===null||n===void 0?void 0:n.idToken){return ti._fromIdtoken(e.multiFactorSession.idToken)}}return null}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class ni{constructor(e,t,n){this.session=e;this.hints=t;this.signInResolver=n}static _fromError(e,t){const n=ct(e);const i=t.customData._serverResponse;const r=(i.mfaInfo||[]).map(e=>vn._fromServerResponse(n,e));X(i.mfaPendingCredential,n,"internal-error");const s=ti._fromMfaPendingCredential(i.mfaPendingCredential);return new ni(s,r,async e=>{const r=await e._process(n,s);delete i.mfaInfo;delete i.mfaPendingCredential;const o=Object.assign(Object.assign({},i),{idToken:r.idToken,refreshToken:r.refreshToken});switch(t.operationType){case"signIn":const e=await en._fromIdTokenResponse(n,t.operationType,o);await n._updateCurrentUser(e.user);return e;case"reauthenticate":X(t.user,n,"internal-error");return en._forOperation(t.user,t.operationType,o);default:B(n,"internal-error")}})}async resolveSignIn(e){const t=e;return this.signInResolver(t)}}function ii(e,t){var n;const i=k(e);const r=t;X(t.customData.operationType,i,"argument-error");X((n=r.customData._serverResponse)===null||n===void 0?void 0:n.mfaPendingCredential,i,"argument-error");return ni._fromError(i,r)}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function ri(e,t){return me(e,"POST","/v2/accounts/mfaEnrollment:start",pe(e,t))}function si(e,t){return me(e,"POST","/v2/accounts/mfaEnrollment:finalize",pe(e,t))}function oi(e,t){return me(e,"POST","/v2/accounts/mfaEnrollment:withdraw",pe(e,t))}class ai{constructor(e){this.user=e;this.enrolledFactors=[];e._onReload(t=>{if(t.mfaInfo){this.enrolledFactors=t.mfaInfo.map(t=>vn._fromServerResponse(e.auth,t))}})}static _fromUser(e){return new ai(e)}async getSession(){return ti._fromIdtoken(await this.user.getIdToken())}async enroll(e,t){const n=e;const i=await this.getSession();const r=await Oe(this.user,n._process(this.user.auth,i,t));await this.user._updateTokensIfNecessary(r);return this.user.reload()}async unenroll(e){const t=typeof e==="string"?e:e.uid;const n=await this.user.getIdToken();const i=await Oe(this.user,oi(this.user.auth,{idToken:n,mfaEnrollmentId:t}));this.enrolledFactors=this.enrolledFactors.filter(({uid:e})=>e!==t);await this.user._updateTokensIfNecessary(i);try{await this.user.reload()}catch(e){if(e.code!==`auth/${"user-token-expired"}`){throw e}}}}const ci=new WeakMap;function ui(e){const t=k(e);if(!ci.has(t)){ci.set(t,ai._fromUser(t))}return ci.get(t)}const di="__sak";
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class li{constructor(e,t){this.storageRetriever=e;this.type=t}_isAvailable(){try{if(!this.storage){return Promise.resolve(false)}this.storage.setItem(di,"1");this.storage.removeItem(di);return Promise.resolve(true)}catch(e){return Promise.resolve(false)}}_set(e,t){this.storage.setItem(e,JSON.stringify(t));return Promise.resolve()}_get(e){const t=this.storage.getItem(e);return Promise.resolve(t?JSON.parse(t):null)}_remove(e){this.storage.removeItem(e);return Promise.resolve()}get storage(){return this.storageRetriever()}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function hi(){const e=r();return $e(e)||et(e)}const fi=1e3;const pi=10;class mi extends li{constructor(){super(()=>window.localStorage,"LOCAL");this.boundEventHandler=(e,t)=>this.onStorageEvent(e,t);this.listeners={};this.localCache={};this.pollTimer=null;this.safariLocalStorageNotSynced=hi()&&rt();this.fallbackToPolling=it();this._shouldAllowMigration=true}forAllChangedKeys(e){for(const t of Object.keys(this.listeners)){const n=this.storage.getItem(t);const i=this.localCache[t];if(n!==i){e(t,i,n)}}}onStorageEvent(e,t=false){if(!e.key){this.forAllChangedKeys((e,t,n)=>{this.notifyListeners(e,n)});return}const n=e.key;if(t){this.detachListener()}else{this.stopPolling()}if(this.safariLocalStorageNotSynced){const i=this.storage.getItem(n);if(e.newValue!==i){if(e.newValue!==null){this.storage.setItem(n,e.newValue)}else{this.storage.removeItem(n)}}else if(this.localCache[n]===e.newValue&&!t){return}}const i=()=>{const e=this.storage.getItem(n);if(!t&&this.localCache[n]===e){return}this.notifyListeners(n,e)};const r=this.storage.getItem(n);if(nt()&&r!==e.newValue&&e.newValue!==e.oldValue){setTimeout(i,pi)}else{i()}}notifyListeners(e,t){this.localCache[e]=t;const n=this.listeners[e];if(n){for(const e of Array.from(n)){e(t?JSON.parse(t):t)}}}startPolling(){this.stopPolling();this.pollTimer=setInterval(()=>{this.forAllChangedKeys((e,t,n)=>{this.onStorageEvent(new StorageEvent("storage",{key:e,oldValue:t,newValue:n}),true)})},fi)}stopPolling(){if(this.pollTimer){clearInterval(this.pollTimer);this.pollTimer=null}}attachListener(){window.addEventListener("storage",this.boundEventHandler)}detachListener(){window.removeEventListener("storage",this.boundEventHandler)}_addListener(e,t){if(Object.keys(this.listeners).length===0){if(this.fallbackToPolling){this.startPolling()}else{this.attachListener()}}if(!this.listeners[e]){this.listeners[e]=new Set;this.localCache[e]=this.storage.getItem(e)}this.listeners[e].add(t)}_removeListener(e,t){if(this.listeners[e]){this.listeners[e].delete(t);if(this.listeners[e].size===0){delete this.listeners[e]}}if(Object.keys(this.listeners).length===0){this.detachListener();this.stopPolling()}}async _set(e,t){await super._set(e,t);this.localCache[e]=JSON.stringify(t)}async _get(e){const t=await super._get(e);this.localCache[e]=JSON.stringify(t);return t}async _remove(e){await super._remove(e);delete this.localCache[e]}}mi.type="LOCAL";const gi=mi;
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class vi extends li{constructor(){super(()=>window.sessionStorage,"SESSION")}_addListener(e,t){return}_removeListener(e,t){return}}vi.type="SESSION";const Ii=vi;
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function _i(e){return Promise.all(e.map(async e=>{try{const t=await e;return{fulfilled:true,value:t}}catch(e){return{fulfilled:false,reason:e}}}))}
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class yi{constructor(e){this.eventTarget=e;this.handlersMap={};this.boundEventHandler=this.handleEvent.bind(this)}static _getInstance(e){const t=this.receivers.find(t=>t.isListeningto(e));if(t){return t}const n=new yi(e);this.receivers.push(n);return n}isListeningto(e){return this.eventTarget===e}async handleEvent(e){const t=e;const{eventId:n,eventType:i,data:r}=t.data;const s=this.handlersMap[i];if(!(s===null||s===void 0?void 0:s.size)){return}t.ports[0].postMessage({status:"ack",eventId:n,eventType:i});const o=Array.from(s).map(async e=>e(t.origin,r));const a=await _i(o);t.ports[0].postMessage({status:"done",eventId:n,eventType:i,response:a})}_subscribe(e,t){if(Object.keys(this.handlersMap).length===0){this.eventTarget.addEventListener("message",this.boundEventHandler)}if(!this.handlersMap[e]){this.handlersMap[e]=new Set}this.handlersMap[e].add(t)}_unsubscribe(e,t){if(this.handlersMap[e]&&t){this.handlersMap[e].delete(t)}if(!t||this.handlersMap[e].size===0){delete this.handlersMap[e]}if(Object.keys(this.handlersMap).length===0){this.eventTarget.removeEventListener("message",this.boundEventHandler)}}}yi.receivers=[];
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function Ti(e="",t=10){let n="";for(let e=0;e<t;e++){n+=Math.floor(Math.random()*10)}return e+n}
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class Ei{constructor(e){this.target=e;this.handlers=new Set}removeMessageHandler(e){if(e.messageChannel){e.messageChannel.port1.removeEventListener("message",e.onMessage);e.messageChannel.port1.close()}this.handlers.delete(e)}async _send(e,t,n=50){const i=typeof MessageChannel!=="undefined"?new MessageChannel:null;if(!i){throw new Error("connection_unavailable")}let r;let s;return new Promise((o,a)=>{const c=Ti("",20);i.port1.start();const u=setTimeout(()=>{a(new Error("unsupported_event"))},n);s={messageChannel:i,onMessage(e){const t=e;if(t.data.eventId!==c){return}switch(t.data.status){case"ack":clearTimeout(u);r=setTimeout(()=>{a(new Error("timeout"))},3e3);break;case"done":clearTimeout(r);o(t.data.response);break;default:clearTimeout(u);clearTimeout(r);a(new Error("invalid_response"));break}}};this.handlers.add(s);i.port1.addEventListener("message",s.onMessage);this.target.postMessage({eventType:e,eventId:c,data:t},[i.port2])}).finally(()=>{if(s){this.removeMessageHandler(s)}})}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function wi(){return window}function ki(e){wi().location.href=e}
-/**
-   * @license
-   * Copyright 2020 Google LLC.
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function bi(){return typeof wi()["WorkerGlobalScope"]!=="undefined"&&typeof wi()["importScripts"]==="function"}async function Ai(){if(!(navigator===null||navigator===void 0?void 0:navigator.serviceWorker)){return null}try{const e=await navigator.serviceWorker.ready;return e.active}catch(e){return null}}function Ri(){var e;return((e=navigator===null||navigator===void 0?void 0:navigator.serviceWorker)===null||e===void 0?void 0:e.controller)||null}function Si(){return bi()?self:null}
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const Ni="firebaseLocalStorageDb";const Oi=1;const Pi="firebaseLocalStorage";const Ci="fbase_key";class Di{constructor(e){this.request=e}toPromise(){return new Promise((e,t)=>{this.request.addEventListener("success",()=>{e(this.request.result)});this.request.addEventListener("error",()=>{t(this.request.error)})})}}function Li(e,t){return e.transaction([Pi],t?"readwrite":"readonly").objectStore(Pi)}function Mi(){const e=indexedDB.deleteDatabase(Ni);return new Di(e).toPromise()}function Ui(){const e=indexedDB.open(Ni,Oi);return new Promise((t,n)=>{e.addEventListener("error",()=>{n(e.error)});e.addEventListener("upgradeneeded",()=>{const t=e.result;try{t.createObjectStore(Pi,{keyPath:Ci})}catch(e){n(e)}});e.addEventListener("success",async()=>{const n=e.result;if(!n.objectStoreNames.contains(Pi)){n.close();await Mi();t(await Ui())}else{t(n)}})})}async function Fi(e,t,n){const i=Li(e,true).put({[Ci]:t,value:n});return new Di(i).toPromise()}async function Vi(e,t){const n=Li(e,false).get(t);const i=await new Di(n).toPromise();return i===undefined?null:i.value}function xi(e,t){const n=Li(e,true).delete(t);return new Di(n).toPromise()}const Hi=800;const ji=3;class Wi{constructor(){this.type="LOCAL";this._shouldAllowMigration=true;this.listeners={};this.localCache={};this.pollTimer=null;this.pendingWrites=0;this.receiver=null;this.sender=null;this.serviceWorkerReceiverAvailable=false;this.activeServiceWorker=null;this._workerInitializationPromise=this.initializeServiceWorkerMessaging().then(()=>{},()=>{})}async _openDb(){if(this.db){return this.db}this.db=await Ui();return this.db}async _withRetries(e){let t=0;while(true){try{const t=await this._openDb();return await e(t)}catch(e){if(t++>ji){throw e}if(this.db){this.db.close();this.db=undefined}}}}async initializeServiceWorkerMessaging(){return bi()?this.initializeReceiver():this.initializeSender()}async initializeReceiver(){this.receiver=yi._getInstance(Si());this.receiver._subscribe("keyChanged",async(e,t)=>{const n=await this._poll();return{keyProcessed:n.includes(t.key)}});this.receiver._subscribe("ping",async(e,t)=>["keyChanged"])}async initializeSender(){var e,t;this.activeServiceWorker=await Ai();if(!this.activeServiceWorker){return}this.sender=new Ei(this.activeServiceWorker);const n=await this.sender._send("ping",{},800);if(!n){return}if(((e=n[0])===null||e===void 0?void 0:e.fulfilled)&&((t=n[0])===null||t===void 0?void 0:t.value.includes("keyChanged"))){this.serviceWorkerReceiverAvailable=true}}async notifyServiceWorker(e){if(!this.sender||!this.activeServiceWorker||Ri()!==this.activeServiceWorker){return}try{await this.sender._send("keyChanged",{key:e},this.serviceWorkerReceiverAvailable?800:50)}catch(e){}}async _isAvailable(){try{if(!indexedDB){return false}const e=await Ui();await Fi(e,di,"1");await xi(e,di);return true}catch(e){}return false}async _withPendingWrite(e){this.pendingWrites++;try{await e()}finally{this.pendingWrites--}}async _set(e,t){return this._withPendingWrite(async()=>{await this._withRetries(n=>Fi(n,e,t));this.localCache[e]=t;return this.notifyServiceWorker(e)})}async _get(e){const t=await this._withRetries(t=>Vi(t,e));this.localCache[e]=t;return t}async _remove(e){return this._withPendingWrite(async()=>{await this._withRetries(t=>xi(t,e));delete this.localCache[e];return this.notifyServiceWorker(e)})}async _poll(){const e=await this._withRetries(e=>{const t=Li(e,false).getAll();return new Di(t).toPromise()});if(!e){return[]}if(this.pendingWrites!==0){return[]}const t=[];const n=new Set;for(const{fbase_key:i,value:r}of e){n.add(i);if(JSON.stringify(this.localCache[i])!==JSON.stringify(r)){this.notifyListeners(i,r);t.push(i)}}for(const e of Object.keys(this.localCache)){if(this.localCache[e]&&!n.has(e)){this.notifyListeners(e,null);t.push(e)}}return t}notifyListeners(e,t){this.localCache[e]=t;const n=this.listeners[e];if(n){for(const e of Array.from(n)){e(t)}}}startPolling(){this.stopPolling();this.pollTimer=setInterval(async()=>this._poll(),Hi)}stopPolling(){if(this.pollTimer){clearInterval(this.pollTimer);this.pollTimer=null}}_addListener(e,t){if(Object.keys(this.listeners).length===0){this.startPolling()}if(!this.listeners[e]){this.listeners[e]=new Set;void this._get(e)}this.listeners[e].add(t)}_removeListener(e,t){if(this.listeners[e]){this.listeners[e].delete(t);if(this.listeners[e].size===0){delete this.listeners[e]}}if(Object.keys(this.listeners).length===0){this.stopPolling()}}}Wi.type="LOCAL";const qi=Wi;
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function Gi(e,t){return me(e,"POST","/v2/accounts/mfaSignIn:start",pe(e,t))}function zi(e,t){return me(e,"POST","/v2/accounts/mfaSignIn:finalize",pe(e,t))}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function Bi(e){return(await me(e,"GET","/v1/recaptchaParams")).recaptchaSiteKey||""}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function Ki(){var e,t;return(t=(e=document.getElementsByTagName("head"))===null||e===void 0?void 0:e[0])!==null&&t!==void 0?t:document}function $i(e){return new Promise((t,n)=>{const i=document.createElement("script");i.setAttribute("src",e);i.onload=t;i.onerror=e=>{const t=K("internal-error");t.customData=e;n(t)};i.type="text/javascript";i.charset="UTF-8";Ki().appendChild(i)})}function Ji(e){return`__${e}${Math.floor(Math.random()*1e6)}`}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const Yi=500;const Xi=6e4;const Qi=1e12;class Zi{constructor(e){this.auth=e;this.counter=Qi;this._widgets=new Map}render(e,t){const n=this.counter;this._widgets.set(n,new er(e,this.auth.name,t||{}));this.counter++;return n}reset(e){var t;const n=e||Qi;void((t=this._widgets.get(n))===null||t===void 0?void 0:t.delete());this._widgets.delete(n)}getResponse(e){var t;const n=e||Qi;return((t=this._widgets.get(n))===null||t===void 0?void 0:t.getResponse())||""}async execute(e){var t;const n=e||Qi;void((t=this._widgets.get(n))===null||t===void 0?void 0:t.execute());return""}}class er{constructor(e,t,n){this.params=n;this.timerId=null;this.deleted=false;this.responseToken=null;this.clickHandler=()=>{this.execute()};const i=typeof e==="string"?document.getElementById(e):e;X(i,"argument-error",{appName:t});this.container=i;this.isVisible=this.params.size!=="invisible";if(this.isVisible){this.execute()}else{this.container.addEventListener("click",this.clickHandler)}}getResponse(){this.checkIfDeleted();return this.responseToken}delete(){this.checkIfDeleted();this.deleted=true;if(this.timerId){clearTimeout(this.timerId);this.timerId=null}this.container.removeEventListener("click",this.clickHandler)}execute(){this.checkIfDeleted();if(this.timerId){return}this.timerId=window.setTimeout(()=>{this.responseToken=tr(50);const{callback:e,"expired-callback":t}=this.params;if(e){try{e(this.responseToken)}catch(e){}}this.timerId=window.setTimeout(()=>{this.timerId=null;this.responseToken=null;if(t){try{t()}catch(e){}}if(this.isVisible){this.execute()}},Xi)},Yi)}checkIfDeleted(){if(this.deleted){throw new Error("reCAPTCHA mock was already deleted!")}}}function tr(e){const t=[];const n="1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";for(let i=0;i<e;i++){t.push(n.charAt(Math.floor(Math.random()*n.length)))}return t.join("")}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const nr=Ji("rcb");const ir=new ue(3e4,6e4);const rr="https://www.google.com/recaptcha/api.js?";class sr{constructor(){this.hostLanguage="";this.counter=0;this.librarySeparatelyLoaded=!!wi().grecaptcha}load(e,t=""){X(or(t),e,"argument-error");if(this.shouldResolveImmediately(t)){return Promise.resolve(wi().grecaptcha)}return new Promise((n,i)=>{const r=wi().setTimeout(()=>{i(K(e,"network-request-failed"))},ir.get());wi()[nr]=()=>{wi().clearTimeout(r);delete wi()[nr];const s=wi().grecaptcha;if(!s){i(K(e,"internal-error"));return}const o=s.render;s.render=(e,t)=>{const n=o(e,t);this.counter++;return n};this.hostLanguage=t;n(s)};const s=`${rr}?${v({onload:nr,render:"explicit",hl:t})}`;$i(s).catch(()=>{clearTimeout(r);i(K(e,"internal-error"))})})}clearedOneInstance(){this.counter--}shouldResolveImmediately(e){return!!wi().grecaptcha&&(e===this.hostLanguage||this.counter>0||this.librarySeparatelyLoaded)}}function or(e){return e.length<=6&&/^\s*[a-zA-Z0-9\-]*\s*$/.test(e)}class ar{async load(e){return new Zi(e)}clearedOneInstance(){}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const cr="recaptcha";const ur={theme:"light",type:"image"};class dr{constructor(e,t=Object.assign({},ur),n){this.parameters=t;this.type=cr;this.destroyed=false;this.widgetId=null;this.tokenChangeListeners=new Set;this.renderPromise=null;this.recaptcha=null;this.auth=ct(n);this.isInvisible=this.parameters.size==="invisible";X(typeof document!=="undefined",this.auth,"operation-not-supported-in-this-environment");const i=typeof e==="string"?document.getElementById(e):e;X(i,this.auth,"argument-error");this.container=i;this.parameters.callback=this.makeTokenCallback(this.parameters.callback);this._recaptchaLoader=this.auth.settings.appVerificationDisabledForTesting?new ar:new sr;this.validateStartingState()}async verify(){this.assertNotDestroyed();const e=await this.render();const t=this.getAssertedRecaptcha();const n=t.getResponse(e);if(n){return n}return new Promise(n=>{const i=e=>{if(!e){return}this.tokenChangeListeners.delete(i);n(e)};this.tokenChangeListeners.add(i);if(this.isInvisible){t.execute(e)}})}render(){try{this.assertNotDestroyed()}catch(e){return Promise.reject(e)}if(this.renderPromise){return this.renderPromise}this.renderPromise=this.makeRenderPromise().catch(e=>{this.renderPromise=null;throw e});return this.renderPromise}_reset(){this.assertNotDestroyed();if(this.widgetId!==null){this.getAssertedRecaptcha().reset(this.widgetId)}}clear(){this.assertNotDestroyed();this.destroyed=true;this._recaptchaLoader.clearedOneInstance();if(!this.isInvisible){this.container.childNodes.forEach(e=>{this.container.removeChild(e)})}}validateStartingState(){X(!this.parameters.sitekey,this.auth,"argument-error");X(this.isInvisible||!this.container.hasChildNodes(),this.auth,"argument-error");X(typeof document!=="undefined",this.auth,"operation-not-supported-in-this-environment")}makeTokenCallback(e){return t=>{this.tokenChangeListeners.forEach(e=>e(t));if(typeof e==="function"){e(t)}else if(typeof e==="string"){const n=wi()[e];if(typeof n==="function"){n(t)}}}}assertNotDestroyed(){X(!this.destroyed,this.auth,"internal-error")}async makeRenderPromise(){await this.init();if(!this.widgetId){let e=this.container;if(!this.isInvisible){const t=document.createElement("div");e.appendChild(t);e=t}this.widgetId=this.getAssertedRecaptcha().render(e,this.parameters)}return this.widgetId}async init(){X(se()&&!bi(),this.auth,"internal-error");await lr();this.recaptcha=await this._recaptchaLoader.load(this.auth,this.auth.languageCode||undefined);const e=await Bi(this.auth);X(e,this.auth,"internal-error");this.parameters.sitekey=e}getAssertedRecaptcha(){X(this.recaptcha,this.auth,"internal-error");return this.recaptcha}}function lr(){let e=null;return new Promise(t=>{if(document.readyState==="complete"){t();return}e=()=>t();window.addEventListener("load",e)}).catch(t=>{if(e){window.removeEventListener("load",e)}throw t})}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class hr{constructor(e,t){this.verificationId=e;this.onConfirmation=t}confirm(e){const t=Ut._fromVerification(this.verificationId,e);return this.onConfirmation(t)}}async function fr(e,t,n){const i=ct(e);const r=await gr(i,t,k(n));return new hr(r,e=>hn(i,e))}async function pr(e,t,n){const i=k(e);await un(false,i,"phone");const r=await gr(i.auth,t,k(n));return new hr(r,e=>fn(i,e))}async function mr(e,t,n){const i=k(e);const r=await gr(i.auth,t,k(n));return new hr(r,e=>pn(i,e))}async function gr(e,t,n){var i;const r=await n.verify();try{X(typeof r==="string",e,"argument-error");X(n.type===cr,e,"argument-error");let s;if(typeof t==="string"){s={phoneNumber:t}}else{s=t}if("session"in s){const t=s.session;if("phoneNumber"in s){X(t.type==="enroll",e,"internal-error");const n=await ri(e,{idToken:t.credential,phoneEnrollmentInfo:{phoneNumber:s.phoneNumber,recaptchaToken:r}});return n.phoneSessionInfo.sessionInfo}else{X(t.type==="signin",e,"internal-error");const n=((i=s.multiFactorHint)===null||i===void 0?void 0:i.uid)||s.multiFactorUid;X(n,e,"missing-multi-factor-info");const o=await Gi(e,{mfaPendingCredential:t.credential,mfaEnrollmentId:n,phoneSignInInfo:{recaptchaToken:r}});return o.phoneResponseInfo.sessionInfo}}else{const{sessionInfo:t}=await Pt(e,{phoneNumber:s.phoneNumber,recaptchaToken:r});return t}}finally{n._reset()}}async function vr(e,t){await cn(k(e),t)}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class Ir{constructor(e){this.providerId=Ir.PROVIDER_ID;this.auth=ct(e)}verifyPhoneNumber(e,t){return gr(this.auth,e,k(t))}static credential(e,t){return Ut._fromVerification(e,t)}static credentialFromResult(e){const t=e;return Ir.credentialFromTaggedObject(t)}static credentialFromError(e){return Ir.credentialFromTaggedObject(e.customData||{})}static credentialFromTaggedObject({_tokenResponse:e}){if(!e){return null}const{phoneNumber:t,temporaryProof:n}=e;if(t&&n){return Ut._fromTokenResponse(t,n)}return null}}Ir.PROVIDER_ID="phone";Ir.PHONE_SIGN_IN_METHOD="phone";
-/**
-   * @license
-   * Copyright 2021 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function _r(e,t){if(t){return te(t)}X(e._popupRedirectResolver,e,"argument-error");return e._popupRedirectResolver}
-/**
-   * @license
-   * Copyright 2019 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class yr extends mt{constructor(e){super("custom","custom");this.params=e}_getIdTokenResponse(e){return St(e,this._buildIdpRequest())}_linkToIdToken(e,t){return St(e,this._buildIdpRequest(t))}_getReauthenticationResolver(e){return St(e,this._buildIdpRequest())}_buildIdpRequest(e){const t={requestUri:this.params.requestUri,sessionId:this.params.sessionId,postBody:this.params.postBody,tenantId:this.params.tenantId,pendingToken:this.params.pendingToken,returnSecureToken:true,returnIdpCredential:true};if(e){t.idToken=e}return t}}function Tr(e){return ln(e.auth,new yr(e),e.bypassAuthState)}function Er(e){const{auth:t,user:n}=e;X(n,t,"internal-error");return dn(n,new yr(e),e.bypassAuthState)}async function wr(e){const{auth:t,user:n}=e;X(n,t,"internal-error");return cn(n,new yr(e),e.bypassAuthState)}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class kr{constructor(e,t,n,i,r=false){this.auth=e;this.resolver=n;this.user=i;this.bypassAuthState=r;this.pendingPromise=null;this.eventManager=null;this.filter=Array.isArray(t)?t:[t]}execute(){return new Promise(async(e,t)=>{this.pendingPromise={resolve:e,reject:t};try{this.eventManager=await this.resolver._initialize(this.auth);await this.onExecution();this.eventManager.registerConsumer(this)}catch(e){this.reject(e)}})}async onAuthEvent(e){const{urlResponse:t,sessionId:n,postBody:i,tenantId:r,error:s,type:o}=e;if(s){this.reject(s);return}const a={auth:this.auth,requestUri:t,sessionId:n,tenantId:r||undefined,postBody:i||undefined,user:this.user,bypassAuthState:this.bypassAuthState};try{this.resolve(await this.getIdpTask(o)(a))}catch(e){this.reject(e)}}onError(e){this.reject(e)}getIdpTask(e){switch(e){case"signInViaPopup":case"signInViaRedirect":return Tr;case"linkViaPopup":case"linkViaRedirect":return wr;case"reauthViaPopup":case"reauthViaRedirect":return Er;default:B(this.auth,"internal-error")}}resolve(e){Z(this.pendingPromise,"Pending promise was never set");this.pendingPromise.resolve(e);this.unregisterAndCleanUp()}reject(e){Z(this.pendingPromise,"Pending promise was never set");this.pendingPromise.reject(e);this.unregisterAndCleanUp()}unregisterAndCleanUp(){if(this.eventManager){this.eventManager.unregisterConsumer(this)}this.pendingPromise=null;this.cleanUp()}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const br=new ue(2e3,1e4);async function Ar(e,t,n){const i=ct(e);J(e,t,Wt);const r=_r(i,n);const s=new Nr(i,"signInViaPopup",t,r);return s.executeNotNull()}async function Rr(e,t,n){const i=k(e);J(i.auth,t,Wt);const r=_r(i.auth,n);const s=new Nr(i.auth,"reauthViaPopup",t,r,i);return s.executeNotNull()}async function Sr(e,t,n){const i=k(e);J(i.auth,t,Wt);const r=_r(i.auth,n);const s=new Nr(i.auth,"linkViaPopup",t,r,i);return s.executeNotNull()}class Nr extends kr{constructor(e,t,n,i,r){super(e,t,i,r);this.provider=n;this.authWindow=null;this.pollId=null;if(Nr.currentPopupAction){Nr.currentPopupAction.cancel()}Nr.currentPopupAction=this}async executeNotNull(){const e=await this.execute();X(e,this.auth,"internal-error");return e}async onExecution(){Z(this.filter.length===1,"Popup operations only handle one event");const e=Ti();this.authWindow=await this.resolver._openPopup(this.auth,this.provider,this.filter[0],e);this.authWindow.associatedEvent=e;this.resolver._originValidation(this.auth).catch(e=>{this.reject(e)});this.resolver._isIframeWebStorageSupported(this.auth,e=>{if(!e){this.reject(K(this.auth,"web-storage-unsupported"))}});this.pollUserCancellation()}get eventId(){var e;return((e=this.authWindow)===null||e===void 0?void 0:e.associatedEvent)||null}cancel(){this.reject(K(this.auth,"cancelled-popup-request"))}cleanUp(){if(this.authWindow){this.authWindow.close()}if(this.pollId){window.clearTimeout(this.pollId)}this.authWindow=null;this.pollId=null;Nr.currentPopupAction=null}pollUserCancellation(){const e=()=>{var t,n;if((n=(t=this.authWindow)===null||t===void 0?void 0:t.window)===null||n===void 0?void 0:n.closed){this.pollId=window.setTimeout(()=>{this.pollId=null;this.reject(K(this.auth,"popup-closed-by-user"))},2e3);return}this.pollId=window.setTimeout(e,br.get())};e()}}Nr.currentPopupAction=null;
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const Or="pendingRedirect";const Pr=new Map;class Cr extends kr{constructor(e,t,n=false){super(e,["signInViaRedirect","linkViaRedirect","reauthViaRedirect","unknown"],t,undefined,n);this.eventId=null}async execute(){let e=Pr.get(this.auth._key());if(!e){try{const t=await Dr(this.resolver,this.auth);const n=t?await super.execute():null;e=()=>Promise.resolve(n)}catch(t){e=()=>Promise.reject(t)}Pr.set(this.auth._key(),e)}if(!this.bypassAuthState){Pr.set(this.auth._key(),()=>Promise.resolve(null))}return e()}async onAuthEvent(e){if(e.type==="signInViaRedirect"){return super.onAuthEvent(e)}else if(e.type==="unknown"){this.resolve(null);return}if(e.eventId){const t=await this.auth._redirectUserForId(e.eventId);if(t){this.user=t;return super.onAuthEvent(e)}else{this.resolve(null)}}}async onExecution(){}cleanUp(){}}async function Dr(e,t){const n=Fr(t);const i=Ur(e);if(!await i._isAvailable()){return false}const r=await i._get(n)==="true";await i._remove(n);return r}async function Lr(e,t){return Ur(e)._set(Fr(t),"true")}function Mr(e,t){Pr.set(e._key(),t)}function Ur(e){return te(e._redirectPersistence)}function Fr(e){return Ge(Or,e.config.apiKey,e.name)}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function Vr(e,t,n){return xr(e,t,n)}async function xr(e,t,n){const i=ct(e);J(e,t,Wt);const r=_r(i,n);await Lr(r,i);return r._openRedirect(i,t,"signInViaRedirect")}function Hr(e,t,n){return jr(e,t,n)}async function jr(e,t,n){const i=k(e);J(i.auth,t,Wt);const r=_r(i.auth,n);await Lr(r,i.auth);const s=await Br(i);return r._openRedirect(i.auth,t,"reauthViaRedirect",s)}function Wr(e,t,n){return qr(e,t,n)}async function qr(e,t,n){const i=k(e);J(i.auth,t,Wt);const r=_r(i.auth,n);await un(false,i,t.providerId);await Lr(r,i.auth);const s=await Br(i);return r._openRedirect(i.auth,t,"linkViaRedirect",s)}async function Gr(e,t){await ct(e)._initializationPromise;return zr(e,t,false)}async function zr(e,t,n=false){const i=ct(e);const r=_r(i,t);const s=new Cr(i,r,n);const o=await s.execute();if(o&&!n){delete o.user._redirectEventId;await i._persistUserIfCurrent(o.user);await i._setRedirectUser(null,t)}return o}async function Br(e){const t=Ti(`${e.uid}:::`);e._redirectEventId=t;await e.auth._setRedirectUser(e);await e.auth._persistUserIfCurrent(e);return t}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const Kr=10*60*1e3;class $r{constructor(e){this.auth=e;this.cachedEventUids=new Set;this.consumers=new Set;this.queuedRedirectEvent=null;this.hasHandledPotentialRedirect=false;this.lastProcessedEventTime=Date.now()}registerConsumer(e){this.consumers.add(e);if(this.queuedRedirectEvent&&this.isEventForConsumer(this.queuedRedirectEvent,e)){this.sendToConsumer(this.queuedRedirectEvent,e);this.saveEventToCache(this.queuedRedirectEvent);this.queuedRedirectEvent=null}}unregisterConsumer(e){this.consumers.delete(e)}onEvent(e){if(this.hasEventBeenHandled(e)){return false}let t=false;this.consumers.forEach(n=>{if(this.isEventForConsumer(e,n)){t=true;this.sendToConsumer(e,n);this.saveEventToCache(e)}});if(this.hasHandledPotentialRedirect||!Xr(e)){return t}this.hasHandledPotentialRedirect=true;if(!t){this.queuedRedirectEvent=e;t=true}return t}sendToConsumer(e,t){var n;if(e.error&&!Yr(e)){const i=((n=e.error.code)===null||n===void 0?void 0:n.split("auth/")[1])||"internal-error";t.onError(K(this.auth,i))}else{t.onAuthEvent(e)}}isEventForConsumer(e,t){const n=t.eventId===null||!!e.eventId&&e.eventId===t.eventId;return t.filter.includes(e.type)&&n}hasEventBeenHandled(e){if(Date.now()-this.lastProcessedEventTime>=Kr){this.cachedEventUids.clear()}return this.cachedEventUids.has(Jr(e))}saveEventToCache(e){this.cachedEventUids.add(Jr(e));this.lastProcessedEventTime=Date.now()}}function Jr(e){return[e.type,e.eventId,e.sessionId,e.tenantId].filter(e=>e).join("-")}function Yr({type:e,error:t}){return e==="unknown"&&(t===null||t===void 0?void 0:t.code)===`auth/${"no-auth-event"}`}function Xr(e){switch(e.type){case"signInViaRedirect":case"linkViaRedirect":case"reauthViaRedirect":return true;case"unknown":return Yr(e);default:return false}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */async function Qr(e,t={}){return me(e,"GET","/v1/projects",t)}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const Zr=/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;const es=/^https?/;async function ts(e){if(e.config.emulator){return}const{authorizedDomains:t}=await Qr(e);for(const e of t){try{if(ns(e)){return}}catch(e){}}B(e,"unauthorized-domain")}function ns(e){const t=re();const{protocol:n,hostname:i}=new URL(t);if(e.startsWith("chrome-extension://")){const r=new URL(e);if(r.hostname===""&&i===""){return n==="chrome-extension:"&&e.replace("chrome-extension://","")===t.replace("chrome-extension://","")}return n==="chrome-extension:"&&r.hostname===i}if(!es.test(n)){return false}if(Zr.test(e)){return i===e}const r=e.replace(/\./g,"\\.");const s=new RegExp("^(.+\\."+r+"|"+r+")$","i");return s.test(i)}
-/**
-   * @license
-   * Copyright 2020 Google LLC.
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const is=new ue(3e4,6e4);function rs(){const e=wi().___jsl;if(e===null||e===void 0?void 0:e.H){for(const t of Object.keys(e.H)){e.H[t].r=e.H[t].r||[];e.H[t].L=e.H[t].L||[];e.H[t].r=[...e.H[t].L];if(e.CP){for(let t=0;t<e.CP.length;t++){e.CP[t]=null}}}}}function ss(e){return new Promise((t,n)=>{var i,r,s;function o(){rs();gapi.load("gapi.iframes",{callback:()=>{t(gapi.iframes.getContext())},ontimeout:()=>{rs();n(K(e,"network-request-failed"))},timeout:is.get()})}if((r=(i=wi().gapi)===null||i===void 0?void 0:i.iframes)===null||r===void 0?void 0:r.Iframe){t(gapi.iframes.getContext())}else if(!!((s=wi().gapi)===null||s===void 0?void 0:s.load)){o()}else{const t=Ji("iframefcb");wi()[t]=()=>{if(!!gapi.load){o()}else{n(K(e,"network-request-failed"))}};return $i(`https://apis.google.com/js/api.js?onload=${t}`).catch(e=>n(e))}}).catch(e=>{os=null;throw e})}let os=null;function as(e){os=os||ss(e);return os}
-/**
-   * @license
-   * Copyright 2020 Google LLC.
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const cs=new ue(5e3,15e3);const us="__/auth/iframe";const ds="emulator/auth/iframe";const ls={style:{position:"absolute",top:"-100px",width:"1px",height:"1px"},"aria-hidden":"true",tabindex:"-1"};const hs=new Map([["identitytoolkit.googleapis.com","p"],["staging-identitytoolkit.sandbox.googleapis.com","s"],["test-identitytoolkit.sandbox.googleapis.com","t"]]);function fs(e){const t=e.config;X(t.authDomain,e,"auth-domain-config-required");const n=t.emulator?de(t,ds):`https://${e.config.authDomain}/${us}`;const i={apiKey:t.apiKey,appName:e.name,v:SDK_VERSION};const r=hs.get(e.config.apiHost);if(r){i.eid=r}const s=e._getFrameworks();if(s.length){i.fw=s.join(",")}return`${n}?${v(i).slice(1)}`}async function ps(e){const t=await as(e);const n=wi().gapi;X(n,e,"internal-error");return t.open({where:document.body,url:fs(e),messageHandlersFilter:n.iframes.CROSS_ORIGIN_IFRAMES_FILTER,attributes:ls,dontclear:true},t=>new Promise(async(n,i)=>{await t.restyle({setHideOnLeave:false});const r=K(e,"network-request-failed");const s=wi().setTimeout(()=>{i(r)},cs.get());function o(){wi().clearTimeout(s);n(t)}t.ping(o).then(o,()=>{i(r)})}))}
-/**
-   * @license
-   * Copyright 2020 Google LLC.
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const ms={location:"yes",resizable:"yes",statusbar:"yes",toolbar:"no"};const gs=500;const vs=600;const Is="_blank";const _s="http://localhost";class ys{constructor(e){this.window=e;this.associatedEvent=null}close(){if(this.window){try{this.window.close()}catch(e){}}}}function Ts(e,t,n,i=gs,s=vs){const o=Math.max((window.screen.availHeight-s)/2,0).toString();const a=Math.max((window.screen.availWidth-i)/2,0).toString();let c="";const u=Object.assign(Object.assign({},ms),{width:i.toString(),height:s.toString(),top:o,left:a});const d=r().toLowerCase();if(n){c=Je(d)?Is:n}if(Ke(d)){t=t||_s;u.scrollbars="yes"}const l=Object.entries(u).reduce((e,[t,n])=>`${e}${t}=${n},`,"");if(tt(d)&&c!=="_self"){Es(t||"",c);return new ys(null)}const h=window.open(t||"",c,l);X(h,e,"popup-blocked");try{h.focus()}catch(e){}return new ys(h)}function Es(e,t){const n=document.createElement("a");n.href=e;n.target=t;const i=document.createEvent("MouseEvent");i.initMouseEvent("click",true,true,window,1,0,0,0,0,false,false,false,false,1,null);n.dispatchEvent(i)}
-/**
-   * @license
-   * Copyright 2021 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const ws="__/auth/handler";const ks="emulator/auth/handler";function bs(e,t,n,i,r,s){X(e.config.authDomain,e,"auth-domain-config-required");X(e.config.apiKey,e,"invalid-api-key");const o={apiKey:e.config.apiKey,appName:e.name,authType:n,redirectUrl:i,v:SDK_VERSION,eventId:r};if(t instanceof Wt){t.setDefaultLanguage(e.languageCode);o.providerId=t.providerId||"";if(!p(t.getCustomParameters())){o.customParameters=JSON.stringify(t.getCustomParameters())}for(const[e,t]of Object.entries(s||{})){o[e]=t}}if(t instanceof qt){const e=t.getScopes().filter(e=>e!=="");if(e.length>0){o.scopes=e.join(",")}}if(e.tenantId){o.tid=e.tenantId}const a=o;for(const e of Object.keys(a)){if(a[e]===undefined){delete a[e]}}return`${As(e)}?${v(a).slice(1)}`}function As({config:e}){if(!e.emulator){return`https://${e.authDomain}/${ws}`}return de(e,ks)}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */const Rs="webStorageSupport";class Ss{constructor(){this.eventManagers={};this.iframes={};this.originValidationPromises={};this._redirectPersistence=Ii;this._completeRedirectFn=zr;this._overrideRedirectResult=Mr}async _openPopup(e,t,n,i){var r;Z((r=this.eventManagers[e._key()])===null||r===void 0?void 0:r.manager,"_initialize() not called before _openPopup()");const s=bs(e,t,n,re(),i);return Ts(e,s,Ti())}async _openRedirect(e,t,n,i){await this._originValidation(e);ki(bs(e,t,n,re(),i));return new Promise(()=>{})}_initialize(e){const t=e._key();if(this.eventManagers[t]){const{manager:e,promise:n}=this.eventManagers[t];if(e){return Promise.resolve(e)}else{Z(n,"If manager is not set, promise should be");return n}}const n=this.initAndGetManager(e);this.eventManagers[t]={promise:n};n.catch(()=>{delete this.eventManagers[t]});return n}async initAndGetManager(e){const t=await ps(e);const n=new $r(e);t.register("authEvent",t=>{X(t===null||t===void 0?void 0:t.authEvent,e,"invalid-auth-event");const i=n.onEvent(t.authEvent);return{status:i?"ACK":"ERROR"}},gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER);this.eventManagers[e._key()]={manager:n};this.iframes[e._key()]=t;return n}_isIframeWebStorageSupported(e,t){const n=this.iframes[e._key()];n.send(Rs,{type:Rs},n=>{var i;const r=(i=n===null||n===void 0?void 0:n[0])===null||i===void 0?void 0:i[Rs];if(r!==undefined){t(!!r)}B(e,"internal-error")},gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER)}_originValidation(e){const t=e._key();if(!this.originValidationPromises[t]){this.originValidationPromises[t]=ts(e)}return this.originValidationPromises[t]}get _shouldInitProactively(){return it()||$e()||et()}}const Ns=Ss;class Os{constructor(e){this.factorId=e}_process(e,t,n){switch(t.type){case"enroll":return this._finalizeEnroll(e,t.credential,n);case"signin":return this._finalizeSignIn(e,t.credential);default:return Q("unexpected MultiFactorSessionType")}}}class Ps extends Os{constructor(e){super("phone");this.credential=e}static _fromCredential(e){return new Ps(e)}_finalizeEnroll(e,t,n){return si(e,{idToken:t,displayName:n,phoneVerificationInfo:this.credential._makeVerificationRequest()})}_finalizeSignIn(e,t){return zi(e,{mfaPendingCredential:t,phoneVerificationInfo:this.credential._makeVerificationRequest()})}}class Cs{constructor(){}static assertion(e){return Ps._fromCredential(e)}}Cs.FACTOR_ID="phone";var Ds="@firebase/auth";var Ls="0.20.3";
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */class Ms{constructor(e){this.auth=e;this.internalListeners=new Map}getUid(){var e;this.assertAuthConfigured();return((e=this.auth.currentUser)===null||e===void 0?void 0:e.uid)||null}async getToken(e){this.assertAuthConfigured();await this.auth._initializationPromise;if(!this.auth.currentUser){return null}const t=await this.auth.currentUser.getIdToken(e);return{accessToken:t}}addAuthTokenListener(e){this.assertAuthConfigured();if(this.internalListeners.has(e)){return}const t=this.auth.onIdTokenChanged(t=>{var n;e(((n=t)===null||n===void 0?void 0:n.stsTokenManager.accessToken)||null)});this.internalListeners.set(e,t);this.updateProactiveRefresh()}removeAuthTokenListener(e){this.assertAuthConfigured();const t=this.internalListeners.get(e);if(!t){return}this.internalListeners.delete(e);t();this.updateProactiveRefresh()}assertAuthConfigured(){X(this.auth._initializationPromise,"dependent-sdk-initialized-before-auth")}updateProactiveRefresh(){if(this.internalListeners.size>0){this.auth._startProactiveRefresh()}else{this.auth._stopProactiveRefresh()}}}
-/**
-   * @license
-   * Copyright 2020 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function Us(e){switch(e){case"Node":return"node";case"ReactNative":return"rn";case"Worker":return"webworker";case"Cordova":return"cordova";default:return undefined}}function Fs(e){_registerComponent(new C("auth",(t,{options:n})=>{const i=t.getProvider("app").getImmediate();const r=t.getProvider("heartbeat");const{apiKey:s,authDomain:o}=i.options;return((t,i)=>{X(s&&!s.includes(":"),"invalid-api-key",{appName:t.name});X(!(o===null||o===void 0?void 0:o.includes(":")),"argument-error",{appName:t.name});const r={apiKey:s,authDomain:o,clientPlatform:e,apiHost:"identitytoolkit.googleapis.com",tokenApiHost:"securetoken.googleapis.com",apiScheme:"https",sdkClientVersion:st(e)};const a=new at(t,i,r);ie(a,n);return a})(i,r)},"PUBLIC").setInstantiationMode("EXPLICIT").setInstanceCreatedCallback((e,t,n)=>{const i=e.getProvider("auth-internal");i.initialize()}));_registerComponent(new C("auth-internal",e=>{const t=ct(e.getProvider("auth").getImmediate());return(e=>new Ms(e))(t)},"PRIVATE").setInstantiationMode("EXPLICIT"));registerVersion(Ds,Ls,Us(e));registerVersion(Ds,Ls,"esm2017")}
-/**
-   * @license
-   * Copyright 2021 Google LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */function Vs(e=getApp()){const t=_getProvider(e,"auth");if(t.isInitialized()){return t.getImmediate()}return ne(e,{popupRedirectResolver:Ns,persistence:[qi,gi,Ii]})}Fs("Browser");var xs={__esModule:true};xs.ActionCodeOperation=F;xs.ActionCodeURL=xt;xs.AuthCredential=mt;xs.AuthErrorCodes=q;xs.EmailAuthCredential=Rt;xs.EmailAuthProvider=jt;xs.FacebookAuthProvider=zt;xs.FactorId=D;xs.GithubAuthProvider=Kt;xs.GoogleAuthProvider=Bt;xs.OAuthCredential=Ot;xs.OAuthProvider=Gt;xs.OperationType=U;xs.PhoneAuthCredential=Ut;xs.PhoneAuthProvider=Ir;xs.PhoneMultiFactorGenerator=Cs;xs.ProviderId=L;xs.RecaptchaVerifier=dr;xs.SAMLAuthProvider=Xt;xs.SignInMethod=M;xs.TwitterAuthProvider=Qt;xs.applyActionCode=En;xs.beforeAuthStateChanged=Jn;xs.browserLocalPersistence=gi;xs.browserPopupRedirectResolver=Ns;xs.browserSessionPersistence=Ii;xs.checkActionCode=wn;xs.confirmPasswordReset=Tn;xs.connectAuthEmulator=dt;xs.createUserWithEmailAndPassword=bn;xs.debugErrorMap=H;xs.deleteUser=ei;xs.fetchSignInMethodsForEmail=Pn;xs.getAdditionalUserInfo=Bn;xs.getAuth=Vs;xs.getIdToken=be;xs.getIdTokenResult=Ae;xs.getMultiFactorResolver=ii;xs.getRedirectResult=Gr;xs.inMemoryPersistence=qe;xs.indexedDBLocalPersistence=qi;xs.initializeAuth=ne;xs.isSignInWithEmailLink=Sn;xs.linkWithCredential=fn;xs.linkWithPhoneNumber=pr;xs.linkWithPopup=Sr;xs.linkWithRedirect=Wr;xs.multiFactor=ui;xs.onAuthStateChanged=Yn;xs.onIdTokenChanged=$n;xs.parseActionCodeURL=Ht;xs.prodErrorMap=j;xs.reauthenticateWithCredential=pn;xs.reauthenticateWithPhoneNumber=mr;xs.reauthenticateWithPopup=Rr;xs.reauthenticateWithRedirect=Hr;xs.reload=Me;xs.sendEmailVerification=Cn;xs.sendPasswordResetEmail=yn;xs.sendSignInLinkToEmail=Rn;xs.setPersistence=Kn;xs.signInAnonymously=nn;xs.signInWithCredential=hn;xs.signInWithCustomToken=gn;xs.signInWithEmailAndPassword=An;xs.signInWithEmailLink=Nn;xs.signInWithPhoneNumber=fr;xs.signInWithPopup=Ar;xs.signInWithRedirect=Vr;xs.signOut=Zn;xs.unlink=an;xs.updateCurrentUser=Qn;xs.updateEmail=Un;xs.updatePassword=Fn;xs.updatePhoneNumber=vr;xs.updateProfile=Mn;xs.useDeviceLanguage=Xn;xs.verifyBeforeUpdateEmail=Dn;xs.verifyPasswordResetCode=kn;return xs});
-},
-	"de/marianzeis/githubfollower/lib/opml-generator.js":function(){sap.ui.define([],function(){
-/**
-   * Created by azu on 2014/01/18.
-   * LICENSE : MIT
-   */
-function n(e){return e.map(function(e){if(e.hasOwnProperty("_children")){var r=e["_children"];delete e["_children"];return{outline:n(r).concat({_attr:e})}}return{outline:{_attr:e}}})}function e(e){return xml({body:n(e)})}function r(n){var e=Object.keys(n).map(function(e){var r={};var t=n[e];if(e==="dateCreated"&&t instanceof Date){r[e]=t.toUTCString()}else{r[e]=t}return r});return xml({head:e})}function t(n,t){var i=r(n);var a=e(t);return'<?xml version="1.0" encoding="UTF-8"?><opml version="2.0">'+i+a+"</opml>"}var i={__esModule:true};i.main=t;return i});
-},
-	"de/marianzeis/githubfollower/lib/opmlpackage.js":'const myVersion="0.4.24",myProductName="opmlPackage";exports.parse=parse;exports.stringify=stringify;exports.htmlify=getOutlineHtml;exports.markdownToOutline=markdownToOutline;exports.outlineToMarkdown=outlineToMarkdown;exports.expandInclude=expandInclude;exports.visitAll=visitAll;exports.expandIncludes=expandIncludes;const utils=require("daveutils");const opmltojs=require("opmltojs");const xml2js=require("xml2js");const request=require("request");function parse(e,n){function t(e){if(typeof e=="object"){return false}return true}function i(e){try{e.head.generator=myProductName+" v"+myVersion}catch(e){}}function s(e,n){var i=e["$"];if(i!==undefined){for(var u in i){if(u!="subs"){n[u]=i[u]}}delete e["$"]}for(var u in e){var r=e[u];if(t(r)){n[u]=r}else{if(u=="outline"){if(n.subs===undefined){n.subs=new Array}if(Array.isArray(r)){for(var o=0;o<r.length;o++){var l=new Object;s(r[o],l);n.subs.push(l)}}else{var l=new Object;s(r,l);n.subs.push(l)}}else{n[u]=new Object;s(r,n[u])}}}}var u={explicitArray:false};xml2js.parseString(e,u,function(e,u){if(e){n(e)}else{if(u==null){let e={message:"Internal error: xml2js.parseString returned null."};n(e)}else{var r={opml:new Object};s(u.opml,r.opml);i(r.opml);if(t(r.opml.head)){r.opml.head=new Object}if(t(r.opml.body)){r.opml.body=new Object}n(undefined,r)}}})}function stringify(e){var n=opmltojs.opmlify(e);return n}function getOutlineHtml(e){var n="";indentlevel=0;function t(e){n+=filledString("\\t",indentlevel)+e+"\\n"}function i(e){t("<ul>");indentlevel++;e.subs.forEach(function(e){t("<li>"+e.text+"</li>");if(e.subs!==undefined){i(e)}});t("</ul>");indentlevel--}i(e.opml.body);return n}function visitAll(e,n){function t(e){if(e.subs!==undefined){for(var i=0;i<e.subs.length;i++){var s=e.subs[i];if(!n(s)){return false}t(s)}}return true}t(e.opml.body)}function markdownToOutline(e,n){var t={opml:{head:{},body:{subs:new Array}}};if(n===undefined){n=new Object}if(n.flAddUnderscores===undefined){n.flAddUnderscores=true}e=e.toString();var i=e.split("\\n"),s=0,u=new Array;var r=undefined,o=t.opml.body.subs;i.forEach(function(e){var t=0,i=true;while(e.length>0){if(e[0]!="\\t"){break}t++;e=utils.stringDelete(e,1,1)}if(utils.beginsWith(e,"- ")){e=utils.stringDelete(e,1,2)}else{if(utils.stringContains(e,":: ")){let t=e.split(":: ");if(r!==undefined){var l=n.flAddUnderscores?"_"+t[0]:t[0];r[l]=t[1]}i=false}}if(t>s){u.push(o);r.subs=new Array;o=r.subs}else{if(t<s){var f=s-t;for(var d=1;d<=f;d++){o=u.pop()}}}if(i){var a={text:e};o.push(a);r=a;s=t}});return t}function outlineToMarkdown(e){var n="",t=0;function i(e){n+=utils.filledString("\\t",t)+e+"\\n"}function s(e){for(var n in e){if(n!="subs"&&n!="text"){if(utils.beginsWith(n,"_")){i(utils.stringDelete(n,1,1)+":: "+e[n])}}}}function u(e){e.subs.forEach(function(e){i("- "+e.text);s(e);if(e.subs!==undefined){t++;u(e);t--}})}u(e.opml.body);return n}function httpRequest(e,n){request(e,function(e,t,i){if(e){n(e)}else{var s=t.statusCode;if(s<200||s>299){const e="The request returned a status code of "+t.statusCode+".";n({message:e})}else{n(undefined,i)}}})}function expandInclude(e,n){if(e.type=="include"&&e.url!==undefined){httpRequest(e.url,function(e,t){if(e){n(e)}else{parse(t,function(e,t){if(e){n(e)}else{n(undefined,t.opml.body)}})}})}else{n(undefined,e)}}function expandIncludes(e,n){function t(n,i){var s=new Object,u=s,r=new Array,o;function l(e){var n=e.name;if(n===undefined){n=utils.innerCaseName(e.text)}return n}function f(){r[r.length]=o;o=u;if(o.subs===undefined){o.subs=new Array}}function d(e,n){var t=new Object;utils.copyScalars(e,t);o.subs[o.subs.length]=t;u=t}function a(){o=r[r.length-1];r.length--}function c(e,i){function s(e,n){console.log("readInclude: url == "+e.url);expandInclude(e,function(e,i){if(e){n(undefined)}else{t(i,function(e){n(e)})}})}function u(e,n,t){function i(e,r){if(e.subs!==undefined&&r<e.subs.length){var o=e.subs[r],f=n+l(o);if(!utils.getBoolean(o.iscomment)){if(o.type=="include"){d(o,f);s(o,function(n){if(n!==undefined){u(n,f+"/",function(){a();i(e,r+1)})}else{i(e,r+1)}})}else{d(o,f);if(o.subs!==undefined){u(o,f+"/",function(){a();i(e,r+1)})}else{i(e,r+1)}}}else{i(e,r+1)}}else{t()}}f();if(e.type=="include"){s(e,function(e){if(e!==undefined){i(e,0)}})}else{i(e,0)}}u(n,"",function(){a();i()})}c(e,function(){i(s)})}t(e.opml.body,function(t){var i={opml:{head:{},body:t}};utils.copyScalars(e.opml.head,i.opml.head);n(i)})}',
-	"de/marianzeis/githubfollower/lib/xml.js":'var escapeForXML=require("./escapeForXML");var Stream=require("stream").Stream;var DEFAULT_INDENT="    ";function xml(e,t){if(typeof t!=="object"){t={indent:t}}var n=t.stream?new Stream:null,r="",i=false,a=!t.indent?"":t.indent===true?DEFAULT_INDENT:t.indent,o=true;function f(e){if(!o){e()}else{process.nextTick(e)}}function u(e,t){if(t!==undefined){r+=t}if(e&&!i){n=n||new Stream;i=true}if(e&&i){var a=r;f(function(){n.emit("data",a)});r=""}}function s(e,t){format(u,resolve(e,a,a?1:0),t)}function c(){if(n){var e=r;f(function(){n.emit("data",e);n.emit("end");n.readable=false;n.emit("close")})}}function l(e){var t=e.encoding||"UTF-8",n={version:"1.0",encoding:t};if(e.standalone){n.standalone=e.standalone}s({"?xml":{_attr:n}});r=r.replace("/>","?>")}f(function(){o=false});if(t.declaration){l(t.declaration)}if(e&&e.forEach){e.forEach(function(t,n){var r;if(n+1===e.length)r=c;s(t,r)})}else{s(e,c)}if(n){n.readable=true;return n}return r}function element(){var e=Array.prototype.slice.call(arguments),t={_elem:resolve(e)};t.push=function(e){if(!this.append){throw new Error("not assigned to a parent!")}var t=this;var n=this._elem.indent;format(this.append,resolve(e,n,this._elem.icount+(n?1:0)),function(){t.append(true)})};t.close=function(e){if(e!==undefined){this.push(e)}if(this.end){this.end()}};return t}function create_indent(e,t){return new Array(t||0).join(e||"")}function resolve(e,t,n){n=n||0;var r=create_indent(t,n);var i;var a=e;var o=false;if(typeof e==="object"){var f=Object.keys(e);i=f[0];a=e[i];if(a&&a._elem){a._elem.name=i;a._elem.icount=n;a._elem.indent=t;a._elem.indents=r;a._elem.interrupt=a;return a._elem}}var u=[],s=[];var c;function l(e){var t=Object.keys(e);t.forEach(function(t){u.push(attribute(t,e[t]))})}switch(typeof a){case"object":if(a===null)break;if(a._attr){l(a._attr)}if(a._cdata){s.push(("<![CDATA["+a._cdata).replace(/\\]\\]>/g,"]]]]><![CDATA[>")+"]]>")}if(a.forEach){c=false;s.push("");a.forEach(function(e){if(typeof e=="object"){var r=Object.keys(e)[0];if(r=="_attr"){l(e._attr)}else{s.push(resolve(e,t,n+1))}}else{s.pop();c=true;s.push(escapeForXML(e))}});if(!c){s.push("")}}break;default:s.push(escapeForXML(a))}return{name:i,interrupt:o,attributes:u,content:s,icount:n,indents:r,indent:t}}function format(e,t,n){if(typeof t!="object"){return e(false,t)}var r=t.interrupt?1:t.content.length;function i(){while(t.content.length){var i=t.content.shift();if(i===undefined)continue;if(a(i))return;format(e,i)}e(false,(r>1?t.indents:"")+(t.name?"</"+t.name+">":"")+(t.indent&&!n?"\\n":""));if(n){n()}}function a(t){if(t.interrupt){t.interrupt.append=e;t.interrupt.end=i;t.interrupt=false;e(true);return true}return false}e(false,t.indents+(t.name?"<"+t.name:"")+(t.attributes.length?" "+t.attributes.join(" "):"")+(r?t.name?">":"":t.name?"/>":"")+(t.indent&&r>1?"\\n":""));if(!r){return e(false,t.indent?"\\n":"")}if(!a(t)){i()}}function attribute(e,t){return e+"="+\'"\'+escapeForXML(t)+\'"\'}module.exports=xml;module.exports.element=module.exports.Element=element;',
 	"de/marianzeis/githubfollower/manifest.json":'{"_version":"1.12.0","sap.app":{"id":"de.marianzeis.githubfollower","type":"application","i18n":"i18n/i18n.properties","title":"{{appTitle}}","description":"{{appDescription}}","applicationVersion":{"version":"1.0.0"}},"sap.ui":{"technology":"UI5","icons":{},"deviceTypes":{"desktop":true,"tablet":true,"phone":true}},"sap.ui5":{"rootView":{"viewName":"de.marianzeis.githubfollower.view.App","type":"XML","async":true,"id":"app"},"dependencies":{"minUI5Version":"1.103.0","libs":{"sap.ui.core":{},"sap.ui.layout":{},"sap.ui.unified":{},"sap.m":{}}},"handleValidation":true,"contentDensities":{"compact":true,"cozy":true},"models":{"i18n":{"type":"sap.ui.model.resource.ResourceModel","settings":{"bundleName":"de.marianzeis.githubfollower.i18n.i18n"}}},"routing":{"config":{"routerClass":"sap.m.routing.Router","viewType":"XML","viewPath":"de.marianzeis.githubfollower.view","controlId":"app","controlAggregation":"pages","async":true},"routes":[{"pattern":"","name":"main","target":"main"}],"targets":{"main":{"viewId":"main","viewName":"Main"}}}}}',
 	"de/marianzeis/githubfollower/view/App.view.xml":'<mvc:View\n\tcontrollerName="de.marianzeis.githubfollower.controller.App"\n\tdisplayBlock="true"\n\txmlns="sap.m"\n\txmlns:mvc="sap.ui.core.mvc"><App id="app" /></mvc:View>',
 	"de/marianzeis/githubfollower/view/Main.view.xml":'<mvc:View\n\tcontrollerName="de.marianzeis.githubfollower.controller.Main"\n\tdisplayBlock="true"\n\txmlns="sap.m"\n\txmlns:mvc="sap.ui.core.mvc"><MessagePage\n\t\ttitle="{i18n>appTitle}"\n\t\ttext="{i18n>appTitle}"\n\t\ticon="sap-icon://feed"\n\t\tid="page"\n\t\tdescription="{i18n>appDescription}"><buttons><Button\n\t\t\t\ttext="Login to GitHub"\n\t\t\t\tpress=".signInToGitHub"\n\t\t\t\ttype="{= ${data>/token} === \'\' ? \'Negative\' : \'Success\' }"\n\t\t\t\tenabled="{= ${data>/token} === \'\'}"\n\t\t\t\t/><Button\n\t\t\t\ttext="Generate OPML from GitHub Following"\n\t\t\t\tpress=".createAndDownloadOPMLFile"\n\t\t\t\tenabled="{= ${data>/token} !== \'\'}"\n\t\t\t\tbusyIndicatorDelay="50"\n\t\t\t\tbusy="{data>/busyOPMLButton}" /></buttons></MessagePage></mvc:View>',
+	"firebase/app.js":function(){sap.ui.define(["exports"],function(e){"use strict";(function(){const e={NODE_ENV:"production"};try{if(process){process.env=Object.assign({},process.env);Object.assign(process.env,e);return}}catch(e){}globalThis.process={env:e}})();const t=function(e){const t=[];let n=0;for(let r=0;r<e.length;r++){let s=e.charCodeAt(r);if(s<128){t[n++]=s}else if(s<2048){t[n++]=s>>6|192;t[n++]=s&63|128}else if((s&64512)===55296&&r+1<e.length&&(e.charCodeAt(r+1)&64512)===56320){s=65536+((s&1023)<<10)+(e.charCodeAt(++r)&1023);t[n++]=s>>18|240;t[n++]=s>>12&63|128;t[n++]=s>>6&63|128;t[n++]=s&63|128}else{t[n++]=s>>12|224;t[n++]=s>>6&63|128;t[n++]=s&63|128}}return t};const n=function(e){const t=[];let n=0,r=0;while(n<e.length){const s=e[n++];if(s<128){t[r++]=String.fromCharCode(s)}else if(s>191&&s<224){const i=e[n++];t[r++]=String.fromCharCode((s&31)<<6|i&63)}else if(s>239&&s<365){const i=e[n++];const a=e[n++];const o=e[n++];const c=((s&7)<<18|(i&63)<<12|(a&63)<<6|o&63)-65536;t[r++]=String.fromCharCode(55296+(c>>10));t[r++]=String.fromCharCode(56320+(c&1023))}else{const i=e[n++];const a=e[n++];t[r++]=String.fromCharCode((s&15)<<12|(i&63)<<6|a&63)}}return t.join("")};const r={byteToCharMap_:null,charToByteMap_:null,byteToCharMapWebSafe_:null,charToByteMapWebSafe_:null,ENCODED_VALS_BASE:"ABCDEFGHIJKLMNOPQRSTUVWXYZ"+"abcdefghijklmnopqrstuvwxyz"+"0123456789",get ENCODED_VALS(){return this.ENCODED_VALS_BASE+"+/="},get ENCODED_VALS_WEBSAFE(){return this.ENCODED_VALS_BASE+"-_."},HAS_NATIVE_SUPPORT:typeof atob==="function",encodeByteArray(e,t){if(!Array.isArray(e)){throw Error("encodeByteArray takes an array as a parameter")}this.init_();const n=t?this.byteToCharMapWebSafe_:this.byteToCharMap_;const r=[];for(let t=0;t<e.length;t+=3){const s=e[t];const i=t+1<e.length;const a=i?e[t+1]:0;const o=t+2<e.length;const c=o?e[t+2]:0;const l=s>>2;const h=(s&3)<<4|a>>4;let f=(a&15)<<2|c>>6;let u=c&63;if(!o){u=64;if(!i){f=64}}r.push(n[l],n[h],n[f],n[u])}return r.join("")},encodeString(e,n){if(this.HAS_NATIVE_SUPPORT&&!n){return btoa(e)}return this.encodeByteArray(t(e),n)},decodeString(e,t){if(this.HAS_NATIVE_SUPPORT&&!t){return atob(e)}return n(this.decodeStringToByteArray(e,t))},decodeStringToByteArray(e,t){this.init_();const n=t?this.charToByteMapWebSafe_:this.charToByteMap_;const r=[];for(let t=0;t<e.length;){const s=n[e.charAt(t++)];const i=t<e.length;const a=i?n[e.charAt(t)]:0;++t;const o=t<e.length;const c=o?n[e.charAt(t)]:64;++t;const l=t<e.length;const h=l?n[e.charAt(t)]:64;++t;if(s==null||a==null||c==null||h==null){throw Error()}const f=s<<2|a>>4;r.push(f);if(c!==64){const e=a<<4&240|c>>2;r.push(e);if(h!==64){const e=c<<6&192|h;r.push(e)}}}return r},init_(){if(!this.byteToCharMap_){this.byteToCharMap_={};this.charToByteMap_={};this.byteToCharMapWebSafe_={};this.charToByteMapWebSafe_={};for(let e=0;e<this.ENCODED_VALS.length;e++){this.byteToCharMap_[e]=this.ENCODED_VALS.charAt(e);this.charToByteMap_[this.byteToCharMap_[e]]=e;this.byteToCharMapWebSafe_[e]=this.ENCODED_VALS_WEBSAFE.charAt(e);this.charToByteMapWebSafe_[this.byteToCharMapWebSafe_[e]]=e;if(e>=this.ENCODED_VALS_BASE.length){this.charToByteMap_[this.ENCODED_VALS_WEBSAFE.charAt(e)]=e;this.charToByteMapWebSafe_[this.ENCODED_VALS.charAt(e)]=e}}}}};const s=function(e){const n=t(e);return r.encodeByteArray(n,true)};const i=function(e){return s(e).replace(/\./g,"")};class a{constructor(){this.reject=()=>{};this.resolve=()=>{};this.promise=new Promise((e,t)=>{this.resolve=e;this.reject=t})}wrapCallback(e){return(t,n)=>{if(t){this.reject(t)}else{this.resolve(n)}if(typeof e==="function"){this.promise.catch(()=>{});if(e.length===1){e(t)}else{e(t,n)}}}}}function o(){return typeof indexedDB==="object"}function c(){return new Promise((e,t)=>{try{let n=true;const r="validate-browser-context-for-indexeddb-analytics-module";const s=self.indexedDB.open(r);s.onsuccess=()=>{s.result.close();if(!n){self.indexedDB.deleteDatabase(r)}e(true)};s.onupgradeneeded=()=>{n=false};s.onerror=()=>{var e;t(((e=s.error)===null||e===void 0?void 0:e.message)||"")}}catch(e){t(e)}})}const l="FirebaseError";class h extends Error{constructor(e,t,n){super(t);this.code=e;this.customData=n;this.name=l;Object.setPrototypeOf(this,h.prototype);if(Error.captureStackTrace){Error.captureStackTrace(this,f.prototype.create)}}}class f{constructor(e,t,n){this.service=e;this.serviceName=t;this.errors=n}create(e,...t){const n=t[0]||{};const r=`${this.service}/${e}`;const s=this.errors[e];const i=s?u(s,n):"Error";const a=`${this.serviceName}: ${i} (${r}).`;const o=new h(r,a,n);return o}}function u(e,t){return e.replace(d,(e,n)=>{const r=t[n];return r!=null?String(r):`<${n}?>`})}const d=/\{\$([^}]+)}/g;function p(e,t){if(e===t){return true}const n=Object.keys(e);const r=Object.keys(t);for(const s of n){if(!r.includes(s)){return false}const n=e[s];const i=t[s];if(g(n)&&g(i)){if(!p(n,i)){return false}}else if(n!==i){return false}}for(const e of r){if(!n.includes(e)){return false}}return true}function g(e){return e!==null&&typeof e==="object"}class m{constructor(e,t,n){this.name=e;this.instanceFactory=t;this.type=n;this.multipleInstances=false;this.serviceProps={};this.instantiationMode="LAZY";this.onInstanceCreated=null}setInstantiationMode(e){this.instantiationMode=e;return this}setMultipleInstances(e){this.multipleInstances=e;return this}setServiceProps(e){this.serviceProps=e;return this}setInstanceCreatedCallback(e){this.onInstanceCreated=e;return this}}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const b="[DEFAULT]";
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class v{constructor(e,t){this.name=e;this.container=t;this.component=null;this.instances=new Map;this.instancesDeferred=new Map;this.instancesOptions=new Map;this.onInitCallbacks=new Map}get(e){const t=this.normalizeInstanceIdentifier(e);if(!this.instancesDeferred.has(t)){const e=new a;this.instancesDeferred.set(t,e);if(this.isInitialized(t)||this.shouldAutoInitialize()){try{const n=this.getOrInitializeService({instanceIdentifier:t});if(n){e.resolve(n)}}catch(e){}}}return this.instancesDeferred.get(t).promise}getImmediate(e){var t;const n=this.normalizeInstanceIdentifier(e===null||e===void 0?void 0:e.identifier);const r=(t=e===null||e===void 0?void 0:e.optional)!==null&&t!==void 0?t:false;if(this.isInitialized(n)||this.shouldAutoInitialize()){try{return this.getOrInitializeService({instanceIdentifier:n})}catch(e){if(r){return null}else{throw e}}}else{if(r){return null}else{throw Error(`Service ${this.name} is not available`)}}}getComponent(){return this.component}setComponent(e){if(e.name!==this.name){throw Error(`Mismatching Component ${e.name} for Provider ${this.name}.`)}if(this.component){throw Error(`Component for ${this.name} has already been provided`)}this.component=e;if(!this.shouldAutoInitialize()){return}if(_(e)){try{this.getOrInitializeService({instanceIdentifier:b})}catch(e){}}for(const[e,t]of this.instancesDeferred.entries()){const n=this.normalizeInstanceIdentifier(e);try{const e=this.getOrInitializeService({instanceIdentifier:n});t.resolve(e)}catch(e){}}}clearInstance(e=b){this.instancesDeferred.delete(e);this.instancesOptions.delete(e);this.instances.delete(e)}async delete(){const e=Array.from(this.instances.values());await Promise.all([...e.filter(e=>"INTERNAL"in e).map(e=>e.INTERNAL.delete()),...e.filter(e=>"_delete"in e).map(e=>e._delete())])}isComponentSet(){return this.component!=null}isInitialized(e=b){return this.instances.has(e)}getOptions(e=b){return this.instancesOptions.get(e)||{}}initialize(e={}){const{options:t={}}=e;const n=this.normalizeInstanceIdentifier(e.instanceIdentifier);if(this.isInitialized(n)){throw Error(`${this.name}(${n}) has already been initialized`)}if(!this.isComponentSet()){throw Error(`Component ${this.name} has not been registered yet`)}const r=this.getOrInitializeService({instanceIdentifier:n,options:t});for(const[e,t]of this.instancesDeferred.entries()){const s=this.normalizeInstanceIdentifier(e);if(n===s){t.resolve(r)}}return r}onInit(e,t){var n;const r=this.normalizeInstanceIdentifier(t);const s=(n=this.onInitCallbacks.get(r))!==null&&n!==void 0?n:new Set;s.add(e);this.onInitCallbacks.set(r,s);const i=this.instances.get(r);if(i){e(i,r)}return()=>{s.delete(e)}}invokeOnInitCallbacks(e,t){const n=this.onInitCallbacks.get(t);if(!n){return}for(const r of n){try{r(e,t)}catch(e){}}}getOrInitializeService({instanceIdentifier:e,options:t={}}){let n=this.instances.get(e);if(!n&&this.component){n=this.component.instanceFactory(this.container,{instanceIdentifier:E(e),options:t});this.instances.set(e,n);this.instancesOptions.set(e,t);this.invokeOnInitCallbacks(n,e);if(this.component.onInstanceCreated){try{this.component.onInstanceCreated(this.container,e,n)}catch(e){}}}return n||null}normalizeInstanceIdentifier(e=b){if(this.component){return this.component.multipleInstances?e:b}else{return e}}shouldAutoInitialize(){return!!this.component&&this.component.instantiationMode!=="EXPLICIT"}}function E(e){return e===b?undefined:e}function _(e){return e.instantiationMode==="EAGER"}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class y{constructor(e){this.name=e;this.providers=new Map}addComponent(e){const t=this.getProvider(e.name);if(t.isComponentSet()){throw new Error(`Component ${e.name} has already been registered with ${this.name}`)}t.setComponent(e)}addOrOverwriteComponent(e){const t=this.getProvider(e.name);if(t.isComponentSet()){this.providers.delete(e.name)}this.addComponent(e)}getProvider(e){if(this.providers.has(e)){return this.providers.get(e)}const t=new v(e,this);this.providers.set(e,t);return t}getProviders(){return Array.from(this.providers.values())}}
+/**
+     * @license
+     * Copyright 2017 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const I=[];var w;(function(e){e[e["DEBUG"]=0]="DEBUG";e[e["VERBOSE"]=1]="VERBOSE";e[e["INFO"]=2]="INFO";e[e["WARN"]=3]="WARN";e[e["ERROR"]=4]="ERROR";e[e["SILENT"]=5]="SILENT"})(w||(w={}));const C={debug:w.DEBUG,verbose:w.VERBOSE,info:w.INFO,warn:w.WARN,error:w.ERROR,silent:w.SILENT};const D=w.INFO;const S={[w.DEBUG]:"log",[w.VERBOSE]:"log",[w.INFO]:"info",[w.WARN]:"warn",[w.ERROR]:"error"};const A=(e,t,...n)=>{if(t<e.logLevel){return}const r=(new Date).toISOString();const s=S[t];if(s){console[s](`[${r}]  ${e.name}:`,...n)}else{throw new Error(`Attempted to log a message with an invalid logType (value: ${t})`)}};class O{constructor(e){this.name=e;this._logLevel=D;this._logHandler=A;this._userLogHandler=null;I.push(this)}get logLevel(){return this._logLevel}set logLevel(e){if(!(e in w)){throw new TypeError(`Invalid value "${e}" assigned to \`logLevel\``)}this._logLevel=e}setLogLevel(e){this._logLevel=typeof e==="string"?C[e]:e}get logHandler(){return this._logHandler}set logHandler(e){if(typeof e!=="function"){throw new TypeError("Value assigned to `logHandler` must be a function")}this._logHandler=e}get userLogHandler(){return this._userLogHandler}set userLogHandler(e){this._userLogHandler=e}debug(...e){this._userLogHandler&&this._userLogHandler(this,w.DEBUG,...e);this._logHandler(this,w.DEBUG,...e)}log(...e){this._userLogHandler&&this._userLogHandler(this,w.VERBOSE,...e);this._logHandler(this,w.VERBOSE,...e)}info(...e){this._userLogHandler&&this._userLogHandler(this,w.INFO,...e);this._logHandler(this,w.INFO,...e)}warn(...e){this._userLogHandler&&this._userLogHandler(this,w.WARN,...e);this._logHandler(this,w.WARN,...e)}error(...e){this._userLogHandler&&this._userLogHandler(this,w.ERROR,...e);this._logHandler(this,w.ERROR,...e)}}function L(e){I.forEach(t=>{t.setLogLevel(e)})}function B(e,t){for(const n of I){let r=null;if(t&&t.level){r=C[t.level]}if(e===null){n.userLogHandler=null}else{n.userLogHandler=(t,n,...s)=>{const i=s.map(e=>{if(e==null){return null}else if(typeof e==="string"){return e}else if(typeof e==="number"||typeof e==="boolean"){return e.toString()}else if(e instanceof Error){return e.message}else{try{return JSON.stringify(e)}catch(e){return null}}}).filter(e=>e).join(" ");if(n>=(r!==null&&r!==void 0?r:t.logLevel)){e({level:w[n].toLowerCase(),message:i,args:s,type:t.name})}}}}}const N=(e,t)=>t.some(t=>e instanceof t);let T;let M;function P(){return T||(T=[IDBDatabase,IDBObjectStore,IDBIndex,IDBCursor,IDBTransaction])}function H(){return M||(M=[IDBCursor.prototype.advance,IDBCursor.prototype.continue,IDBCursor.prototype.continuePrimaryKey])}const R=new WeakMap;const $=new WeakMap;const k=new WeakMap;const j=new WeakMap;const V=new WeakMap;function F(e){const t=new Promise((t,n)=>{const r=()=>{e.removeEventListener("success",s);e.removeEventListener("error",i)};const s=()=>{t(K(e.result));r()};const i=()=>{n(e.error);r()};e.addEventListener("success",s);e.addEventListener("error",i)});t.then(t=>{if(t instanceof IDBCursor){R.set(t,e)}}).catch(()=>{});V.set(t,e);return t}function z(e){if($.has(e))return;const t=new Promise((t,n)=>{const r=()=>{e.removeEventListener("complete",s);e.removeEventListener("error",i);e.removeEventListener("abort",i)};const s=()=>{t();r()};const i=()=>{n(e.error||new DOMException("AbortError","AbortError"));r()};e.addEventListener("complete",s);e.addEventListener("error",i);e.addEventListener("abort",i)});$.set(e,t)}let W={get(e,t,n){if(e instanceof IDBTransaction){if(t==="done")return $.get(e);if(t==="objectStoreNames"){return e.objectStoreNames||k.get(e)}if(t==="store"){return n.objectStoreNames[1]?undefined:n.objectStore(n.objectStoreNames[0])}}return K(e[t])},set(e,t,n){e[t]=n;return true},has(e,t){if(e instanceof IDBTransaction&&(t==="done"||t==="store")){return true}return t in e}};function x(e){W=e(W)}function U(e){if(e===IDBDatabase.prototype.transaction&&!("objectStoreNames"in IDBTransaction.prototype)){return function(t,...n){const r=e.call(J(this),t,...n);k.set(r,t.sort?t.sort():[t]);return K(r)}}if(H().includes(e)){return function(...t){e.apply(J(this),t);return K(R.get(this))}}return function(...t){return K(e.apply(J(this),t))}}function G(e){if(typeof e==="function")return U(e);if(e instanceof IDBTransaction)z(e);if(N(e,P()))return new Proxy(e,W);return e}function K(e){if(e instanceof IDBRequest)return F(e);if(j.has(e))return j.get(e);const t=G(e);if(t!==e){j.set(e,t);V.set(t,e)}return t}const J=e=>V.get(e);function Y(e,t,{blocked:n,upgrade:r,blocking:s,terminated:i}={}){const a=indexedDB.open(e,t);const o=K(a);if(r){a.addEventListener("upgradeneeded",e=>{r(K(a.result),e.oldVersion,e.newVersion,K(a.transaction))})}if(n)a.addEventListener("blocked",()=>n());o.then(e=>{if(i)e.addEventListener("close",()=>i());if(s)e.addEventListener("versionchange",()=>s())}).catch(()=>{});return o}const q=["get","getKey","getAll","getAllKeys","count"];const X=["put","add","delete","clear"];const Z=new Map;function Q(e,t){if(!(e instanceof IDBDatabase&&!(t in e)&&typeof t==="string")){return}if(Z.get(t))return Z.get(t);const n=t.replace(/FromIndex$/,"");const r=t!==n;const s=X.includes(n);if(!(n in(r?IDBIndex:IDBObjectStore).prototype)||!(s||q.includes(n))){return}const i=async function(e,...t){const i=this.transaction(e,s?"readwrite":"readonly");let a=i.store;if(r)a=a.index(t.shift());return(await Promise.all([a[n](...t),s&&i.done]))[0]};Z.set(t,i);return i}x(e=>({...e,get:(t,n,r)=>Q(t,n)||e.get(t,n,r),has:(t,n)=>!!Q(t,n)||e.has(t,n)}));
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class ee{constructor(e){this.container=e}getPlatformInfoString(){const e=this.container.getProviders();return e.map(e=>{if(te(e)){const t=e.getImmediate();return`${t.library}/${t.version}`}else{return null}}).filter(e=>e).join(" ")}}function te(e){const t=e.getComponent();return(t===null||t===void 0?void 0:t.type)==="VERSION"}const ne="@firebase/app";const re="0.7.27";
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const se=new O("@firebase/app");const ie="@firebase/app-compat";const ae="@firebase/analytics-compat";const oe="@firebase/analytics";const ce="@firebase/app-check-compat";const le="@firebase/app-check";const he="@firebase/auth";const fe="@firebase/auth-compat";const ue="@firebase/database";const de="@firebase/database-compat";const pe="@firebase/functions";const ge="@firebase/functions-compat";const me="@firebase/installations";const be="@firebase/installations-compat";const ve="@firebase/messaging";const Ee="@firebase/messaging-compat";const _e="@firebase/performance";const ye="@firebase/performance-compat";const Ie="@firebase/remote-config";const we="@firebase/remote-config-compat";const Ce="@firebase/storage";const De="@firebase/storage-compat";const Se="@firebase/firestore";const Ae="@firebase/firestore-compat";const Oe="firebase";const Le="9.8.4";
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Be="[DEFAULT]";const Ne={[ne]:"fire-core",[ie]:"fire-core-compat",[oe]:"fire-analytics",[ae]:"fire-analytics-compat",[le]:"fire-app-check",[ce]:"fire-app-check-compat",[he]:"fire-auth",[fe]:"fire-auth-compat",[ue]:"fire-rtdb",[de]:"fire-rtdb-compat",[pe]:"fire-fn",[ge]:"fire-fn-compat",[me]:"fire-iid",[be]:"fire-iid-compat",[ve]:"fire-fcm",[Ee]:"fire-fcm-compat",[_e]:"fire-perf",[ye]:"fire-perf-compat",[Ie]:"fire-rc",[we]:"fire-rc-compat",[Ce]:"fire-gcs",[De]:"fire-gcs-compat",[Se]:"fire-fst",[Ae]:"fire-fst-compat","fire-js":"fire-js",[Oe]:"fire-js-all"};
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Te=new Map;const Me=new Map;function Pe(e,t){try{e.container.addComponent(t)}catch(n){se.debug(`Component ${t.name} failed to register with FirebaseApp ${e.name}`,n)}}function He(e,t){e.container.addOrOverwriteComponent(t)}function Re(e){const t=e.name;if(Me.has(t)){se.debug(`There were multiple attempts to register component ${t}.`);return false}Me.set(t,e);for(const t of Te.values()){Pe(t,e)}return true}function $e(e,t){const n=e.container.getProvider("heartbeat").getImmediate({optional:true});if(n){void n.triggerHeartbeat()}return e.container.getProvider(t)}function ke(e,t,n=Be){$e(e,t).clearInstance(n)}function je(){Me.clear()}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Ve={["no-app"]:"No Firebase App '{$appName}' has been created - "+"call Firebase App.initializeApp()",["bad-app-name"]:"Illegal App name: '{$appName}",["duplicate-app"]:"Firebase App named '{$appName}' already exists with different options or config",["app-deleted"]:"Firebase App named '{$appName}' already deleted",["invalid-app-argument"]:"firebase.{$appName}() takes either no argument or a "+"Firebase App instance.",["invalid-log-argument"]:"First argument to `onLog` must be null or a function.",["storage-open"]:"Error thrown when opening storage. Original error: {$originalErrorMessage}.",["storage-get"]:"Error thrown when reading from storage. Original error: {$originalErrorMessage}.",["storage-set"]:"Error thrown when writing to storage. Original error: {$originalErrorMessage}.",["storage-delete"]:"Error thrown when deleting from storage. Original error: {$originalErrorMessage}."};const Fe=new f("app","Firebase",Ve);
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class ze{constructor(e,t,n){this._isDeleted=false;this._options=Object.assign({},e);this._config=Object.assign({},t);this._name=t.name;this._automaticDataCollectionEnabled=t.automaticDataCollectionEnabled;this._container=n;this.container.addComponent(new m("app",()=>this,"PUBLIC"))}get automaticDataCollectionEnabled(){this.checkDestroyed();return this._automaticDataCollectionEnabled}set automaticDataCollectionEnabled(e){this.checkDestroyed();this._automaticDataCollectionEnabled=e}get name(){this.checkDestroyed();return this._name}get options(){this.checkDestroyed();return this._options}get config(){this.checkDestroyed();return this._config}get container(){return this._container}get isDeleted(){return this._isDeleted}set isDeleted(e){this._isDeleted=e}checkDestroyed(){if(this.isDeleted){throw Fe.create("app-deleted",{appName:this._name})}}}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const We=Le;function xe(e,t={}){if(typeof t!=="object"){const e=t;t={name:e}}const n=Object.assign({name:Be,automaticDataCollectionEnabled:false},t);const r=n.name;if(typeof r!=="string"||!r){throw Fe.create("bad-app-name",{appName:String(r)})}const s=Te.get(r);if(s){if(p(e,s.options)&&p(n,s.config)){return s}else{throw Fe.create("duplicate-app",{appName:r})}}const i=new y(r);for(const e of Me.values()){i.addComponent(e)}const a=new ze(e,n,i);Te.set(r,a);return a}function Ue(e=Be){const t=Te.get(e);if(!t){throw Fe.create("no-app",{appName:e})}return t}function Ge(){return Array.from(Te.values())}async function Ke(e){const t=e.name;if(Te.has(t)){Te.delete(t);await Promise.all(e.container.getProviders().map(e=>e.delete()));e.isDeleted=true}}function Je(e,t,n){var r;let s=(r=Ne[e])!==null&&r!==void 0?r:e;if(n){s+=`-${n}`}const i=s.match(/\s|\//);const a=t.match(/\s|\//);if(i||a){const e=[`Unable to register library "${s}" with version "${t}":`];if(i){e.push(`library name "${s}" contains illegal characters (whitespace or "/")`)}if(i&&a){e.push("and")}if(a){e.push(`version name "${t}" contains illegal characters (whitespace or "/")`)}se.warn(e.join(" "));return}Re(new m(`${s}-version`,()=>({library:s,version:t}),"VERSION"))}function Ye(e,t){if(e!==null&&typeof e!=="function"){throw Fe.create("invalid-log-argument")}B(e,t)}function qe(e){L(e)}
+/**
+     * @license
+     * Copyright 2021 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Xe="firebase-heartbeat-database";const Ze=1;const Qe="firebase-heartbeat-store";let et=null;function tt(){if(!et){et=Y(Xe,Ze,{upgrade:(e,t)=>{switch(t){case 0:e.createObjectStore(Qe)}}}).catch(e=>{throw Fe.create("storage-open",{originalErrorMessage:e.message})})}return et}async function nt(e){var t;try{const t=await tt();return t.transaction(Qe).objectStore(Qe).get(st(e))}catch(e){throw Fe.create("storage-get",{originalErrorMessage:(t=e)===null||t===void 0?void 0:t.message})}}async function rt(e,t){var n;try{const n=await tt();const r=n.transaction(Qe,"readwrite");const s=r.objectStore(Qe);await s.put(t,st(e));return r.done}catch(e){throw Fe.create("storage-set",{originalErrorMessage:(n=e)===null||n===void 0?void 0:n.message})}}function st(e){return`${e.name}!${e.options.appId}`}
+/**
+     * @license
+     * Copyright 2021 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const it=1024;const at=30*24*60*60*1e3;class ot{constructor(e){this.container=e;this._heartbeatsCache=null;const t=this.container.getProvider("app").getImmediate();this._storage=new ht(t);this._heartbeatsCachePromise=this._storage.read().then(e=>{this._heartbeatsCache=e;return e})}async triggerHeartbeat(){const e=this.container.getProvider("platform-logger").getImmediate();const t=e.getPlatformInfoString();const n=ct();if(this._heartbeatsCache===null){this._heartbeatsCache=await this._heartbeatsCachePromise}if(this._heartbeatsCache.lastSentHeartbeatDate===n||this._heartbeatsCache.heartbeats.some(e=>e.date===n)){return}else{this._heartbeatsCache.heartbeats.push({date:n,agent:t})}this._heartbeatsCache.heartbeats=this._heartbeatsCache.heartbeats.filter(e=>{const t=new Date(e.date).valueOf();const n=Date.now();return n-t<=at});return this._storage.overwrite(this._heartbeatsCache)}async getHeartbeatsHeader(){if(this._heartbeatsCache===null){await this._heartbeatsCachePromise}if(this._heartbeatsCache===null||this._heartbeatsCache.heartbeats.length===0){return""}const e=ct();const{heartbeatsToSend:t,unsentEntries:n}=lt(this._heartbeatsCache.heartbeats);const r=i(JSON.stringify({version:2,heartbeats:t}));this._heartbeatsCache.lastSentHeartbeatDate=e;if(n.length>0){this._heartbeatsCache.heartbeats=n;await this._storage.overwrite(this._heartbeatsCache)}else{this._heartbeatsCache.heartbeats=[];void this._storage.overwrite(this._heartbeatsCache)}return r}}function ct(){const e=new Date;return e.toISOString().substring(0,10)}function lt(e,t=it){const n=[];let r=e.slice();for(const s of e){const e=n.find(e=>e.agent===s.agent);if(!e){n.push({agent:s.agent,dates:[s.date]});if(ft(n)>t){n.pop();break}}else{e.dates.push(s.date);if(ft(n)>t){e.dates.pop();break}}r=r.slice(1)}return{heartbeatsToSend:n,unsentEntries:r}}class ht{constructor(e){this.app=e;this._canUseIndexedDBPromise=this.runIndexedDBEnvironmentCheck()}async runIndexedDBEnvironmentCheck(){if(!o()){return false}else{return c().then(()=>true).catch(()=>false)}}async read(){const e=await this._canUseIndexedDBPromise;if(!e){return{heartbeats:[]}}else{const e=await nt(this.app);return e||{heartbeats:[]}}}async overwrite(e){var t;const n=await this._canUseIndexedDBPromise;if(!n){return}else{const n=await this.read();return rt(this.app,{lastSentHeartbeatDate:(t=e.lastSentHeartbeatDate)!==null&&t!==void 0?t:n.lastSentHeartbeatDate,heartbeats:e.heartbeats})}}async add(e){var t;const n=await this._canUseIndexedDBPromise;if(!n){return}else{const n=await this.read();return rt(this.app,{lastSentHeartbeatDate:(t=e.lastSentHeartbeatDate)!==null&&t!==void 0?t:n.lastSentHeartbeatDate,heartbeats:[...n.heartbeats,...e.heartbeats]})}}}function ft(e){return i(JSON.stringify({version:2,heartbeats:e})).length}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function ut(e){Re(new m("platform-logger",e=>new ee(e),"PRIVATE"));Re(new m("heartbeat",e=>new ot(e),"PRIVATE"));Je(ne,re,e);Je(ne,re,"esm2017");Je("fire-js","")}ut("");var dt="firebase";var pt="9.8.4";
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */Je(dt,pt,"app");e.FirebaseError=h;e.SDK_VERSION=We;e._DEFAULT_ENTRY_NAME=Be;e._addComponent=Pe;e._addOrOverwriteComponent=He;e._apps=Te;e._clearComponents=je;e._components=Me;e._getProvider=$e;e._registerComponent=Re;e._removeServiceInstance=ke;e.deleteApp=Ke;e.getApp=Ue;e.getApps=Ge;e.initializeApp=xe;e.onLog=Ye;e.registerVersion=Je;e.setLogLevel=qe;Object.defineProperty(e,"__esModule",{value:true})});
+},
+	"firebase/auth.js":function(){sap.ui.define(["exports"],function(e){"use strict";(function(){const e={NODE_ENV:"production"};try{if(process){process.env=Object.assign({},process.env);Object.assign(process.env,e);return}}catch(e){}globalThis.process={env:e}})();const t=function(e){const t=[];let n=0;for(let r=0;r<e.length;r++){let i=e.charCodeAt(r);if(i<128){t[n++]=i}else if(i<2048){t[n++]=i>>6|192;t[n++]=i&63|128}else if((i&64512)===55296&&r+1<e.length&&(e.charCodeAt(r+1)&64512)===56320){i=65536+((i&1023)<<10)+(e.charCodeAt(++r)&1023);t[n++]=i>>18|240;t[n++]=i>>12&63|128;t[n++]=i>>6&63|128;t[n++]=i&63|128}else{t[n++]=i>>12|224;t[n++]=i>>6&63|128;t[n++]=i&63|128}}return t};const n=function(e){const t=[];let n=0,r=0;while(n<e.length){const i=e[n++];if(i<128){t[r++]=String.fromCharCode(i)}else if(i>191&&i<224){const s=e[n++];t[r++]=String.fromCharCode((i&31)<<6|s&63)}else if(i>239&&i<365){const s=e[n++];const o=e[n++];const a=e[n++];const c=((i&7)<<18|(s&63)<<12|(o&63)<<6|a&63)-65536;t[r++]=String.fromCharCode(55296+(c>>10));t[r++]=String.fromCharCode(56320+(c&1023))}else{const s=e[n++];const o=e[n++];t[r++]=String.fromCharCode((i&15)<<12|(s&63)<<6|o&63)}}return t.join("")};const r={byteToCharMap_:null,charToByteMap_:null,byteToCharMapWebSafe_:null,charToByteMapWebSafe_:null,ENCODED_VALS_BASE:"ABCDEFGHIJKLMNOPQRSTUVWXYZ"+"abcdefghijklmnopqrstuvwxyz"+"0123456789",get ENCODED_VALS(){return this.ENCODED_VALS_BASE+"+/="},get ENCODED_VALS_WEBSAFE(){return this.ENCODED_VALS_BASE+"-_."},HAS_NATIVE_SUPPORT:typeof atob==="function",encodeByteArray(e,t){if(!Array.isArray(e)){throw Error("encodeByteArray takes an array as a parameter")}this.init_();const n=t?this.byteToCharMapWebSafe_:this.byteToCharMap_;const r=[];for(let t=0;t<e.length;t+=3){const i=e[t];const s=t+1<e.length;const o=s?e[t+1]:0;const a=t+2<e.length;const c=a?e[t+2]:0;const u=i>>2;const l=(i&3)<<4|o>>4;let d=(o&15)<<2|c>>6;let h=c&63;if(!a){h=64;if(!s){d=64}}r.push(n[u],n[l],n[d],n[h])}return r.join("")},encodeString(e,n){if(this.HAS_NATIVE_SUPPORT&&!n){return btoa(e)}return this.encodeByteArray(t(e),n)},decodeString(e,t){if(this.HAS_NATIVE_SUPPORT&&!t){return atob(e)}return n(this.decodeStringToByteArray(e,t))},decodeStringToByteArray(e,t){this.init_();const n=t?this.charToByteMapWebSafe_:this.charToByteMap_;const r=[];for(let t=0;t<e.length;){const i=n[e.charAt(t++)];const s=t<e.length;const o=s?n[e.charAt(t)]:0;++t;const a=t<e.length;const c=a?n[e.charAt(t)]:64;++t;const u=t<e.length;const l=u?n[e.charAt(t)]:64;++t;if(i==null||o==null||c==null||l==null){throw Error()}const d=i<<2|o>>4;r.push(d);if(c!==64){const e=o<<4&240|c>>2;r.push(e);if(l!==64){const e=c<<6&192|l;r.push(e)}}}return r},init_(){if(!this.byteToCharMap_){this.byteToCharMap_={};this.charToByteMap_={};this.byteToCharMapWebSafe_={};this.charToByteMapWebSafe_={};for(let e=0;e<this.ENCODED_VALS.length;e++){this.byteToCharMap_[e]=this.ENCODED_VALS.charAt(e);this.charToByteMap_[this.byteToCharMap_[e]]=e;this.byteToCharMapWebSafe_[e]=this.ENCODED_VALS_WEBSAFE.charAt(e);this.charToByteMapWebSafe_[this.byteToCharMapWebSafe_[e]]=e;if(e>=this.ENCODED_VALS_BASE.length){this.charToByteMap_[this.ENCODED_VALS_WEBSAFE.charAt(e)]=e;this.charToByteMapWebSafe_[this.ENCODED_VALS.charAt(e)]=e}}}}};const i=function(e){const n=t(e);return r.encodeByteArray(n,true)};const s=function(e){return i(e).replace(/\./g,"")};const o=function(e){try{return r.decodeString(e,true)}catch(e){console.error("base64Decode failed: ",e)}return null};function a(){if(typeof navigator!=="undefined"&&typeof navigator["userAgent"]==="string"){return navigator["userAgent"]}else{return""}}function c(){return typeof window!=="undefined"&&!!(window["cordova"]||window["phonegap"]||window["PhoneGap"])&&/ios|iphone|ipod|ipad|android|blackberry|iemobile/i.test(a())}function u(){const e=typeof chrome==="object"?chrome.runtime:typeof browser==="object"?browser.runtime:undefined;return typeof e==="object"&&e.id!==undefined}function l(){return typeof navigator==="object"&&navigator["product"]==="ReactNative"}function d(){const e=a();return e.indexOf("MSIE ")>=0||e.indexOf("Trident/")>=0}function h(){return typeof indexedDB==="object"}function f(){return new Promise((e,t)=>{try{let n=true;const r="validate-browser-context-for-indexeddb-analytics-module";const i=self.indexedDB.open(r);i.onsuccess=()=>{i.result.close();if(!n){self.indexedDB.deleteDatabase(r)}e(true)};i.onupgradeneeded=()=>{n=false};i.onerror=()=>{var e;t(((e=i.error)===null||e===void 0?void 0:e.message)||"")}}catch(e){t(e)}})}const p="FirebaseError";class m extends Error{constructor(e,t,n){super(t);this.code=e;this.customData=n;this.name=p;Object.setPrototypeOf(this,m.prototype);if(Error.captureStackTrace){Error.captureStackTrace(this,g.prototype.create)}}}class g{constructor(e,t,n){this.service=e;this.serviceName=t;this.errors=n}create(e,...t){const n=t[0]||{};const r=`${this.service}/${e}`;const i=this.errors[e];const s=i?v(i,n):"Error";const o=`${this.serviceName}: ${s} (${r}).`;const a=new m(r,o,n);return a}}function v(e,t){return e.replace(I,(e,n)=>{const r=t[n];return r!=null?String(r):`<${n}?>`})}const I=/\{\$([^}]+)}/g;function _(e){for(const t in e){if(Object.prototype.hasOwnProperty.call(e,t)){return false}}return true}function y(e,t){if(e===t){return true}const n=Object.keys(e);const r=Object.keys(t);for(const i of n){if(!r.includes(i)){return false}const n=e[i];const s=t[i];if(T(n)&&T(s)){if(!y(n,s)){return false}}else if(n!==s){return false}}for(const e of r){if(!n.includes(e)){return false}}return true}function T(e){return e!==null&&typeof e==="object"}function w(e){const t=[];for(const[n,r]of Object.entries(e)){if(Array.isArray(r)){r.forEach(e=>{t.push(encodeURIComponent(n)+"="+encodeURIComponent(e))})}else{t.push(encodeURIComponent(n)+"="+encodeURIComponent(r))}}return t.length?"&"+t.join("&"):""}function E(e){const t={};const n=e.replace(/^\?/,"").split("&");n.forEach(e=>{if(e){const[n,r]=e.split("=");t[decodeURIComponent(n)]=decodeURIComponent(r)}});return t}function b(e){const t=e.indexOf("?");if(!t){return""}const n=e.indexOf("#",t);return e.substring(t,n>0?n:undefined)}function k(e,t){const n=new A(e,t);return n.subscribe.bind(n)}class A{constructor(e,t){this.observers=[];this.unsubscribes=[];this.observerCount=0;this.task=Promise.resolve();this.finalized=false;this.onNoObservers=t;this.task.then(()=>{e(this)}).catch(e=>{this.error(e)})}next(e){this.forEachObserver(t=>{t.next(e)})}error(e){this.forEachObserver(t=>{t.error(e)});this.close(e)}complete(){this.forEachObserver(e=>{e.complete()});this.close()}subscribe(e,t,n){let r;if(e===undefined&&t===undefined&&n===undefined){throw new Error("Missing Observer.")}if(S(e,["next","error","complete"])){r=e}else{r={next:e,error:t,complete:n}}if(r.next===undefined){r.next=R}if(r.error===undefined){r.error=R}if(r.complete===undefined){r.complete=R}const i=this.unsubscribeOne.bind(this,this.observers.length);if(this.finalized){this.task.then(()=>{try{if(this.finalError){r.error(this.finalError)}else{r.complete()}}catch(e){}return})}this.observers.push(r);return i}unsubscribeOne(e){if(this.observers===undefined||this.observers[e]===undefined){return}delete this.observers[e];this.observerCount-=1;if(this.observerCount===0&&this.onNoObservers!==undefined){this.onNoObservers(this)}}forEachObserver(e){if(this.finalized){return}for(let t=0;t<this.observers.length;t++){this.sendOne(t,e)}}sendOne(e,t){this.task.then(()=>{if(this.observers!==undefined&&this.observers[e]!==undefined){try{t(this.observers[e])}catch(e){if(typeof console!=="undefined"&&console.error){console.error(e)}}}})}close(e){if(this.finalized){return}this.finalized=true;if(e!==undefined){this.finalError=e}this.task.then(()=>{this.observers=undefined;this.onNoObservers=undefined})}}function S(e,t){if(typeof e!=="object"||e===null){return false}for(const n of t){if(n in e&&typeof e[n]==="function"){return true}}return false}function R(){}function N(e){if(e&&e._delegate){return e._delegate}else{return e}}class O{constructor(e,t,n){this.name=e;this.instanceFactory=t;this.type=n;this.multipleInstances=false;this.serviceProps={};this.instantiationMode="LAZY";this.onInstanceCreated=null}setInstantiationMode(e){this.instantiationMode=e;return this}setMultipleInstances(e){this.multipleInstances=e;return this}setServiceProps(e){this.serviceProps=e;return this}setInstanceCreatedCallback(e){this.onInstanceCreated=e;return this}}var P;(function(e){e[e["DEBUG"]=0]="DEBUG";e[e["VERBOSE"]=1]="VERBOSE";e[e["INFO"]=2]="INFO";e[e["WARN"]=3]="WARN";e[e["ERROR"]=4]="ERROR";e[e["SILENT"]=5]="SILENT"})(P||(P={}));const C={debug:P.DEBUG,verbose:P.VERBOSE,info:P.INFO,warn:P.WARN,error:P.ERROR,silent:P.SILENT};const D=P.INFO;const L={[P.DEBUG]:"log",[P.VERBOSE]:"log",[P.INFO]:"info",[P.WARN]:"warn",[P.ERROR]:"error"};const M=(e,t,...n)=>{if(t<e.logLevel){return}const r=(new Date).toISOString();const i=L[t];if(i){console[i](`[${r}]  ${e.name}:`,...n)}else{throw new Error(`Attempted to log a message with an invalid logType (value: ${t})`)}};class U{constructor(e){this.name=e;this._logLevel=D;this._logHandler=M;this._userLogHandler=null}get logLevel(){return this._logLevel}set logLevel(e){if(!(e in P)){throw new TypeError(`Invalid value "${e}" assigned to \`logLevel\``)}this._logLevel=e}setLogLevel(e){this._logLevel=typeof e==="string"?C[e]:e}get logHandler(){return this._logHandler}set logHandler(e){if(typeof e!=="function"){throw new TypeError("Value assigned to `logHandler` must be a function")}this._logHandler=e}get userLogHandler(){return this._userLogHandler}set userLogHandler(e){this._userLogHandler=e}debug(...e){this._userLogHandler&&this._userLogHandler(this,P.DEBUG,...e);this._logHandler(this,P.DEBUG,...e)}log(...e){this._userLogHandler&&this._userLogHandler(this,P.VERBOSE,...e);this._logHandler(this,P.VERBOSE,...e)}info(...e){this._userLogHandler&&this._userLogHandler(this,P.INFO,...e);this._logHandler(this,P.INFO,...e)}warn(...e){this._userLogHandler&&this._userLogHandler(this,P.WARN,...e);this._logHandler(this,P.WARN,...e)}error(...e){this._userLogHandler&&this._userLogHandler(this,P.ERROR,...e);this._logHandler(this,P.ERROR,...e)}}const F=(e,t)=>t.some(t=>e instanceof t);let x;let V;function j(){return x||(x=[IDBDatabase,IDBObjectStore,IDBIndex,IDBCursor,IDBTransaction])}function H(){return V||(V=[IDBCursor.prototype.advance,IDBCursor.prototype.continue,IDBCursor.prototype.continuePrimaryKey])}const W=new WeakMap;const B=new WeakMap;const q=new WeakMap;const G=new WeakMap;const z=new WeakMap;function $(e){const t=new Promise((t,n)=>{const r=()=>{e.removeEventListener("success",i);e.removeEventListener("error",s)};const i=()=>{t(Z(e.result));r()};const s=()=>{n(e.error);r()};e.addEventListener("success",i);e.addEventListener("error",s)});t.then(t=>{if(t instanceof IDBCursor){W.set(t,e)}}).catch(()=>{});z.set(t,e);return t}function K(e){if(B.has(e))return;const t=new Promise((t,n)=>{const r=()=>{e.removeEventListener("complete",i);e.removeEventListener("error",s);e.removeEventListener("abort",s)};const i=()=>{t();r()};const s=()=>{n(e.error||new DOMException("AbortError","AbortError"));r()};e.addEventListener("complete",i);e.addEventListener("error",s);e.addEventListener("abort",s)});B.set(e,t)}let J={get(e,t,n){if(e instanceof IDBTransaction){if(t==="done")return B.get(e);if(t==="objectStoreNames"){return e.objectStoreNames||q.get(e)}if(t==="store"){return n.objectStoreNames[1]?undefined:n.objectStore(n.objectStoreNames[0])}}return Z(e[t])},set(e,t,n){e[t]=n;return true},has(e,t){if(e instanceof IDBTransaction&&(t==="done"||t==="store")){return true}return t in e}};function Y(e){J=e(J)}function X(e){if(e===IDBDatabase.prototype.transaction&&!("objectStoreNames"in IDBTransaction.prototype)){return function(t,...n){const r=e.call(ee(this),t,...n);q.set(r,t.sort?t.sort():[t]);return Z(r)}}if(H().includes(e)){return function(...t){e.apply(ee(this),t);return Z(W.get(this))}}return function(...t){return Z(e.apply(ee(this),t))}}function Q(e){if(typeof e==="function")return X(e);if(e instanceof IDBTransaction)K(e);if(F(e,j()))return new Proxy(e,J);return e}function Z(e){if(e instanceof IDBRequest)return $(e);if(G.has(e))return G.get(e);const t=Q(e);if(t!==e){G.set(e,t);z.set(t,e)}return t}const ee=e=>z.get(e);function te(e,t,{blocked:n,upgrade:r,blocking:i,terminated:s}={}){const o=indexedDB.open(e,t);const a=Z(o);if(r){o.addEventListener("upgradeneeded",e=>{r(Z(o.result),e.oldVersion,e.newVersion,Z(o.transaction))})}if(n)o.addEventListener("blocked",()=>n());a.then(e=>{if(s)e.addEventListener("close",()=>s());if(i)e.addEventListener("versionchange",()=>i())}).catch(()=>{});return a}const ne=["get","getKey","getAll","getAllKeys","count"];const re=["put","add","delete","clear"];const ie=new Map;function se(e,t){if(!(e instanceof IDBDatabase&&!(t in e)&&typeof t==="string")){return}if(ie.get(t))return ie.get(t);const n=t.replace(/FromIndex$/,"");const r=t!==n;const i=re.includes(n);if(!(n in(r?IDBIndex:IDBObjectStore).prototype)||!(i||ne.includes(n))){return}const s=async function(e,...t){const s=this.transaction(e,i?"readwrite":"readonly");let o=s.store;if(r)o=o.index(t.shift());return(await Promise.all([o[n](...t),i&&s.done]))[0]};ie.set(t,s);return s}Y(e=>({...e,get:(t,n,r)=>se(t,n)||e.get(t,n,r),has:(t,n)=>!!se(t,n)||e.has(t,n)}));
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class oe{constructor(e){this.container=e}getPlatformInfoString(){const e=this.container.getProviders();return e.map(e=>{if(ae(e)){const t=e.getImmediate();return`${t.library}/${t.version}`}else{return null}}).filter(e=>e).join(" ")}}function ae(e){const t=e.getComponent();return(t===null||t===void 0?void 0:t.type)==="VERSION"}const ce="@firebase/app";const ue="0.7.27";
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const le=new U("@firebase/app");const de="@firebase/app-compat";const he="@firebase/analytics-compat";const fe="@firebase/analytics";const pe="@firebase/app-check-compat";const me="@firebase/app-check";const ge="@firebase/auth";const ve="@firebase/auth-compat";const Ie="@firebase/database";const _e="@firebase/database-compat";const ye="@firebase/functions";const Te="@firebase/functions-compat";const we="@firebase/installations";const Ee="@firebase/installations-compat";const be="@firebase/messaging";const ke="@firebase/messaging-compat";const Ae="@firebase/performance";const Se="@firebase/performance-compat";const Re="@firebase/remote-config";const Ne="@firebase/remote-config-compat";const Oe="@firebase/storage";const Pe="@firebase/storage-compat";const Ce="@firebase/firestore";const De="@firebase/firestore-compat";const Le="firebase";const Me="9.8.4";
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Ue="[DEFAULT]";const Fe={[ce]:"fire-core",[de]:"fire-core-compat",[fe]:"fire-analytics",[he]:"fire-analytics-compat",[me]:"fire-app-check",[pe]:"fire-app-check-compat",[ge]:"fire-auth",[ve]:"fire-auth-compat",[Ie]:"fire-rtdb",[_e]:"fire-rtdb-compat",[ye]:"fire-fn",[Te]:"fire-fn-compat",[we]:"fire-iid",[Ee]:"fire-iid-compat",[be]:"fire-fcm",[ke]:"fire-fcm-compat",[Ae]:"fire-perf",[Se]:"fire-perf-compat",[Re]:"fire-rc",[Ne]:"fire-rc-compat",[Oe]:"fire-gcs",[Pe]:"fire-gcs-compat",[Ce]:"fire-fst",[De]:"fire-fst-compat","fire-js":"fire-js",[Le]:"fire-js-all"};
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const xe=new Map;const Ve=new Map;function je(e,t){try{e.container.addComponent(t)}catch(n){le.debug(`Component ${t.name} failed to register with FirebaseApp ${e.name}`,n)}}function He(e){const t=e.name;if(Ve.has(t)){le.debug(`There were multiple attempts to register component ${t}.`);return false}Ve.set(t,e);for(const t of xe.values()){je(t,e)}return true}function We(e,t){const n=e.container.getProvider("heartbeat").getImmediate({optional:true});if(n){void n.triggerHeartbeat()}return e.container.getProvider(t)}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Be={["no-app"]:"No Firebase App '{$appName}' has been created - "+"call Firebase App.initializeApp()",["bad-app-name"]:"Illegal App name: '{$appName}",["duplicate-app"]:"Firebase App named '{$appName}' already exists with different options or config",["app-deleted"]:"Firebase App named '{$appName}' already deleted",["invalid-app-argument"]:"firebase.{$appName}() takes either no argument or a "+"Firebase App instance.",["invalid-log-argument"]:"First argument to `onLog` must be null or a function.",["storage-open"]:"Error thrown when opening storage. Original error: {$originalErrorMessage}.",["storage-get"]:"Error thrown when reading from storage. Original error: {$originalErrorMessage}.",["storage-set"]:"Error thrown when writing to storage. Original error: {$originalErrorMessage}.",["storage-delete"]:"Error thrown when deleting from storage. Original error: {$originalErrorMessage}."};const qe=new g("app","Firebase",Be);
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Ge=Me;function ze(e=Ue){const t=xe.get(e);if(!t){throw qe.create("no-app",{appName:e})}return t}function $e(e,t,n){var r;let i=(r=Fe[e])!==null&&r!==void 0?r:e;if(n){i+=`-${n}`}const s=i.match(/\s|\//);const o=t.match(/\s|\//);if(s||o){const e=[`Unable to register library "${i}" with version "${t}":`];if(s){e.push(`library name "${i}" contains illegal characters (whitespace or "/")`)}if(s&&o){e.push("and")}if(o){e.push(`version name "${t}" contains illegal characters (whitespace or "/")`)}le.warn(e.join(" "));return}He(new O(`${i}-version`,()=>({library:i,version:t}),"VERSION"))}
+/**
+     * @license
+     * Copyright 2021 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Ke="firebase-heartbeat-database";const Je=1;const Ye="firebase-heartbeat-store";let Xe=null;function Qe(){if(!Xe){Xe=te(Ke,Je,{upgrade:(e,t)=>{switch(t){case 0:e.createObjectStore(Ye)}}}).catch(e=>{throw qe.create("storage-open",{originalErrorMessage:e.message})})}return Xe}async function Ze(e){var t;try{const t=await Qe();return t.transaction(Ye).objectStore(Ye).get(tt(e))}catch(e){throw qe.create("storage-get",{originalErrorMessage:(t=e)===null||t===void 0?void 0:t.message})}}async function et(e,t){var n;try{const n=await Qe();const r=n.transaction(Ye,"readwrite");const i=r.objectStore(Ye);await i.put(t,tt(e));return r.done}catch(e){throw qe.create("storage-set",{originalErrorMessage:(n=e)===null||n===void 0?void 0:n.message})}}function tt(e){return`${e.name}!${e.options.appId}`}
+/**
+     * @license
+     * Copyright 2021 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const nt=1024;const rt=30*24*60*60*1e3;class it{constructor(e){this.container=e;this._heartbeatsCache=null;const t=this.container.getProvider("app").getImmediate();this._storage=new at(t);this._heartbeatsCachePromise=this._storage.read().then(e=>{this._heartbeatsCache=e;return e})}async triggerHeartbeat(){const e=this.container.getProvider("platform-logger").getImmediate();const t=e.getPlatformInfoString();const n=st();if(this._heartbeatsCache===null){this._heartbeatsCache=await this._heartbeatsCachePromise}if(this._heartbeatsCache.lastSentHeartbeatDate===n||this._heartbeatsCache.heartbeats.some(e=>e.date===n)){return}else{this._heartbeatsCache.heartbeats.push({date:n,agent:t})}this._heartbeatsCache.heartbeats=this._heartbeatsCache.heartbeats.filter(e=>{const t=new Date(e.date).valueOf();const n=Date.now();return n-t<=rt});return this._storage.overwrite(this._heartbeatsCache)}async getHeartbeatsHeader(){if(this._heartbeatsCache===null){await this._heartbeatsCachePromise}if(this._heartbeatsCache===null||this._heartbeatsCache.heartbeats.length===0){return""}const e=st();const{heartbeatsToSend:t,unsentEntries:n}=ot(this._heartbeatsCache.heartbeats);const r=s(JSON.stringify({version:2,heartbeats:t}));this._heartbeatsCache.lastSentHeartbeatDate=e;if(n.length>0){this._heartbeatsCache.heartbeats=n;await this._storage.overwrite(this._heartbeatsCache)}else{this._heartbeatsCache.heartbeats=[];void this._storage.overwrite(this._heartbeatsCache)}return r}}function st(){const e=new Date;return e.toISOString().substring(0,10)}function ot(e,t=nt){const n=[];let r=e.slice();for(const i of e){const e=n.find(e=>e.agent===i.agent);if(!e){n.push({agent:i.agent,dates:[i.date]});if(ct(n)>t){n.pop();break}}else{e.dates.push(i.date);if(ct(n)>t){e.dates.pop();break}}r=r.slice(1)}return{heartbeatsToSend:n,unsentEntries:r}}class at{constructor(e){this.app=e;this._canUseIndexedDBPromise=this.runIndexedDBEnvironmentCheck()}async runIndexedDBEnvironmentCheck(){if(!h()){return false}else{return f().then(()=>true).catch(()=>false)}}async read(){const e=await this._canUseIndexedDBPromise;if(!e){return{heartbeats:[]}}else{const e=await Ze(this.app);return e||{heartbeats:[]}}}async overwrite(e){var t;const n=await this._canUseIndexedDBPromise;if(!n){return}else{const n=await this.read();return et(this.app,{lastSentHeartbeatDate:(t=e.lastSentHeartbeatDate)!==null&&t!==void 0?t:n.lastSentHeartbeatDate,heartbeats:e.heartbeats})}}async add(e){var t;const n=await this._canUseIndexedDBPromise;if(!n){return}else{const n=await this.read();return et(this.app,{lastSentHeartbeatDate:(t=e.lastSentHeartbeatDate)!==null&&t!==void 0?t:n.lastSentHeartbeatDate,heartbeats:[...n.heartbeats,...e.heartbeats]})}}}function ct(e){return s(JSON.stringify({version:2,heartbeats:e})).length}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function ut(e){He(new O("platform-logger",e=>new oe(e),"PRIVATE"));He(new O("heartbeat",e=>new it(e),"PRIVATE"));$e(ce,ue,e);$e(ce,ue,"esm2017");$e("fire-js","")}ut("");function lt(e,t){var n={};for(var r in e)if(Object.prototype.hasOwnProperty.call(e,r)&&t.indexOf(r)<0)n[r]=e[r];if(e!=null&&typeof Object.getOwnPropertySymbols==="function")for(var i=0,r=Object.getOwnPropertySymbols(e);i<r.length;i++){if(t.indexOf(r[i])<0&&Object.prototype.propertyIsEnumerable.call(e,r[i]))n[r[i]]=e[r[i]]}return n}
+/**
+     * @license
+     * Copyright 2021 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const dt={PHONE:"phone"};const ht={FACEBOOK:"facebook.com",GITHUB:"github.com",GOOGLE:"google.com",PASSWORD:"password",PHONE:"phone",TWITTER:"twitter.com"};const ft={EMAIL_LINK:"emailLink",EMAIL_PASSWORD:"password",FACEBOOK:"facebook.com",GITHUB:"github.com",GOOGLE:"google.com",PHONE:"phone",TWITTER:"twitter.com"};const pt={LINK:"link",REAUTHENTICATE:"reauthenticate",SIGN_IN:"signIn"};const mt={EMAIL_SIGNIN:"EMAIL_SIGNIN",PASSWORD_RESET:"PASSWORD_RESET",RECOVER_EMAIL:"RECOVER_EMAIL",REVERT_SECOND_FACTOR_ADDITION:"REVERT_SECOND_FACTOR_ADDITION",VERIFY_AND_CHANGE_EMAIL:"VERIFY_AND_CHANGE_EMAIL",VERIFY_EMAIL:"VERIFY_EMAIL"};
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function gt(){return{["admin-restricted-operation"]:"This operation is restricted to administrators only.",["argument-error"]:"",["app-not-authorized"]:"This app, identified by the domain where it's hosted, is not "+"authorized to use Firebase Authentication with the provided API key. "+"Review your key configuration in the Google API console.",["app-not-installed"]:"The requested mobile application corresponding to the identifier ("+"Android package name or iOS bundle ID) provided is not installed on "+"this device.",["captcha-check-failed"]:"The reCAPTCHA response token provided is either invalid, expired, "+"already used or the domain associated with it does not match the list "+"of whitelisted domains.",["code-expired"]:"The SMS code has expired. Please re-send the verification code to try "+"again.",["cordova-not-ready"]:"Cordova framework is not ready.",["cors-unsupported"]:"This browser is not supported.",["credential-already-in-use"]:"This credential is already associated with a different user account.",["custom-token-mismatch"]:"The custom token corresponds to a different audience.",["requires-recent-login"]:"This operation is sensitive and requires recent authentication. Log in "+"again before retrying this request.",["dependent-sdk-initialized-before-auth"]:"Another Firebase SDK was initialized and is trying to use Auth before Auth is "+"initialized. Please be sure to call `initializeAuth` or `getAuth` before "+"starting any other Firebase SDK.",["dynamic-link-not-activated"]:"Please activate Dynamic Links in the Firebase Console and agree to the terms and "+"conditions.",["email-change-needs-verification"]:"Multi-factor users must always have a verified email.",["email-already-in-use"]:"The email address is already in use by another account.",["emulator-config-failed"]:"Auth instance has already been used to make a network call. Auth can "+"no longer be configured to use the emulator. Try calling "+'"connectAuthEmulator()" sooner.',["expired-action-code"]:"The action code has expired.",["cancelled-popup-request"]:"This operation has been cancelled due to another conflicting popup being opened.",["internal-error"]:"An internal AuthError has occurred.",["invalid-app-credential"]:"The phone verification request contains an invalid application verifier."+" The reCAPTCHA token response is either invalid or expired.",["invalid-app-id"]:"The mobile app identifier is not registed for the current project.",["invalid-user-token"]:"This user's credential isn't valid for this project. This can happen "+"if the user's token has been tampered with, or if the user isn't for "+"the project associated with this API key.",["invalid-auth-event"]:"An internal AuthError has occurred.",["invalid-verification-code"]:"The SMS verification code used to create the phone auth credential is "+"invalid. Please resend the verification code sms and be sure to use the "+"verification code provided by the user.",["invalid-continue-uri"]:"The continue URL provided in the request is invalid.",["invalid-cordova-configuration"]:"The following Cordova plugins must be installed to enable OAuth sign-in: "+"cordova-plugin-buildinfo, cordova-universal-links-plugin, "+"cordova-plugin-browsertab, cordova-plugin-inappbrowser and "+"cordova-plugin-customurlscheme.",["invalid-custom-token"]:"The custom token format is incorrect. Please check the documentation.",["invalid-dynamic-link-domain"]:"The provided dynamic link domain is not configured or authorized for the current project.",["invalid-email"]:"The email address is badly formatted.",["invalid-emulator-scheme"]:"Emulator URL must start with a valid scheme (http:// or https://).",["invalid-api-key"]:"Your API key is invalid, please check you have copied it correctly.",["invalid-cert-hash"]:"The SHA-1 certificate hash provided is invalid.",["invalid-credential"]:"The supplied auth credential is malformed or has expired.",["invalid-message-payload"]:"The email template corresponding to this action contains invalid characters in its message. "+"Please fix by going to the Auth email templates section in the Firebase Console.",["invalid-multi-factor-session"]:"The request does not contain a valid proof of first factor successful sign-in.",["invalid-oauth-provider"]:"EmailAuthProvider is not supported for this operation. This operation "+"only supports OAuth providers.",["invalid-oauth-client-id"]:"The OAuth client ID provided is either invalid or does not match the "+"specified API key.",["unauthorized-domain"]:"This domain is not authorized for OAuth operations for your Firebase "+"project. Edit the list of authorized domains from the Firebase console.",["invalid-action-code"]:"The action code is invalid. This can happen if the code is malformed, "+"expired, or has already been used.",["wrong-password"]:"The password is invalid or the user does not have a password.",["invalid-persistence-type"]:"The specified persistence type is invalid. It can only be local, session or none.",["invalid-phone-number"]:"The format of the phone number provided is incorrect. Please enter the "+"phone number in a format that can be parsed into E.164 format. E.164 "+"phone numbers are written in the format [+][country code][subscriber "+"number including area code].",["invalid-provider-id"]:"The specified provider ID is invalid.",["invalid-recipient-email"]:"The email corresponding to this action failed to send as the provided "+"recipient email address is invalid.",["invalid-sender"]:"The email template corresponding to this action contains an invalid sender email or name. "+"Please fix by going to the Auth email templates section in the Firebase Console.",["invalid-verification-id"]:"The verification ID used to create the phone auth credential is invalid.",["invalid-tenant-id"]:"The Auth instance's tenant ID is invalid.",["login-blocked"]:"Login blocked by user-provided method: {$originalMessage}",["missing-android-pkg-name"]:"An Android Package Name must be provided if the Android App is required to be installed.",["auth-domain-config-required"]:"Be sure to include authDomain when calling firebase.initializeApp(), "+"by following the instructions in the Firebase console.",["missing-app-credential"]:"The phone verification request is missing an application verifier "+"assertion. A reCAPTCHA response token needs to be provided.",["missing-verification-code"]:"The phone auth credential was created with an empty SMS verification code.",["missing-continue-uri"]:"A continue URL must be provided in the request.",["missing-iframe-start"]:"An internal AuthError has occurred.",["missing-ios-bundle-id"]:"An iOS Bundle ID must be provided if an App Store ID is provided.",["missing-or-invalid-nonce"]:"The request does not contain a valid nonce. This can occur if the "+"SHA-256 hash of the provided raw nonce does not match the hashed nonce "+"in the ID token payload.",["missing-multi-factor-info"]:"No second factor identifier is provided.",["missing-multi-factor-session"]:"The request is missing proof of first factor successful sign-in.",["missing-phone-number"]:"To send verification codes, provide a phone number for the recipient.",["missing-verification-id"]:"The phone auth credential was created with an empty verification ID.",["app-deleted"]:"This instance of FirebaseApp has been deleted.",["multi-factor-info-not-found"]:"The user does not have a second factor matching the identifier provided.",["multi-factor-auth-required"]:"Proof of ownership of a second factor is required to complete sign-in.",["account-exists-with-different-credential"]:"An account already exists with the same email address but different "+"sign-in credentials. Sign in using a provider associated with this "+"email address.",["network-request-failed"]:"A network AuthError (such as timeout, interrupted connection or unreachable host) has occurred.",["no-auth-event"]:"An internal AuthError has occurred.",["no-such-provider"]:"User was not linked to an account with the given provider.",["null-user"]:"A null user object was provided as the argument for an operation which "+"requires a non-null user object.",["operation-not-allowed"]:"The given sign-in provider is disabled for this Firebase project. "+"Enable it in the Firebase console, under the sign-in method tab of the "+"Auth section.",["operation-not-supported-in-this-environment"]:"This operation is not supported in the environment this application is "+'running on. "location.protocol" must be http, https or chrome-extension'+" and web storage must be enabled.",["popup-blocked"]:"Unable to establish a connection with the popup. It may have been blocked by the browser.",["popup-closed-by-user"]:"The popup has been closed by the user before finalizing the operation.",["provider-already-linked"]:"User can only be linked to one identity for the given provider.",["quota-exceeded"]:"The project's quota for this operation has been exceeded.",["redirect-cancelled-by-user"]:"The redirect operation has been cancelled by the user before finalizing.",["redirect-operation-pending"]:"A redirect sign-in operation is already pending.",["rejected-credential"]:"The request contains malformed or mismatching credentials.",["second-factor-already-in-use"]:"The second factor is already enrolled on this account.",["maximum-second-factor-count-exceeded"]:"The maximum allowed number of second factors on a user has been exceeded.",["tenant-id-mismatch"]:"The provided tenant ID does not match the Auth instance's tenant ID",["timeout"]:"The operation has timed out.",["user-token-expired"]:"The user's credential is no longer valid. The user must sign in again.",["too-many-requests"]:"We have blocked all requests from this device due to unusual activity. "+"Try again later.",["unauthorized-continue-uri"]:"The domain of the continue URL is not whitelisted.  Please whitelist "+"the domain in the Firebase console.",["unsupported-first-factor"]:"Enrolling a second factor or signing in with a multi-factor account requires sign-in with a supported first factor.",["unsupported-persistence-type"]:"The current environment does not support the specified persistence type.",["unsupported-tenant-operation"]:"This operation is not supported in a multi-tenant context.",["unverified-email"]:"The operation requires a verified email.",["user-cancelled"]:"The user did not grant your application the permissions it requested.",["user-not-found"]:"There is no user record corresponding to this identifier. The user may "+"have been deleted.",["user-disabled"]:"The user account has been disabled by an administrator.",["user-mismatch"]:"The supplied credentials do not correspond to the previously signed in user.",["user-signed-out"]:"",["weak-password"]:"The password must be 6 characters long or more.",["web-storage-unsupported"]:"This browser is not supported or 3rd party cookies and data may be disabled.",["already-initialized"]:"initializeAuth() has already been called with "+"different options. To avoid this error, call initializeAuth() with the "+"same options as when it was originally called, or call getAuth() to return the"+" already initialized instance."}}function vt(){return{["dependent-sdk-initialized-before-auth"]:"Another Firebase SDK was initialized and is trying to use Auth before Auth is "+"initialized. Please be sure to call `initializeAuth` or `getAuth` before "+"starting any other Firebase SDK."}}const It=gt;const _t=vt;const yt=new g("auth","Firebase",vt());const Tt={ADMIN_ONLY_OPERATION:"auth/admin-restricted-operation",ARGUMENT_ERROR:"auth/argument-error",APP_NOT_AUTHORIZED:"auth/app-not-authorized",APP_NOT_INSTALLED:"auth/app-not-installed",CAPTCHA_CHECK_FAILED:"auth/captcha-check-failed",CODE_EXPIRED:"auth/code-expired",CORDOVA_NOT_READY:"auth/cordova-not-ready",CORS_UNSUPPORTED:"auth/cors-unsupported",CREDENTIAL_ALREADY_IN_USE:"auth/credential-already-in-use",CREDENTIAL_MISMATCH:"auth/custom-token-mismatch",CREDENTIAL_TOO_OLD_LOGIN_AGAIN:"auth/requires-recent-login",DEPENDENT_SDK_INIT_BEFORE_AUTH:"auth/dependent-sdk-initialized-before-auth",DYNAMIC_LINK_NOT_ACTIVATED:"auth/dynamic-link-not-activated",EMAIL_CHANGE_NEEDS_VERIFICATION:"auth/email-change-needs-verification",EMAIL_EXISTS:"auth/email-already-in-use",EMULATOR_CONFIG_FAILED:"auth/emulator-config-failed",EXPIRED_OOB_CODE:"auth/expired-action-code",EXPIRED_POPUP_REQUEST:"auth/cancelled-popup-request",INTERNAL_ERROR:"auth/internal-error",INVALID_API_KEY:"auth/invalid-api-key",INVALID_APP_CREDENTIAL:"auth/invalid-app-credential",INVALID_APP_ID:"auth/invalid-app-id",INVALID_AUTH:"auth/invalid-user-token",INVALID_AUTH_EVENT:"auth/invalid-auth-event",INVALID_CERT_HASH:"auth/invalid-cert-hash",INVALID_CODE:"auth/invalid-verification-code",INVALID_CONTINUE_URI:"auth/invalid-continue-uri",INVALID_CORDOVA_CONFIGURATION:"auth/invalid-cordova-configuration",INVALID_CUSTOM_TOKEN:"auth/invalid-custom-token",INVALID_DYNAMIC_LINK_DOMAIN:"auth/invalid-dynamic-link-domain",INVALID_EMAIL:"auth/invalid-email",INVALID_EMULATOR_SCHEME:"auth/invalid-emulator-scheme",INVALID_IDP_RESPONSE:"auth/invalid-credential",INVALID_MESSAGE_PAYLOAD:"auth/invalid-message-payload",INVALID_MFA_SESSION:"auth/invalid-multi-factor-session",INVALID_OAUTH_CLIENT_ID:"auth/invalid-oauth-client-id",INVALID_OAUTH_PROVIDER:"auth/invalid-oauth-provider",INVALID_OOB_CODE:"auth/invalid-action-code",INVALID_ORIGIN:"auth/unauthorized-domain",INVALID_PASSWORD:"auth/wrong-password",INVALID_PERSISTENCE:"auth/invalid-persistence-type",INVALID_PHONE_NUMBER:"auth/invalid-phone-number",INVALID_PROVIDER_ID:"auth/invalid-provider-id",INVALID_RECIPIENT_EMAIL:"auth/invalid-recipient-email",INVALID_SENDER:"auth/invalid-sender",INVALID_SESSION_INFO:"auth/invalid-verification-id",INVALID_TENANT_ID:"auth/invalid-tenant-id",MFA_INFO_NOT_FOUND:"auth/multi-factor-info-not-found",MFA_REQUIRED:"auth/multi-factor-auth-required",MISSING_ANDROID_PACKAGE_NAME:"auth/missing-android-pkg-name",MISSING_APP_CREDENTIAL:"auth/missing-app-credential",MISSING_AUTH_DOMAIN:"auth/auth-domain-config-required",MISSING_CODE:"auth/missing-verification-code",MISSING_CONTINUE_URI:"auth/missing-continue-uri",MISSING_IFRAME_START:"auth/missing-iframe-start",MISSING_IOS_BUNDLE_ID:"auth/missing-ios-bundle-id",MISSING_OR_INVALID_NONCE:"auth/missing-or-invalid-nonce",MISSING_MFA_INFO:"auth/missing-multi-factor-info",MISSING_MFA_SESSION:"auth/missing-multi-factor-session",MISSING_PHONE_NUMBER:"auth/missing-phone-number",MISSING_SESSION_INFO:"auth/missing-verification-id",MODULE_DESTROYED:"auth/app-deleted",NEED_CONFIRMATION:"auth/account-exists-with-different-credential",NETWORK_REQUEST_FAILED:"auth/network-request-failed",NULL_USER:"auth/null-user",NO_AUTH_EVENT:"auth/no-auth-event",NO_SUCH_PROVIDER:"auth/no-such-provider",OPERATION_NOT_ALLOWED:"auth/operation-not-allowed",OPERATION_NOT_SUPPORTED:"auth/operation-not-supported-in-this-environment",POPUP_BLOCKED:"auth/popup-blocked",POPUP_CLOSED_BY_USER:"auth/popup-closed-by-user",PROVIDER_ALREADY_LINKED:"auth/provider-already-linked",QUOTA_EXCEEDED:"auth/quota-exceeded",REDIRECT_CANCELLED_BY_USER:"auth/redirect-cancelled-by-user",REDIRECT_OPERATION_PENDING:"auth/redirect-operation-pending",REJECTED_CREDENTIAL:"auth/rejected-credential",SECOND_FACTOR_ALREADY_ENROLLED:"auth/second-factor-already-in-use",SECOND_FACTOR_LIMIT_EXCEEDED:"auth/maximum-second-factor-count-exceeded",TENANT_ID_MISMATCH:"auth/tenant-id-mismatch",TIMEOUT:"auth/timeout",TOKEN_EXPIRED:"auth/user-token-expired",TOO_MANY_ATTEMPTS_TRY_LATER:"auth/too-many-requests",UNAUTHORIZED_DOMAIN:"auth/unauthorized-continue-uri",UNSUPPORTED_FIRST_FACTOR:"auth/unsupported-first-factor",UNSUPPORTED_PERSISTENCE:"auth/unsupported-persistence-type",UNSUPPORTED_TENANT_OPERATION:"auth/unsupported-tenant-operation",UNVERIFIED_EMAIL:"auth/unverified-email",USER_CANCELLED:"auth/user-cancelled",USER_DELETED:"auth/user-not-found",USER_DISABLED:"auth/user-disabled",USER_MISMATCH:"auth/user-mismatch",USER_SIGNED_OUT:"auth/user-signed-out",WEAK_PASSWORD:"auth/weak-password",WEB_STORAGE_UNSUPPORTED:"auth/web-storage-unsupported",ALREADY_INITIALIZED:"auth/already-initialized"};
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const wt=new U("@firebase/auth");function Et(e,...t){if(wt.logLevel<=P.ERROR){wt.error(`Auth (${Ge}): ${e}`,...t)}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function bt(e,...t){throw Rt(e,...t)}function kt(e,...t){return Rt(e,...t)}function At(e,t,n){const r=Object.assign(Object.assign({},_t()),{[t]:n});const i=new g("auth","Firebase",r);return i.create(t,{appName:e.name})}function St(e,t,n){const r=n;if(!(t instanceof r)){if(r.name!==t.constructor.name){bt(e,"argument-error")}throw At(e,"argument-error",`Type of ${t.constructor.name} does not match expected instance.`+`Did you pass a reference from a different Auth SDK?`)}}function Rt(e,...t){if(typeof e!=="string"){const n=t[0];const r=[...t.slice(1)];if(r[0]){r[0].appName=e.name}return e._errorFactory.create(n,...r)}return yt.create(e,...t)}function Nt(e,t,...n){if(!e){throw Rt(t,...n)}}function Ot(e){const t=`INTERNAL ASSERTION FAILED: `+e;Et(t);throw new Error(t)}function Pt(e,t){if(!e){Ot(t)}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Ct=new Map;function Dt(e){Pt(e instanceof Function,"Expected a class definition");let t=Ct.get(e);if(t){Pt(t instanceof e,"Instance stored in cache mismatched with class");return t}t=new e;Ct.set(e,t);return t}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function Lt(e,t){const n=We(e,"auth");if(n.isInitialized()){const e=n.getImmediate();const r=n.getOptions();if(y(r,t!==null&&t!==void 0?t:{})){return e}else{bt(e,"already-initialized")}}const r=n.initialize({options:t});return r}function Mt(e,t){const n=(t===null||t===void 0?void 0:t.persistence)||[];const r=(Array.isArray(n)?n:[n]).map(Dt);if(t===null||t===void 0?void 0:t.errorMap){e._updateErrorMap(t.errorMap)}e._initializeWithPersistence(r,t===null||t===void 0?void 0:t.popupRedirectResolver)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function Ut(){var e;return typeof self!=="undefined"&&((e=self.location)===null||e===void 0?void 0:e.href)||""}function Ft(){return xt()==="http:"||xt()==="https:"}function xt(){var e;return typeof self!=="undefined"&&((e=self.location)===null||e===void 0?void 0:e.protocol)||null}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function Vt(){if(typeof navigator!=="undefined"&&navigator&&"onLine"in navigator&&typeof navigator.onLine==="boolean"&&(Ft()||u()||"connection"in navigator)){return navigator.onLine}return true}function jt(){if(typeof navigator==="undefined"){return null}const e=navigator;return e.languages&&e.languages[0]||e.language||null}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Ht{constructor(e,t){this.shortDelay=e;this.longDelay=t;Pt(t>e,"Short delay should be less than long delay!");this.isMobile=c()||l()}get(){if(!Vt()){return Math.min(5e3,this.shortDelay)}return this.isMobile?this.longDelay:this.shortDelay}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function Wt(e,t){Pt(e.emulator,"Emulator should always be set here");const{url:n}=e.emulator;if(!t){return n}return`${n}${t.startsWith("/")?t.slice(1):t}`}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Bt{static initialize(e,t,n){this.fetchImpl=e;if(t){this.headersImpl=t}if(n){this.responseImpl=n}}static fetch(){if(this.fetchImpl){return this.fetchImpl}if(typeof self!=="undefined"&&"fetch"in self){return self.fetch}Ot("Could not find fetch implementation, make sure you call FetchProvider.initialize() with an appropriate polyfill")}static headers(){if(this.headersImpl){return this.headersImpl}if(typeof self!=="undefined"&&"Headers"in self){return self.Headers}Ot("Could not find Headers implementation, make sure you call FetchProvider.initialize() with an appropriate polyfill")}static response(){if(this.responseImpl){return this.responseImpl}if(typeof self!=="undefined"&&"Response"in self){return self.Response}Ot("Could not find Response implementation, make sure you call FetchProvider.initialize() with an appropriate polyfill")}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const qt={["CREDENTIAL_MISMATCH"]:"custom-token-mismatch",["MISSING_CUSTOM_TOKEN"]:"internal-error",["INVALID_IDENTIFIER"]:"invalid-email",["MISSING_CONTINUE_URI"]:"internal-error",["INVALID_PASSWORD"]:"wrong-password",["MISSING_PASSWORD"]:"internal-error",["EMAIL_EXISTS"]:"email-already-in-use",["PASSWORD_LOGIN_DISABLED"]:"operation-not-allowed",["INVALID_IDP_RESPONSE"]:"invalid-credential",["INVALID_PENDING_TOKEN"]:"invalid-credential",["FEDERATED_USER_ID_ALREADY_LINKED"]:"credential-already-in-use",["MISSING_REQ_TYPE"]:"internal-error",["EMAIL_NOT_FOUND"]:"user-not-found",["RESET_PASSWORD_EXCEED_LIMIT"]:"too-many-requests",["EXPIRED_OOB_CODE"]:"expired-action-code",["INVALID_OOB_CODE"]:"invalid-action-code",["MISSING_OOB_CODE"]:"internal-error",["CREDENTIAL_TOO_OLD_LOGIN_AGAIN"]:"requires-recent-login",["INVALID_ID_TOKEN"]:"invalid-user-token",["TOKEN_EXPIRED"]:"user-token-expired",["USER_NOT_FOUND"]:"user-token-expired",["TOO_MANY_ATTEMPTS_TRY_LATER"]:"too-many-requests",["INVALID_CODE"]:"invalid-verification-code",["INVALID_SESSION_INFO"]:"invalid-verification-id",["INVALID_TEMPORARY_PROOF"]:"invalid-credential",["MISSING_SESSION_INFO"]:"missing-verification-id",["SESSION_EXPIRED"]:"code-expired",["MISSING_ANDROID_PACKAGE_NAME"]:"missing-android-pkg-name",["UNAUTHORIZED_DOMAIN"]:"unauthorized-continue-uri",["INVALID_OAUTH_CLIENT_ID"]:"invalid-oauth-client-id",["ADMIN_ONLY_OPERATION"]:"admin-restricted-operation",["INVALID_MFA_PENDING_CREDENTIAL"]:"invalid-multi-factor-session",["MFA_ENROLLMENT_NOT_FOUND"]:"multi-factor-info-not-found",["MISSING_MFA_ENROLLMENT_ID"]:"missing-multi-factor-info",["MISSING_MFA_PENDING_CREDENTIAL"]:"missing-multi-factor-session",["SECOND_FACTOR_EXISTS"]:"second-factor-already-in-use",["SECOND_FACTOR_LIMIT_EXCEEDED"]:"maximum-second-factor-count-exceeded",["BLOCKING_FUNCTION_ERROR_RESPONSE"]:"internal-error"};
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Gt=new Ht(3e4,6e4);function zt(e,t){if(e.tenantId&&!t.tenantId){return Object.assign(Object.assign({},t),{tenantId:e.tenantId})}return t}async function $t(e,t,n,r,i={}){return Kt(e,i,async()=>{let i={};let s={};if(r){if(t==="GET"){s=r}else{i={body:JSON.stringify(r)}}}const o=w(Object.assign({key:e.config.apiKey},s)).slice(1);const a=await e._getAdditionalHeaders();a["Content-Type"]="application/json";if(e.languageCode){a["X-Firebase-Locale"]=e.languageCode}return Bt.fetch()(Yt(e,e.config.apiHost,n,o),Object.assign({method:t,headers:a,referrerPolicy:"no-referrer"},i))})}async function Kt(e,t,n){e._canInitEmulator=false;const r=Object.assign(Object.assign({},qt),t);try{const t=new Xt(e);const i=await Promise.race([n(),t.promise]);t.clearNetworkTimeout();const s=await i.json();if("needConfirmation"in s){throw Qt(e,"account-exists-with-different-credential",s)}if(i.ok&&!("errorMessage"in s)){return s}else{const t=i.ok?s.errorMessage:s.error.message;const[n,o]=t.split(" : ");if(n==="FEDERATED_USER_ID_ALREADY_LINKED"){throw Qt(e,"credential-already-in-use",s)}else if(n==="EMAIL_EXISTS"){throw Qt(e,"email-already-in-use",s)}else if(n==="USER_DISABLED"){throw Qt(e,"user-disabled",s)}const a=r[n]||n.toLowerCase().replace(/[_\s]+/g,"-");if(o){throw At(e,a,o)}else{bt(e,a)}}}catch(t){if(t instanceof m){throw t}bt(e,"network-request-failed")}}async function Jt(e,t,n,r,i={}){const s=await $t(e,t,n,r,i);if("mfaPendingCredential"in s){bt(e,"multi-factor-auth-required",{_serverResponse:s})}return s}function Yt(e,t,n,r){const i=`${t}${n}?${r}`;if(!e.config.emulator){return`${e.config.apiScheme}://${i}`}return Wt(e.config,i)}class Xt{constructor(e){this.auth=e;this.timer=null;this.promise=new Promise((e,t)=>{this.timer=setTimeout(()=>t(kt(this.auth,"network-request-failed")),Gt.get())})}clearNetworkTimeout(){clearTimeout(this.timer)}}function Qt(e,t,n){const r={appName:e.name};if(n.email){r.email=n.email}if(n.phoneNumber){r.phoneNumber=n.phoneNumber}const i=kt(e,t,r);i.customData._tokenResponse=n;return i}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function Zt(e,t){return $t(e,"POST","/v1/accounts:delete",t)}async function en(e,t){return $t(e,"POST","/v1/accounts:update",t)}async function tn(e,t){return $t(e,"POST","/v1/accounts:lookup",t)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function nn(e){if(!e){return undefined}try{const t=new Date(Number(e));if(!isNaN(t.getTime())){return t.toUTCString()}}catch(e){}return undefined}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function rn(e,t=false){return N(e).getIdToken(t)}async function sn(e,t=false){const n=N(e);const r=await n.getIdToken(t);const i=an(r);Nt(i&&i.exp&&i.auth_time&&i.iat,n.auth,"internal-error");const s=typeof i.firebase==="object"?i.firebase:undefined;const o=s===null||s===void 0?void 0:s["sign_in_provider"];return{claims:i,token:r,authTime:nn(on(i.auth_time)),issuedAtTime:nn(on(i.iat)),expirationTime:nn(on(i.exp)),signInProvider:o||null,signInSecondFactor:(s===null||s===void 0?void 0:s["sign_in_second_factor"])||null}}function on(e){return Number(e)*1e3}function an(e){var t;const[n,r,i]=e.split(".");if(n===undefined||r===undefined||i===undefined){Et("JWT malformed, contained fewer than 3 sections");return null}try{const e=o(r);if(!e){Et("Failed to decode base64 JWT payload");return null}return JSON.parse(e)}catch(e){Et("Caught error parsing JWT payload as JSON",(t=e)===null||t===void 0?void 0:t.toString());return null}}function cn(e){const t=an(e);Nt(t,"internal-error");Nt(typeof t.exp!=="undefined","internal-error");Nt(typeof t.iat!=="undefined","internal-error");return Number(t.exp)-Number(t.iat)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function un(e,t,n=false){if(n){return t}try{return await t}catch(t){if(t instanceof m&&ln(t)){if(e.auth.currentUser===e){await e.auth.signOut()}}throw t}}function ln({code:e}){return e===`auth/${"user-disabled"}`||e===`auth/${"user-token-expired"}`}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class dn{constructor(e){this.user=e;this.isRunning=false;this.timerId=null;this.errorBackoff=3e4}_start(){if(this.isRunning){return}this.isRunning=true;this.schedule()}_stop(){if(!this.isRunning){return}this.isRunning=false;if(this.timerId!==null){clearTimeout(this.timerId)}}getInterval(e){var t;if(e){const e=this.errorBackoff;this.errorBackoff=Math.min(this.errorBackoff*2,96e4);return e}else{this.errorBackoff=3e4;const e=(t=this.user.stsTokenManager.expirationTime)!==null&&t!==void 0?t:0;const n=e-Date.now()-3e5;return Math.max(0,n)}}schedule(e=false){if(!this.isRunning){return}const t=this.getInterval(e);this.timerId=setTimeout(async()=>{await this.iteration()},t)}async iteration(){var e;try{await this.user.getIdToken(true)}catch(t){if(((e=t)===null||e===void 0?void 0:e.code)===`auth/${"network-request-failed"}`){this.schedule(true)}return}this.schedule()}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class hn{constructor(e,t){this.createdAt=e;this.lastLoginAt=t;this._initializeTime()}_initializeTime(){this.lastSignInTime=nn(this.lastLoginAt);this.creationTime=nn(this.createdAt)}_copy(e){this.createdAt=e.createdAt;this.lastLoginAt=e.lastLoginAt;this._initializeTime()}toJSON(){return{createdAt:this.createdAt,lastLoginAt:this.lastLoginAt}}}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function fn(e){var t;const n=e.auth;const r=await e.getIdToken();const i=await un(e,tn(n,{idToken:r}));Nt(i===null||i===void 0?void 0:i.users.length,n,"internal-error");const s=i.users[0];e._notifyReloadListener(s);const o=((t=s.providerUserInfo)===null||t===void 0?void 0:t.length)?gn(s.providerUserInfo):[];const a=mn(e.providerData,o);const c=e.isAnonymous;const u=!(e.email&&s.passwordHash)&&!(a===null||a===void 0?void 0:a.length);const l=!c?false:u;const d={uid:s.localId,displayName:s.displayName||null,photoURL:s.photoUrl||null,email:s.email||null,emailVerified:s.emailVerified||false,phoneNumber:s.phoneNumber||null,tenantId:s.tenantId||null,providerData:a,metadata:new hn(s.createdAt,s.lastLoginAt),isAnonymous:l};Object.assign(e,d)}async function pn(e){const t=N(e);await fn(t);await t.auth._persistUserIfCurrent(t);t.auth._notifyListenersIfCurrent(t)}function mn(e,t){const n=e.filter(e=>!t.some(t=>t.providerId===e.providerId));return[...n,...t]}function gn(e){return e.map(e=>{var{providerId:t}=e,n=lt(e,["providerId"]);return{providerId:t,uid:n.rawId||"",displayName:n.displayName||null,email:n.email||null,phoneNumber:n.phoneNumber||null,photoURL:n.photoUrl||null}})}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function vn(e,t){const n=await Kt(e,{},async()=>{const n=w({grant_type:"refresh_token",refresh_token:t}).slice(1);const{tokenApiHost:r,apiKey:i}=e.config;const s=Yt(e,r,"/v1/token",`key=${i}`);const o=await e._getAdditionalHeaders();o["Content-Type"]="application/x-www-form-urlencoded";return Bt.fetch()(s,{method:"POST",headers:o,body:n})});return{accessToken:n.access_token,expiresIn:n.expires_in,refreshToken:n.refresh_token}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class In{constructor(){this.refreshToken=null;this.accessToken=null;this.expirationTime=null}get isExpired(){return!this.expirationTime||Date.now()>this.expirationTime-3e4}updateFromServerResponse(e){Nt(e.idToken,"internal-error");Nt(typeof e.idToken!=="undefined","internal-error");Nt(typeof e.refreshToken!=="undefined","internal-error");const t="expiresIn"in e&&typeof e.expiresIn!=="undefined"?Number(e.expiresIn):cn(e.idToken);this.updateTokensAndExpiration(e.idToken,e.refreshToken,t)}async getToken(e,t=false){Nt(!this.accessToken||this.refreshToken,e,"user-token-expired");if(!t&&this.accessToken&&!this.isExpired){return this.accessToken}if(this.refreshToken){await this.refresh(e,this.refreshToken);return this.accessToken}return null}clearRefreshToken(){this.refreshToken=null}async refresh(e,t){const{accessToken:n,refreshToken:r,expiresIn:i}=await vn(e,t);this.updateTokensAndExpiration(n,r,Number(i))}updateTokensAndExpiration(e,t,n){this.refreshToken=t||null;this.accessToken=e||null;this.expirationTime=Date.now()+n*1e3}static fromJSON(e,t){const{refreshToken:n,accessToken:r,expirationTime:i}=t;const s=new In;if(n){Nt(typeof n==="string","internal-error",{appName:e});s.refreshToken=n}if(r){Nt(typeof r==="string","internal-error",{appName:e});s.accessToken=r}if(i){Nt(typeof i==="number","internal-error",{appName:e});s.expirationTime=i}return s}toJSON(){return{refreshToken:this.refreshToken,accessToken:this.accessToken,expirationTime:this.expirationTime}}_assign(e){this.accessToken=e.accessToken;this.refreshToken=e.refreshToken;this.expirationTime=e.expirationTime}_clone(){return Object.assign(new In,this.toJSON())}_performRefresh(){return Ot("not implemented")}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function _n(e,t){Nt(typeof e==="string"||typeof e==="undefined","internal-error",{appName:t})}class yn{constructor(e){var{uid:t,auth:n,stsTokenManager:r}=e,i=lt(e,["uid","auth","stsTokenManager"]);this.providerId="firebase";this.proactiveRefresh=new dn(this);this.reloadUserInfo=null;this.reloadListener=null;this.uid=t;this.auth=n;this.stsTokenManager=r;this.accessToken=r.accessToken;this.displayName=i.displayName||null;this.email=i.email||null;this.emailVerified=i.emailVerified||false;this.phoneNumber=i.phoneNumber||null;this.photoURL=i.photoURL||null;this.isAnonymous=i.isAnonymous||false;this.tenantId=i.tenantId||null;this.providerData=i.providerData?[...i.providerData]:[];this.metadata=new hn(i.createdAt||undefined,i.lastLoginAt||undefined)}async getIdToken(e){const t=await un(this,this.stsTokenManager.getToken(this.auth,e));Nt(t,this.auth,"internal-error");if(this.accessToken!==t){this.accessToken=t;await this.auth._persistUserIfCurrent(this);this.auth._notifyListenersIfCurrent(this)}return t}getIdTokenResult(e){return sn(this,e)}reload(){return pn(this)}_assign(e){if(this===e){return}Nt(this.uid===e.uid,this.auth,"internal-error");this.displayName=e.displayName;this.photoURL=e.photoURL;this.email=e.email;this.emailVerified=e.emailVerified;this.phoneNumber=e.phoneNumber;this.isAnonymous=e.isAnonymous;this.tenantId=e.tenantId;this.providerData=e.providerData.map(e=>Object.assign({},e));this.metadata._copy(e.metadata);this.stsTokenManager._assign(e.stsTokenManager)}_clone(e){return new yn(Object.assign(Object.assign({},this),{auth:e,stsTokenManager:this.stsTokenManager._clone()}))}_onReload(e){Nt(!this.reloadListener,this.auth,"internal-error");this.reloadListener=e;if(this.reloadUserInfo){this._notifyReloadListener(this.reloadUserInfo);this.reloadUserInfo=null}}_notifyReloadListener(e){if(this.reloadListener){this.reloadListener(e)}else{this.reloadUserInfo=e}}_startProactiveRefresh(){this.proactiveRefresh._start()}_stopProactiveRefresh(){this.proactiveRefresh._stop()}async _updateTokensIfNecessary(e,t=false){let n=false;if(e.idToken&&e.idToken!==this.stsTokenManager.accessToken){this.stsTokenManager.updateFromServerResponse(e);n=true}if(t){await fn(this)}await this.auth._persistUserIfCurrent(this);if(n){this.auth._notifyListenersIfCurrent(this)}}async delete(){const e=await this.getIdToken();await un(this,Zt(this.auth,{idToken:e}));this.stsTokenManager.clearRefreshToken();return this.auth.signOut()}toJSON(){return Object.assign(Object.assign({uid:this.uid,email:this.email||undefined,emailVerified:this.emailVerified,displayName:this.displayName||undefined,isAnonymous:this.isAnonymous,photoURL:this.photoURL||undefined,phoneNumber:this.phoneNumber||undefined,tenantId:this.tenantId||undefined,providerData:this.providerData.map(e=>Object.assign({},e)),stsTokenManager:this.stsTokenManager.toJSON(),_redirectEventId:this._redirectEventId},this.metadata.toJSON()),{apiKey:this.auth.config.apiKey,appName:this.auth.name})}get refreshToken(){return this.stsTokenManager.refreshToken||""}static _fromJSON(e,t){var n,r,i,s,o,a,c,u;const l=(n=t.displayName)!==null&&n!==void 0?n:undefined;const d=(r=t.email)!==null&&r!==void 0?r:undefined;const h=(i=t.phoneNumber)!==null&&i!==void 0?i:undefined;const f=(s=t.photoURL)!==null&&s!==void 0?s:undefined;const p=(o=t.tenantId)!==null&&o!==void 0?o:undefined;const m=(a=t._redirectEventId)!==null&&a!==void 0?a:undefined;const g=(c=t.createdAt)!==null&&c!==void 0?c:undefined;const v=(u=t.lastLoginAt)!==null&&u!==void 0?u:undefined;const{uid:I,emailVerified:_,isAnonymous:y,providerData:T,stsTokenManager:w}=t;Nt(I&&w,e,"internal-error");const E=In.fromJSON(this.name,w);Nt(typeof I==="string",e,"internal-error");_n(l,e.name);_n(d,e.name);Nt(typeof _==="boolean",e,"internal-error");Nt(typeof y==="boolean",e,"internal-error");_n(h,e.name);_n(f,e.name);_n(p,e.name);_n(m,e.name);_n(g,e.name);_n(v,e.name);const b=new yn({uid:I,auth:e,email:d,emailVerified:_,displayName:l,isAnonymous:y,photoURL:f,phoneNumber:h,tenantId:p,stsTokenManager:E,createdAt:g,lastLoginAt:v});if(T&&Array.isArray(T)){b.providerData=T.map(e=>Object.assign({},e))}if(m){b._redirectEventId=m}return b}static async _fromIdTokenResponse(e,t,n=false){const r=new In;r.updateFromServerResponse(t);const i=new yn({uid:t.localId,auth:e,stsTokenManager:r,isAnonymous:n});await fn(i);return i}}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Tn{constructor(){this.type="NONE";this.storage={}}async _isAvailable(){return true}async _set(e,t){this.storage[e]=t}async _get(e){const t=this.storage[e];return t===undefined?null:t}async _remove(e){delete this.storage[e]}_addListener(e,t){return}_removeListener(e,t){return}}Tn.type="NONE";const wn=Tn;
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function En(e,t,n){return`${"firebase"}:${e}:${t}:${n}`}class bn{constructor(e,t,n){this.persistence=e;this.auth=t;this.userKey=n;const{config:r,name:i}=this.auth;this.fullUserKey=En(this.userKey,r.apiKey,i);this.fullPersistenceKey=En("persistence",r.apiKey,i);this.boundEventHandler=t._onStorageEvent.bind(t);this.persistence._addListener(this.fullUserKey,this.boundEventHandler)}setCurrentUser(e){return this.persistence._set(this.fullUserKey,e.toJSON())}async getCurrentUser(){const e=await this.persistence._get(this.fullUserKey);return e?yn._fromJSON(this.auth,e):null}removeCurrentUser(){return this.persistence._remove(this.fullUserKey)}savePersistenceForRedirect(){return this.persistence._set(this.fullPersistenceKey,this.persistence.type)}async setPersistence(e){if(this.persistence===e){return}const t=await this.getCurrentUser();await this.removeCurrentUser();this.persistence=e;if(t){return this.setCurrentUser(t)}}delete(){this.persistence._removeListener(this.fullUserKey,this.boundEventHandler)}static async create(e,t,n="authUser"){if(!t.length){return new bn(Dt(wn),e,n)}const r=(await Promise.all(t.map(async e=>{if(await e._isAvailable()){return e}return undefined}))).filter(e=>e);let i=r[0]||Dt(wn);const s=En(n,e.config.apiKey,e.name);let o=null;for(const n of t){try{const t=await n._get(s);if(t){const r=yn._fromJSON(e,t);if(n!==i){o=r}i=n;break}}catch(e){}}const a=r.filter(e=>e._shouldAllowMigration);if(!i._shouldAllowMigration||!a.length){return new bn(i,e,n)}i=a[0];if(o){await i._set(s,o.toJSON())}await Promise.all(t.map(async e=>{if(e!==i){try{await e._remove(s)}catch(e){}}}));return new bn(i,e,n)}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function kn(e){const t=e.toLowerCase();if(t.includes("opera/")||t.includes("opr/")||t.includes("opios/")){return"Opera"}else if(Nn(t)){return"IEMobile"}else if(t.includes("msie")||t.includes("trident/")){return"IE"}else if(t.includes("edge/")){return"Edge"}else if(An(t)){return"Firefox"}else if(t.includes("silk/")){return"Silk"}else if(Pn(t)){return"Blackberry"}else if(Cn(t)){return"Webos"}else if(Sn(t)){return"Safari"}else if((t.includes("chrome/")||Rn(t))&&!t.includes("edge/")){return"Chrome"}else if(On(t)){return"Android"}else{const t=/([a-zA-Z\d\.]+)\/[a-zA-Z\d\.]*$/;const n=e.match(t);if((n===null||n===void 0?void 0:n.length)===2){return n[1]}}return"Other"}function An(e=a()){return/firefox\//i.test(e)}function Sn(e=a()){const t=e.toLowerCase();return t.includes("safari/")&&!t.includes("chrome/")&&!t.includes("crios/")&&!t.includes("android")}function Rn(e=a()){return/crios\//i.test(e)}function Nn(e=a()){return/iemobile/i.test(e)}function On(e=a()){return/android/i.test(e)}function Pn(e=a()){return/blackberry/i.test(e)}function Cn(e=a()){return/webos/i.test(e)}function Dn(e=a()){return/iphone|ipad|ipod/i.test(e)}function Ln(e=a()){var t;return Dn(e)&&!!((t=window.navigator)===null||t===void 0?void 0:t.standalone)}function Mn(){return d()&&document.documentMode===10}function Un(e=a()){return Dn(e)||On(e)||Cn(e)||Pn(e)||/windows phone/i.test(e)||Nn(e)}function Fn(){try{return!!(window&&window!==window.top)}catch(e){return false}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function xn(e,t=[]){let n;switch(e){case"Browser":n=kn(a());break;case"Worker":n=`${kn(a())}-${e}`;break;default:n=e}const r=t.length?t.join(","):"FirebaseCore-web";return`${n}/${"JsCore"}/${Ge}/${r}`}
+/**
+     * @license
+     * Copyright 2022 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Vn{constructor(e){this.auth=e;this.queue=[]}pushCallback(e,t){const n=t=>new Promise((n,r)=>{try{const r=e(t);n(r)}catch(e){r(e)}});n.onAbort=t;this.queue.push(n);const r=this.queue.length-1;return()=>{this.queue[r]=()=>Promise.resolve()}}async runMiddleware(e){var t;if(this.auth.currentUser===e){return}const n=[];try{for(const t of this.queue){await t(e);if(t.onAbort){n.push(t.onAbort)}}}catch(e){n.reverse();for(const e of n){try{e()}catch(e){}}throw this.auth._errorFactory.create("login-blocked",{originalMessage:(t=e)===null||t===void 0?void 0:t.message})}}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class jn{constructor(e,t,n){this.app=e;this.heartbeatServiceProvider=t;this.config=n;this.currentUser=null;this.emulatorConfig=null;this.operations=Promise.resolve();this.authStateSubscription=new Wn(this);this.idTokenSubscription=new Wn(this);this.beforeStateQueue=new Vn(this);this.redirectUser=null;this.isProactiveRefreshEnabled=false;this._canInitEmulator=true;this._isInitialized=false;this._deleted=false;this._initializationPromise=null;this._popupRedirectResolver=null;this._errorFactory=yt;this.lastNotifiedUid=undefined;this.languageCode=null;this.tenantId=null;this.settings={appVerificationDisabledForTesting:false};this.frameworks=[];this.name=e.name;this.clientVersion=n.sdkClientVersion}_initializeWithPersistence(e,t){if(t){this._popupRedirectResolver=Dt(t)}this._initializationPromise=this.queue(async()=>{var n,r;if(this._deleted){return}this.persistenceManager=await bn.create(this,e);if(this._deleted){return}if((n=this._popupRedirectResolver)===null||n===void 0?void 0:n._shouldInitProactively){try{await this._popupRedirectResolver._initialize(this)}catch(e){}}await this.initializeCurrentUser(t);this.lastNotifiedUid=((r=this.currentUser)===null||r===void 0?void 0:r.uid)||null;if(this._deleted){return}this._isInitialized=true});return this._initializationPromise}async _onStorageEvent(){if(this._deleted){return}const e=await this.assertedPersistence.getCurrentUser();if(!this.currentUser&&!e){return}if(this.currentUser&&e&&this.currentUser.uid===e.uid){this._currentUser._assign(e);await this.currentUser.getIdToken();return}await this._updateCurrentUser(e,true)}async initializeCurrentUser(e){var t;const n=await this.assertedPersistence.getCurrentUser();let r=n;let i=false;if(e&&this.config.authDomain){await this.getOrInitRedirectPersistenceManager();const n=(t=this.redirectUser)===null||t===void 0?void 0:t._redirectEventId;const s=r===null||r===void 0?void 0:r._redirectEventId;const o=await this.tryRedirectSignIn(e);if((!n||n===s)&&(o===null||o===void 0?void 0:o.user)){r=o.user;i=true}}if(!r){return this.directlySetCurrentUser(null)}if(!r._redirectEventId){if(i){try{await this.beforeStateQueue.runMiddleware(r)}catch(e){r=n;this._popupRedirectResolver._overrideRedirectResult(this,()=>Promise.reject(e))}}if(r){return this.reloadAndSetCurrentUserOrClear(r)}else{return this.directlySetCurrentUser(null)}}Nt(this._popupRedirectResolver,this,"argument-error");await this.getOrInitRedirectPersistenceManager();if(this.redirectUser&&this.redirectUser._redirectEventId===r._redirectEventId){return this.directlySetCurrentUser(r)}return this.reloadAndSetCurrentUserOrClear(r)}async tryRedirectSignIn(e){let t=null;try{t=await this._popupRedirectResolver._completeRedirectFn(this,e,true)}catch(e){await this._setRedirectUser(null)}return t}async reloadAndSetCurrentUserOrClear(e){var t;try{await fn(e)}catch(e){if(((t=e)===null||t===void 0?void 0:t.code)!==`auth/${"network-request-failed"}`){return this.directlySetCurrentUser(null)}}return this.directlySetCurrentUser(e)}useDeviceLanguage(){this.languageCode=jt()}async _delete(){this._deleted=true}async updateCurrentUser(e){const t=e?N(e):null;if(t){Nt(t.auth.config.apiKey===this.config.apiKey,this,"invalid-user-token")}return this._updateCurrentUser(t&&t._clone(this))}async _updateCurrentUser(e,t=false){if(this._deleted){return}if(e){Nt(this.tenantId===e.tenantId,this,"tenant-id-mismatch")}if(!t){await this.beforeStateQueue.runMiddleware(e)}return this.queue(async()=>{await this.directlySetCurrentUser(e);this.notifyAuthListeners()})}async signOut(){await this.beforeStateQueue.runMiddleware(null);if(this.redirectPersistenceManager||this._popupRedirectResolver){await this._setRedirectUser(null)}return this._updateCurrentUser(null,true)}setPersistence(e){return this.queue(async()=>{await this.assertedPersistence.setPersistence(Dt(e))})}_getPersistence(){return this.assertedPersistence.persistence.type}_updateErrorMap(e){this._errorFactory=new g("auth","Firebase",e())}onAuthStateChanged(e,t,n){return this.registerStateListener(this.authStateSubscription,e,t,n)}beforeAuthStateChanged(e,t){return this.beforeStateQueue.pushCallback(e,t)}onIdTokenChanged(e,t,n){return this.registerStateListener(this.idTokenSubscription,e,t,n)}toJSON(){var e;return{apiKey:this.config.apiKey,authDomain:this.config.authDomain,appName:this.name,currentUser:(e=this._currentUser)===null||e===void 0?void 0:e.toJSON()}}async _setRedirectUser(e,t){const n=await this.getOrInitRedirectPersistenceManager(t);return e===null?n.removeCurrentUser():n.setCurrentUser(e)}async getOrInitRedirectPersistenceManager(e){if(!this.redirectPersistenceManager){const t=e&&Dt(e)||this._popupRedirectResolver;Nt(t,this,"argument-error");this.redirectPersistenceManager=await bn.create(this,[Dt(t._redirectPersistence)],"redirectUser");this.redirectUser=await this.redirectPersistenceManager.getCurrentUser()}return this.redirectPersistenceManager}async _redirectUserForId(e){var t,n;if(this._isInitialized){await this.queue(async()=>{})}if(((t=this._currentUser)===null||t===void 0?void 0:t._redirectEventId)===e){return this._currentUser}if(((n=this.redirectUser)===null||n===void 0?void 0:n._redirectEventId)===e){return this.redirectUser}return null}async _persistUserIfCurrent(e){if(e===this.currentUser){return this.queue(async()=>this.directlySetCurrentUser(e))}}_notifyListenersIfCurrent(e){if(e===this.currentUser){this.notifyAuthListeners()}}_key(){return`${this.config.authDomain}:${this.config.apiKey}:${this.name}`}_startProactiveRefresh(){this.isProactiveRefreshEnabled=true;if(this.currentUser){this._currentUser._startProactiveRefresh()}}_stopProactiveRefresh(){this.isProactiveRefreshEnabled=false;if(this.currentUser){this._currentUser._stopProactiveRefresh()}}get _currentUser(){return this.currentUser}notifyAuthListeners(){var e,t;if(!this._isInitialized){return}this.idTokenSubscription.next(this.currentUser);const n=(t=(e=this.currentUser)===null||e===void 0?void 0:e.uid)!==null&&t!==void 0?t:null;if(this.lastNotifiedUid!==n){this.lastNotifiedUid=n;this.authStateSubscription.next(this.currentUser)}}registerStateListener(e,t,n,r){if(this._deleted){return()=>{}}const i=typeof t==="function"?t:t.next.bind(t);const s=this._isInitialized?Promise.resolve():this._initializationPromise;Nt(s,this,"internal-error");s.then(()=>i(this.currentUser));if(typeof t==="function"){return e.addObserver(t,n,r)}else{return e.addObserver(t)}}async directlySetCurrentUser(e){if(this.currentUser&&this.currentUser!==e){this._currentUser._stopProactiveRefresh();if(e&&this.isProactiveRefreshEnabled){e._startProactiveRefresh()}}this.currentUser=e;if(e){await this.assertedPersistence.setCurrentUser(e)}else{await this.assertedPersistence.removeCurrentUser()}}queue(e){this.operations=this.operations.then(e,e);return this.operations}get assertedPersistence(){Nt(this.persistenceManager,this,"internal-error");return this.persistenceManager}_logFramework(e){if(!e||this.frameworks.includes(e)){return}this.frameworks.push(e);this.frameworks.sort();this.clientVersion=xn(this.config.clientPlatform,this._getFrameworks())}_getFrameworks(){return this.frameworks}async _getAdditionalHeaders(){var e;const t={["X-Client-Version"]:this.clientVersion};if(this.app.options.appId){t["X-Firebase-gmpid"]=this.app.options.appId}const n=await((e=this.heartbeatServiceProvider.getImmediate({optional:true}))===null||e===void 0?void 0:e.getHeartbeatsHeader());if(n){t["X-Firebase-Client"]=n}return t}}function Hn(e){return N(e)}class Wn{constructor(e){this.auth=e;this.observer=null;this.addObserver=k(e=>this.observer=e)}get next(){Nt(this.observer,this.auth,"internal-error");return this.observer.next.bind(this.observer)}}function Bn(e,t,n){const r=Hn(e);Nt(r._canInitEmulator,r,"emulator-config-failed");Nt(/^https?:\/\//.test(t),r,"invalid-emulator-scheme");const i=!!(n===null||n===void 0?void 0:n.disableWarnings);const s=qn(t);const{host:o,port:a}=Gn(t);const c=a===null?"":`:${a}`;r.config.emulator={url:`${s}//${o}${c}/`};r.settings.appVerificationDisabledForTesting=true;r.emulatorConfig=Object.freeze({host:o,port:a,protocol:s.replace(":",""),options:Object.freeze({disableWarnings:i})});if(!i){$n()}}function qn(e){const t=e.indexOf(":");return t<0?"":e.substr(0,t+1)}function Gn(e){const t=qn(e);const n=/(\/\/)?([^?#/]+)/.exec(e.substr(t.length));if(!n){return{host:"",port:null}}const r=n[2].split("@").pop()||"";const i=/^(\[[^\]]+\])(:|$)/.exec(r);if(i){const e=i[1];return{host:e,port:zn(r.substr(e.length+1))}}else{const[e,t]=r.split(":");return{host:e,port:zn(t)}}}function zn(e){if(!e){return null}const t=Number(e);if(isNaN(t)){return null}return t}function $n(){function e(){const e=document.createElement("p");const t=e.style;e.innerText="Running in emulator mode. Do not use with production credentials.";t.position="fixed";t.width="100%";t.backgroundColor="#ffffff";t.border=".1em solid #000000";t.color="#b50000";t.bottom="0px";t.left="0px";t.margin="0px";t.zIndex="10000";t.textAlign="center";e.classList.add("firebase-emulator-warning");document.body.appendChild(e)}if(typeof console!=="undefined"&&typeof console.info==="function"){console.info("WARNING: You are using the Auth Emulator,"+" which is intended for local testing only.  Do not use with"+" production credentials.")}if(typeof window!=="undefined"&&typeof document!=="undefined"){if(document.readyState==="loading"){window.addEventListener("DOMContentLoaded",e)}else{e()}}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Kn{constructor(e,t){this.providerId=e;this.signInMethod=t}toJSON(){return Ot("not implemented")}_getIdTokenResponse(e){return Ot("not implemented")}_linkToIdToken(e,t){return Ot("not implemented")}_getReauthenticationResolver(e){return Ot("not implemented")}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function Jn(e,t){return $t(e,"POST","/v1/accounts:resetPassword",zt(e,t))}async function Yn(e,t){return $t(e,"POST","/v1/accounts:update",t)}async function Xn(e,t){return $t(e,"POST","/v1/accounts:update",zt(e,t))}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function Qn(e,t){return Jt(e,"POST","/v1/accounts:signInWithPassword",zt(e,t))}async function Zn(e,t){return $t(e,"POST","/v1/accounts:sendOobCode",zt(e,t))}async function er(e,t){return Zn(e,t)}async function tr(e,t){return Zn(e,t)}async function nr(e,t){return Zn(e,t)}async function rr(e,t){return Zn(e,t)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function ir(e,t){return Jt(e,"POST","/v1/accounts:signInWithEmailLink",zt(e,t))}async function sr(e,t){return Jt(e,"POST","/v1/accounts:signInWithEmailLink",zt(e,t))}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class or extends Kn{constructor(e,t,n,r=null){super("password",n);this._email=e;this._password=t;this._tenantId=r}static _fromEmailAndPassword(e,t){return new or(e,t,"password")}static _fromEmailAndCode(e,t,n=null){return new or(e,t,"emailLink",n)}toJSON(){return{email:this._email,password:this._password,signInMethod:this.signInMethod,tenantId:this._tenantId}}static fromJSON(e){const t=typeof e==="string"?JSON.parse(e):e;if((t===null||t===void 0?void 0:t.email)&&(t===null||t===void 0?void 0:t.password)){if(t.signInMethod==="password"){return this._fromEmailAndPassword(t.email,t.password)}else if(t.signInMethod==="emailLink"){return this._fromEmailAndCode(t.email,t.password,t.tenantId)}}return null}async _getIdTokenResponse(e){switch(this.signInMethod){case"password":return Qn(e,{returnSecureToken:true,email:this._email,password:this._password});case"emailLink":return ir(e,{email:this._email,oobCode:this._password});default:bt(e,"internal-error")}}async _linkToIdToken(e,t){switch(this.signInMethod){case"password":return Yn(e,{idToken:t,returnSecureToken:true,email:this._email,password:this._password});case"emailLink":return sr(e,{idToken:t,email:this._email,oobCode:this._password});default:bt(e,"internal-error")}}_getReauthenticationResolver(e){return this._getIdTokenResponse(e)}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function ar(e,t){return Jt(e,"POST","/v1/accounts:signInWithIdp",zt(e,t))}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const cr="http://localhost";class ur extends Kn{constructor(){super(...arguments);this.pendingToken=null}static _fromParams(e){const t=new ur(e.providerId,e.signInMethod);if(e.idToken||e.accessToken){if(e.idToken){t.idToken=e.idToken}if(e.accessToken){t.accessToken=e.accessToken}if(e.nonce&&!e.pendingToken){t.nonce=e.nonce}if(e.pendingToken){t.pendingToken=e.pendingToken}}else if(e.oauthToken&&e.oauthTokenSecret){t.accessToken=e.oauthToken;t.secret=e.oauthTokenSecret}else{bt("argument-error")}return t}toJSON(){return{idToken:this.idToken,accessToken:this.accessToken,secret:this.secret,nonce:this.nonce,pendingToken:this.pendingToken,providerId:this.providerId,signInMethod:this.signInMethod}}static fromJSON(e){const t=typeof e==="string"?JSON.parse(e):e;const{providerId:n,signInMethod:r}=t,i=lt(t,["providerId","signInMethod"]);if(!n||!r){return null}const s=new ur(n,r);s.idToken=i.idToken||undefined;s.accessToken=i.accessToken||undefined;s.secret=i.secret;s.nonce=i.nonce;s.pendingToken=i.pendingToken||null;return s}_getIdTokenResponse(e){const t=this.buildRequest();return ar(e,t)}_linkToIdToken(e,t){const n=this.buildRequest();n.idToken=t;return ar(e,n)}_getReauthenticationResolver(e){const t=this.buildRequest();t.autoCreate=false;return ar(e,t)}buildRequest(){const e={requestUri:cr,returnSecureToken:true};if(this.pendingToken){e.pendingToken=this.pendingToken}else{const t={};if(this.idToken){t["id_token"]=this.idToken}if(this.accessToken){t["access_token"]=this.accessToken}if(this.secret){t["oauth_token_secret"]=this.secret}t["providerId"]=this.providerId;if(this.nonce&&!this.pendingToken){t["nonce"]=this.nonce}e.postBody=w(t)}return e}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function lr(e,t){return $t(e,"POST","/v1/accounts:sendVerificationCode",zt(e,t))}async function dr(e,t){return Jt(e,"POST","/v1/accounts:signInWithPhoneNumber",zt(e,t))}async function hr(e,t){const n=await Jt(e,"POST","/v1/accounts:signInWithPhoneNumber",zt(e,t));if(n.temporaryProof){throw Qt(e,"account-exists-with-different-credential",n)}return n}const fr={["USER_NOT_FOUND"]:"user-not-found"};async function pr(e,t){const n=Object.assign(Object.assign({},t),{operation:"REAUTH"});return Jt(e,"POST","/v1/accounts:signInWithPhoneNumber",zt(e,n),fr)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class mr extends Kn{constructor(e){super("phone","phone");this.params=e}static _fromVerification(e,t){return new mr({verificationId:e,verificationCode:t})}static _fromTokenResponse(e,t){return new mr({phoneNumber:e,temporaryProof:t})}_getIdTokenResponse(e){return dr(e,this._makeVerificationRequest())}_linkToIdToken(e,t){return hr(e,Object.assign({idToken:t},this._makeVerificationRequest()))}_getReauthenticationResolver(e){return pr(e,this._makeVerificationRequest())}_makeVerificationRequest(){const{temporaryProof:e,phoneNumber:t,verificationId:n,verificationCode:r}=this.params;if(e&&t){return{temporaryProof:e,phoneNumber:t}}return{sessionInfo:n,code:r}}toJSON(){const e={providerId:this.providerId};if(this.params.phoneNumber){e.phoneNumber=this.params.phoneNumber}if(this.params.temporaryProof){e.temporaryProof=this.params.temporaryProof}if(this.params.verificationCode){e.verificationCode=this.params.verificationCode}if(this.params.verificationId){e.verificationId=this.params.verificationId}return e}static fromJSON(e){if(typeof e==="string"){e=JSON.parse(e)}const{verificationId:t,verificationCode:n,phoneNumber:r,temporaryProof:i}=e;if(!n&&!t&&!r&&!i){return null}return new mr({verificationId:t,verificationCode:n,phoneNumber:r,temporaryProof:i})}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function gr(e){switch(e){case"recoverEmail":return"RECOVER_EMAIL";case"resetPassword":return"PASSWORD_RESET";case"signIn":return"EMAIL_SIGNIN";case"verifyEmail":return"VERIFY_EMAIL";case"verifyAndChangeEmail":return"VERIFY_AND_CHANGE_EMAIL";case"revertSecondFactorAddition":return"REVERT_SECOND_FACTOR_ADDITION";default:return null}}function vr(e){const t=E(b(e))["link"];const n=t?E(b(t))["deep_link_id"]:null;const r=E(b(e))["deep_link_id"];const i=r?E(b(r))["link"]:null;return i||r||n||t||e}class Ir{constructor(e){var t,n,r,i,s,o;const a=E(b(e));const c=(t=a["apiKey"])!==null&&t!==void 0?t:null;const u=(n=a["oobCode"])!==null&&n!==void 0?n:null;const l=gr((r=a["mode"])!==null&&r!==void 0?r:null);Nt(c&&u&&l,"argument-error");this.apiKey=c;this.operation=l;this.code=u;this.continueUrl=(i=a["continueUrl"])!==null&&i!==void 0?i:null;this.languageCode=(s=a["languageCode"])!==null&&s!==void 0?s:null;this.tenantId=(o=a["tenantId"])!==null&&o!==void 0?o:null}static parseLink(e){const t=vr(e);try{return new Ir(t)}catch(e){return null}}}function _r(e){return Ir.parseLink(e)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class yr{constructor(){this.providerId=yr.PROVIDER_ID}static credential(e,t){return or._fromEmailAndPassword(e,t)}static credentialWithLink(e,t){const n=Ir.parseLink(t);Nt(n,"argument-error");return or._fromEmailAndCode(e,n.code,n.tenantId)}}yr.PROVIDER_ID="password";yr.EMAIL_PASSWORD_SIGN_IN_METHOD="password";yr.EMAIL_LINK_SIGN_IN_METHOD="emailLink";
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Tr{constructor(e){this.providerId=e;this.defaultLanguageCode=null;this.customParameters={}}setDefaultLanguage(e){this.defaultLanguageCode=e}setCustomParameters(e){this.customParameters=e;return this}getCustomParameters(){return this.customParameters}}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class wr extends Tr{constructor(){super(...arguments);this.scopes=[]}addScope(e){if(!this.scopes.includes(e)){this.scopes.push(e)}return this}getScopes(){return[...this.scopes]}}class Er extends wr{static credentialFromJSON(e){const t=typeof e==="string"?JSON.parse(e):e;Nt("providerId"in t&&"signInMethod"in t,"argument-error");return ur._fromParams(t)}credential(e){return this._credential(Object.assign(Object.assign({},e),{nonce:e.rawNonce}))}_credential(e){Nt(e.idToken||e.accessToken,"argument-error");return ur._fromParams(Object.assign(Object.assign({},e),{providerId:this.providerId,signInMethod:this.providerId}))}static credentialFromResult(e){return Er.oauthCredentialFromTaggedObject(e)}static credentialFromError(e){return Er.oauthCredentialFromTaggedObject(e.customData||{})}static oauthCredentialFromTaggedObject({_tokenResponse:e}){if(!e){return null}const{oauthIdToken:t,oauthAccessToken:n,oauthTokenSecret:r,pendingToken:i,nonce:s,providerId:o}=e;if(!n&&!r&&!t&&!i){return null}if(!o){return null}try{return new Er(o)._credential({idToken:t,accessToken:n,nonce:s,pendingToken:i})}catch(e){return null}}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class br extends wr{constructor(){super("facebook.com")}static credential(e){return ur._fromParams({providerId:br.PROVIDER_ID,signInMethod:br.FACEBOOK_SIGN_IN_METHOD,accessToken:e})}static credentialFromResult(e){return br.credentialFromTaggedObject(e)}static credentialFromError(e){return br.credentialFromTaggedObject(e.customData||{})}static credentialFromTaggedObject({_tokenResponse:e}){if(!e||!("oauthAccessToken"in e)){return null}if(!e.oauthAccessToken){return null}try{return br.credential(e.oauthAccessToken)}catch(e){return null}}}br.FACEBOOK_SIGN_IN_METHOD="facebook.com";br.PROVIDER_ID="facebook.com";
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class kr extends wr{constructor(){super("google.com");this.addScope("profile")}static credential(e,t){return ur._fromParams({providerId:kr.PROVIDER_ID,signInMethod:kr.GOOGLE_SIGN_IN_METHOD,idToken:e,accessToken:t})}static credentialFromResult(e){return kr.credentialFromTaggedObject(e)}static credentialFromError(e){return kr.credentialFromTaggedObject(e.customData||{})}static credentialFromTaggedObject({_tokenResponse:e}){if(!e){return null}const{oauthIdToken:t,oauthAccessToken:n}=e;if(!t&&!n){return null}try{return kr.credential(t,n)}catch(e){return null}}}kr.GOOGLE_SIGN_IN_METHOD="google.com";kr.PROVIDER_ID="google.com";
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Ar extends wr{constructor(){super("github.com")}static credential(e){return ur._fromParams({providerId:Ar.PROVIDER_ID,signInMethod:Ar.GITHUB_SIGN_IN_METHOD,accessToken:e})}static credentialFromResult(e){return Ar.credentialFromTaggedObject(e)}static credentialFromError(e){return Ar.credentialFromTaggedObject(e.customData||{})}static credentialFromTaggedObject({_tokenResponse:e}){if(!e||!("oauthAccessToken"in e)){return null}if(!e.oauthAccessToken){return null}try{return Ar.credential(e.oauthAccessToken)}catch(e){return null}}}Ar.GITHUB_SIGN_IN_METHOD="github.com";Ar.PROVIDER_ID="github.com";
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Sr="http://localhost";class Rr extends Kn{constructor(e,t){super(e,e);this.pendingToken=t}_getIdTokenResponse(e){const t=this.buildRequest();return ar(e,t)}_linkToIdToken(e,t){const n=this.buildRequest();n.idToken=t;return ar(e,n)}_getReauthenticationResolver(e){const t=this.buildRequest();t.autoCreate=false;return ar(e,t)}toJSON(){return{signInMethod:this.signInMethod,providerId:this.providerId,pendingToken:this.pendingToken}}static fromJSON(e){const t=typeof e==="string"?JSON.parse(e):e;const{providerId:n,signInMethod:r,pendingToken:i}=t;if(!n||!r||!i||n!==r){return null}return new Rr(n,i)}static _create(e,t){return new Rr(e,t)}buildRequest(){return{requestUri:Sr,returnSecureToken:true,pendingToken:this.pendingToken}}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Nr="saml.";class Or extends Tr{constructor(e){Nt(e.startsWith(Nr),"argument-error");super(e)}static credentialFromResult(e){return Or.samlCredentialFromTaggedObject(e)}static credentialFromError(e){return Or.samlCredentialFromTaggedObject(e.customData||{})}static credentialFromJSON(e){const t=Rr.fromJSON(e);Nt(t,"argument-error");return t}static samlCredentialFromTaggedObject({_tokenResponse:e}){if(!e){return null}const{pendingToken:t,providerId:n}=e;if(!t||!n){return null}try{return Rr._create(n,t)}catch(e){return null}}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Pr extends wr{constructor(){super("twitter.com")}static credential(e,t){return ur._fromParams({providerId:Pr.PROVIDER_ID,signInMethod:Pr.TWITTER_SIGN_IN_METHOD,oauthToken:e,oauthTokenSecret:t})}static credentialFromResult(e){return Pr.credentialFromTaggedObject(e)}static credentialFromError(e){return Pr.credentialFromTaggedObject(e.customData||{})}static credentialFromTaggedObject({_tokenResponse:e}){if(!e){return null}const{oauthAccessToken:t,oauthTokenSecret:n}=e;if(!t||!n){return null}try{return Pr.credential(t,n)}catch(e){return null}}}Pr.TWITTER_SIGN_IN_METHOD="twitter.com";Pr.PROVIDER_ID="twitter.com";
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function Cr(e,t){return Jt(e,"POST","/v1/accounts:signUp",zt(e,t))}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Dr{constructor(e){this.user=e.user;this.providerId=e.providerId;this._tokenResponse=e._tokenResponse;this.operationType=e.operationType}static async _fromIdTokenResponse(e,t,n,r=false){const i=await yn._fromIdTokenResponse(e,n,r);const s=Lr(n);const o=new Dr({user:i,providerId:s,_tokenResponse:n,operationType:t});return o}static async _forOperation(e,t,n){await e._updateTokensIfNecessary(n,true);const r=Lr(n);return new Dr({user:e,providerId:r,_tokenResponse:n,operationType:t})}}function Lr(e){if(e.providerId){return e.providerId}if("phoneNumber"in e){return"phone"}return null}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function Mr(e){var t;const n=Hn(e);await n._initializationPromise;if((t=n.currentUser)===null||t===void 0?void 0:t.isAnonymous){return new Dr({user:n.currentUser,providerId:null,operationType:"signIn"})}const r=await Cr(n,{returnSecureToken:true});const i=await Dr._fromIdTokenResponse(n,"signIn",r,true);await n._updateCurrentUser(i.user);return i}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Ur extends m{constructor(e,t,n,r){var i;super(t.code,t.message);this.operationType=n;this.user=r;Object.setPrototypeOf(this,Ur.prototype);this.customData={appName:e.name,tenantId:(i=e.tenantId)!==null&&i!==void 0?i:undefined,_serverResponse:t.customData._serverResponse,operationType:n}}static _fromErrorAndOperation(e,t,n,r){return new Ur(e,t,n,r)}}function Fr(e,t,n,r){const i=t==="reauthenticate"?n._getReauthenticationResolver(e):n._getIdTokenResponse(e);return i.catch(n=>{if(n.code===`auth/${"multi-factor-auth-required"}`){throw Ur._fromErrorAndOperation(e,n,t,r)}throw n})}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function xr(e){return new Set(e.map(({providerId:e})=>e).filter(e=>!!e))}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function Vr(e,t){const n=N(e);await Hr(true,n,t);const{providerUserInfo:r}=await en(n.auth,{idToken:await n.getIdToken(),deleteProvider:[t]});const i=xr(r||[]);n.providerData=n.providerData.filter(e=>i.has(e.providerId));if(!i.has("phone")){n.phoneNumber=null}await n.auth._persistUserIfCurrent(n);return n}async function jr(e,t,n=false){const r=await un(e,t._linkToIdToken(e.auth,await e.getIdToken()),n);return Dr._forOperation(e,"link",r)}async function Hr(e,t,n){await fn(t);const r=xr(t.providerData);const i=e===false?"provider-already-linked":"no-such-provider";Nt(r.has(n)===e,t.auth,i)}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function Wr(e,t,n=false){var r;const{auth:i}=e;const s="reauthenticate";try{const r=await un(e,Fr(i,s,t,e),n);Nt(r.idToken,i,"internal-error");const o=an(r.idToken);Nt(o,i,"internal-error");const{sub:a}=o;Nt(e.uid===a,i,"user-mismatch");return Dr._forOperation(e,s,r)}catch(e){if(((r=e)===null||r===void 0?void 0:r.code)===`auth/${"user-not-found"}`){bt(i,"user-mismatch")}throw e}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function Br(e,t,n=false){const r="signIn";const i=await Fr(e,r,t);const s=await Dr._fromIdTokenResponse(e,r,i);if(!n){await e._updateCurrentUser(s.user)}return s}async function qr(e,t){return Br(Hn(e),t)}async function Gr(e,t){const n=N(e);await Hr(false,n,t.providerId);return jr(n,t)}async function zr(e,t){return Wr(N(e),t)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function $r(e,t){return Jt(e,"POST","/v1/accounts:signInWithCustomToken",zt(e,t))}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function Kr(e,t){const n=Hn(e);const r=await $r(n,{token:t,returnSecureToken:true});const i=await Dr._fromIdTokenResponse(n,"signIn",r);await n._updateCurrentUser(i.user);return i}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Jr{constructor(e,t){this.factorId=e;this.uid=t.mfaEnrollmentId;this.enrollmentTime=new Date(t.enrolledAt).toUTCString();this.displayName=t.displayName}static _fromServerResponse(e,t){if("phoneInfo"in t){return Yr._fromServerResponse(e,t)}return bt(e,"internal-error")}}class Yr extends Jr{constructor(e){super("phone",e);this.phoneNumber=e.phoneInfo}static _fromServerResponse(e,t){return new Yr(t)}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function Xr(e,t,n){var r;Nt(((r=n.url)===null||r===void 0?void 0:r.length)>0,e,"invalid-continue-uri");Nt(typeof n.dynamicLinkDomain==="undefined"||n.dynamicLinkDomain.length>0,e,"invalid-dynamic-link-domain");t.continueUrl=n.url;t.dynamicLinkDomain=n.dynamicLinkDomain;t.canHandleCodeInApp=n.handleCodeInApp;if(n.iOS){Nt(n.iOS.bundleId.length>0,e,"missing-ios-bundle-id");t.iOSBundleId=n.iOS.bundleId}if(n.android){Nt(n.android.packageName.length>0,e,"missing-android-pkg-name");t.androidInstallApp=n.android.installApp;t.androidMinimumVersionCode=n.android.minimumVersion;t.androidPackageName=n.android.packageName}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function Qr(e,t,n){const r=N(e);const i={requestType:"PASSWORD_RESET",email:t};if(n){Xr(r,i,n)}await tr(r,i)}async function Zr(e,t,n){await Jn(N(e),{oobCode:t,newPassword:n})}async function ei(e,t){await Xn(N(e),{oobCode:t})}async function ti(e,t){const n=N(e);const r=await Jn(n,{oobCode:t});const i=r.requestType;Nt(i,n,"internal-error");switch(i){case"EMAIL_SIGNIN":break;case"VERIFY_AND_CHANGE_EMAIL":Nt(r.newEmail,n,"internal-error");break;case"REVERT_SECOND_FACTOR_ADDITION":Nt(r.mfaInfo,n,"internal-error");default:Nt(r.email,n,"internal-error")}let s=null;if(r.mfaInfo){s=Jr._fromServerResponse(Hn(n),r.mfaInfo)}return{data:{email:(r.requestType==="VERIFY_AND_CHANGE_EMAIL"?r.newEmail:r.email)||null,previousEmail:(r.requestType==="VERIFY_AND_CHANGE_EMAIL"?r.email:r.newEmail)||null,multiFactorInfo:s},operation:i}}async function ni(e,t){const{data:n}=await ti(N(e),t);return n.email}async function ri(e,t,n){const r=Hn(e);const i=await Cr(r,{returnSecureToken:true,email:t,password:n});const s=await Dr._fromIdTokenResponse(r,"signIn",i);await r._updateCurrentUser(s.user);return s}function ii(e,t,n){return qr(N(e),yr.credential(t,n))}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function si(e,t,n){const r=N(e);const i={requestType:"EMAIL_SIGNIN",email:t};Nt(n.handleCodeInApp,r,"argument-error");if(n){Xr(r,i,n)}await nr(r,i)}function oi(e,t){const n=Ir.parseLink(t);return(n===null||n===void 0?void 0:n.operation)==="EMAIL_SIGNIN"}async function ai(e,t,n){const r=N(e);const i=yr.credentialWithLink(t,n||Ut());Nt(i._tenantId===(r.tenantId||null),r,"tenant-id-mismatch");return qr(r,i)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function ci(e,t){return $t(e,"POST","/v1/accounts:createAuthUri",zt(e,t))}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function ui(e,t){const n=Ft()?Ut():"http://localhost";const r={identifier:t,continueUri:n};const{signinMethods:i}=await ci(N(e),r);return i||[]}async function li(e,t){const n=N(e);const r=await e.getIdToken();const i={requestType:"VERIFY_EMAIL",idToken:r};if(t){Xr(n.auth,i,t)}const{email:s}=await er(n.auth,i);if(s!==e.email){await e.reload()}}async function di(e,t,n){const r=N(e);const i=await e.getIdToken();const s={requestType:"VERIFY_AND_CHANGE_EMAIL",idToken:i,newEmail:t};if(n){Xr(r.auth,s,n)}const{email:o}=await rr(r.auth,s);if(o!==e.email){await e.reload()}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function hi(e,t){return $t(e,"POST","/v1/accounts:update",t)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function fi(e,{displayName:t,photoURL:n}){if(t===undefined&&n===undefined){return}const r=N(e);const i=await r.getIdToken();const s={idToken:i,displayName:t,photoUrl:n,returnSecureToken:true};const o=await un(r,hi(r.auth,s));r.displayName=o.displayName||null;r.photoURL=o.photoUrl||null;const a=r.providerData.find(({providerId:e})=>e==="password");if(a){a.displayName=r.displayName;a.photoURL=r.photoURL}await r._updateTokensIfNecessary(o)}function pi(e,t){return gi(N(e),t,null)}function mi(e,t){return gi(N(e),null,t)}async function gi(e,t,n){const{auth:r}=e;const i=await e.getIdToken();const s={idToken:i,returnSecureToken:true};if(t){s.email=t}if(n){s.password=n}const o=await un(e,Yn(r,s));await e._updateTokensIfNecessary(o,true)}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function vi(e){var t,n;if(!e){return null}const{providerId:r}=e;const i=e.rawUserInfo?JSON.parse(e.rawUserInfo):{};const s=e.isNewUser||e.kind==="identitytoolkit#SignupNewUserResponse";if(!r&&(e===null||e===void 0?void 0:e.idToken)){const r=(n=(t=an(e.idToken))===null||t===void 0?void 0:t.firebase)===null||n===void 0?void 0:n["sign_in_provider"];if(r){const e=r!=="anonymous"&&r!=="custom"?r:null;return new Ii(s,e)}}if(!r){return null}switch(r){case"facebook.com":return new yi(s,i);case"github.com":return new Ti(s,i);case"google.com":return new wi(s,i);case"twitter.com":return new Ei(s,i,e.screenName||null);case"custom":case"anonymous":return new Ii(s,null);default:return new Ii(s,r,i)}}class Ii{constructor(e,t,n={}){this.isNewUser=e;this.providerId=t;this.profile=n}}class _i extends Ii{constructor(e,t,n,r){super(e,t,n);this.username=r}}class yi extends Ii{constructor(e,t){super(e,"facebook.com",t)}}class Ti extends _i{constructor(e,t){super(e,"github.com",t,typeof(t===null||t===void 0?void 0:t.login)==="string"?t===null||t===void 0?void 0:t.login:null)}}class wi extends Ii{constructor(e,t){super(e,"google.com",t)}}class Ei extends _i{constructor(e,t,n){super(e,"twitter.com",t,n)}}function bi(e){const{user:t,_tokenResponse:n}=e;if(t.isAnonymous&&!n){return{providerId:null,isNewUser:false,profile:null}}return vi(n)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function ki(e,t){return N(e).setPersistence(t)}function Ai(e,t,n,r){return N(e).onIdTokenChanged(t,n,r)}function Si(e,t,n){return N(e).beforeAuthStateChanged(t,n)}function Ri(e,t,n,r){return N(e).onAuthStateChanged(t,n,r)}function Ni(e){N(e).useDeviceLanguage()}function Oi(e,t){return N(e).updateCurrentUser(t)}function Pi(e){return N(e).signOut()}async function Ci(e){return N(e).delete()}class Di{constructor(e,t){this.type=e;this.credential=t}static _fromIdtoken(e){return new Di("enroll",e)}static _fromMfaPendingCredential(e){return new Di("signin",e)}toJSON(){const e=this.type==="enroll"?"idToken":"pendingCredential";return{multiFactorSession:{[e]:this.credential}}}static fromJSON(e){var t,n;if(e===null||e===void 0?void 0:e.multiFactorSession){if((t=e.multiFactorSession)===null||t===void 0?void 0:t.pendingCredential){return Di._fromMfaPendingCredential(e.multiFactorSession.pendingCredential)}else if((n=e.multiFactorSession)===null||n===void 0?void 0:n.idToken){return Di._fromIdtoken(e.multiFactorSession.idToken)}}return null}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Li{constructor(e,t,n){this.session=e;this.hints=t;this.signInResolver=n}static _fromError(e,t){const n=Hn(e);const r=t.customData._serverResponse;const i=(r.mfaInfo||[]).map(e=>Jr._fromServerResponse(n,e));Nt(r.mfaPendingCredential,n,"internal-error");const s=Di._fromMfaPendingCredential(r.mfaPendingCredential);return new Li(s,i,async e=>{const i=await e._process(n,s);delete r.mfaInfo;delete r.mfaPendingCredential;const o=Object.assign(Object.assign({},r),{idToken:i.idToken,refreshToken:i.refreshToken});switch(t.operationType){case"signIn":const e=await Dr._fromIdTokenResponse(n,t.operationType,o);await n._updateCurrentUser(e.user);return e;case"reauthenticate":Nt(t.user,n,"internal-error");return Dr._forOperation(t.user,t.operationType,o);default:bt(n,"internal-error")}})}async resolveSignIn(e){const t=e;return this.signInResolver(t)}}function Mi(e,t){var n;const r=N(e);const i=t;Nt(t.customData.operationType,r,"argument-error");Nt((n=i.customData._serverResponse)===null||n===void 0?void 0:n.mfaPendingCredential,r,"argument-error");return Li._fromError(r,i)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function Ui(e,t){return $t(e,"POST","/v2/accounts/mfaEnrollment:start",zt(e,t))}function Fi(e,t){return $t(e,"POST","/v2/accounts/mfaEnrollment:finalize",zt(e,t))}function xi(e,t){return $t(e,"POST","/v2/accounts/mfaEnrollment:withdraw",zt(e,t))}class Vi{constructor(e){this.user=e;this.enrolledFactors=[];e._onReload(t=>{if(t.mfaInfo){this.enrolledFactors=t.mfaInfo.map(t=>Jr._fromServerResponse(e.auth,t))}})}static _fromUser(e){return new Vi(e)}async getSession(){return Di._fromIdtoken(await this.user.getIdToken())}async enroll(e,t){const n=e;const r=await this.getSession();const i=await un(this.user,n._process(this.user.auth,r,t));await this.user._updateTokensIfNecessary(i);return this.user.reload()}async unenroll(e){var t;const n=typeof e==="string"?e:e.uid;const r=await this.user.getIdToken();const i=await un(this.user,xi(this.user.auth,{idToken:r,mfaEnrollmentId:n}));this.enrolledFactors=this.enrolledFactors.filter(({uid:e})=>e!==n);await this.user._updateTokensIfNecessary(i);try{await this.user.reload()}catch(e){if(((t=e)===null||t===void 0?void 0:t.code)!==`auth/${"user-token-expired"}`){throw e}}}}const ji=new WeakMap;function Hi(e){const t=N(e);if(!ji.has(t)){ji.set(t,Vi._fromUser(t))}return ji.get(t)}const Wi="__sak";
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Bi{constructor(e,t){this.storageRetriever=e;this.type=t}_isAvailable(){try{if(!this.storage){return Promise.resolve(false)}this.storage.setItem(Wi,"1");this.storage.removeItem(Wi);return Promise.resolve(true)}catch(e){return Promise.resolve(false)}}_set(e,t){this.storage.setItem(e,JSON.stringify(t));return Promise.resolve()}_get(e){const t=this.storage.getItem(e);return Promise.resolve(t?JSON.parse(t):null)}_remove(e){this.storage.removeItem(e);return Promise.resolve()}get storage(){return this.storageRetriever()}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function qi(){const e=a();return Sn(e)||Dn(e)}const Gi=1e3;const zi=10;class $i extends Bi{constructor(){super(()=>window.localStorage,"LOCAL");this.boundEventHandler=(e,t)=>this.onStorageEvent(e,t);this.listeners={};this.localCache={};this.pollTimer=null;this.safariLocalStorageNotSynced=qi()&&Fn();this.fallbackToPolling=Un();this._shouldAllowMigration=true}forAllChangedKeys(e){for(const t of Object.keys(this.listeners)){const n=this.storage.getItem(t);const r=this.localCache[t];if(n!==r){e(t,r,n)}}}onStorageEvent(e,t=false){if(!e.key){this.forAllChangedKeys((e,t,n)=>{this.notifyListeners(e,n)});return}const n=e.key;if(t){this.detachListener()}else{this.stopPolling()}if(this.safariLocalStorageNotSynced){const r=this.storage.getItem(n);if(e.newValue!==r){if(e.newValue!==null){this.storage.setItem(n,e.newValue)}else{this.storage.removeItem(n)}}else if(this.localCache[n]===e.newValue&&!t){return}}const r=()=>{const e=this.storage.getItem(n);if(!t&&this.localCache[n]===e){return}this.notifyListeners(n,e)};const i=this.storage.getItem(n);if(Mn()&&i!==e.newValue&&e.newValue!==e.oldValue){setTimeout(r,zi)}else{r()}}notifyListeners(e,t){this.localCache[e]=t;const n=this.listeners[e];if(n){for(const e of Array.from(n)){e(t?JSON.parse(t):t)}}}startPolling(){this.stopPolling();this.pollTimer=setInterval(()=>{this.forAllChangedKeys((e,t,n)=>{this.onStorageEvent(new StorageEvent("storage",{key:e,oldValue:t,newValue:n}),true)})},Gi)}stopPolling(){if(this.pollTimer){clearInterval(this.pollTimer);this.pollTimer=null}}attachListener(){window.addEventListener("storage",this.boundEventHandler)}detachListener(){window.removeEventListener("storage",this.boundEventHandler)}_addListener(e,t){if(Object.keys(this.listeners).length===0){if(this.fallbackToPolling){this.startPolling()}else{this.attachListener()}}if(!this.listeners[e]){this.listeners[e]=new Set;this.localCache[e]=this.storage.getItem(e)}this.listeners[e].add(t)}_removeListener(e,t){if(this.listeners[e]){this.listeners[e].delete(t);if(this.listeners[e].size===0){delete this.listeners[e]}}if(Object.keys(this.listeners).length===0){this.detachListener();this.stopPolling()}}async _set(e,t){await super._set(e,t);this.localCache[e]=JSON.stringify(t)}async _get(e){const t=await super._get(e);this.localCache[e]=JSON.stringify(t);return t}async _remove(e){await super._remove(e);delete this.localCache[e]}}$i.type="LOCAL";const Ki=$i;
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Ji extends Bi{constructor(){super(()=>window.sessionStorage,"SESSION")}_addListener(e,t){return}_removeListener(e,t){return}}Ji.type="SESSION";const Yi=Ji;
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function Xi(e){return Promise.all(e.map(async e=>{try{const t=await e;return{fulfilled:true,value:t}}catch(e){return{fulfilled:false,reason:e}}}))}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Qi{constructor(e){this.eventTarget=e;this.handlersMap={};this.boundEventHandler=this.handleEvent.bind(this)}static _getInstance(e){const t=this.receivers.find(t=>t.isListeningto(e));if(t){return t}const n=new Qi(e);this.receivers.push(n);return n}isListeningto(e){return this.eventTarget===e}async handleEvent(e){const t=e;const{eventId:n,eventType:r,data:i}=t.data;const s=this.handlersMap[r];if(!(s===null||s===void 0?void 0:s.size)){return}t.ports[0].postMessage({status:"ack",eventId:n,eventType:r});const o=Array.from(s).map(async e=>e(t.origin,i));const a=await Xi(o);t.ports[0].postMessage({status:"done",eventId:n,eventType:r,response:a})}_subscribe(e,t){if(Object.keys(this.handlersMap).length===0){this.eventTarget.addEventListener("message",this.boundEventHandler)}if(!this.handlersMap[e]){this.handlersMap[e]=new Set}this.handlersMap[e].add(t)}_unsubscribe(e,t){if(this.handlersMap[e]&&t){this.handlersMap[e].delete(t)}if(!t||this.handlersMap[e].size===0){delete this.handlersMap[e]}if(Object.keys(this.handlersMap).length===0){this.eventTarget.removeEventListener("message",this.boundEventHandler)}}}Qi.receivers=[];
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function Zi(e="",t=10){let n="";for(let e=0;e<t;e++){n+=Math.floor(Math.random()*10)}return e+n}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class es{constructor(e){this.target=e;this.handlers=new Set}removeMessageHandler(e){if(e.messageChannel){e.messageChannel.port1.removeEventListener("message",e.onMessage);e.messageChannel.port1.close()}this.handlers.delete(e)}async _send(e,t,n=50){const r=typeof MessageChannel!=="undefined"?new MessageChannel:null;if(!r){throw new Error("connection_unavailable")}let i;let s;return new Promise((o,a)=>{const c=Zi("",20);r.port1.start();const u=setTimeout(()=>{a(new Error("unsupported_event"))},n);s={messageChannel:r,onMessage(e){const t=e;if(t.data.eventId!==c){return}switch(t.data.status){case"ack":clearTimeout(u);i=setTimeout(()=>{a(new Error("timeout"))},3e3);break;case"done":clearTimeout(i);o(t.data.response);break;default:clearTimeout(u);clearTimeout(i);a(new Error("invalid_response"));break}}};this.handlers.add(s);r.port1.addEventListener("message",s.onMessage);this.target.postMessage({eventType:e,eventId:c,data:t},[r.port2])}).finally(()=>{if(s){this.removeMessageHandler(s)}})}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function ts(){return window}function ns(e){ts().location.href=e}
+/**
+     * @license
+     * Copyright 2020 Google LLC.
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function rs(){return typeof ts()["WorkerGlobalScope"]!=="undefined"&&typeof ts()["importScripts"]==="function"}async function is(){if(!(navigator===null||navigator===void 0?void 0:navigator.serviceWorker)){return null}try{const e=await navigator.serviceWorker.ready;return e.active}catch(e){return null}}function ss(){var e;return((e=navigator===null||navigator===void 0?void 0:navigator.serviceWorker)===null||e===void 0?void 0:e.controller)||null}function os(){return rs()?self:null}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const as="firebaseLocalStorageDb";const cs=1;const us="firebaseLocalStorage";const ls="fbase_key";class ds{constructor(e){this.request=e}toPromise(){return new Promise((e,t)=>{this.request.addEventListener("success",()=>{e(this.request.result)});this.request.addEventListener("error",()=>{t(this.request.error)})})}}function hs(e,t){return e.transaction([us],t?"readwrite":"readonly").objectStore(us)}function fs(){const e=indexedDB.deleteDatabase(as);return new ds(e).toPromise()}function ps(){const e=indexedDB.open(as,cs);return new Promise((t,n)=>{e.addEventListener("error",()=>{n(e.error)});e.addEventListener("upgradeneeded",()=>{const t=e.result;try{t.createObjectStore(us,{keyPath:ls})}catch(e){n(e)}});e.addEventListener("success",async()=>{const n=e.result;if(!n.objectStoreNames.contains(us)){n.close();await fs();t(await ps())}else{t(n)}})})}async function ms(e,t,n){const r=hs(e,true).put({[ls]:t,value:n});return new ds(r).toPromise()}async function gs(e,t){const n=hs(e,false).get(t);const r=await new ds(n).toPromise();return r===undefined?null:r.value}function vs(e,t){const n=hs(e,true).delete(t);return new ds(n).toPromise()}const Is=800;const _s=3;class ys{constructor(){this.type="LOCAL";this._shouldAllowMigration=true;this.listeners={};this.localCache={};this.pollTimer=null;this.pendingWrites=0;this.receiver=null;this.sender=null;this.serviceWorkerReceiverAvailable=false;this.activeServiceWorker=null;this._workerInitializationPromise=this.initializeServiceWorkerMessaging().then(()=>{},()=>{})}async _openDb(){if(this.db){return this.db}this.db=await ps();return this.db}async _withRetries(e){let t=0;while(true){try{const t=await this._openDb();return await e(t)}catch(e){if(t++>_s){throw e}if(this.db){this.db.close();this.db=undefined}}}}async initializeServiceWorkerMessaging(){return rs()?this.initializeReceiver():this.initializeSender()}async initializeReceiver(){this.receiver=Qi._getInstance(os());this.receiver._subscribe("keyChanged",async(e,t)=>{const n=await this._poll();return{keyProcessed:n.includes(t.key)}});this.receiver._subscribe("ping",async(e,t)=>["keyChanged"])}async initializeSender(){var e,t;this.activeServiceWorker=await is();if(!this.activeServiceWorker){return}this.sender=new es(this.activeServiceWorker);const n=await this.sender._send("ping",{},800);if(!n){return}if(((e=n[0])===null||e===void 0?void 0:e.fulfilled)&&((t=n[0])===null||t===void 0?void 0:t.value.includes("keyChanged"))){this.serviceWorkerReceiverAvailable=true}}async notifyServiceWorker(e){if(!this.sender||!this.activeServiceWorker||ss()!==this.activeServiceWorker){return}try{await this.sender._send("keyChanged",{key:e},this.serviceWorkerReceiverAvailable?800:50)}catch(e){}}async _isAvailable(){try{if(!indexedDB){return false}const e=await ps();await ms(e,Wi,"1");await vs(e,Wi);return true}catch(e){}return false}async _withPendingWrite(e){this.pendingWrites++;try{await e()}finally{this.pendingWrites--}}async _set(e,t){return this._withPendingWrite(async()=>{await this._withRetries(n=>ms(n,e,t));this.localCache[e]=t;return this.notifyServiceWorker(e)})}async _get(e){const t=await this._withRetries(t=>gs(t,e));this.localCache[e]=t;return t}async _remove(e){return this._withPendingWrite(async()=>{await this._withRetries(t=>vs(t,e));delete this.localCache[e];return this.notifyServiceWorker(e)})}async _poll(){const e=await this._withRetries(e=>{const t=hs(e,false).getAll();return new ds(t).toPromise()});if(!e){return[]}if(this.pendingWrites!==0){return[]}const t=[];const n=new Set;for(const{fbase_key:r,value:i}of e){n.add(r);if(JSON.stringify(this.localCache[r])!==JSON.stringify(i)){this.notifyListeners(r,i);t.push(r)}}for(const e of Object.keys(this.localCache)){if(this.localCache[e]&&!n.has(e)){this.notifyListeners(e,null);t.push(e)}}return t}notifyListeners(e,t){this.localCache[e]=t;const n=this.listeners[e];if(n){for(const e of Array.from(n)){e(t)}}}startPolling(){this.stopPolling();this.pollTimer=setInterval(async()=>this._poll(),Is)}stopPolling(){if(this.pollTimer){clearInterval(this.pollTimer);this.pollTimer=null}}_addListener(e,t){if(Object.keys(this.listeners).length===0){this.startPolling()}if(!this.listeners[e]){this.listeners[e]=new Set;void this._get(e)}this.listeners[e].add(t)}_removeListener(e,t){if(this.listeners[e]){this.listeners[e].delete(t);if(this.listeners[e].size===0){delete this.listeners[e]}}if(Object.keys(this.listeners).length===0){this.stopPolling()}}}ys.type="LOCAL";const Ts=ys;
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function ws(e,t){return $t(e,"POST","/v2/accounts/mfaSignIn:start",zt(e,t))}function Es(e,t){return $t(e,"POST","/v2/accounts/mfaSignIn:finalize",zt(e,t))}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function bs(e){return(await $t(e,"GET","/v1/recaptchaParams")).recaptchaSiteKey||""}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function ks(){var e,t;return(t=(e=document.getElementsByTagName("head"))===null||e===void 0?void 0:e[0])!==null&&t!==void 0?t:document}function As(e){return new Promise((t,n)=>{const r=document.createElement("script");r.setAttribute("src",e);r.onload=t;r.onerror=e=>{const t=kt("internal-error");t.customData=e;n(t)};r.type="text/javascript";r.charset="UTF-8";ks().appendChild(r)})}function Ss(e){return`__${e}${Math.floor(Math.random()*1e6)}`}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Rs=500;const Ns=6e4;const Os=1e12;class Ps{constructor(e){this.auth=e;this.counter=Os;this._widgets=new Map}render(e,t){const n=this.counter;this._widgets.set(n,new Cs(e,this.auth.name,t||{}));this.counter++;return n}reset(e){var t;const n=e||Os;void((t=this._widgets.get(n))===null||t===void 0?void 0:t.delete());this._widgets.delete(n)}getResponse(e){var t;const n=e||Os;return((t=this._widgets.get(n))===null||t===void 0?void 0:t.getResponse())||""}async execute(e){var t;const n=e||Os;void((t=this._widgets.get(n))===null||t===void 0?void 0:t.execute());return""}}class Cs{constructor(e,t,n){this.params=n;this.timerId=null;this.deleted=false;this.responseToken=null;this.clickHandler=()=>{this.execute()};const r=typeof e==="string"?document.getElementById(e):e;Nt(r,"argument-error",{appName:t});this.container=r;this.isVisible=this.params.size!=="invisible";if(this.isVisible){this.execute()}else{this.container.addEventListener("click",this.clickHandler)}}getResponse(){this.checkIfDeleted();return this.responseToken}delete(){this.checkIfDeleted();this.deleted=true;if(this.timerId){clearTimeout(this.timerId);this.timerId=null}this.container.removeEventListener("click",this.clickHandler)}execute(){this.checkIfDeleted();if(this.timerId){return}this.timerId=window.setTimeout(()=>{this.responseToken=Ds(50);const{callback:e,"expired-callback":t}=this.params;if(e){try{e(this.responseToken)}catch(e){}}this.timerId=window.setTimeout(()=>{this.timerId=null;this.responseToken=null;if(t){try{t()}catch(e){}}if(this.isVisible){this.execute()}},Ns)},Rs)}checkIfDeleted(){if(this.deleted){throw new Error("reCAPTCHA mock was already deleted!")}}}function Ds(e){const t=[];const n="1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";for(let r=0;r<e;r++){t.push(n.charAt(Math.floor(Math.random()*n.length)))}return t.join("")}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Ls=Ss("rcb");const Ms=new Ht(3e4,6e4);const Us="https://www.google.com/recaptcha/api.js?";class Fs{constructor(){this.hostLanguage="";this.counter=0;this.librarySeparatelyLoaded=!!ts().grecaptcha}load(e,t=""){Nt(xs(t),e,"argument-error");if(this.shouldResolveImmediately(t)){return Promise.resolve(ts().grecaptcha)}return new Promise((n,r)=>{const i=ts().setTimeout(()=>{r(kt(e,"network-request-failed"))},Ms.get());ts()[Ls]=()=>{ts().clearTimeout(i);delete ts()[Ls];const s=ts().grecaptcha;if(!s){r(kt(e,"internal-error"));return}const o=s.render;s.render=(e,t)=>{const n=o(e,t);this.counter++;return n};this.hostLanguage=t;n(s)};const s=`${Us}?${w({onload:Ls,render:"explicit",hl:t})}`;As(s).catch(()=>{clearTimeout(i);r(kt(e,"internal-error"))})})}clearedOneInstance(){this.counter--}shouldResolveImmediately(e){return!!ts().grecaptcha&&(e===this.hostLanguage||this.counter>0||this.librarySeparatelyLoaded)}}function xs(e){return e.length<=6&&/^\s*[a-zA-Z0-9\-]*\s*$/.test(e)}class Vs{async load(e){return new Ps(e)}clearedOneInstance(){}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const js="recaptcha";const Hs={theme:"light",type:"image"};class Ws{constructor(e,t=Object.assign({},Hs),n){this.parameters=t;this.type=js;this.destroyed=false;this.widgetId=null;this.tokenChangeListeners=new Set;this.renderPromise=null;this.recaptcha=null;this.auth=Hn(n);this.isInvisible=this.parameters.size==="invisible";Nt(typeof document!=="undefined",this.auth,"operation-not-supported-in-this-environment");const r=typeof e==="string"?document.getElementById(e):e;Nt(r,this.auth,"argument-error");this.container=r;this.parameters.callback=this.makeTokenCallback(this.parameters.callback);this._recaptchaLoader=this.auth.settings.appVerificationDisabledForTesting?new Vs:new Fs;this.validateStartingState()}async verify(){this.assertNotDestroyed();const e=await this.render();const t=this.getAssertedRecaptcha();const n=t.getResponse(e);if(n){return n}return new Promise(n=>{const r=e=>{if(!e){return}this.tokenChangeListeners.delete(r);n(e)};this.tokenChangeListeners.add(r);if(this.isInvisible){t.execute(e)}})}render(){try{this.assertNotDestroyed()}catch(e){return Promise.reject(e)}if(this.renderPromise){return this.renderPromise}this.renderPromise=this.makeRenderPromise().catch(e=>{this.renderPromise=null;throw e});return this.renderPromise}_reset(){this.assertNotDestroyed();if(this.widgetId!==null){this.getAssertedRecaptcha().reset(this.widgetId)}}clear(){this.assertNotDestroyed();this.destroyed=true;this._recaptchaLoader.clearedOneInstance();if(!this.isInvisible){this.container.childNodes.forEach(e=>{this.container.removeChild(e)})}}validateStartingState(){Nt(!this.parameters.sitekey,this.auth,"argument-error");Nt(this.isInvisible||!this.container.hasChildNodes(),this.auth,"argument-error");Nt(typeof document!=="undefined",this.auth,"operation-not-supported-in-this-environment")}makeTokenCallback(e){return t=>{this.tokenChangeListeners.forEach(e=>e(t));if(typeof e==="function"){e(t)}else if(typeof e==="string"){const n=ts()[e];if(typeof n==="function"){n(t)}}}}assertNotDestroyed(){Nt(!this.destroyed,this.auth,"internal-error")}async makeRenderPromise(){await this.init();if(!this.widgetId){let e=this.container;if(!this.isInvisible){const t=document.createElement("div");e.appendChild(t);e=t}this.widgetId=this.getAssertedRecaptcha().render(e,this.parameters)}return this.widgetId}async init(){Nt(Ft()&&!rs(),this.auth,"internal-error");await Bs();this.recaptcha=await this._recaptchaLoader.load(this.auth,this.auth.languageCode||undefined);const e=await bs(this.auth);Nt(e,this.auth,"internal-error");this.parameters.sitekey=e}getAssertedRecaptcha(){Nt(this.recaptcha,this.auth,"internal-error");return this.recaptcha}}function Bs(){let e=null;return new Promise(t=>{if(document.readyState==="complete"){t();return}e=()=>t();window.addEventListener("load",e)}).catch(t=>{if(e){window.removeEventListener("load",e)}throw t})}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class qs{constructor(e,t){this.verificationId=e;this.onConfirmation=t}confirm(e){const t=mr._fromVerification(this.verificationId,e);return this.onConfirmation(t)}}async function Gs(e,t,n){const r=Hn(e);const i=await Ks(r,t,N(n));return new qs(i,e=>qr(r,e))}async function zs(e,t,n){const r=N(e);await Hr(false,r,"phone");const i=await Ks(r.auth,t,N(n));return new qs(i,e=>Gr(r,e))}async function $s(e,t,n){const r=N(e);const i=await Ks(r.auth,t,N(n));return new qs(i,e=>zr(r,e))}async function Ks(e,t,n){var r;const i=await n.verify();try{Nt(typeof i==="string",e,"argument-error");Nt(n.type===js,e,"argument-error");let s;if(typeof t==="string"){s={phoneNumber:t}}else{s=t}if("session"in s){const t=s.session;if("phoneNumber"in s){Nt(t.type==="enroll",e,"internal-error");const n=await Ui(e,{idToken:t.credential,phoneEnrollmentInfo:{phoneNumber:s.phoneNumber,recaptchaToken:i}});return n.phoneSessionInfo.sessionInfo}else{Nt(t.type==="signin",e,"internal-error");const n=((r=s.multiFactorHint)===null||r===void 0?void 0:r.uid)||s.multiFactorUid;Nt(n,e,"missing-multi-factor-info");const o=await ws(e,{mfaPendingCredential:t.credential,mfaEnrollmentId:n,phoneSignInInfo:{recaptchaToken:i}});return o.phoneResponseInfo.sessionInfo}}else{const{sessionInfo:t}=await lr(e,{phoneNumber:s.phoneNumber,recaptchaToken:i});return t}}finally{n._reset()}}async function Js(e,t){await jr(N(e),t)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Ys{constructor(e){this.providerId=Ys.PROVIDER_ID;this.auth=Hn(e)}verifyPhoneNumber(e,t){return Ks(this.auth,e,N(t))}static credential(e,t){return mr._fromVerification(e,t)}static credentialFromResult(e){const t=e;return Ys.credentialFromTaggedObject(t)}static credentialFromError(e){return Ys.credentialFromTaggedObject(e.customData||{})}static credentialFromTaggedObject({_tokenResponse:e}){if(!e){return null}const{phoneNumber:t,temporaryProof:n}=e;if(t&&n){return mr._fromTokenResponse(t,n)}return null}}Ys.PROVIDER_ID="phone";Ys.PHONE_SIGN_IN_METHOD="phone";
+/**
+     * @license
+     * Copyright 2021 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function Xs(e,t){if(t){return Dt(t)}Nt(e._popupRedirectResolver,e,"argument-error");return e._popupRedirectResolver}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Qs extends Kn{constructor(e){super("custom","custom");this.params=e}_getIdTokenResponse(e){return ar(e,this._buildIdpRequest())}_linkToIdToken(e,t){return ar(e,this._buildIdpRequest(t))}_getReauthenticationResolver(e){return ar(e,this._buildIdpRequest())}_buildIdpRequest(e){const t={requestUri:this.params.requestUri,sessionId:this.params.sessionId,postBody:this.params.postBody,tenantId:this.params.tenantId,pendingToken:this.params.pendingToken,returnSecureToken:true,returnIdpCredential:true};if(e){t.idToken=e}return t}}function Zs(e){return Br(e.auth,new Qs(e),e.bypassAuthState)}function eo(e){const{auth:t,user:n}=e;Nt(n,t,"internal-error");return Wr(n,new Qs(e),e.bypassAuthState)}async function to(e){const{auth:t,user:n}=e;Nt(n,t,"internal-error");return jr(n,new Qs(e),e.bypassAuthState)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class no{constructor(e,t,n,r,i=false){this.auth=e;this.resolver=n;this.user=r;this.bypassAuthState=i;this.pendingPromise=null;this.eventManager=null;this.filter=Array.isArray(t)?t:[t]}execute(){return new Promise(async(e,t)=>{this.pendingPromise={resolve:e,reject:t};try{this.eventManager=await this.resolver._initialize(this.auth);await this.onExecution();this.eventManager.registerConsumer(this)}catch(e){this.reject(e)}})}async onAuthEvent(e){const{urlResponse:t,sessionId:n,postBody:r,tenantId:i,error:s,type:o}=e;if(s){this.reject(s);return}const a={auth:this.auth,requestUri:t,sessionId:n,tenantId:i||undefined,postBody:r||undefined,user:this.user,bypassAuthState:this.bypassAuthState};try{this.resolve(await this.getIdpTask(o)(a))}catch(e){this.reject(e)}}onError(e){this.reject(e)}getIdpTask(e){switch(e){case"signInViaPopup":case"signInViaRedirect":return Zs;case"linkViaPopup":case"linkViaRedirect":return to;case"reauthViaPopup":case"reauthViaRedirect":return eo;default:bt(this.auth,"internal-error")}}resolve(e){Pt(this.pendingPromise,"Pending promise was never set");this.pendingPromise.resolve(e);this.unregisterAndCleanUp()}reject(e){Pt(this.pendingPromise,"Pending promise was never set");this.pendingPromise.reject(e);this.unregisterAndCleanUp()}unregisterAndCleanUp(){if(this.eventManager){this.eventManager.unregisterConsumer(this)}this.pendingPromise=null;this.cleanUp()}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const ro=new Ht(2e3,1e4);async function io(e,t,n){const r=Hn(e);St(e,t,Tr);const i=Xs(r,n);const s=new ao(r,"signInViaPopup",t,i);return s.executeNotNull()}async function so(e,t,n){const r=N(e);St(r.auth,t,Tr);const i=Xs(r.auth,n);const s=new ao(r.auth,"reauthViaPopup",t,i,r);return s.executeNotNull()}async function oo(e,t,n){const r=N(e);St(r.auth,t,Tr);const i=Xs(r.auth,n);const s=new ao(r.auth,"linkViaPopup",t,i,r);return s.executeNotNull()}class ao extends no{constructor(e,t,n,r,i){super(e,t,r,i);this.provider=n;this.authWindow=null;this.pollId=null;if(ao.currentPopupAction){ao.currentPopupAction.cancel()}ao.currentPopupAction=this}async executeNotNull(){const e=await this.execute();Nt(e,this.auth,"internal-error");return e}async onExecution(){Pt(this.filter.length===1,"Popup operations only handle one event");const e=Zi();this.authWindow=await this.resolver._openPopup(this.auth,this.provider,this.filter[0],e);this.authWindow.associatedEvent=e;this.resolver._originValidation(this.auth).catch(e=>{this.reject(e)});this.resolver._isIframeWebStorageSupported(this.auth,e=>{if(!e){this.reject(kt(this.auth,"web-storage-unsupported"))}});this.pollUserCancellation()}get eventId(){var e;return((e=this.authWindow)===null||e===void 0?void 0:e.associatedEvent)||null}cancel(){this.reject(kt(this.auth,"cancelled-popup-request"))}cleanUp(){if(this.authWindow){this.authWindow.close()}if(this.pollId){window.clearTimeout(this.pollId)}this.authWindow=null;this.pollId=null;ao.currentPopupAction=null}pollUserCancellation(){const e=()=>{var t,n;if((n=(t=this.authWindow)===null||t===void 0?void 0:t.window)===null||n===void 0?void 0:n.closed){this.pollId=window.setTimeout(()=>{this.pollId=null;this.reject(kt(this.auth,"popup-closed-by-user"))},2e3);return}this.pollId=window.setTimeout(e,ro.get())};e()}}ao.currentPopupAction=null;
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const co="pendingRedirect";const uo=new Map;class lo extends no{constructor(e,t,n=false){super(e,["signInViaRedirect","linkViaRedirect","reauthViaRedirect","unknown"],t,undefined,n);this.eventId=null}async execute(){let e=uo.get(this.auth._key());if(!e){try{const t=await ho(this.resolver,this.auth);const n=t?await super.execute():null;e=()=>Promise.resolve(n)}catch(t){e=()=>Promise.reject(t)}uo.set(this.auth._key(),e)}if(!this.bypassAuthState){uo.set(this.auth._key(),()=>Promise.resolve(null))}return e()}async onAuthEvent(e){if(e.type==="signInViaRedirect"){return super.onAuthEvent(e)}else if(e.type==="unknown"){this.resolve(null);return}if(e.eventId){const t=await this.auth._redirectUserForId(e.eventId);if(t){this.user=t;return super.onAuthEvent(e)}else{this.resolve(null)}}}async onExecution(){}cleanUp(){}}async function ho(e,t){const n=go(t);const r=mo(e);if(!await r._isAvailable()){return false}const i=await r._get(n)==="true";await r._remove(n);return i}async function fo(e,t){return mo(e)._set(go(t),"true")}function po(e,t){uo.set(e._key(),t)}function mo(e){return Dt(e._redirectPersistence)}function go(e){return En(co,e.config.apiKey,e.name)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function vo(e,t,n){return Io(e,t,n)}async function Io(e,t,n){const r=Hn(e);St(e,t,Tr);const i=Xs(r,n);await fo(i,r);return i._openRedirect(r,t,"signInViaRedirect")}function _o(e,t,n){return yo(e,t,n)}async function yo(e,t,n){const r=N(e);St(r.auth,t,Tr);const i=Xs(r.auth,n);await fo(i,r.auth);const s=await ko(r);return i._openRedirect(r.auth,t,"reauthViaRedirect",s)}function To(e,t,n){return wo(e,t,n)}async function wo(e,t,n){const r=N(e);St(r.auth,t,Tr);const i=Xs(r.auth,n);await Hr(false,r,t.providerId);await fo(i,r.auth);const s=await ko(r);return i._openRedirect(r.auth,t,"linkViaRedirect",s)}async function Eo(e,t){await Hn(e)._initializationPromise;return bo(e,t,false)}async function bo(e,t,n=false){const r=Hn(e);const i=Xs(r,t);const s=new lo(r,i,n);const o=await s.execute();if(o&&!n){delete o.user._redirectEventId;await r._persistUserIfCurrent(o.user);await r._setRedirectUser(null,t)}return o}async function ko(e){const t=Zi(`${e.uid}:::`);e._redirectEventId=t;await e.auth._setRedirectUser(e);await e.auth._persistUserIfCurrent(e);return t}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Ao=10*60*1e3;class So{constructor(e){this.auth=e;this.cachedEventUids=new Set;this.consumers=new Set;this.queuedRedirectEvent=null;this.hasHandledPotentialRedirect=false;this.lastProcessedEventTime=Date.now()}registerConsumer(e){this.consumers.add(e);if(this.queuedRedirectEvent&&this.isEventForConsumer(this.queuedRedirectEvent,e)){this.sendToConsumer(this.queuedRedirectEvent,e);this.saveEventToCache(this.queuedRedirectEvent);this.queuedRedirectEvent=null}}unregisterConsumer(e){this.consumers.delete(e)}onEvent(e){if(this.hasEventBeenHandled(e)){return false}let t=false;this.consumers.forEach(n=>{if(this.isEventForConsumer(e,n)){t=true;this.sendToConsumer(e,n);this.saveEventToCache(e)}});if(this.hasHandledPotentialRedirect||!Oo(e)){return t}this.hasHandledPotentialRedirect=true;if(!t){this.queuedRedirectEvent=e;t=true}return t}sendToConsumer(e,t){var n;if(e.error&&!No(e)){const r=((n=e.error.code)===null||n===void 0?void 0:n.split("auth/")[1])||"internal-error";t.onError(kt(this.auth,r))}else{t.onAuthEvent(e)}}isEventForConsumer(e,t){const n=t.eventId===null||!!e.eventId&&e.eventId===t.eventId;return t.filter.includes(e.type)&&n}hasEventBeenHandled(e){if(Date.now()-this.lastProcessedEventTime>=Ao){this.cachedEventUids.clear()}return this.cachedEventUids.has(Ro(e))}saveEventToCache(e){this.cachedEventUids.add(Ro(e));this.lastProcessedEventTime=Date.now()}}function Ro(e){return[e.type,e.eventId,e.sessionId,e.tenantId].filter(e=>e).join("-")}function No({type:e,error:t}){return e==="unknown"&&(t===null||t===void 0?void 0:t.code)===`auth/${"no-auth-event"}`}function Oo(e){switch(e.type){case"signInViaRedirect":case"linkViaRedirect":case"reauthViaRedirect":return true;case"unknown":return No(e);default:return false}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function Po(e,t={}){return $t(e,"GET","/v1/projects",t)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Co=/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;const Do=/^https?/;async function Lo(e){if(e.config.emulator){return}const{authorizedDomains:t}=await Po(e);for(const e of t){try{if(Mo(e)){return}}catch(e){}}bt(e,"unauthorized-domain")}function Mo(e){const t=Ut();const{protocol:n,hostname:r}=new URL(t);if(e.startsWith("chrome-extension://")){const i=new URL(e);if(i.hostname===""&&r===""){return n==="chrome-extension:"&&e.replace("chrome-extension://","")===t.replace("chrome-extension://","")}return n==="chrome-extension:"&&i.hostname===r}if(!Do.test(n)){return false}if(Co.test(e)){return r===e}const i=e.replace(/\./g,"\\.");const s=new RegExp("^(.+\\."+i+"|"+i+")$","i");return s.test(r)}
+/**
+     * @license
+     * Copyright 2020 Google LLC.
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Uo=new Ht(3e4,6e4);function Fo(){const e=ts().___jsl;if(e===null||e===void 0?void 0:e.H){for(const t of Object.keys(e.H)){e.H[t].r=e.H[t].r||[];e.H[t].L=e.H[t].L||[];e.H[t].r=[...e.H[t].L];if(e.CP){for(let t=0;t<e.CP.length;t++){e.CP[t]=null}}}}}function xo(e){return new Promise((t,n)=>{var r,i,s;function o(){Fo();gapi.load("gapi.iframes",{callback:()=>{t(gapi.iframes.getContext())},ontimeout:()=>{Fo();n(kt(e,"network-request-failed"))},timeout:Uo.get()})}if((i=(r=ts().gapi)===null||r===void 0?void 0:r.iframes)===null||i===void 0?void 0:i.Iframe){t(gapi.iframes.getContext())}else if(!!((s=ts().gapi)===null||s===void 0?void 0:s.load)){o()}else{const t=Ss("iframefcb");ts()[t]=()=>{if(!!gapi.load){o()}else{n(kt(e,"network-request-failed"))}};return As(`https://apis.google.com/js/api.js?onload=${t}`).catch(e=>n(e))}}).catch(e=>{Vo=null;throw e})}let Vo=null;function jo(e){Vo=Vo||xo(e);return Vo}
+/**
+     * @license
+     * Copyright 2020 Google LLC.
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Ho=new Ht(5e3,15e3);const Wo="__/auth/iframe";const Bo="emulator/auth/iframe";const qo={style:{position:"absolute",top:"-100px",width:"1px",height:"1px"},"aria-hidden":"true",tabindex:"-1"};const Go=new Map([["identitytoolkit.googleapis.com","p"],["staging-identitytoolkit.sandbox.googleapis.com","s"],["test-identitytoolkit.sandbox.googleapis.com","t"]]);function zo(e){const t=e.config;Nt(t.authDomain,e,"auth-domain-config-required");const n=t.emulator?Wt(t,Bo):`https://${e.config.authDomain}/${Wo}`;const r={apiKey:t.apiKey,appName:e.name,v:Ge};const i=Go.get(e.config.apiHost);if(i){r.eid=i}const s=e._getFrameworks();if(s.length){r.fw=s.join(",")}return`${n}?${w(r).slice(1)}`}async function $o(e){const t=await jo(e);const n=ts().gapi;Nt(n,e,"internal-error");return t.open({where:document.body,url:zo(e),messageHandlersFilter:n.iframes.CROSS_ORIGIN_IFRAMES_FILTER,attributes:qo,dontclear:true},t=>new Promise(async(n,r)=>{await t.restyle({setHideOnLeave:false});const i=kt(e,"network-request-failed");const s=ts().setTimeout(()=>{r(i)},Ho.get());function o(){ts().clearTimeout(s);n(t)}t.ping(o).then(o,()=>{r(i)})}))}
+/**
+     * @license
+     * Copyright 2020 Google LLC.
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Ko={location:"yes",resizable:"yes",statusbar:"yes",toolbar:"no"};const Jo=500;const Yo=600;const Xo="_blank";const Qo="http://localhost";class Zo{constructor(e){this.window=e;this.associatedEvent=null}close(){if(this.window){try{this.window.close()}catch(e){}}}}function ea(e,t,n,r=Jo,i=Yo){const s=Math.max((window.screen.availHeight-i)/2,0).toString();const o=Math.max((window.screen.availWidth-r)/2,0).toString();let c="";const u=Object.assign(Object.assign({},Ko),{width:r.toString(),height:i.toString(),top:s,left:o});const l=a().toLowerCase();if(n){c=Rn(l)?Xo:n}if(An(l)){t=t||Qo;u.scrollbars="yes"}const d=Object.entries(u).reduce((e,[t,n])=>`${e}${t}=${n},`,"");if(Ln(l)&&c!=="_self"){ta(t||"",c);return new Zo(null)}const h=window.open(t||"",c,d);Nt(h,e,"popup-blocked");try{h.focus()}catch(e){}return new Zo(h)}function ta(e,t){const n=document.createElement("a");n.href=e;n.target=t;const r=document.createEvent("MouseEvent");r.initMouseEvent("click",true,true,window,1,0,0,0,0,false,false,false,false,1,null);n.dispatchEvent(r)}
+/**
+     * @license
+     * Copyright 2021 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const na="__/auth/handler";const ra="emulator/auth/handler";function ia(e,t,n,r,i,s){Nt(e.config.authDomain,e,"auth-domain-config-required");Nt(e.config.apiKey,e,"invalid-api-key");const o={apiKey:e.config.apiKey,appName:e.name,authType:n,redirectUrl:r,v:Ge,eventId:i};if(t instanceof Tr){t.setDefaultLanguage(e.languageCode);o.providerId=t.providerId||"";if(!_(t.getCustomParameters())){o.customParameters=JSON.stringify(t.getCustomParameters())}for(const[e,t]of Object.entries(s||{})){o[e]=t}}if(t instanceof wr){const e=t.getScopes().filter(e=>e!=="");if(e.length>0){o.scopes=e.join(",")}}if(e.tenantId){o.tid=e.tenantId}const a=o;for(const e of Object.keys(a)){if(a[e]===undefined){delete a[e]}}return`${sa(e)}?${w(a).slice(1)}`}function sa({config:e}){if(!e.emulator){return`https://${e.authDomain}/${na}`}return Wt(e,ra)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const oa="webStorageSupport";class aa{constructor(){this.eventManagers={};this.iframes={};this.originValidationPromises={};this._redirectPersistence=Yi;this._completeRedirectFn=bo;this._overrideRedirectResult=po}async _openPopup(e,t,n,r){var i;Pt((i=this.eventManagers[e._key()])===null||i===void 0?void 0:i.manager,"_initialize() not called before _openPopup()");const s=ia(e,t,n,Ut(),r);return ea(e,s,Zi())}async _openRedirect(e,t,n,r){await this._originValidation(e);ns(ia(e,t,n,Ut(),r));return new Promise(()=>{})}_initialize(e){const t=e._key();if(this.eventManagers[t]){const{manager:e,promise:n}=this.eventManagers[t];if(e){return Promise.resolve(e)}else{Pt(n,"If manager is not set, promise should be");return n}}const n=this.initAndGetManager(e);this.eventManagers[t]={promise:n};n.catch(()=>{delete this.eventManagers[t]});return n}async initAndGetManager(e){const t=await $o(e);const n=new So(e);t.register("authEvent",t=>{Nt(t===null||t===void 0?void 0:t.authEvent,e,"invalid-auth-event");const r=n.onEvent(t.authEvent);return{status:r?"ACK":"ERROR"}},gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER);this.eventManagers[e._key()]={manager:n};this.iframes[e._key()]=t;return n}_isIframeWebStorageSupported(e,t){const n=this.iframes[e._key()];n.send(oa,{type:oa},n=>{var r;const i=(r=n===null||n===void 0?void 0:n[0])===null||r===void 0?void 0:r[oa];if(i!==undefined){t(!!i)}bt(e,"internal-error")},gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER)}_originValidation(e){const t=e._key();if(!this.originValidationPromises[t]){this.originValidationPromises[t]=Lo(e)}return this.originValidationPromises[t]}get _shouldInitProactively(){return Un()||Sn()||Dn()}}const ca=aa;class ua{constructor(e){this.factorId=e}_process(e,t,n){switch(t.type){case"enroll":return this._finalizeEnroll(e,t.credential,n);case"signin":return this._finalizeSignIn(e,t.credential);default:return Ot("unexpected MultiFactorSessionType")}}}class la extends ua{constructor(e){super("phone");this.credential=e}static _fromCredential(e){return new la(e)}_finalizeEnroll(e,t,n){return Fi(e,{idToken:t,displayName:n,phoneVerificationInfo:this.credential._makeVerificationRequest()})}_finalizeSignIn(e,t){return Es(e,{mfaPendingCredential:t,phoneVerificationInfo:this.credential._makeVerificationRequest()})}}class da{constructor(){}static assertion(e){return la._fromCredential(e)}}da.FACTOR_ID="phone";var ha="@firebase/auth";var fa="0.20.4";
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class pa{constructor(e){this.auth=e;this.internalListeners=new Map}getUid(){var e;this.assertAuthConfigured();return((e=this.auth.currentUser)===null||e===void 0?void 0:e.uid)||null}async getToken(e){this.assertAuthConfigured();await this.auth._initializationPromise;if(!this.auth.currentUser){return null}const t=await this.auth.currentUser.getIdToken(e);return{accessToken:t}}addAuthTokenListener(e){this.assertAuthConfigured();if(this.internalListeners.has(e)){return}const t=this.auth.onIdTokenChanged(t=>{var n;e(((n=t)===null||n===void 0?void 0:n.stsTokenManager.accessToken)||null)});this.internalListeners.set(e,t);this.updateProactiveRefresh()}removeAuthTokenListener(e){this.assertAuthConfigured();const t=this.internalListeners.get(e);if(!t){return}this.internalListeners.delete(e);t();this.updateProactiveRefresh()}assertAuthConfigured(){Nt(this.auth._initializationPromise,"dependent-sdk-initialized-before-auth")}updateProactiveRefresh(){if(this.internalListeners.size>0){this.auth._startProactiveRefresh()}else{this.auth._stopProactiveRefresh()}}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function ma(e){switch(e){case"Node":return"node";case"ReactNative":return"rn";case"Worker":return"webworker";case"Cordova":return"cordova";default:return undefined}}function ga(e){He(new O("auth",(t,{options:n})=>{const r=t.getProvider("app").getImmediate();const i=t.getProvider("heartbeat");const{apiKey:s,authDomain:o}=r.options;return((t,r)=>{Nt(s&&!s.includes(":"),"invalid-api-key",{appName:t.name});Nt(!(o===null||o===void 0?void 0:o.includes(":")),"argument-error",{appName:t.name});const i={apiKey:s,authDomain:o,clientPlatform:e,apiHost:"identitytoolkit.googleapis.com",tokenApiHost:"securetoken.googleapis.com",apiScheme:"https",sdkClientVersion:xn(e)};const a=new jn(t,r,i);Mt(a,n);return a})(r,i)},"PUBLIC").setInstantiationMode("EXPLICIT").setInstanceCreatedCallback((e,t,n)=>{const r=e.getProvider("auth-internal");r.initialize()}));He(new O("auth-internal",e=>{const t=Hn(e.getProvider("auth").getImmediate());return(e=>new pa(e))(t)},"PRIVATE").setInstantiationMode("EXPLICIT"));$e(ha,fa,ma(e));$e(ha,fa,"esm2017")}
+/**
+     * @license
+     * Copyright 2021 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function va(e=ze()){const t=We(e,"auth");if(t.isInitialized()){return t.getImmediate()}return Lt(e,{popupRedirectResolver:ca,persistence:[Ts,Ki,Yi]})}ga("Browser");e.ActionCodeOperation=mt;e.ActionCodeURL=Ir;e.AuthCredential=Kn;e.AuthErrorCodes=Tt;e.EmailAuthCredential=or;e.EmailAuthProvider=yr;e.FacebookAuthProvider=br;e.FactorId=dt;e.GithubAuthProvider=Ar;e.GoogleAuthProvider=kr;e.OAuthCredential=ur;e.OAuthProvider=Er;e.OperationType=pt;e.PhoneAuthCredential=mr;e.PhoneAuthProvider=Ys;e.PhoneMultiFactorGenerator=da;e.ProviderId=ht;e.RecaptchaVerifier=Ws;e.SAMLAuthProvider=Or;e.SignInMethod=ft;e.TwitterAuthProvider=Pr;e.applyActionCode=ei;e.beforeAuthStateChanged=Si;e.browserLocalPersistence=Ki;e.browserPopupRedirectResolver=ca;e.browserSessionPersistence=Yi;e.checkActionCode=ti;e.confirmPasswordReset=Zr;e.connectAuthEmulator=Bn;e.createUserWithEmailAndPassword=ri;e.debugErrorMap=It;e.deleteUser=Ci;e.fetchSignInMethodsForEmail=ui;e.getAdditionalUserInfo=bi;e.getAuth=va;e.getIdToken=rn;e.getIdTokenResult=sn;e.getMultiFactorResolver=Mi;e.getRedirectResult=Eo;e.inMemoryPersistence=wn;e.indexedDBLocalPersistence=Ts;e.initializeAuth=Lt;e.isSignInWithEmailLink=oi;e.linkWithCredential=Gr;e.linkWithPhoneNumber=zs;e.linkWithPopup=oo;e.linkWithRedirect=To;e.multiFactor=Hi;e.onAuthStateChanged=Ri;e.onIdTokenChanged=Ai;e.parseActionCodeURL=_r;e.prodErrorMap=_t;e.reauthenticateWithCredential=zr;e.reauthenticateWithPhoneNumber=$s;e.reauthenticateWithPopup=so;e.reauthenticateWithRedirect=_o;e.reload=pn;e.sendEmailVerification=li;e.sendPasswordResetEmail=Qr;e.sendSignInLinkToEmail=si;e.setPersistence=ki;e.signInAnonymously=Mr;e.signInWithCredential=qr;e.signInWithCustomToken=Kr;e.signInWithEmailAndPassword=ii;e.signInWithEmailLink=ai;e.signInWithPhoneNumber=Gs;e.signInWithPopup=io;e.signInWithRedirect=vo;e.signOut=Pi;e.unlink=Vr;e.updateCurrentUser=Oi;e.updateEmail=pi;e.updatePassword=mi;e.updatePhoneNumber=Js;e.updateProfile=fi;e.useDeviceLanguage=Ni;e.verifyBeforeUpdateEmail=di;e.verifyPasswordResetCode=ni;Object.defineProperty(e,"__esModule",{value:true})});
+},
+	"githubfollower/lib/firebase.js":function(){sap.ui.define(["exports"],function(e){"use strict";(function(){const e={NODE_ENV:"production"};try{if(process){process.env=Object.assign({},process.env);Object.assign(process.env,e);return}}catch(e){}globalThis.process={env:e}})();const t=function(e){const t=[];let n=0;for(let r=0;r<e.length;r++){let i=e.charCodeAt(r);if(i<128){t[n++]=i}else if(i<2048){t[n++]=i>>6|192;t[n++]=i&63|128}else if((i&64512)===55296&&r+1<e.length&&(e.charCodeAt(r+1)&64512)===56320){i=65536+((i&1023)<<10)+(e.charCodeAt(++r)&1023);t[n++]=i>>18|240;t[n++]=i>>12&63|128;t[n++]=i>>6&63|128;t[n++]=i&63|128}else{t[n++]=i>>12|224;t[n++]=i>>6&63|128;t[n++]=i&63|128}}return t};const n=function(e){const t=[];let n=0,r=0;while(n<e.length){const i=e[n++];if(i<128){t[r++]=String.fromCharCode(i)}else if(i>191&&i<224){const s=e[n++];t[r++]=String.fromCharCode((i&31)<<6|s&63)}else if(i>239&&i<365){const s=e[n++];const o=e[n++];const a=e[n++];const c=((i&7)<<18|(s&63)<<12|(o&63)<<6|a&63)-65536;t[r++]=String.fromCharCode(55296+(c>>10));t[r++]=String.fromCharCode(56320+(c&1023))}else{const s=e[n++];const o=e[n++];t[r++]=String.fromCharCode((i&15)<<12|(s&63)<<6|o&63)}}return t.join("")};const r={byteToCharMap_:null,charToByteMap_:null,byteToCharMapWebSafe_:null,charToByteMapWebSafe_:null,ENCODED_VALS_BASE:"ABCDEFGHIJKLMNOPQRSTUVWXYZ"+"abcdefghijklmnopqrstuvwxyz"+"0123456789",get ENCODED_VALS(){return this.ENCODED_VALS_BASE+"+/="},get ENCODED_VALS_WEBSAFE(){return this.ENCODED_VALS_BASE+"-_."},HAS_NATIVE_SUPPORT:typeof atob==="function",encodeByteArray(e,t){if(!Array.isArray(e)){throw Error("encodeByteArray takes an array as a parameter")}this.init_();const n=t?this.byteToCharMapWebSafe_:this.byteToCharMap_;const r=[];for(let t=0;t<e.length;t+=3){const i=e[t];const s=t+1<e.length;const o=s?e[t+1]:0;const a=t+2<e.length;const c=a?e[t+2]:0;const u=i>>2;const l=(i&3)<<4|o>>4;let h=(o&15)<<2|c>>6;let d=c&63;if(!a){d=64;if(!s){h=64}}r.push(n[u],n[l],n[h],n[d])}return r.join("")},encodeString(e,n){if(this.HAS_NATIVE_SUPPORT&&!n){return btoa(e)}return this.encodeByteArray(t(e),n)},decodeString(e,t){if(this.HAS_NATIVE_SUPPORT&&!t){return atob(e)}return n(this.decodeStringToByteArray(e,t))},decodeStringToByteArray(e,t){this.init_();const n=t?this.charToByteMapWebSafe_:this.charToByteMap_;const r=[];for(let t=0;t<e.length;){const i=n[e.charAt(t++)];const s=t<e.length;const o=s?n[e.charAt(t)]:0;++t;const a=t<e.length;const c=a?n[e.charAt(t)]:64;++t;const u=t<e.length;const l=u?n[e.charAt(t)]:64;++t;if(i==null||o==null||c==null||l==null){throw Error()}const h=i<<2|o>>4;r.push(h);if(c!==64){const e=o<<4&240|c>>2;r.push(e);if(l!==64){const e=c<<6&192|l;r.push(e)}}}return r},init_(){if(!this.byteToCharMap_){this.byteToCharMap_={};this.charToByteMap_={};this.byteToCharMapWebSafe_={};this.charToByteMapWebSafe_={};for(let e=0;e<this.ENCODED_VALS.length;e++){this.byteToCharMap_[e]=this.ENCODED_VALS.charAt(e);this.charToByteMap_[this.byteToCharMap_[e]]=e;this.byteToCharMapWebSafe_[e]=this.ENCODED_VALS_WEBSAFE.charAt(e);this.charToByteMapWebSafe_[this.byteToCharMapWebSafe_[e]]=e;if(e>=this.ENCODED_VALS_BASE.length){this.charToByteMap_[this.ENCODED_VALS_WEBSAFE.charAt(e)]=e;this.charToByteMapWebSafe_[this.ENCODED_VALS.charAt(e)]=e}}}}};const i=function(e){const n=t(e);return r.encodeByteArray(n,true)};const s=function(e){return i(e).replace(/\./g,"")};const o=function(e){try{return r.decodeString(e,true)}catch(e){console.error("base64Decode failed: ",e)}return null};class a{constructor(){this.reject=()=>{};this.resolve=()=>{};this.promise=new Promise((e,t)=>{this.resolve=e;this.reject=t})}wrapCallback(e){return(t,n)=>{if(t){this.reject(t)}else{this.resolve(n)}if(typeof e==="function"){this.promise.catch(()=>{});if(e.length===1){e(t)}else{e(t,n)}}}}}function c(){if(typeof navigator!=="undefined"&&typeof navigator["userAgent"]==="string"){return navigator["userAgent"]}else{return""}}function u(){return typeof window!=="undefined"&&!!(window["cordova"]||window["phonegap"]||window["PhoneGap"])&&/ios|iphone|ipod|ipad|android|blackberry|iemobile/i.test(c())}function l(){const e=typeof chrome==="object"?chrome.runtime:typeof browser==="object"?browser.runtime:undefined;return typeof e==="object"&&e.id!==undefined}function h(){return typeof navigator==="object"&&navigator["product"]==="ReactNative"}function d(){const e=c();return e.indexOf("MSIE ")>=0||e.indexOf("Trident/")>=0}function f(){return typeof indexedDB==="object"}function p(){return new Promise((e,t)=>{try{let n=true;const r="validate-browser-context-for-indexeddb-analytics-module";const i=self.indexedDB.open(r);i.onsuccess=()=>{i.result.close();if(!n){self.indexedDB.deleteDatabase(r)}e(true)};i.onupgradeneeded=()=>{n=false};i.onerror=()=>{var e;t(((e=i.error)===null||e===void 0?void 0:e.message)||"")}}catch(e){t(e)}})}const g="FirebaseError";class m extends Error{constructor(e,t,n){super(t);this.code=e;this.customData=n;this.name=g;Object.setPrototypeOf(this,m.prototype);if(Error.captureStackTrace){Error.captureStackTrace(this,v.prototype.create)}}}class v{constructor(e,t,n){this.service=e;this.serviceName=t;this.errors=n}create(e,...t){const n=t[0]||{};const r=`${this.service}/${e}`;const i=this.errors[e];const s=i?_(i,n):"Error";const o=`${this.serviceName}: ${s} (${r}).`;const a=new m(r,o,n);return a}}function _(e,t){return e.replace(y,(e,n)=>{const r=t[n];return r!=null?String(r):`<${n}?>`})}const y=/\{\$([^}]+)}/g;function I(e){for(const t in e){if(Object.prototype.hasOwnProperty.call(e,t)){return false}}return true}function b(e,t){if(e===t){return true}const n=Object.keys(e);const r=Object.keys(t);for(const i of n){if(!r.includes(i)){return false}const n=e[i];const s=t[i];if(w(n)&&w(s)){if(!b(n,s)){return false}}else if(n!==s){return false}}for(const e of r){if(!n.includes(e)){return false}}return true}function w(e){return e!==null&&typeof e==="object"}function T(e){const t=[];for(const[n,r]of Object.entries(e)){if(Array.isArray(r)){r.forEach(e=>{t.push(encodeURIComponent(n)+"="+encodeURIComponent(e))})}else{t.push(encodeURIComponent(n)+"="+encodeURIComponent(r))}}return t.length?"&"+t.join("&"):""}function E(e,t){const n=new k(e,t);return n.subscribe.bind(n)}class k{constructor(e,t){this.observers=[];this.unsubscribes=[];this.observerCount=0;this.task=Promise.resolve();this.finalized=false;this.onNoObservers=t;this.task.then(()=>{e(this)}).catch(e=>{this.error(e)})}next(e){this.forEachObserver(t=>{t.next(e)})}error(e){this.forEachObserver(t=>{t.error(e)});this.close(e)}complete(){this.forEachObserver(e=>{e.complete()});this.close()}subscribe(e,t,n){let r;if(e===undefined&&t===undefined&&n===undefined){throw new Error("Missing Observer.")}if(S(e,["next","error","complete"])){r=e}else{r={next:e,error:t,complete:n}}if(r.next===undefined){r.next=O}if(r.error===undefined){r.error=O}if(r.complete===undefined){r.complete=O}const i=this.unsubscribeOne.bind(this,this.observers.length);if(this.finalized){this.task.then(()=>{try{if(this.finalError){r.error(this.finalError)}else{r.complete()}}catch(e){}return})}this.observers.push(r);return i}unsubscribeOne(e){if(this.observers===undefined||this.observers[e]===undefined){return}delete this.observers[e];this.observerCount-=1;if(this.observerCount===0&&this.onNoObservers!==undefined){this.onNoObservers(this)}}forEachObserver(e){if(this.finalized){return}for(let t=0;t<this.observers.length;t++){this.sendOne(t,e)}}sendOne(e,t){this.task.then(()=>{if(this.observers!==undefined&&this.observers[e]!==undefined){try{t(this.observers[e])}catch(e){if(typeof console!=="undefined"&&console.error){console.error(e)}}}})}close(e){if(this.finalized){return}this.finalized=true;if(e!==undefined){this.finalError=e}this.task.then(()=>{this.observers=undefined;this.onNoObservers=undefined})}}function S(e,t){if(typeof e!=="object"||e===null){return false}for(const n of t){if(n in e&&typeof e[n]==="function"){return true}}return false}function O(){}function R(e){if(e&&e._delegate){return e._delegate}else{return e}}class C{constructor(e,t,n){this.name=e;this.instanceFactory=t;this.type=n;this.multipleInstances=false;this.serviceProps={};this.instantiationMode="LAZY";this.onInstanceCreated=null}setInstantiationMode(e){this.instantiationMode=e;return this}setMultipleInstances(e){this.multipleInstances=e;return this}setServiceProps(e){this.serviceProps=e;return this}setInstanceCreatedCallback(e){this.onInstanceCreated=e;return this}}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const A="[DEFAULT]";
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class N{constructor(e,t){this.name=e;this.container=t;this.component=null;this.instances=new Map;this.instancesDeferred=new Map;this.instancesOptions=new Map;this.onInitCallbacks=new Map}get(e){const t=this.normalizeInstanceIdentifier(e);if(!this.instancesDeferred.has(t)){const e=new a;this.instancesDeferred.set(t,e);if(this.isInitialized(t)||this.shouldAutoInitialize()){try{const n=this.getOrInitializeService({instanceIdentifier:t});if(n){e.resolve(n)}}catch(e){}}}return this.instancesDeferred.get(t).promise}getImmediate(e){var t;const n=this.normalizeInstanceIdentifier(e===null||e===void 0?void 0:e.identifier);const r=(t=e===null||e===void 0?void 0:e.optional)!==null&&t!==void 0?t:false;if(this.isInitialized(n)||this.shouldAutoInitialize()){try{return this.getOrInitializeService({instanceIdentifier:n})}catch(e){if(r){return null}else{throw e}}}else{if(r){return null}else{throw Error(`Service ${this.name} is not available`)}}}getComponent(){return this.component}setComponent(e){if(e.name!==this.name){throw Error(`Mismatching Component ${e.name} for Provider ${this.name}.`)}if(this.component){throw Error(`Component for ${this.name} has already been provided`)}this.component=e;if(!this.shouldAutoInitialize()){return}if(D(e)){try{this.getOrInitializeService({instanceIdentifier:A})}catch(e){}}for(const[e,t]of this.instancesDeferred.entries()){const n=this.normalizeInstanceIdentifier(e);try{const e=this.getOrInitializeService({instanceIdentifier:n});t.resolve(e)}catch(e){}}}clearInstance(e=A){this.instancesDeferred.delete(e);this.instancesOptions.delete(e);this.instances.delete(e)}async delete(){const e=Array.from(this.instances.values());await Promise.all([...e.filter(e=>"INTERNAL"in e).map(e=>e.INTERNAL.delete()),...e.filter(e=>"_delete"in e).map(e=>e._delete())])}isComponentSet(){return this.component!=null}isInitialized(e=A){return this.instances.has(e)}getOptions(e=A){return this.instancesOptions.get(e)||{}}initialize(e={}){const{options:t={}}=e;const n=this.normalizeInstanceIdentifier(e.instanceIdentifier);if(this.isInitialized(n)){throw Error(`${this.name}(${n}) has already been initialized`)}if(!this.isComponentSet()){throw Error(`Component ${this.name} has not been registered yet`)}const r=this.getOrInitializeService({instanceIdentifier:n,options:t});for(const[e,t]of this.instancesDeferred.entries()){const i=this.normalizeInstanceIdentifier(e);if(n===i){t.resolve(r)}}return r}onInit(e,t){var n;const r=this.normalizeInstanceIdentifier(t);const i=(n=this.onInitCallbacks.get(r))!==null&&n!==void 0?n:new Set;i.add(e);this.onInitCallbacks.set(r,i);const s=this.instances.get(r);if(s){e(s,r)}return()=>{i.delete(e)}}invokeOnInitCallbacks(e,t){const n=this.onInitCallbacks.get(t);if(!n){return}for(const r of n){try{r(e,t)}catch(e){}}}getOrInitializeService({instanceIdentifier:e,options:t={}}){let n=this.instances.get(e);if(!n&&this.component){n=this.component.instanceFactory(this.container,{instanceIdentifier:P(e),options:t});this.instances.set(e,n);this.instancesOptions.set(e,t);this.invokeOnInitCallbacks(n,e);if(this.component.onInstanceCreated){try{this.component.onInstanceCreated(this.container,e,n)}catch(e){}}}return n||null}normalizeInstanceIdentifier(e=A){if(this.component){return this.component.multipleInstances?e:A}else{return e}}shouldAutoInitialize(){return!!this.component&&this.component.instantiationMode!=="EXPLICIT"}}function P(e){return e===A?undefined:e}function D(e){return e.instantiationMode==="EAGER"}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class L{constructor(e){this.name=e;this.providers=new Map}addComponent(e){const t=this.getProvider(e.name);if(t.isComponentSet()){throw new Error(`Component ${e.name} has already been registered with ${this.name}`)}t.setComponent(e)}addOrOverwriteComponent(e){const t=this.getProvider(e.name);if(t.isComponentSet()){this.providers.delete(e.name)}this.addComponent(e)}getProvider(e){if(this.providers.has(e)){return this.providers.get(e)}const t=new N(e,this);this.providers.set(e,t);return t}getProviders(){return Array.from(this.providers.values())}}var M;(function(e){e[e["DEBUG"]=0]="DEBUG";e[e["VERBOSE"]=1]="VERBOSE";e[e["INFO"]=2]="INFO";e[e["WARN"]=3]="WARN";e[e["ERROR"]=4]="ERROR";e[e["SILENT"]=5]="SILENT"})(M||(M={}));const U={debug:M.DEBUG,verbose:M.VERBOSE,info:M.INFO,warn:M.WARN,error:M.ERROR,silent:M.SILENT};const x=M.INFO;const j={[M.DEBUG]:"log",[M.VERBOSE]:"log",[M.INFO]:"info",[M.WARN]:"warn",[M.ERROR]:"error"};const F=(e,t,...n)=>{if(t<e.logLevel){return}const r=(new Date).toISOString();const i=j[t];if(i){console[i](`[${r}]  ${e.name}:`,...n)}else{throw new Error(`Attempted to log a message with an invalid logType (value: ${t})`)}};class H{constructor(e){this.name=e;this._logLevel=x;this._logHandler=F;this._userLogHandler=null}get logLevel(){return this._logLevel}set logLevel(e){if(!(e in M)){throw new TypeError(`Invalid value "${e}" assigned to \`logLevel\``)}this._logLevel=e}setLogLevel(e){this._logLevel=typeof e==="string"?U[e]:e}get logHandler(){return this._logHandler}set logHandler(e){if(typeof e!=="function"){throw new TypeError("Value assigned to `logHandler` must be a function")}this._logHandler=e}get userLogHandler(){return this._userLogHandler}set userLogHandler(e){this._userLogHandler=e}debug(...e){this._userLogHandler&&this._userLogHandler(this,M.DEBUG,...e);this._logHandler(this,M.DEBUG,...e)}log(...e){this._userLogHandler&&this._userLogHandler(this,M.VERBOSE,...e);this._logHandler(this,M.VERBOSE,...e)}info(...e){this._userLogHandler&&this._userLogHandler(this,M.INFO,...e);this._logHandler(this,M.INFO,...e)}warn(...e){this._userLogHandler&&this._userLogHandler(this,M.WARN,...e);this._logHandler(this,M.WARN,...e)}error(...e){this._userLogHandler&&this._userLogHandler(this,M.ERROR,...e);this._logHandler(this,M.ERROR,...e)}}const V=(e,t)=>t.some(t=>e instanceof t);let B;let $;function z(){return B||(B=[IDBDatabase,IDBObjectStore,IDBIndex,IDBCursor,IDBTransaction])}function W(){return $||($=[IDBCursor.prototype.advance,IDBCursor.prototype.continue,IDBCursor.prototype.continuePrimaryKey])}const q=new WeakMap;const K=new WeakMap;const G=new WeakMap;const J=new WeakMap;const X=new WeakMap;function Y(e){const t=new Promise((t,n)=>{const r=()=>{e.removeEventListener("success",i);e.removeEventListener("error",s)};const i=()=>{t(re(e.result));r()};const s=()=>{n(e.error);r()};e.addEventListener("success",i);e.addEventListener("error",s)});t.then(t=>{if(t instanceof IDBCursor){q.set(t,e)}}).catch(()=>{});X.set(t,e);return t}function Q(e){if(K.has(e))return;const t=new Promise((t,n)=>{const r=()=>{e.removeEventListener("complete",i);e.removeEventListener("error",s);e.removeEventListener("abort",s)};const i=()=>{t();r()};const s=()=>{n(e.error||new DOMException("AbortError","AbortError"));r()};e.addEventListener("complete",i);e.addEventListener("error",s);e.addEventListener("abort",s)});K.set(e,t)}let Z={get(e,t,n){if(e instanceof IDBTransaction){if(t==="done")return K.get(e);if(t==="objectStoreNames"){return e.objectStoreNames||G.get(e)}if(t==="store"){return n.objectStoreNames[1]?undefined:n.objectStore(n.objectStoreNames[0])}}return re(e[t])},set(e,t,n){e[t]=n;return true},has(e,t){if(e instanceof IDBTransaction&&(t==="done"||t==="store")){return true}return t in e}};function ee(e){Z=e(Z)}function te(e){if(e===IDBDatabase.prototype.transaction&&!("objectStoreNames"in IDBTransaction.prototype)){return function(t,...n){const r=e.call(ie(this),t,...n);G.set(r,t.sort?t.sort():[t]);return re(r)}}if(W().includes(e)){return function(...t){e.apply(ie(this),t);return re(q.get(this))}}return function(...t){return re(e.apply(ie(this),t))}}function ne(e){if(typeof e==="function")return te(e);if(e instanceof IDBTransaction)Q(e);if(V(e,z()))return new Proxy(e,Z);return e}function re(e){if(e instanceof IDBRequest)return Y(e);if(J.has(e))return J.get(e);const t=ne(e);if(t!==e){J.set(e,t);X.set(t,e)}return t}const ie=e=>X.get(e);function se(e,t,{blocked:n,upgrade:r,blocking:i,terminated:s}={}){const o=indexedDB.open(e,t);const a=re(o);if(r){o.addEventListener("upgradeneeded",e=>{r(re(o.result),e.oldVersion,e.newVersion,re(o.transaction))})}if(n)o.addEventListener("blocked",()=>n());a.then(e=>{if(s)e.addEventListener("close",()=>s());if(i)e.addEventListener("versionchange",()=>i())}).catch(()=>{});return a}const oe=["get","getKey","getAll","getAllKeys","count"];const ae=["put","add","delete","clear"];const ce=new Map;function ue(e,t){if(!(e instanceof IDBDatabase&&!(t in e)&&typeof t==="string")){return}if(ce.get(t))return ce.get(t);const n=t.replace(/FromIndex$/,"");const r=t!==n;const i=ae.includes(n);if(!(n in(r?IDBIndex:IDBObjectStore).prototype)||!(i||oe.includes(n))){return}const s=async function(e,...t){const s=this.transaction(e,i?"readwrite":"readonly");let o=s.store;if(r)o=o.index(t.shift());return(await Promise.all([o[n](...t),i&&s.done]))[0]};ce.set(t,s);return s}ee(e=>({...e,get:(t,n,r)=>ue(t,n)||e.get(t,n,r),has:(t,n)=>!!ue(t,n)||e.has(t,n)}));
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class le{constructor(e){this.container=e}getPlatformInfoString(){const e=this.container.getProviders();return e.map(e=>{if(he(e)){const t=e.getImmediate();return`${t.library}/${t.version}`}else{return null}}).filter(e=>e).join(" ")}}function he(e){const t=e.getComponent();return(t===null||t===void 0?void 0:t.type)==="VERSION"}const de="@firebase/app";const fe="0.7.27";
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const pe=new H("@firebase/app");const ge="@firebase/app-compat";const me="@firebase/analytics-compat";const ve="@firebase/analytics";const _e="@firebase/app-check-compat";const ye="@firebase/app-check";const Ie="@firebase/auth";const be="@firebase/auth-compat";const we="@firebase/database";const Te="@firebase/database-compat";const Ee="@firebase/functions";const ke="@firebase/functions-compat";const Se="@firebase/installations";const Oe="@firebase/installations-compat";const Re="@firebase/messaging";const Ce="@firebase/messaging-compat";const Ae="@firebase/performance";const Ne="@firebase/performance-compat";const Pe="@firebase/remote-config";const De="@firebase/remote-config-compat";const Le="@firebase/storage";const Me="@firebase/storage-compat";const Ue="@firebase/firestore";const xe="@firebase/firestore-compat";const je="firebase";const Fe="9.8.4";
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const He="[DEFAULT]";const Ve={[de]:"fire-core",[ge]:"fire-core-compat",[ve]:"fire-analytics",[me]:"fire-analytics-compat",[ye]:"fire-app-check",[_e]:"fire-app-check-compat",[Ie]:"fire-auth",[be]:"fire-auth-compat",[we]:"fire-rtdb",[Te]:"fire-rtdb-compat",[Ee]:"fire-fn",[ke]:"fire-fn-compat",[Se]:"fire-iid",[Oe]:"fire-iid-compat",[Re]:"fire-fcm",[Ce]:"fire-fcm-compat",[Ae]:"fire-perf",[Ne]:"fire-perf-compat",[Pe]:"fire-rc",[De]:"fire-rc-compat",[Le]:"fire-gcs",[Me]:"fire-gcs-compat",[Ue]:"fire-fst",[xe]:"fire-fst-compat","fire-js":"fire-js",[je]:"fire-js-all"};
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Be=new Map;const $e=new Map;function ze(e,t){try{e.container.addComponent(t)}catch(n){pe.debug(`Component ${t.name} failed to register with FirebaseApp ${e.name}`,n)}}function We(e){const t=e.name;if($e.has(t)){pe.debug(`There were multiple attempts to register component ${t}.`);return false}$e.set(t,e);for(const t of Be.values()){ze(t,e)}return true}function qe(e,t){const n=e.container.getProvider("heartbeat").getImmediate({optional:true});if(n){void n.triggerHeartbeat()}return e.container.getProvider(t)}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Ke={["no-app"]:"No Firebase App '{$appName}' has been created - "+"call Firebase App.initializeApp()",["bad-app-name"]:"Illegal App name: '{$appName}",["duplicate-app"]:"Firebase App named '{$appName}' already exists with different options or config",["app-deleted"]:"Firebase App named '{$appName}' already deleted",["invalid-app-argument"]:"firebase.{$appName}() takes either no argument or a "+"Firebase App instance.",["invalid-log-argument"]:"First argument to `onLog` must be null or a function.",["storage-open"]:"Error thrown when opening storage. Original error: {$originalErrorMessage}.",["storage-get"]:"Error thrown when reading from storage. Original error: {$originalErrorMessage}.",["storage-set"]:"Error thrown when writing to storage. Original error: {$originalErrorMessage}.",["storage-delete"]:"Error thrown when deleting from storage. Original error: {$originalErrorMessage}."};const Ge=new v("app","Firebase",Ke);
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Je{constructor(e,t,n){this._isDeleted=false;this._options=Object.assign({},e);this._config=Object.assign({},t);this._name=t.name;this._automaticDataCollectionEnabled=t.automaticDataCollectionEnabled;this._container=n;this.container.addComponent(new C("app",()=>this,"PUBLIC"))}get automaticDataCollectionEnabled(){this.checkDestroyed();return this._automaticDataCollectionEnabled}set automaticDataCollectionEnabled(e){this.checkDestroyed();this._automaticDataCollectionEnabled=e}get name(){this.checkDestroyed();return this._name}get options(){this.checkDestroyed();return this._options}get config(){this.checkDestroyed();return this._config}get container(){return this._container}get isDeleted(){return this._isDeleted}set isDeleted(e){this._isDeleted=e}checkDestroyed(){if(this.isDeleted){throw Ge.create("app-deleted",{appName:this._name})}}}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Xe=Fe;function Ye(e,t={}){if(typeof t!=="object"){const e=t;t={name:e}}const n=Object.assign({name:He,automaticDataCollectionEnabled:false},t);const r=n.name;if(typeof r!=="string"||!r){throw Ge.create("bad-app-name",{appName:String(r)})}const i=Be.get(r);if(i){if(b(e,i.options)&&b(n,i.config)){return i}else{throw Ge.create("duplicate-app",{appName:r})}}const s=new L(r);for(const e of $e.values()){s.addComponent(e)}const o=new Je(e,n,s);Be.set(r,o);return o}function Qe(e=He){const t=Be.get(e);if(!t){throw Ge.create("no-app",{appName:e})}return t}function Ze(e,t,n){var r;let i=(r=Ve[e])!==null&&r!==void 0?r:e;if(n){i+=`-${n}`}const s=i.match(/\s|\//);const o=t.match(/\s|\//);if(s||o){const e=[`Unable to register library "${i}" with version "${t}":`];if(s){e.push(`library name "${i}" contains illegal characters (whitespace or "/")`)}if(s&&o){e.push("and")}if(o){e.push(`version name "${t}" contains illegal characters (whitespace or "/")`)}pe.warn(e.join(" "));return}We(new C(`${i}-version`,()=>({library:i,version:t}),"VERSION"))}
+/**
+     * @license
+     * Copyright 2021 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const et="firebase-heartbeat-database";const tt=1;const nt="firebase-heartbeat-store";let rt=null;function it(){if(!rt){rt=se(et,tt,{upgrade:(e,t)=>{switch(t){case 0:e.createObjectStore(nt)}}}).catch(e=>{throw Ge.create("storage-open",{originalErrorMessage:e.message})})}return rt}async function st(e){var t;try{const t=await it();return t.transaction(nt).objectStore(nt).get(at(e))}catch(e){throw Ge.create("storage-get",{originalErrorMessage:(t=e)===null||t===void 0?void 0:t.message})}}async function ot(e,t){var n;try{const n=await it();const r=n.transaction(nt,"readwrite");const i=r.objectStore(nt);await i.put(t,at(e));return r.done}catch(e){throw Ge.create("storage-set",{originalErrorMessage:(n=e)===null||n===void 0?void 0:n.message})}}function at(e){return`${e.name}!${e.options.appId}`}
+/**
+     * @license
+     * Copyright 2021 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const ct=1024;const ut=30*24*60*60*1e3;class lt{constructor(e){this.container=e;this._heartbeatsCache=null;const t=this.container.getProvider("app").getImmediate();this._storage=new ft(t);this._heartbeatsCachePromise=this._storage.read().then(e=>{this._heartbeatsCache=e;return e})}async triggerHeartbeat(){const e=this.container.getProvider("platform-logger").getImmediate();const t=e.getPlatformInfoString();const n=ht();if(this._heartbeatsCache===null){this._heartbeatsCache=await this._heartbeatsCachePromise}if(this._heartbeatsCache.lastSentHeartbeatDate===n||this._heartbeatsCache.heartbeats.some(e=>e.date===n)){return}else{this._heartbeatsCache.heartbeats.push({date:n,agent:t})}this._heartbeatsCache.heartbeats=this._heartbeatsCache.heartbeats.filter(e=>{const t=new Date(e.date).valueOf();const n=Date.now();return n-t<=ut});return this._storage.overwrite(this._heartbeatsCache)}async getHeartbeatsHeader(){if(this._heartbeatsCache===null){await this._heartbeatsCachePromise}if(this._heartbeatsCache===null||this._heartbeatsCache.heartbeats.length===0){return""}const e=ht();const{heartbeatsToSend:t,unsentEntries:n}=dt(this._heartbeatsCache.heartbeats);const r=s(JSON.stringify({version:2,heartbeats:t}));this._heartbeatsCache.lastSentHeartbeatDate=e;if(n.length>0){this._heartbeatsCache.heartbeats=n;await this._storage.overwrite(this._heartbeatsCache)}else{this._heartbeatsCache.heartbeats=[];void this._storage.overwrite(this._heartbeatsCache)}return r}}function ht(){const e=new Date;return e.toISOString().substring(0,10)}function dt(e,t=ct){const n=[];let r=e.slice();for(const i of e){const e=n.find(e=>e.agent===i.agent);if(!e){n.push({agent:i.agent,dates:[i.date]});if(pt(n)>t){n.pop();break}}else{e.dates.push(i.date);if(pt(n)>t){e.dates.pop();break}}r=r.slice(1)}return{heartbeatsToSend:n,unsentEntries:r}}class ft{constructor(e){this.app=e;this._canUseIndexedDBPromise=this.runIndexedDBEnvironmentCheck()}async runIndexedDBEnvironmentCheck(){if(!f()){return false}else{return p().then(()=>true).catch(()=>false)}}async read(){const e=await this._canUseIndexedDBPromise;if(!e){return{heartbeats:[]}}else{const e=await st(this.app);return e||{heartbeats:[]}}}async overwrite(e){var t;const n=await this._canUseIndexedDBPromise;if(!n){return}else{const n=await this.read();return ot(this.app,{lastSentHeartbeatDate:(t=e.lastSentHeartbeatDate)!==null&&t!==void 0?t:n.lastSentHeartbeatDate,heartbeats:e.heartbeats})}}async add(e){var t;const n=await this._canUseIndexedDBPromise;if(!n){return}else{const n=await this.read();return ot(this.app,{lastSentHeartbeatDate:(t=e.lastSentHeartbeatDate)!==null&&t!==void 0?t:n.lastSentHeartbeatDate,heartbeats:[...n.heartbeats,...e.heartbeats]})}}}function pt(e){return s(JSON.stringify({version:2,heartbeats:e})).length}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function gt(e){We(new C("platform-logger",e=>new le(e),"PRIVATE"));We(new C("heartbeat",e=>new lt(e),"PRIVATE"));Ze(de,fe,e);Ze(de,fe,"esm2017");Ze("fire-js","")}gt("");var mt="firebase";var vt="9.8.4";
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */Ze(mt,vt,"app");function _t(e,t){var n={};for(var r in e)if(Object.prototype.hasOwnProperty.call(e,r)&&t.indexOf(r)<0)n[r]=e[r];if(e!=null&&typeof Object.getOwnPropertySymbols==="function")for(var i=0,r=Object.getOwnPropertySymbols(e);i<r.length;i++){if(t.indexOf(r[i])<0&&Object.prototype.propertyIsEnumerable.call(e,r[i]))n[r[i]]=e[r[i]]}return n}function yt(){return{["dependent-sdk-initialized-before-auth"]:"Another Firebase SDK was initialized and is trying to use Auth before Auth is "+"initialized. Please be sure to call `initializeAuth` or `getAuth` before "+"starting any other Firebase SDK."}}const It=yt;const bt=new v("auth","Firebase",yt());
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const wt=new H("@firebase/auth");function Tt(e,...t){if(wt.logLevel<=M.ERROR){wt.error(`Auth (${Xe}): ${e}`,...t)}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function Et(e,...t){throw Rt(e,...t)}function kt(e,...t){return Rt(e,...t)}function St(e,t,n){const r=Object.assign(Object.assign({},It()),{[t]:n});const i=new v("auth","Firebase",r);return i.create(t,{appName:e.name})}function Ot(e,t,n){const r=n;if(!(t instanceof r)){if(r.name!==t.constructor.name){Et(e,"argument-error")}throw St(e,"argument-error",`Type of ${t.constructor.name} does not match expected instance.`+`Did you pass a reference from a different Auth SDK?`)}}function Rt(e,...t){if(typeof e!=="string"){const n=t[0];const r=[...t.slice(1)];if(r[0]){r[0].appName=e.name}return e._errorFactory.create(n,...r)}return bt.create(e,...t)}function Ct(e,t,...n){if(!e){throw Rt(t,...n)}}function At(e){const t=`INTERNAL ASSERTION FAILED: `+e;Tt(t);throw new Error(t)}function Nt(e,t){if(!e){At(t)}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Pt=new Map;function Dt(e){Nt(e instanceof Function,"Expected a class definition");let t=Pt.get(e);if(t){Nt(t instanceof e,"Instance stored in cache mismatched with class");return t}t=new e;Pt.set(e,t);return t}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function Lt(e,t){const n=qe(e,"auth");if(n.isInitialized()){const e=n.getImmediate();const r=n.getOptions();if(b(r,t!==null&&t!==void 0?t:{})){return e}else{Et(e,"already-initialized")}}const r=n.initialize({options:t});return r}function Mt(e,t){const n=(t===null||t===void 0?void 0:t.persistence)||[];const r=(Array.isArray(n)?n:[n]).map(Dt);if(t===null||t===void 0?void 0:t.errorMap){e._updateErrorMap(t.errorMap)}e._initializeWithPersistence(r,t===null||t===void 0?void 0:t.popupRedirectResolver)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function Ut(){var e;return typeof self!=="undefined"&&((e=self.location)===null||e===void 0?void 0:e.href)||""}function xt(){return jt()==="http:"||jt()==="https:"}function jt(){var e;return typeof self!=="undefined"&&((e=self.location)===null||e===void 0?void 0:e.protocol)||null}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function Ft(){if(typeof navigator!=="undefined"&&navigator&&"onLine"in navigator&&typeof navigator.onLine==="boolean"&&(xt()||l()||"connection"in navigator)){return navigator.onLine}return true}function Ht(){if(typeof navigator==="undefined"){return null}const e=navigator;return e.languages&&e.languages[0]||e.language||null}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Vt{constructor(e,t){this.shortDelay=e;this.longDelay=t;Nt(t>e,"Short delay should be less than long delay!");this.isMobile=u()||h()}get(){if(!Ft()){return Math.min(5e3,this.shortDelay)}return this.isMobile?this.longDelay:this.shortDelay}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function Bt(e,t){Nt(e.emulator,"Emulator should always be set here");const{url:n}=e.emulator;if(!t){return n}return`${n}${t.startsWith("/")?t.slice(1):t}`}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class $t{static initialize(e,t,n){this.fetchImpl=e;if(t){this.headersImpl=t}if(n){this.responseImpl=n}}static fetch(){if(this.fetchImpl){return this.fetchImpl}if(typeof self!=="undefined"&&"fetch"in self){return self.fetch}At("Could not find fetch implementation, make sure you call FetchProvider.initialize() with an appropriate polyfill")}static headers(){if(this.headersImpl){return this.headersImpl}if(typeof self!=="undefined"&&"Headers"in self){return self.Headers}At("Could not find Headers implementation, make sure you call FetchProvider.initialize() with an appropriate polyfill")}static response(){if(this.responseImpl){return this.responseImpl}if(typeof self!=="undefined"&&"Response"in self){return self.Response}At("Could not find Response implementation, make sure you call FetchProvider.initialize() with an appropriate polyfill")}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const zt={["CREDENTIAL_MISMATCH"]:"custom-token-mismatch",["MISSING_CUSTOM_TOKEN"]:"internal-error",["INVALID_IDENTIFIER"]:"invalid-email",["MISSING_CONTINUE_URI"]:"internal-error",["INVALID_PASSWORD"]:"wrong-password",["MISSING_PASSWORD"]:"internal-error",["EMAIL_EXISTS"]:"email-already-in-use",["PASSWORD_LOGIN_DISABLED"]:"operation-not-allowed",["INVALID_IDP_RESPONSE"]:"invalid-credential",["INVALID_PENDING_TOKEN"]:"invalid-credential",["FEDERATED_USER_ID_ALREADY_LINKED"]:"credential-already-in-use",["MISSING_REQ_TYPE"]:"internal-error",["EMAIL_NOT_FOUND"]:"user-not-found",["RESET_PASSWORD_EXCEED_LIMIT"]:"too-many-requests",["EXPIRED_OOB_CODE"]:"expired-action-code",["INVALID_OOB_CODE"]:"invalid-action-code",["MISSING_OOB_CODE"]:"internal-error",["CREDENTIAL_TOO_OLD_LOGIN_AGAIN"]:"requires-recent-login",["INVALID_ID_TOKEN"]:"invalid-user-token",["TOKEN_EXPIRED"]:"user-token-expired",["USER_NOT_FOUND"]:"user-token-expired",["TOO_MANY_ATTEMPTS_TRY_LATER"]:"too-many-requests",["INVALID_CODE"]:"invalid-verification-code",["INVALID_SESSION_INFO"]:"invalid-verification-id",["INVALID_TEMPORARY_PROOF"]:"invalid-credential",["MISSING_SESSION_INFO"]:"missing-verification-id",["SESSION_EXPIRED"]:"code-expired",["MISSING_ANDROID_PACKAGE_NAME"]:"missing-android-pkg-name",["UNAUTHORIZED_DOMAIN"]:"unauthorized-continue-uri",["INVALID_OAUTH_CLIENT_ID"]:"invalid-oauth-client-id",["ADMIN_ONLY_OPERATION"]:"admin-restricted-operation",["INVALID_MFA_PENDING_CREDENTIAL"]:"invalid-multi-factor-session",["MFA_ENROLLMENT_NOT_FOUND"]:"multi-factor-info-not-found",["MISSING_MFA_ENROLLMENT_ID"]:"missing-multi-factor-info",["MISSING_MFA_PENDING_CREDENTIAL"]:"missing-multi-factor-session",["SECOND_FACTOR_EXISTS"]:"second-factor-already-in-use",["SECOND_FACTOR_LIMIT_EXCEEDED"]:"maximum-second-factor-count-exceeded",["BLOCKING_FUNCTION_ERROR_RESPONSE"]:"internal-error"};
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Wt=new Vt(3e4,6e4);function qt(e,t){if(e.tenantId&&!t.tenantId){return Object.assign(Object.assign({},t),{tenantId:e.tenantId})}return t}async function Kt(e,t,n,r,i={}){return Gt(e,i,async()=>{let i={};let s={};if(r){if(t==="GET"){s=r}else{i={body:JSON.stringify(r)}}}const o=T(Object.assign({key:e.config.apiKey},s)).slice(1);const a=await e._getAdditionalHeaders();a["Content-Type"]="application/json";if(e.languageCode){a["X-Firebase-Locale"]=e.languageCode}return $t.fetch()(Xt(e,e.config.apiHost,n,o),Object.assign({method:t,headers:a,referrerPolicy:"no-referrer"},i))})}async function Gt(e,t,n){e._canInitEmulator=false;const r=Object.assign(Object.assign({},zt),t);try{const t=new Yt(e);const i=await Promise.race([n(),t.promise]);t.clearNetworkTimeout();const s=await i.json();if("needConfirmation"in s){throw Qt(e,"account-exists-with-different-credential",s)}if(i.ok&&!("errorMessage"in s)){return s}else{const t=i.ok?s.errorMessage:s.error.message;const[n,o]=t.split(" : ");if(n==="FEDERATED_USER_ID_ALREADY_LINKED"){throw Qt(e,"credential-already-in-use",s)}else if(n==="EMAIL_EXISTS"){throw Qt(e,"email-already-in-use",s)}else if(n==="USER_DISABLED"){throw Qt(e,"user-disabled",s)}const a=r[n]||n.toLowerCase().replace(/[_\s]+/g,"-");if(o){throw St(e,a,o)}else{Et(e,a)}}}catch(t){if(t instanceof m){throw t}Et(e,"network-request-failed")}}async function Jt(e,t,n,r,i={}){const s=await Kt(e,t,n,r,i);if("mfaPendingCredential"in s){Et(e,"multi-factor-auth-required",{_serverResponse:s})}return s}function Xt(e,t,n,r){const i=`${t}${n}?${r}`;if(!e.config.emulator){return`${e.config.apiScheme}://${i}`}return Bt(e.config,i)}class Yt{constructor(e){this.auth=e;this.timer=null;this.promise=new Promise((e,t)=>{this.timer=setTimeout(()=>t(kt(this.auth,"network-request-failed")),Wt.get())})}clearNetworkTimeout(){clearTimeout(this.timer)}}function Qt(e,t,n){const r={appName:e.name};if(n.email){r.email=n.email}if(n.phoneNumber){r.phoneNumber=n.phoneNumber}const i=kt(e,t,r);i.customData._tokenResponse=n;return i}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function Zt(e,t){return Kt(e,"POST","/v1/accounts:delete",t)}async function en(e,t){return Kt(e,"POST","/v1/accounts:lookup",t)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function tn(e){if(!e){return undefined}try{const t=new Date(Number(e));if(!isNaN(t.getTime())){return t.toUTCString()}}catch(e){}return undefined}async function nn(e,t=false){const n=R(e);const r=await n.getIdToken(t);const i=sn(r);Ct(i&&i.exp&&i.auth_time&&i.iat,n.auth,"internal-error");const s=typeof i.firebase==="object"?i.firebase:undefined;const o=s===null||s===void 0?void 0:s["sign_in_provider"];return{claims:i,token:r,authTime:tn(rn(i.auth_time)),issuedAtTime:tn(rn(i.iat)),expirationTime:tn(rn(i.exp)),signInProvider:o||null,signInSecondFactor:(s===null||s===void 0?void 0:s["sign_in_second_factor"])||null}}function rn(e){return Number(e)*1e3}function sn(e){var t;const[n,r,i]=e.split(".");if(n===undefined||r===undefined||i===undefined){Tt("JWT malformed, contained fewer than 3 sections");return null}try{const e=o(r);if(!e){Tt("Failed to decode base64 JWT payload");return null}return JSON.parse(e)}catch(e){Tt("Caught error parsing JWT payload as JSON",(t=e)===null||t===void 0?void 0:t.toString());return null}}function on(e){const t=sn(e);Ct(t,"internal-error");Ct(typeof t.exp!=="undefined","internal-error");Ct(typeof t.iat!=="undefined","internal-error");return Number(t.exp)-Number(t.iat)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function an(e,t,n=false){if(n){return t}try{return await t}catch(t){if(t instanceof m&&cn(t)){if(e.auth.currentUser===e){await e.auth.signOut()}}throw t}}function cn({code:e}){return e===`auth/${"user-disabled"}`||e===`auth/${"user-token-expired"}`}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class un{constructor(e){this.user=e;this.isRunning=false;this.timerId=null;this.errorBackoff=3e4}_start(){if(this.isRunning){return}this.isRunning=true;this.schedule()}_stop(){if(!this.isRunning){return}this.isRunning=false;if(this.timerId!==null){clearTimeout(this.timerId)}}getInterval(e){var t;if(e){const e=this.errorBackoff;this.errorBackoff=Math.min(this.errorBackoff*2,96e4);return e}else{this.errorBackoff=3e4;const e=(t=this.user.stsTokenManager.expirationTime)!==null&&t!==void 0?t:0;const n=e-Date.now()-3e5;return Math.max(0,n)}}schedule(e=false){if(!this.isRunning){return}const t=this.getInterval(e);this.timerId=setTimeout(async()=>{await this.iteration()},t)}async iteration(){var e;try{await this.user.getIdToken(true)}catch(t){if(((e=t)===null||e===void 0?void 0:e.code)===`auth/${"network-request-failed"}`){this.schedule(true)}return}this.schedule()}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class ln{constructor(e,t){this.createdAt=e;this.lastLoginAt=t;this._initializeTime()}_initializeTime(){this.lastSignInTime=tn(this.lastLoginAt);this.creationTime=tn(this.createdAt)}_copy(e){this.createdAt=e.createdAt;this.lastLoginAt=e.lastLoginAt;this._initializeTime()}toJSON(){return{createdAt:this.createdAt,lastLoginAt:this.lastLoginAt}}}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function hn(e){var t;const n=e.auth;const r=await e.getIdToken();const i=await an(e,en(n,{idToken:r}));Ct(i===null||i===void 0?void 0:i.users.length,n,"internal-error");const s=i.users[0];e._notifyReloadListener(s);const o=((t=s.providerUserInfo)===null||t===void 0?void 0:t.length)?pn(s.providerUserInfo):[];const a=fn(e.providerData,o);const c=e.isAnonymous;const u=!(e.email&&s.passwordHash)&&!(a===null||a===void 0?void 0:a.length);const l=!c?false:u;const h={uid:s.localId,displayName:s.displayName||null,photoURL:s.photoUrl||null,email:s.email||null,emailVerified:s.emailVerified||false,phoneNumber:s.phoneNumber||null,tenantId:s.tenantId||null,providerData:a,metadata:new ln(s.createdAt,s.lastLoginAt),isAnonymous:l};Object.assign(e,h)}async function dn(e){const t=R(e);await hn(t);await t.auth._persistUserIfCurrent(t);t.auth._notifyListenersIfCurrent(t)}function fn(e,t){const n=e.filter(e=>!t.some(t=>t.providerId===e.providerId));return[...n,...t]}function pn(e){return e.map(e=>{var{providerId:t}=e,n=_t(e,["providerId"]);return{providerId:t,uid:n.rawId||"",displayName:n.displayName||null,email:n.email||null,phoneNumber:n.phoneNumber||null,photoURL:n.photoUrl||null}})}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function gn(e,t){const n=await Gt(e,{},async()=>{const n=T({grant_type:"refresh_token",refresh_token:t}).slice(1);const{tokenApiHost:r,apiKey:i}=e.config;const s=Xt(e,r,"/v1/token",`key=${i}`);const o=await e._getAdditionalHeaders();o["Content-Type"]="application/x-www-form-urlencoded";return $t.fetch()(s,{method:"POST",headers:o,body:n})});return{accessToken:n.access_token,expiresIn:n.expires_in,refreshToken:n.refresh_token}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class mn{constructor(){this.refreshToken=null;this.accessToken=null;this.expirationTime=null}get isExpired(){return!this.expirationTime||Date.now()>this.expirationTime-3e4}updateFromServerResponse(e){Ct(e.idToken,"internal-error");Ct(typeof e.idToken!=="undefined","internal-error");Ct(typeof e.refreshToken!=="undefined","internal-error");const t="expiresIn"in e&&typeof e.expiresIn!=="undefined"?Number(e.expiresIn):on(e.idToken);this.updateTokensAndExpiration(e.idToken,e.refreshToken,t)}async getToken(e,t=false){Ct(!this.accessToken||this.refreshToken,e,"user-token-expired");if(!t&&this.accessToken&&!this.isExpired){return this.accessToken}if(this.refreshToken){await this.refresh(e,this.refreshToken);return this.accessToken}return null}clearRefreshToken(){this.refreshToken=null}async refresh(e,t){const{accessToken:n,refreshToken:r,expiresIn:i}=await gn(e,t);this.updateTokensAndExpiration(n,r,Number(i))}updateTokensAndExpiration(e,t,n){this.refreshToken=t||null;this.accessToken=e||null;this.expirationTime=Date.now()+n*1e3}static fromJSON(e,t){const{refreshToken:n,accessToken:r,expirationTime:i}=t;const s=new mn;if(n){Ct(typeof n==="string","internal-error",{appName:e});s.refreshToken=n}if(r){Ct(typeof r==="string","internal-error",{appName:e});s.accessToken=r}if(i){Ct(typeof i==="number","internal-error",{appName:e});s.expirationTime=i}return s}toJSON(){return{refreshToken:this.refreshToken,accessToken:this.accessToken,expirationTime:this.expirationTime}}_assign(e){this.accessToken=e.accessToken;this.refreshToken=e.refreshToken;this.expirationTime=e.expirationTime}_clone(){return Object.assign(new mn,this.toJSON())}_performRefresh(){return At("not implemented")}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function vn(e,t){Ct(typeof e==="string"||typeof e==="undefined","internal-error",{appName:t})}class _n{constructor(e){var{uid:t,auth:n,stsTokenManager:r}=e,i=_t(e,["uid","auth","stsTokenManager"]);this.providerId="firebase";this.proactiveRefresh=new un(this);this.reloadUserInfo=null;this.reloadListener=null;this.uid=t;this.auth=n;this.stsTokenManager=r;this.accessToken=r.accessToken;this.displayName=i.displayName||null;this.email=i.email||null;this.emailVerified=i.emailVerified||false;this.phoneNumber=i.phoneNumber||null;this.photoURL=i.photoURL||null;this.isAnonymous=i.isAnonymous||false;this.tenantId=i.tenantId||null;this.providerData=i.providerData?[...i.providerData]:[];this.metadata=new ln(i.createdAt||undefined,i.lastLoginAt||undefined)}async getIdToken(e){const t=await an(this,this.stsTokenManager.getToken(this.auth,e));Ct(t,this.auth,"internal-error");if(this.accessToken!==t){this.accessToken=t;await this.auth._persistUserIfCurrent(this);this.auth._notifyListenersIfCurrent(this)}return t}getIdTokenResult(e){return nn(this,e)}reload(){return dn(this)}_assign(e){if(this===e){return}Ct(this.uid===e.uid,this.auth,"internal-error");this.displayName=e.displayName;this.photoURL=e.photoURL;this.email=e.email;this.emailVerified=e.emailVerified;this.phoneNumber=e.phoneNumber;this.isAnonymous=e.isAnonymous;this.tenantId=e.tenantId;this.providerData=e.providerData.map(e=>Object.assign({},e));this.metadata._copy(e.metadata);this.stsTokenManager._assign(e.stsTokenManager)}_clone(e){return new _n(Object.assign(Object.assign({},this),{auth:e,stsTokenManager:this.stsTokenManager._clone()}))}_onReload(e){Ct(!this.reloadListener,this.auth,"internal-error");this.reloadListener=e;if(this.reloadUserInfo){this._notifyReloadListener(this.reloadUserInfo);this.reloadUserInfo=null}}_notifyReloadListener(e){if(this.reloadListener){this.reloadListener(e)}else{this.reloadUserInfo=e}}_startProactiveRefresh(){this.proactiveRefresh._start()}_stopProactiveRefresh(){this.proactiveRefresh._stop()}async _updateTokensIfNecessary(e,t=false){let n=false;if(e.idToken&&e.idToken!==this.stsTokenManager.accessToken){this.stsTokenManager.updateFromServerResponse(e);n=true}if(t){await hn(this)}await this.auth._persistUserIfCurrent(this);if(n){this.auth._notifyListenersIfCurrent(this)}}async delete(){const e=await this.getIdToken();await an(this,Zt(this.auth,{idToken:e}));this.stsTokenManager.clearRefreshToken();return this.auth.signOut()}toJSON(){return Object.assign(Object.assign({uid:this.uid,email:this.email||undefined,emailVerified:this.emailVerified,displayName:this.displayName||undefined,isAnonymous:this.isAnonymous,photoURL:this.photoURL||undefined,phoneNumber:this.phoneNumber||undefined,tenantId:this.tenantId||undefined,providerData:this.providerData.map(e=>Object.assign({},e)),stsTokenManager:this.stsTokenManager.toJSON(),_redirectEventId:this._redirectEventId},this.metadata.toJSON()),{apiKey:this.auth.config.apiKey,appName:this.auth.name})}get refreshToken(){return this.stsTokenManager.refreshToken||""}static _fromJSON(e,t){var n,r,i,s,o,a,c,u;const l=(n=t.displayName)!==null&&n!==void 0?n:undefined;const h=(r=t.email)!==null&&r!==void 0?r:undefined;const d=(i=t.phoneNumber)!==null&&i!==void 0?i:undefined;const f=(s=t.photoURL)!==null&&s!==void 0?s:undefined;const p=(o=t.tenantId)!==null&&o!==void 0?o:undefined;const g=(a=t._redirectEventId)!==null&&a!==void 0?a:undefined;const m=(c=t.createdAt)!==null&&c!==void 0?c:undefined;const v=(u=t.lastLoginAt)!==null&&u!==void 0?u:undefined;const{uid:_,emailVerified:y,isAnonymous:I,providerData:b,stsTokenManager:w}=t;Ct(_&&w,e,"internal-error");const T=mn.fromJSON(this.name,w);Ct(typeof _==="string",e,"internal-error");vn(l,e.name);vn(h,e.name);Ct(typeof y==="boolean",e,"internal-error");Ct(typeof I==="boolean",e,"internal-error");vn(d,e.name);vn(f,e.name);vn(p,e.name);vn(g,e.name);vn(m,e.name);vn(v,e.name);const E=new _n({uid:_,auth:e,email:h,emailVerified:y,displayName:l,isAnonymous:I,photoURL:f,phoneNumber:d,tenantId:p,stsTokenManager:T,createdAt:m,lastLoginAt:v});if(b&&Array.isArray(b)){E.providerData=b.map(e=>Object.assign({},e))}if(g){E._redirectEventId=g}return E}static async _fromIdTokenResponse(e,t,n=false){const r=new mn;r.updateFromServerResponse(t);const i=new _n({uid:t.localId,auth:e,stsTokenManager:r,isAnonymous:n});await hn(i);return i}}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class yn{constructor(){this.type="NONE";this.storage={}}async _isAvailable(){return true}async _set(e,t){this.storage[e]=t}async _get(e){const t=this.storage[e];return t===undefined?null:t}async _remove(e){delete this.storage[e]}_addListener(e,t){return}_removeListener(e,t){return}}yn.type="NONE";const In=yn;
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function bn(e,t,n){return`${"firebase"}:${e}:${t}:${n}`}class wn{constructor(e,t,n){this.persistence=e;this.auth=t;this.userKey=n;const{config:r,name:i}=this.auth;this.fullUserKey=bn(this.userKey,r.apiKey,i);this.fullPersistenceKey=bn("persistence",r.apiKey,i);this.boundEventHandler=t._onStorageEvent.bind(t);this.persistence._addListener(this.fullUserKey,this.boundEventHandler)}setCurrentUser(e){return this.persistence._set(this.fullUserKey,e.toJSON())}async getCurrentUser(){const e=await this.persistence._get(this.fullUserKey);return e?_n._fromJSON(this.auth,e):null}removeCurrentUser(){return this.persistence._remove(this.fullUserKey)}savePersistenceForRedirect(){return this.persistence._set(this.fullPersistenceKey,this.persistence.type)}async setPersistence(e){if(this.persistence===e){return}const t=await this.getCurrentUser();await this.removeCurrentUser();this.persistence=e;if(t){return this.setCurrentUser(t)}}delete(){this.persistence._removeListener(this.fullUserKey,this.boundEventHandler)}static async create(e,t,n="authUser"){if(!t.length){return new wn(Dt(In),e,n)}const r=(await Promise.all(t.map(async e=>{if(await e._isAvailable()){return e}return undefined}))).filter(e=>e);let i=r[0]||Dt(In);const s=bn(n,e.config.apiKey,e.name);let o=null;for(const n of t){try{const t=await n._get(s);if(t){const r=_n._fromJSON(e,t);if(n!==i){o=r}i=n;break}}catch(e){}}const a=r.filter(e=>e._shouldAllowMigration);if(!i._shouldAllowMigration||!a.length){return new wn(i,e,n)}i=a[0];if(o){await i._set(s,o.toJSON())}await Promise.all(t.map(async e=>{if(e!==i){try{await e._remove(s)}catch(e){}}}));return new wn(i,e,n)}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function Tn(e){const t=e.toLowerCase();if(t.includes("opera/")||t.includes("opr/")||t.includes("opios/")){return"Opera"}else if(On(t)){return"IEMobile"}else if(t.includes("msie")||t.includes("trident/")){return"IE"}else if(t.includes("edge/")){return"Edge"}else if(En(t)){return"Firefox"}else if(t.includes("silk/")){return"Silk"}else if(Cn(t)){return"Blackberry"}else if(An(t)){return"Webos"}else if(kn(t)){return"Safari"}else if((t.includes("chrome/")||Sn(t))&&!t.includes("edge/")){return"Chrome"}else if(Rn(t)){return"Android"}else{const t=/([a-zA-Z\d\.]+)\/[a-zA-Z\d\.]*$/;const n=e.match(t);if((n===null||n===void 0?void 0:n.length)===2){return n[1]}}return"Other"}function En(e=c()){return/firefox\//i.test(e)}function kn(e=c()){const t=e.toLowerCase();return t.includes("safari/")&&!t.includes("chrome/")&&!t.includes("crios/")&&!t.includes("android")}function Sn(e=c()){return/crios\//i.test(e)}function On(e=c()){return/iemobile/i.test(e)}function Rn(e=c()){return/android/i.test(e)}function Cn(e=c()){return/blackberry/i.test(e)}function An(e=c()){return/webos/i.test(e)}function Nn(e=c()){return/iphone|ipad|ipod/i.test(e)}function Pn(e=c()){var t;return Nn(e)&&!!((t=window.navigator)===null||t===void 0?void 0:t.standalone)}function Dn(){return d()&&document.documentMode===10}function Ln(e=c()){return Nn(e)||Rn(e)||An(e)||Cn(e)||/windows phone/i.test(e)||On(e)}function Mn(){try{return!!(window&&window!==window.top)}catch(e){return false}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function Un(e,t=[]){let n;switch(e){case"Browser":n=Tn(c());break;case"Worker":n=`${Tn(c())}-${e}`;break;default:n=e}const r=t.length?t.join(","):"FirebaseCore-web";return`${n}/${"JsCore"}/${Xe}/${r}`}
+/**
+     * @license
+     * Copyright 2022 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class xn{constructor(e){this.auth=e;this.queue=[]}pushCallback(e,t){const n=t=>new Promise((n,r)=>{try{const r=e(t);n(r)}catch(e){r(e)}});n.onAbort=t;this.queue.push(n);const r=this.queue.length-1;return()=>{this.queue[r]=()=>Promise.resolve()}}async runMiddleware(e){var t;if(this.auth.currentUser===e){return}const n=[];try{for(const t of this.queue){await t(e);if(t.onAbort){n.push(t.onAbort)}}}catch(e){n.reverse();for(const e of n){try{e()}catch(e){}}throw this.auth._errorFactory.create("login-blocked",{originalMessage:(t=e)===null||t===void 0?void 0:t.message})}}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class jn{constructor(e,t,n){this.app=e;this.heartbeatServiceProvider=t;this.config=n;this.currentUser=null;this.emulatorConfig=null;this.operations=Promise.resolve();this.authStateSubscription=new Hn(this);this.idTokenSubscription=new Hn(this);this.beforeStateQueue=new xn(this);this.redirectUser=null;this.isProactiveRefreshEnabled=false;this._canInitEmulator=true;this._isInitialized=false;this._deleted=false;this._initializationPromise=null;this._popupRedirectResolver=null;this._errorFactory=bt;this.lastNotifiedUid=undefined;this.languageCode=null;this.tenantId=null;this.settings={appVerificationDisabledForTesting:false};this.frameworks=[];this.name=e.name;this.clientVersion=n.sdkClientVersion}_initializeWithPersistence(e,t){if(t){this._popupRedirectResolver=Dt(t)}this._initializationPromise=this.queue(async()=>{var n,r;if(this._deleted){return}this.persistenceManager=await wn.create(this,e);if(this._deleted){return}if((n=this._popupRedirectResolver)===null||n===void 0?void 0:n._shouldInitProactively){try{await this._popupRedirectResolver._initialize(this)}catch(e){}}await this.initializeCurrentUser(t);this.lastNotifiedUid=((r=this.currentUser)===null||r===void 0?void 0:r.uid)||null;if(this._deleted){return}this._isInitialized=true});return this._initializationPromise}async _onStorageEvent(){if(this._deleted){return}const e=await this.assertedPersistence.getCurrentUser();if(!this.currentUser&&!e){return}if(this.currentUser&&e&&this.currentUser.uid===e.uid){this._currentUser._assign(e);await this.currentUser.getIdToken();return}await this._updateCurrentUser(e,true)}async initializeCurrentUser(e){var t;const n=await this.assertedPersistence.getCurrentUser();let r=n;let i=false;if(e&&this.config.authDomain){await this.getOrInitRedirectPersistenceManager();const n=(t=this.redirectUser)===null||t===void 0?void 0:t._redirectEventId;const s=r===null||r===void 0?void 0:r._redirectEventId;const o=await this.tryRedirectSignIn(e);if((!n||n===s)&&(o===null||o===void 0?void 0:o.user)){r=o.user;i=true}}if(!r){return this.directlySetCurrentUser(null)}if(!r._redirectEventId){if(i){try{await this.beforeStateQueue.runMiddleware(r)}catch(e){r=n;this._popupRedirectResolver._overrideRedirectResult(this,()=>Promise.reject(e))}}if(r){return this.reloadAndSetCurrentUserOrClear(r)}else{return this.directlySetCurrentUser(null)}}Ct(this._popupRedirectResolver,this,"argument-error");await this.getOrInitRedirectPersistenceManager();if(this.redirectUser&&this.redirectUser._redirectEventId===r._redirectEventId){return this.directlySetCurrentUser(r)}return this.reloadAndSetCurrentUserOrClear(r)}async tryRedirectSignIn(e){let t=null;try{t=await this._popupRedirectResolver._completeRedirectFn(this,e,true)}catch(e){await this._setRedirectUser(null)}return t}async reloadAndSetCurrentUserOrClear(e){var t;try{await hn(e)}catch(e){if(((t=e)===null||t===void 0?void 0:t.code)!==`auth/${"network-request-failed"}`){return this.directlySetCurrentUser(null)}}return this.directlySetCurrentUser(e)}useDeviceLanguage(){this.languageCode=Ht()}async _delete(){this._deleted=true}async updateCurrentUser(e){const t=e?R(e):null;if(t){Ct(t.auth.config.apiKey===this.config.apiKey,this,"invalid-user-token")}return this._updateCurrentUser(t&&t._clone(this))}async _updateCurrentUser(e,t=false){if(this._deleted){return}if(e){Ct(this.tenantId===e.tenantId,this,"tenant-id-mismatch")}if(!t){await this.beforeStateQueue.runMiddleware(e)}return this.queue(async()=>{await this.directlySetCurrentUser(e);this.notifyAuthListeners()})}async signOut(){await this.beforeStateQueue.runMiddleware(null);if(this.redirectPersistenceManager||this._popupRedirectResolver){await this._setRedirectUser(null)}return this._updateCurrentUser(null,true)}setPersistence(e){return this.queue(async()=>{await this.assertedPersistence.setPersistence(Dt(e))})}_getPersistence(){return this.assertedPersistence.persistence.type}_updateErrorMap(e){this._errorFactory=new v("auth","Firebase",e())}onAuthStateChanged(e,t,n){return this.registerStateListener(this.authStateSubscription,e,t,n)}beforeAuthStateChanged(e,t){return this.beforeStateQueue.pushCallback(e,t)}onIdTokenChanged(e,t,n){return this.registerStateListener(this.idTokenSubscription,e,t,n)}toJSON(){var e;return{apiKey:this.config.apiKey,authDomain:this.config.authDomain,appName:this.name,currentUser:(e=this._currentUser)===null||e===void 0?void 0:e.toJSON()}}async _setRedirectUser(e,t){const n=await this.getOrInitRedirectPersistenceManager(t);return e===null?n.removeCurrentUser():n.setCurrentUser(e)}async getOrInitRedirectPersistenceManager(e){if(!this.redirectPersistenceManager){const t=e&&Dt(e)||this._popupRedirectResolver;Ct(t,this,"argument-error");this.redirectPersistenceManager=await wn.create(this,[Dt(t._redirectPersistence)],"redirectUser");this.redirectUser=await this.redirectPersistenceManager.getCurrentUser()}return this.redirectPersistenceManager}async _redirectUserForId(e){var t,n;if(this._isInitialized){await this.queue(async()=>{})}if(((t=this._currentUser)===null||t===void 0?void 0:t._redirectEventId)===e){return this._currentUser}if(((n=this.redirectUser)===null||n===void 0?void 0:n._redirectEventId)===e){return this.redirectUser}return null}async _persistUserIfCurrent(e){if(e===this.currentUser){return this.queue(async()=>this.directlySetCurrentUser(e))}}_notifyListenersIfCurrent(e){if(e===this.currentUser){this.notifyAuthListeners()}}_key(){return`${this.config.authDomain}:${this.config.apiKey}:${this.name}`}_startProactiveRefresh(){this.isProactiveRefreshEnabled=true;if(this.currentUser){this._currentUser._startProactiveRefresh()}}_stopProactiveRefresh(){this.isProactiveRefreshEnabled=false;if(this.currentUser){this._currentUser._stopProactiveRefresh()}}get _currentUser(){return this.currentUser}notifyAuthListeners(){var e,t;if(!this._isInitialized){return}this.idTokenSubscription.next(this.currentUser);const n=(t=(e=this.currentUser)===null||e===void 0?void 0:e.uid)!==null&&t!==void 0?t:null;if(this.lastNotifiedUid!==n){this.lastNotifiedUid=n;this.authStateSubscription.next(this.currentUser)}}registerStateListener(e,t,n,r){if(this._deleted){return()=>{}}const i=typeof t==="function"?t:t.next.bind(t);const s=this._isInitialized?Promise.resolve():this._initializationPromise;Ct(s,this,"internal-error");s.then(()=>i(this.currentUser));if(typeof t==="function"){return e.addObserver(t,n,r)}else{return e.addObserver(t)}}async directlySetCurrentUser(e){if(this.currentUser&&this.currentUser!==e){this._currentUser._stopProactiveRefresh();if(e&&this.isProactiveRefreshEnabled){e._startProactiveRefresh()}}this.currentUser=e;if(e){await this.assertedPersistence.setCurrentUser(e)}else{await this.assertedPersistence.removeCurrentUser()}}queue(e){this.operations=this.operations.then(e,e);return this.operations}get assertedPersistence(){Ct(this.persistenceManager,this,"internal-error");return this.persistenceManager}_logFramework(e){if(!e||this.frameworks.includes(e)){return}this.frameworks.push(e);this.frameworks.sort();this.clientVersion=Un(this.config.clientPlatform,this._getFrameworks())}_getFrameworks(){return this.frameworks}async _getAdditionalHeaders(){var e;const t={["X-Client-Version"]:this.clientVersion};if(this.app.options.appId){t["X-Firebase-gmpid"]=this.app.options.appId}const n=await((e=this.heartbeatServiceProvider.getImmediate({optional:true}))===null||e===void 0?void 0:e.getHeartbeatsHeader());if(n){t["X-Firebase-Client"]=n}return t}}function Fn(e){return R(e)}class Hn{constructor(e){this.auth=e;this.observer=null;this.addObserver=E(e=>this.observer=e)}get next(){Ct(this.observer,this.auth,"internal-error");return this.observer.next.bind(this.observer)}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Vn{constructor(e,t){this.providerId=e;this.signInMethod=t}toJSON(){return At("not implemented")}_getIdTokenResponse(e){return At("not implemented")}_linkToIdToken(e,t){return At("not implemented")}_getReauthenticationResolver(e){return At("not implemented")}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function Bn(e,t){return Jt(e,"POST","/v1/accounts:signInWithIdp",qt(e,t))}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const $n="http://localhost";class zn extends Vn{constructor(){super(...arguments);this.pendingToken=null}static _fromParams(e){const t=new zn(e.providerId,e.signInMethod);if(e.idToken||e.accessToken){if(e.idToken){t.idToken=e.idToken}if(e.accessToken){t.accessToken=e.accessToken}if(e.nonce&&!e.pendingToken){t.nonce=e.nonce}if(e.pendingToken){t.pendingToken=e.pendingToken}}else if(e.oauthToken&&e.oauthTokenSecret){t.accessToken=e.oauthToken;t.secret=e.oauthTokenSecret}else{Et("argument-error")}return t}toJSON(){return{idToken:this.idToken,accessToken:this.accessToken,secret:this.secret,nonce:this.nonce,pendingToken:this.pendingToken,providerId:this.providerId,signInMethod:this.signInMethod}}static fromJSON(e){const t=typeof e==="string"?JSON.parse(e):e;const{providerId:n,signInMethod:r}=t,i=_t(t,["providerId","signInMethod"]);if(!n||!r){return null}const s=new zn(n,r);s.idToken=i.idToken||undefined;s.accessToken=i.accessToken||undefined;s.secret=i.secret;s.nonce=i.nonce;s.pendingToken=i.pendingToken||null;return s}_getIdTokenResponse(e){const t=this.buildRequest();return Bn(e,t)}_linkToIdToken(e,t){const n=this.buildRequest();n.idToken=t;return Bn(e,n)}_getReauthenticationResolver(e){const t=this.buildRequest();t.autoCreate=false;return Bn(e,t)}buildRequest(){const e={requestUri:$n,returnSecureToken:true};if(this.pendingToken){e.pendingToken=this.pendingToken}else{const t={};if(this.idToken){t["id_token"]=this.idToken}if(this.accessToken){t["access_token"]=this.accessToken}if(this.secret){t["oauth_token_secret"]=this.secret}t["providerId"]=this.providerId;if(this.nonce&&!this.pendingToken){t["nonce"]=this.nonce}e.postBody=T(t)}return e}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Wn{constructor(e){this.providerId=e;this.defaultLanguageCode=null;this.customParameters={}}setDefaultLanguage(e){this.defaultLanguageCode=e}setCustomParameters(e){this.customParameters=e;return this}getCustomParameters(){return this.customParameters}}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class qn extends Wn{constructor(){super(...arguments);this.scopes=[]}addScope(e){if(!this.scopes.includes(e)){this.scopes.push(e)}return this}getScopes(){return[...this.scopes]}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Kn extends qn{constructor(){super("facebook.com")}static credential(e){return zn._fromParams({providerId:Kn.PROVIDER_ID,signInMethod:Kn.FACEBOOK_SIGN_IN_METHOD,accessToken:e})}static credentialFromResult(e){return Kn.credentialFromTaggedObject(e)}static credentialFromError(e){return Kn.credentialFromTaggedObject(e.customData||{})}static credentialFromTaggedObject({_tokenResponse:e}){if(!e||!("oauthAccessToken"in e)){return null}if(!e.oauthAccessToken){return null}try{return Kn.credential(e.oauthAccessToken)}catch(e){return null}}}Kn.FACEBOOK_SIGN_IN_METHOD="facebook.com";Kn.PROVIDER_ID="facebook.com";
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Gn extends qn{constructor(){super("google.com");this.addScope("profile")}static credential(e,t){return zn._fromParams({providerId:Gn.PROVIDER_ID,signInMethod:Gn.GOOGLE_SIGN_IN_METHOD,idToken:e,accessToken:t})}static credentialFromResult(e){return Gn.credentialFromTaggedObject(e)}static credentialFromError(e){return Gn.credentialFromTaggedObject(e.customData||{})}static credentialFromTaggedObject({_tokenResponse:e}){if(!e){return null}const{oauthIdToken:t,oauthAccessToken:n}=e;if(!t&&!n){return null}try{return Gn.credential(t,n)}catch(e){return null}}}Gn.GOOGLE_SIGN_IN_METHOD="google.com";Gn.PROVIDER_ID="google.com";
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Jn extends qn{constructor(){super("github.com")}static credential(e){return zn._fromParams({providerId:Jn.PROVIDER_ID,signInMethod:Jn.GITHUB_SIGN_IN_METHOD,accessToken:e})}static credentialFromResult(e){return Jn.credentialFromTaggedObject(e)}static credentialFromError(e){return Jn.credentialFromTaggedObject(e.customData||{})}static credentialFromTaggedObject({_tokenResponse:e}){if(!e||!("oauthAccessToken"in e)){return null}if(!e.oauthAccessToken){return null}try{return Jn.credential(e.oauthAccessToken)}catch(e){return null}}}Jn.GITHUB_SIGN_IN_METHOD="github.com";Jn.PROVIDER_ID="github.com";
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Xn extends qn{constructor(){super("twitter.com")}static credential(e,t){return zn._fromParams({providerId:Xn.PROVIDER_ID,signInMethod:Xn.TWITTER_SIGN_IN_METHOD,oauthToken:e,oauthTokenSecret:t})}static credentialFromResult(e){return Xn.credentialFromTaggedObject(e)}static credentialFromError(e){return Xn.credentialFromTaggedObject(e.customData||{})}static credentialFromTaggedObject({_tokenResponse:e}){if(!e){return null}const{oauthAccessToken:t,oauthTokenSecret:n}=e;if(!t||!n){return null}try{return Xn.credential(t,n)}catch(e){return null}}}Xn.TWITTER_SIGN_IN_METHOD="twitter.com";Xn.PROVIDER_ID="twitter.com";
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Yn{constructor(e){this.user=e.user;this.providerId=e.providerId;this._tokenResponse=e._tokenResponse;this.operationType=e.operationType}static async _fromIdTokenResponse(e,t,n,r=false){const i=await _n._fromIdTokenResponse(e,n,r);const s=Qn(n);const o=new Yn({user:i,providerId:s,_tokenResponse:n,operationType:t});return o}static async _forOperation(e,t,n){await e._updateTokensIfNecessary(n,true);const r=Qn(n);return new Yn({user:e,providerId:r,_tokenResponse:n,operationType:t})}}function Qn(e){if(e.providerId){return e.providerId}if("phoneNumber"in e){return"phone"}return null}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Zn extends m{constructor(e,t,n,r){var i;super(t.code,t.message);this.operationType=n;this.user=r;Object.setPrototypeOf(this,Zn.prototype);this.customData={appName:e.name,tenantId:(i=e.tenantId)!==null&&i!==void 0?i:undefined,_serverResponse:t.customData._serverResponse,operationType:n}}static _fromErrorAndOperation(e,t,n,r){return new Zn(e,t,n,r)}}function er(e,t,n,r){const i=t==="reauthenticate"?n._getReauthenticationResolver(e):n._getIdTokenResponse(e);return i.catch(n=>{if(n.code===`auth/${"multi-factor-auth-required"}`){throw Zn._fromErrorAndOperation(e,n,t,r)}throw n})}async function tr(e,t,n=false){const r=await an(e,t._linkToIdToken(e.auth,await e.getIdToken()),n);return Yn._forOperation(e,"link",r)}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function nr(e,t,n=false){var r;const{auth:i}=e;const s="reauthenticate";try{const r=await an(e,er(i,s,t,e),n);Ct(r.idToken,i,"internal-error");const o=sn(r.idToken);Ct(o,i,"internal-error");const{sub:a}=o;Ct(e.uid===a,i,"user-mismatch");return Yn._forOperation(e,s,r)}catch(e){if(((r=e)===null||r===void 0?void 0:r.code)===`auth/${"user-not-found"}`){Et(i,"user-mismatch")}throw e}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function rr(e,t,n=false){const r="signIn";const i=await er(e,r,t);const s=await Yn._fromIdTokenResponse(e,r,i);if(!n){await e._updateCurrentUser(s.user)}return s}const ir="__sak";
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class sr{constructor(e,t){this.storageRetriever=e;this.type=t}_isAvailable(){try{if(!this.storage){return Promise.resolve(false)}this.storage.setItem(ir,"1");this.storage.removeItem(ir);return Promise.resolve(true)}catch(e){return Promise.resolve(false)}}_set(e,t){this.storage.setItem(e,JSON.stringify(t));return Promise.resolve()}_get(e){const t=this.storage.getItem(e);return Promise.resolve(t?JSON.parse(t):null)}_remove(e){this.storage.removeItem(e);return Promise.resolve()}get storage(){return this.storageRetriever()}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function or(){const e=c();return kn(e)||Nn(e)}const ar=1e3;const cr=10;class ur extends sr{constructor(){super(()=>window.localStorage,"LOCAL");this.boundEventHandler=(e,t)=>this.onStorageEvent(e,t);this.listeners={};this.localCache={};this.pollTimer=null;this.safariLocalStorageNotSynced=or()&&Mn();this.fallbackToPolling=Ln();this._shouldAllowMigration=true}forAllChangedKeys(e){for(const t of Object.keys(this.listeners)){const n=this.storage.getItem(t);const r=this.localCache[t];if(n!==r){e(t,r,n)}}}onStorageEvent(e,t=false){if(!e.key){this.forAllChangedKeys((e,t,n)=>{this.notifyListeners(e,n)});return}const n=e.key;if(t){this.detachListener()}else{this.stopPolling()}if(this.safariLocalStorageNotSynced){const r=this.storage.getItem(n);if(e.newValue!==r){if(e.newValue!==null){this.storage.setItem(n,e.newValue)}else{this.storage.removeItem(n)}}else if(this.localCache[n]===e.newValue&&!t){return}}const r=()=>{const e=this.storage.getItem(n);if(!t&&this.localCache[n]===e){return}this.notifyListeners(n,e)};const i=this.storage.getItem(n);if(Dn()&&i!==e.newValue&&e.newValue!==e.oldValue){setTimeout(r,cr)}else{r()}}notifyListeners(e,t){this.localCache[e]=t;const n=this.listeners[e];if(n){for(const e of Array.from(n)){e(t?JSON.parse(t):t)}}}startPolling(){this.stopPolling();this.pollTimer=setInterval(()=>{this.forAllChangedKeys((e,t,n)=>{this.onStorageEvent(new StorageEvent("storage",{key:e,oldValue:t,newValue:n}),true)})},ar)}stopPolling(){if(this.pollTimer){clearInterval(this.pollTimer);this.pollTimer=null}}attachListener(){window.addEventListener("storage",this.boundEventHandler)}detachListener(){window.removeEventListener("storage",this.boundEventHandler)}_addListener(e,t){if(Object.keys(this.listeners).length===0){if(this.fallbackToPolling){this.startPolling()}else{this.attachListener()}}if(!this.listeners[e]){this.listeners[e]=new Set;this.localCache[e]=this.storage.getItem(e)}this.listeners[e].add(t)}_removeListener(e,t){if(this.listeners[e]){this.listeners[e].delete(t);if(this.listeners[e].size===0){delete this.listeners[e]}}if(Object.keys(this.listeners).length===0){this.detachListener();this.stopPolling()}}async _set(e,t){await super._set(e,t);this.localCache[e]=JSON.stringify(t)}async _get(e){const t=await super._get(e);this.localCache[e]=JSON.stringify(t);return t}async _remove(e){await super._remove(e);delete this.localCache[e]}}ur.type="LOCAL";const lr=ur;
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class hr extends sr{constructor(){super(()=>window.sessionStorage,"SESSION")}_addListener(e,t){return}_removeListener(e,t){return}}hr.type="SESSION";const dr=hr;
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function fr(e){return Promise.all(e.map(async e=>{try{const t=await e;return{fulfilled:true,value:t}}catch(e){return{fulfilled:false,reason:e}}}))}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class pr{constructor(e){this.eventTarget=e;this.handlersMap={};this.boundEventHandler=this.handleEvent.bind(this)}static _getInstance(e){const t=this.receivers.find(t=>t.isListeningto(e));if(t){return t}const n=new pr(e);this.receivers.push(n);return n}isListeningto(e){return this.eventTarget===e}async handleEvent(e){const t=e;const{eventId:n,eventType:r,data:i}=t.data;const s=this.handlersMap[r];if(!(s===null||s===void 0?void 0:s.size)){return}t.ports[0].postMessage({status:"ack",eventId:n,eventType:r});const o=Array.from(s).map(async e=>e(t.origin,i));const a=await fr(o);t.ports[0].postMessage({status:"done",eventId:n,eventType:r,response:a})}_subscribe(e,t){if(Object.keys(this.handlersMap).length===0){this.eventTarget.addEventListener("message",this.boundEventHandler)}if(!this.handlersMap[e]){this.handlersMap[e]=new Set}this.handlersMap[e].add(t)}_unsubscribe(e,t){if(this.handlersMap[e]&&t){this.handlersMap[e].delete(t)}if(!t||this.handlersMap[e].size===0){delete this.handlersMap[e]}if(Object.keys(this.handlersMap).length===0){this.eventTarget.removeEventListener("message",this.boundEventHandler)}}}pr.receivers=[];
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function gr(e="",t=10){let n="";for(let e=0;e<t;e++){n+=Math.floor(Math.random()*10)}return e+n}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class mr{constructor(e){this.target=e;this.handlers=new Set}removeMessageHandler(e){if(e.messageChannel){e.messageChannel.port1.removeEventListener("message",e.onMessage);e.messageChannel.port1.close()}this.handlers.delete(e)}async _send(e,t,n=50){const r=typeof MessageChannel!=="undefined"?new MessageChannel:null;if(!r){throw new Error("connection_unavailable")}let i;let s;return new Promise((o,a)=>{const c=gr("",20);r.port1.start();const u=setTimeout(()=>{a(new Error("unsupported_event"))},n);s={messageChannel:r,onMessage(e){const t=e;if(t.data.eventId!==c){return}switch(t.data.status){case"ack":clearTimeout(u);i=setTimeout(()=>{a(new Error("timeout"))},3e3);break;case"done":clearTimeout(i);o(t.data.response);break;default:clearTimeout(u);clearTimeout(i);a(new Error("invalid_response"));break}}};this.handlers.add(s);r.port1.addEventListener("message",s.onMessage);this.target.postMessage({eventType:e,eventId:c,data:t},[r.port2])}).finally(()=>{if(s){this.removeMessageHandler(s)}})}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function vr(){return window}function _r(e){vr().location.href=e}
+/**
+     * @license
+     * Copyright 2020 Google LLC.
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function yr(){return typeof vr()["WorkerGlobalScope"]!=="undefined"&&typeof vr()["importScripts"]==="function"}async function Ir(){if(!(navigator===null||navigator===void 0?void 0:navigator.serviceWorker)){return null}try{const e=await navigator.serviceWorker.ready;return e.active}catch(e){return null}}function br(){var e;return((e=navigator===null||navigator===void 0?void 0:navigator.serviceWorker)===null||e===void 0?void 0:e.controller)||null}function wr(){return yr()?self:null}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Tr="firebaseLocalStorageDb";const Er=1;const kr="firebaseLocalStorage";const Sr="fbase_key";class Or{constructor(e){this.request=e}toPromise(){return new Promise((e,t)=>{this.request.addEventListener("success",()=>{e(this.request.result)});this.request.addEventListener("error",()=>{t(this.request.error)})})}}function Rr(e,t){return e.transaction([kr],t?"readwrite":"readonly").objectStore(kr)}function Cr(){const e=indexedDB.deleteDatabase(Tr);return new Or(e).toPromise()}function Ar(){const e=indexedDB.open(Tr,Er);return new Promise((t,n)=>{e.addEventListener("error",()=>{n(e.error)});e.addEventListener("upgradeneeded",()=>{const t=e.result;try{t.createObjectStore(kr,{keyPath:Sr})}catch(e){n(e)}});e.addEventListener("success",async()=>{const n=e.result;if(!n.objectStoreNames.contains(kr)){n.close();await Cr();t(await Ar())}else{t(n)}})})}async function Nr(e,t,n){const r=Rr(e,true).put({[Sr]:t,value:n});return new Or(r).toPromise()}async function Pr(e,t){const n=Rr(e,false).get(t);const r=await new Or(n).toPromise();return r===undefined?null:r.value}function Dr(e,t){const n=Rr(e,true).delete(t);return new Or(n).toPromise()}const Lr=800;const Mr=3;class Ur{constructor(){this.type="LOCAL";this._shouldAllowMigration=true;this.listeners={};this.localCache={};this.pollTimer=null;this.pendingWrites=0;this.receiver=null;this.sender=null;this.serviceWorkerReceiverAvailable=false;this.activeServiceWorker=null;this._workerInitializationPromise=this.initializeServiceWorkerMessaging().then(()=>{},()=>{})}async _openDb(){if(this.db){return this.db}this.db=await Ar();return this.db}async _withRetries(e){let t=0;while(true){try{const t=await this._openDb();return await e(t)}catch(e){if(t++>Mr){throw e}if(this.db){this.db.close();this.db=undefined}}}}async initializeServiceWorkerMessaging(){return yr()?this.initializeReceiver():this.initializeSender()}async initializeReceiver(){this.receiver=pr._getInstance(wr());this.receiver._subscribe("keyChanged",async(e,t)=>{const n=await this._poll();return{keyProcessed:n.includes(t.key)}});this.receiver._subscribe("ping",async(e,t)=>["keyChanged"])}async initializeSender(){var e,t;this.activeServiceWorker=await Ir();if(!this.activeServiceWorker){return}this.sender=new mr(this.activeServiceWorker);const n=await this.sender._send("ping",{},800);if(!n){return}if(((e=n[0])===null||e===void 0?void 0:e.fulfilled)&&((t=n[0])===null||t===void 0?void 0:t.value.includes("keyChanged"))){this.serviceWorkerReceiverAvailable=true}}async notifyServiceWorker(e){if(!this.sender||!this.activeServiceWorker||br()!==this.activeServiceWorker){return}try{await this.sender._send("keyChanged",{key:e},this.serviceWorkerReceiverAvailable?800:50)}catch(e){}}async _isAvailable(){try{if(!indexedDB){return false}const e=await Ar();await Nr(e,ir,"1");await Dr(e,ir);return true}catch(e){}return false}async _withPendingWrite(e){this.pendingWrites++;try{await e()}finally{this.pendingWrites--}}async _set(e,t){return this._withPendingWrite(async()=>{await this._withRetries(n=>Nr(n,e,t));this.localCache[e]=t;return this.notifyServiceWorker(e)})}async _get(e){const t=await this._withRetries(t=>Pr(t,e));this.localCache[e]=t;return t}async _remove(e){return this._withPendingWrite(async()=>{await this._withRetries(t=>Dr(t,e));delete this.localCache[e];return this.notifyServiceWorker(e)})}async _poll(){const e=await this._withRetries(e=>{const t=Rr(e,false).getAll();return new Or(t).toPromise()});if(!e){return[]}if(this.pendingWrites!==0){return[]}const t=[];const n=new Set;for(const{fbase_key:r,value:i}of e){n.add(r);if(JSON.stringify(this.localCache[r])!==JSON.stringify(i)){this.notifyListeners(r,i);t.push(r)}}for(const e of Object.keys(this.localCache)){if(this.localCache[e]&&!n.has(e)){this.notifyListeners(e,null);t.push(e)}}return t}notifyListeners(e,t){this.localCache[e]=t;const n=this.listeners[e];if(n){for(const e of Array.from(n)){e(t)}}}startPolling(){this.stopPolling();this.pollTimer=setInterval(async()=>this._poll(),Lr)}stopPolling(){if(this.pollTimer){clearInterval(this.pollTimer);this.pollTimer=null}}_addListener(e,t){if(Object.keys(this.listeners).length===0){this.startPolling()}if(!this.listeners[e]){this.listeners[e]=new Set;void this._get(e)}this.listeners[e].add(t)}_removeListener(e,t){if(this.listeners[e]){this.listeners[e].delete(t);if(this.listeners[e].size===0){delete this.listeners[e]}}if(Object.keys(this.listeners).length===0){this.stopPolling()}}}Ur.type="LOCAL";const xr=Ur;
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function jr(){var e,t;return(t=(e=document.getElementsByTagName("head"))===null||e===void 0?void 0:e[0])!==null&&t!==void 0?t:document}function Fr(e){return new Promise((t,n)=>{const r=document.createElement("script");r.setAttribute("src",e);r.onload=t;r.onerror=e=>{const t=kt("internal-error");t.customData=e;n(t)};r.type="text/javascript";r.charset="UTF-8";jr().appendChild(r)})}function Hr(e){return`__${e}${Math.floor(Math.random()*1e6)}`}new Vt(3e4,6e4);
+/**
+     * @license
+     * Copyright 2021 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function Vr(e,t){if(t){return Dt(t)}Ct(e._popupRedirectResolver,e,"argument-error");return e._popupRedirectResolver}
+/**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class Br extends Vn{constructor(e){super("custom","custom");this.params=e}_getIdTokenResponse(e){return Bn(e,this._buildIdpRequest())}_linkToIdToken(e,t){return Bn(e,this._buildIdpRequest(t))}_getReauthenticationResolver(e){return Bn(e,this._buildIdpRequest())}_buildIdpRequest(e){const t={requestUri:this.params.requestUri,sessionId:this.params.sessionId,postBody:this.params.postBody,tenantId:this.params.tenantId,pendingToken:this.params.pendingToken,returnSecureToken:true,returnIdpCredential:true};if(e){t.idToken=e}return t}}function $r(e){return rr(e.auth,new Br(e),e.bypassAuthState)}function zr(e){const{auth:t,user:n}=e;Ct(n,t,"internal-error");return nr(n,new Br(e),e.bypassAuthState)}async function Wr(e){const{auth:t,user:n}=e;Ct(n,t,"internal-error");return tr(n,new Br(e),e.bypassAuthState)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class qr{constructor(e,t,n,r,i=false){this.auth=e;this.resolver=n;this.user=r;this.bypassAuthState=i;this.pendingPromise=null;this.eventManager=null;this.filter=Array.isArray(t)?t:[t]}execute(){return new Promise(async(e,t)=>{this.pendingPromise={resolve:e,reject:t};try{this.eventManager=await this.resolver._initialize(this.auth);await this.onExecution();this.eventManager.registerConsumer(this)}catch(e){this.reject(e)}})}async onAuthEvent(e){const{urlResponse:t,sessionId:n,postBody:r,tenantId:i,error:s,type:o}=e;if(s){this.reject(s);return}const a={auth:this.auth,requestUri:t,sessionId:n,tenantId:i||undefined,postBody:r||undefined,user:this.user,bypassAuthState:this.bypassAuthState};try{this.resolve(await this.getIdpTask(o)(a))}catch(e){this.reject(e)}}onError(e){this.reject(e)}getIdpTask(e){switch(e){case"signInViaPopup":case"signInViaRedirect":return $r;case"linkViaPopup":case"linkViaRedirect":return Wr;case"reauthViaPopup":case"reauthViaRedirect":return zr;default:Et(this.auth,"internal-error")}}resolve(e){Nt(this.pendingPromise,"Pending promise was never set");this.pendingPromise.resolve(e);this.unregisterAndCleanUp()}reject(e){Nt(this.pendingPromise,"Pending promise was never set");this.pendingPromise.reject(e);this.unregisterAndCleanUp()}unregisterAndCleanUp(){if(this.eventManager){this.eventManager.unregisterConsumer(this)}this.pendingPromise=null;this.cleanUp()}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Kr=new Vt(2e3,1e4);async function Gr(e,t,n){const r=Fn(e);Ot(e,t,Wn);const i=Vr(r,n);const s=new Jr(r,"signInViaPopup",t,i);return s.executeNotNull()}class Jr extends qr{constructor(e,t,n,r,i){super(e,t,r,i);this.provider=n;this.authWindow=null;this.pollId=null;if(Jr.currentPopupAction){Jr.currentPopupAction.cancel()}Jr.currentPopupAction=this}async executeNotNull(){const e=await this.execute();Ct(e,this.auth,"internal-error");return e}async onExecution(){Nt(this.filter.length===1,"Popup operations only handle one event");const e=gr();this.authWindow=await this.resolver._openPopup(this.auth,this.provider,this.filter[0],e);this.authWindow.associatedEvent=e;this.resolver._originValidation(this.auth).catch(e=>{this.reject(e)});this.resolver._isIframeWebStorageSupported(this.auth,e=>{if(!e){this.reject(kt(this.auth,"web-storage-unsupported"))}});this.pollUserCancellation()}get eventId(){var e;return((e=this.authWindow)===null||e===void 0?void 0:e.associatedEvent)||null}cancel(){this.reject(kt(this.auth,"cancelled-popup-request"))}cleanUp(){if(this.authWindow){this.authWindow.close()}if(this.pollId){window.clearTimeout(this.pollId)}this.authWindow=null;this.pollId=null;Jr.currentPopupAction=null}pollUserCancellation(){const e=()=>{var t,n;if((n=(t=this.authWindow)===null||t===void 0?void 0:t.window)===null||n===void 0?void 0:n.closed){this.pollId=window.setTimeout(()=>{this.pollId=null;this.reject(kt(this.auth,"popup-closed-by-user"))},2e3);return}this.pollId=window.setTimeout(e,Kr.get())};e()}}Jr.currentPopupAction=null;
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Xr="pendingRedirect";const Yr=new Map;class Qr extends qr{constructor(e,t,n=false){super(e,["signInViaRedirect","linkViaRedirect","reauthViaRedirect","unknown"],t,undefined,n);this.eventId=null}async execute(){let e=Yr.get(this.auth._key());if(!e){try{const t=await Zr(this.resolver,this.auth);const n=t?await super.execute():null;e=()=>Promise.resolve(n)}catch(t){e=()=>Promise.reject(t)}Yr.set(this.auth._key(),e)}if(!this.bypassAuthState){Yr.set(this.auth._key(),()=>Promise.resolve(null))}return e()}async onAuthEvent(e){if(e.type==="signInViaRedirect"){return super.onAuthEvent(e)}else if(e.type==="unknown"){this.resolve(null);return}if(e.eventId){const t=await this.auth._redirectUserForId(e.eventId);if(t){this.user=t;return super.onAuthEvent(e)}else{this.resolve(null)}}}async onExecution(){}cleanUp(){}}async function Zr(e,t){const n=ni(t);const r=ti(e);if(!await r._isAvailable()){return false}const i=await r._get(n)==="true";await r._remove(n);return i}function ei(e,t){Yr.set(e._key(),t)}function ti(e){return Dt(e._redirectPersistence)}function ni(e){return bn(Xr,e.config.apiKey,e.name)}async function ri(e,t,n=false){const r=Fn(e);const i=Vr(r,t);const s=new Qr(r,i,n);const o=await s.execute();if(o&&!n){delete o.user._redirectEventId;await r._persistUserIfCurrent(o.user);await r._setRedirectUser(null,t)}return o}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const ii=10*60*1e3;class si{constructor(e){this.auth=e;this.cachedEventUids=new Set;this.consumers=new Set;this.queuedRedirectEvent=null;this.hasHandledPotentialRedirect=false;this.lastProcessedEventTime=Date.now()}registerConsumer(e){this.consumers.add(e);if(this.queuedRedirectEvent&&this.isEventForConsumer(this.queuedRedirectEvent,e)){this.sendToConsumer(this.queuedRedirectEvent,e);this.saveEventToCache(this.queuedRedirectEvent);this.queuedRedirectEvent=null}}unregisterConsumer(e){this.consumers.delete(e)}onEvent(e){if(this.hasEventBeenHandled(e)){return false}let t=false;this.consumers.forEach(n=>{if(this.isEventForConsumer(e,n)){t=true;this.sendToConsumer(e,n);this.saveEventToCache(e)}});if(this.hasHandledPotentialRedirect||!ci(e)){return t}this.hasHandledPotentialRedirect=true;if(!t){this.queuedRedirectEvent=e;t=true}return t}sendToConsumer(e,t){var n;if(e.error&&!ai(e)){const r=((n=e.error.code)===null||n===void 0?void 0:n.split("auth/")[1])||"internal-error";t.onError(kt(this.auth,r))}else{t.onAuthEvent(e)}}isEventForConsumer(e,t){const n=t.eventId===null||!!e.eventId&&e.eventId===t.eventId;return t.filter.includes(e.type)&&n}hasEventBeenHandled(e){if(Date.now()-this.lastProcessedEventTime>=ii){this.cachedEventUids.clear()}return this.cachedEventUids.has(oi(e))}saveEventToCache(e){this.cachedEventUids.add(oi(e));this.lastProcessedEventTime=Date.now()}}function oi(e){return[e.type,e.eventId,e.sessionId,e.tenantId].filter(e=>e).join("-")}function ai({type:e,error:t}){return e==="unknown"&&(t===null||t===void 0?void 0:t.code)===`auth/${"no-auth-event"}`}function ci(e){switch(e.type){case"signInViaRedirect":case"linkViaRedirect":case"reauthViaRedirect":return true;case"unknown":return ai(e);default:return false}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */async function ui(e,t={}){return Kt(e,"GET","/v1/projects",t)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const li=/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;const hi=/^https?/;async function di(e){if(e.config.emulator){return}const{authorizedDomains:t}=await ui(e);for(const e of t){try{if(fi(e)){return}}catch(e){}}Et(e,"unauthorized-domain")}function fi(e){const t=Ut();const{protocol:n,hostname:r}=new URL(t);if(e.startsWith("chrome-extension://")){const i=new URL(e);if(i.hostname===""&&r===""){return n==="chrome-extension:"&&e.replace("chrome-extension://","")===t.replace("chrome-extension://","")}return n==="chrome-extension:"&&i.hostname===r}if(!hi.test(n)){return false}if(li.test(e)){return r===e}const i=e.replace(/\./g,"\\.");const s=new RegExp("^(.+\\."+i+"|"+i+")$","i");return s.test(r)}
+/**
+     * @license
+     * Copyright 2020 Google LLC.
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const pi=new Vt(3e4,6e4);function gi(){const e=vr().___jsl;if(e===null||e===void 0?void 0:e.H){for(const t of Object.keys(e.H)){e.H[t].r=e.H[t].r||[];e.H[t].L=e.H[t].L||[];e.H[t].r=[...e.H[t].L];if(e.CP){for(let t=0;t<e.CP.length;t++){e.CP[t]=null}}}}}function mi(e){return new Promise((t,n)=>{var r,i,s;function o(){gi();gapi.load("gapi.iframes",{callback:()=>{t(gapi.iframes.getContext())},ontimeout:()=>{gi();n(kt(e,"network-request-failed"))},timeout:pi.get()})}if((i=(r=vr().gapi)===null||r===void 0?void 0:r.iframes)===null||i===void 0?void 0:i.Iframe){t(gapi.iframes.getContext())}else if(!!((s=vr().gapi)===null||s===void 0?void 0:s.load)){o()}else{const t=Hr("iframefcb");vr()[t]=()=>{if(!!gapi.load){o()}else{n(kt(e,"network-request-failed"))}};return Fr(`https://apis.google.com/js/api.js?onload=${t}`).catch(e=>n(e))}}).catch(e=>{vi=null;throw e})}let vi=null;function _i(e){vi=vi||mi(e);return vi}
+/**
+     * @license
+     * Copyright 2020 Google LLC.
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const yi=new Vt(5e3,15e3);const Ii="__/auth/iframe";const bi="emulator/auth/iframe";const wi={style:{position:"absolute",top:"-100px",width:"1px",height:"1px"},"aria-hidden":"true",tabindex:"-1"};const Ti=new Map([["identitytoolkit.googleapis.com","p"],["staging-identitytoolkit.sandbox.googleapis.com","s"],["test-identitytoolkit.sandbox.googleapis.com","t"]]);function Ei(e){const t=e.config;Ct(t.authDomain,e,"auth-domain-config-required");const n=t.emulator?Bt(t,bi):`https://${e.config.authDomain}/${Ii}`;const r={apiKey:t.apiKey,appName:e.name,v:Xe};const i=Ti.get(e.config.apiHost);if(i){r.eid=i}const s=e._getFrameworks();if(s.length){r.fw=s.join(",")}return`${n}?${T(r).slice(1)}`}async function ki(e){const t=await _i(e);const n=vr().gapi;Ct(n,e,"internal-error");return t.open({where:document.body,url:Ei(e),messageHandlersFilter:n.iframes.CROSS_ORIGIN_IFRAMES_FILTER,attributes:wi,dontclear:true},t=>new Promise(async(n,r)=>{await t.restyle({setHideOnLeave:false});const i=kt(e,"network-request-failed");const s=vr().setTimeout(()=>{r(i)},yi.get());function o(){vr().clearTimeout(s);n(t)}t.ping(o).then(o,()=>{r(i)})}))}
+/**
+     * @license
+     * Copyright 2020 Google LLC.
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Si={location:"yes",resizable:"yes",statusbar:"yes",toolbar:"no"};const Oi=500;const Ri=600;const Ci="_blank";const Ai="http://localhost";class Ni{constructor(e){this.window=e;this.associatedEvent=null}close(){if(this.window){try{this.window.close()}catch(e){}}}}function Pi(e,t,n,r=Oi,i=Ri){const s=Math.max((window.screen.availHeight-i)/2,0).toString();const o=Math.max((window.screen.availWidth-r)/2,0).toString();let a="";const u=Object.assign(Object.assign({},Si),{width:r.toString(),height:i.toString(),top:s,left:o});const l=c().toLowerCase();if(n){a=Sn(l)?Ci:n}if(En(l)){t=t||Ai;u.scrollbars="yes"}const h=Object.entries(u).reduce((e,[t,n])=>`${e}${t}=${n},`,"");if(Pn(l)&&a!=="_self"){Di(t||"",a);return new Ni(null)}const d=window.open(t||"",a,h);Ct(d,e,"popup-blocked");try{d.focus()}catch(e){}return new Ni(d)}function Di(e,t){const n=document.createElement("a");n.href=e;n.target=t;const r=document.createEvent("MouseEvent");r.initMouseEvent("click",true,true,window,1,0,0,0,0,false,false,false,false,1,null);n.dispatchEvent(r)}
+/**
+     * @license
+     * Copyright 2021 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const Li="__/auth/handler";const Mi="emulator/auth/handler";function Ui(e,t,n,r,i,s){Ct(e.config.authDomain,e,"auth-domain-config-required");Ct(e.config.apiKey,e,"invalid-api-key");const o={apiKey:e.config.apiKey,appName:e.name,authType:n,redirectUrl:r,v:Xe,eventId:i};if(t instanceof Wn){t.setDefaultLanguage(e.languageCode);o.providerId=t.providerId||"";if(!I(t.getCustomParameters())){o.customParameters=JSON.stringify(t.getCustomParameters())}for(const[e,t]of Object.entries(s||{})){o[e]=t}}if(t instanceof qn){const e=t.getScopes().filter(e=>e!=="");if(e.length>0){o.scopes=e.join(",")}}if(e.tenantId){o.tid=e.tenantId}const a=o;for(const e of Object.keys(a)){if(a[e]===undefined){delete a[e]}}return`${xi(e)}?${T(a).slice(1)}`}function xi({config:e}){if(!e.emulator){return`https://${e.authDomain}/${Li}`}return Bt(e,Mi)}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */const ji="webStorageSupport";class Fi{constructor(){this.eventManagers={};this.iframes={};this.originValidationPromises={};this._redirectPersistence=dr;this._completeRedirectFn=ri;this._overrideRedirectResult=ei}async _openPopup(e,t,n,r){var i;Nt((i=this.eventManagers[e._key()])===null||i===void 0?void 0:i.manager,"_initialize() not called before _openPopup()");const s=Ui(e,t,n,Ut(),r);return Pi(e,s,gr())}async _openRedirect(e,t,n,r){await this._originValidation(e);_r(Ui(e,t,n,Ut(),r));return new Promise(()=>{})}_initialize(e){const t=e._key();if(this.eventManagers[t]){const{manager:e,promise:n}=this.eventManagers[t];if(e){return Promise.resolve(e)}else{Nt(n,"If manager is not set, promise should be");return n}}const n=this.initAndGetManager(e);this.eventManagers[t]={promise:n};n.catch(()=>{delete this.eventManagers[t]});return n}async initAndGetManager(e){const t=await ki(e);const n=new si(e);t.register("authEvent",t=>{Ct(t===null||t===void 0?void 0:t.authEvent,e,"invalid-auth-event");const r=n.onEvent(t.authEvent);return{status:r?"ACK":"ERROR"}},gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER);this.eventManagers[e._key()]={manager:n};this.iframes[e._key()]=t;return n}_isIframeWebStorageSupported(e,t){const n=this.iframes[e._key()];n.send(ji,{type:ji},n=>{var r;const i=(r=n===null||n===void 0?void 0:n[0])===null||r===void 0?void 0:r[ji];if(i!==undefined){t(!!i)}Et(e,"internal-error")},gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER)}_originValidation(e){const t=e._key();if(!this.originValidationPromises[t]){this.originValidationPromises[t]=di(e)}return this.originValidationPromises[t]}get _shouldInitProactively(){return Ln()||kn()||Nn()}}const Hi=Fi;var Vi="@firebase/auth";var Bi="0.20.4";
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */class $i{constructor(e){this.auth=e;this.internalListeners=new Map}getUid(){var e;this.assertAuthConfigured();return((e=this.auth.currentUser)===null||e===void 0?void 0:e.uid)||null}async getToken(e){this.assertAuthConfigured();await this.auth._initializationPromise;if(!this.auth.currentUser){return null}const t=await this.auth.currentUser.getIdToken(e);return{accessToken:t}}addAuthTokenListener(e){this.assertAuthConfigured();if(this.internalListeners.has(e)){return}const t=this.auth.onIdTokenChanged(t=>{var n;e(((n=t)===null||n===void 0?void 0:n.stsTokenManager.accessToken)||null)});this.internalListeners.set(e,t);this.updateProactiveRefresh()}removeAuthTokenListener(e){this.assertAuthConfigured();const t=this.internalListeners.get(e);if(!t){return}this.internalListeners.delete(e);t();this.updateProactiveRefresh()}assertAuthConfigured(){Ct(this.auth._initializationPromise,"dependent-sdk-initialized-before-auth")}updateProactiveRefresh(){if(this.internalListeners.size>0){this.auth._startProactiveRefresh()}else{this.auth._stopProactiveRefresh()}}}
+/**
+     * @license
+     * Copyright 2020 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function zi(e){switch(e){case"Node":return"node";case"ReactNative":return"rn";case"Worker":return"webworker";case"Cordova":return"cordova";default:return undefined}}function Wi(e){We(new C("auth",(t,{options:n})=>{const r=t.getProvider("app").getImmediate();const i=t.getProvider("heartbeat");const{apiKey:s,authDomain:o}=r.options;return((t,r)=>{Ct(s&&!s.includes(":"),"invalid-api-key",{appName:t.name});Ct(!(o===null||o===void 0?void 0:o.includes(":")),"argument-error",{appName:t.name});const i={apiKey:s,authDomain:o,clientPlatform:e,apiHost:"identitytoolkit.googleapis.com",tokenApiHost:"securetoken.googleapis.com",apiScheme:"https",sdkClientVersion:Un(e)};const a=new jn(t,r,i);Mt(a,n);return a})(r,i)},"PUBLIC").setInstantiationMode("EXPLICIT").setInstanceCreatedCallback((e,t,n)=>{const r=e.getProvider("auth-internal");r.initialize()}));We(new C("auth-internal",e=>{const t=Fn(e.getProvider("auth").getImmediate());return(e=>new $i(e))(t)},"PRIVATE").setInstantiationMode("EXPLICIT"));Ze(Vi,Bi,zi(e));Ze(Vi,Bi,"esm2017")}
+/**
+     * @license
+     * Copyright 2021 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */function qi(e=Qe()){const t=qe(e,"auth");if(t.isInitialized()){return t.getImmediate()}return Lt(e,{popupRedirectResolver:Hi,persistence:[xr,lr,dr]})}Wi("Browser");e.GithubAuthProvider=Jn;e.getAuth=qi;e.initializeApp=Ye;e.signInWithPopup=Gr;Object.defineProperty(e,"__esModule",{value:true})});
+},
 	"jquery.sap.global.js":function(){/*!
  * OpenUI5
  * (c) Copyright 2009-2022 SAP SE or an SAP affiliate company.
@@ -3079,7 +4320,7 @@ if(typeof window.sap!=="object"&&typeof window.sap!=="function"){window.sap={}}i
  * (c) Copyright 2009-2022 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
-sap.ui.define(["sap/ui/VersionInfo","sap/base/Log","sap/base/assert","sap/base/util/ObjectPath"],function(e,n,a,o){"use strict";if(window.OpenAjax&&window.OpenAjax.hub){OpenAjax.hub.registerLibrary("sap","http://www.sap.com/","0.1",{})}var t;if(typeof window.sap!=="object"&&typeof window.sap!=="function"){window.sap={}}if(typeof window.sap.ui!=="object"){window.sap.ui={}}sap.ui=Object.assign(sap.ui,{version:"1.103.0",buildinfo:{lastchange:"",buildtime:"20220615-1639"}});var s=window["sap-ui-config"]||{};var r=0;if(s["xx-nosync"]==="warn"||/(?:\?|&)sap-ui-xx-nosync=(?:warn)/.exec(window.location.search)){r=1}if(s["xx-nosync"]===true||s["xx-nosync"]==="true"||/(?:\?|&)sap-ui-xx-nosync=(?:x|X|true)/.exec(window.location.search)){r=2}sap.ui.getVersionInfo=function(a){if(a&&a.async){n.info("Do not use deprecated function 'sap.ui.getVersionInfo'. Use"+" 'sap/ui/VersionInfo' module's asynchronous .load function instead")}else{n.warning("Do not use deprecated function 'sap.ui.getVersionInfo' synchronously! Use"+" 'sap/ui/VersionInfo' module's asynchronous .load function instead","Deprecation",null,function(){return{type:"sap.ui.getVersionInfo",name:"Global"}})}return e._load(a)};sap.ui.namespace=function(e){a(false,"sap.ui.namespace is long time deprecated and shouldn't be used");return o.create(e)};sap.ui.lazyRequire=function(e,s,i){a(typeof e==="string"&&e,"lazyRequire: sClassName must be a non-empty string");a(!s||typeof s==="string","lazyRequire: sMethods must be empty or a string");if(r===2){n.error("[nosync] lazy stub creation ignored for '"+e+"'");return}var u=e.replace(/\//gi,"."),c=u.lastIndexOf("."),p=u.substr(0,c),f=u.substr(c+1),l=o.create(p),y=l[f],d=(s||"new").split(" "),b=d.indexOf("new");i=i||u;if(!y){if(b>=0){y=function(){if(r){if(r===1){n.error("[nosync] lazy stub for constructor '"+u+"' called")}}else{n.debug("lazy stub for constructor '"+u+"' called.")}sap.ui.requireSync(i.replace(/\./g,"/"));var o=l[f];a(typeof o==="function","lazyRequire: oRealClass must be a function after loading");if(o._sapUiLazyLoader){throw new Error("lazyRequire: stub '"+u+"'has not been replaced by module '"+i+"'")}var s=Object.create(o.prototype);if(!(this instanceof y)){t=t||sap.ui.require("sap/ui/base/Object");if(t&&s instanceof t){n.error("Constructor "+e+' has been called without "new" operator!',null,null,function(){try{throw new Error}catch(e){return e}})}}var c=o.apply(s,arguments);if(c&&(typeof c==="function"||typeof c==="object")){s=c}return s};y._sapUiLazyLoader=true;d.splice(b,1)}else{y={}}l[f]=y}d.forEach(function(e){if(!y[e]){y[e]=function(){if(r){if(r===1){n.error("[no-sync] lazy stub for method '"+u+"."+e+"' called")}}else{n.debug("lazy stub for method '"+u+"."+e+"' called.")}sap.ui.requireSync(i.replace(/\./g,"/"));var o=l[f];a(typeof o==="function"||typeof o==="object","lazyRequire: oRealClass must be a function or object after loading");a(typeof o[e]==="function","lazyRequire: method must be a function");if(o[e]._sapUiLazyLoader){throw new Error("lazyRequire: stub '"+u+"."+e+"' has not been replaced by loaded module '"+i+"'")}return o[e].apply(o,arguments)};y[e]._sapUiLazyLoader=true}})};sap.ui.lazyRequire._isStub=function(e){a(typeof e==="string"&&e,"lazyRequire._isStub: sClassName must be a non-empty string");var n=e.lastIndexOf("."),t=e.slice(0,n),s=e.slice(n+1),r=o.get(t||"");return!!(r&&typeof r[s]==="function"&&r[s]._sapUiLazyLoader)};sap.ui.resource=function(e,n){a(typeof e==="string","sLibraryName must be a string");a(typeof n==="string","sResourcePath must be a string");return sap.ui.require.toUrl((String(e).replace(/\./g,"/")+"/"+n).replace(/^\/*/,""))};sap.ui.localResources=function(e){a(e,"sNamespace must not be empty");var n={};n[e.replace(/\./g,"/")]="./"+e.replace(/\./g,"/");sap.ui.loader.config({paths:n})};return sap.ui});
+sap.ui.define(["sap/ui/VersionInfo","sap/base/Log","sap/base/assert","sap/base/util/ObjectPath"],function(e,n,a,o){"use strict";if(window.OpenAjax&&window.OpenAjax.hub){OpenAjax.hub.registerLibrary("sap","http://www.sap.com/","0.1",{})}var t;if(typeof window.sap!=="object"&&typeof window.sap!=="function"){window.sap={}}if(typeof window.sap.ui!=="object"){window.sap.ui={}}sap.ui=Object.assign(sap.ui,{version:"1.103.0",buildinfo:{lastchange:"",buildtime:"20220627-1904"}});var s=window["sap-ui-config"]||{};var r=0;if(s["xx-nosync"]==="warn"||/(?:\?|&)sap-ui-xx-nosync=(?:warn)/.exec(window.location.search)){r=1}if(s["xx-nosync"]===true||s["xx-nosync"]==="true"||/(?:\?|&)sap-ui-xx-nosync=(?:x|X|true)/.exec(window.location.search)){r=2}sap.ui.getVersionInfo=function(a){if(a&&a.async){n.info("Do not use deprecated function 'sap.ui.getVersionInfo'. Use"+" 'sap/ui/VersionInfo' module's asynchronous .load function instead")}else{n.warning("Do not use deprecated function 'sap.ui.getVersionInfo' synchronously! Use"+" 'sap/ui/VersionInfo' module's asynchronous .load function instead","Deprecation",null,function(){return{type:"sap.ui.getVersionInfo",name:"Global"}})}return e._load(a)};sap.ui.namespace=function(e){a(false,"sap.ui.namespace is long time deprecated and shouldn't be used");return o.create(e)};sap.ui.lazyRequire=function(e,s,i){a(typeof e==="string"&&e,"lazyRequire: sClassName must be a non-empty string");a(!s||typeof s==="string","lazyRequire: sMethods must be empty or a string");if(r===2){n.error("[nosync] lazy stub creation ignored for '"+e+"'");return}var u=e.replace(/\//gi,"."),c=u.lastIndexOf("."),p=u.substr(0,c),f=u.substr(c+1),l=o.create(p),y=l[f],d=(s||"new").split(" "),b=d.indexOf("new");i=i||u;if(!y){if(b>=0){y=function(){if(r){if(r===1){n.error("[nosync] lazy stub for constructor '"+u+"' called")}}else{n.debug("lazy stub for constructor '"+u+"' called.")}sap.ui.requireSync(i.replace(/\./g,"/"));var o=l[f];a(typeof o==="function","lazyRequire: oRealClass must be a function after loading");if(o._sapUiLazyLoader){throw new Error("lazyRequire: stub '"+u+"'has not been replaced by module '"+i+"'")}var s=Object.create(o.prototype);if(!(this instanceof y)){t=t||sap.ui.require("sap/ui/base/Object");if(t&&s instanceof t){n.error("Constructor "+e+' has been called without "new" operator!',null,null,function(){try{throw new Error}catch(e){return e}})}}var c=o.apply(s,arguments);if(c&&(typeof c==="function"||typeof c==="object")){s=c}return s};y._sapUiLazyLoader=true;d.splice(b,1)}else{y={}}l[f]=y}d.forEach(function(e){if(!y[e]){y[e]=function(){if(r){if(r===1){n.error("[no-sync] lazy stub for method '"+u+"."+e+"' called")}}else{n.debug("lazy stub for method '"+u+"."+e+"' called.")}sap.ui.requireSync(i.replace(/\./g,"/"));var o=l[f];a(typeof o==="function"||typeof o==="object","lazyRequire: oRealClass must be a function or object after loading");a(typeof o[e]==="function","lazyRequire: method must be a function");if(o[e]._sapUiLazyLoader){throw new Error("lazyRequire: stub '"+u+"."+e+"' has not been replaced by loaded module '"+i+"'")}return o[e].apply(o,arguments)};y[e]._sapUiLazyLoader=true}})};sap.ui.lazyRequire._isStub=function(e){a(typeof e==="string"&&e,"lazyRequire._isStub: sClassName must be a non-empty string");var n=e.lastIndexOf("."),t=e.slice(0,n),s=e.slice(n+1),r=o.get(t||"");return!!(r&&typeof r[s]==="function"&&r[s]._sapUiLazyLoader)};sap.ui.resource=function(e,n){a(typeof e==="string","sLibraryName must be a string");a(typeof n==="string","sResourcePath must be a string");return sap.ui.require.toUrl((String(e).replace(/\./g,"/")+"/"+n).replace(/^\/*/,""))};sap.ui.localResources=function(e){a(e,"sNamespace must not be empty");var n={};n[e.replace(/\./g,"/")]="./"+e.replace(/\./g,"/");sap.ui.loader.config({paths:n})};return sap.ui});
 },
 	"sap/ui/VersionInfo.js":function(){/*!
  * OpenUI5

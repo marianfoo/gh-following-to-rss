@@ -1,4 +1,4 @@
-sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/MessageBox"], function (__BaseController, JSONModel, MessageBox) {
+sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/MessageBox", "@octokit/core", "githubfollower/lib/firebase"], function (__BaseController, JSONModel, MessageBox, ___octokit_core, __githubfollower_lib_firebase) {
   function _interopRequireDefault(obj) {
     return obj && obj.__esModule && typeof obj.default !== "undefined" ? obj.default : obj;
   }
@@ -6,9 +6,15 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/Message
   /* eslint-disable @typescript-eslint/no-unsafe-assignment */
   const BaseController = _interopRequireDefault(__BaseController);
 
+  const Octokit = ___octokit_core["Octokit"];
+  const initializeApp = __githubfollower_lib_firebase["initializeApp"];
+  const getAuth = __githubfollower_lib_firebase["getAuth"];
+  const GithubAuthProvider = __githubfollower_lib_firebase["GithubAuthProvider"];
+  const signInWithPopup = __githubfollower_lib_firebase["signInWithPopup"];
   /**
    * @namespace de.marianzeis.githubfollower.controller
    */
+
   const Main = BaseController.extend("de.marianzeis.githubfollower.controller.Main", {
     onInit: function _onInit() {
       const firebaseConfig = {
@@ -20,10 +26,10 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/Message
         appId: "1:576057379323:web:4fb59feea548cdefa1235e"
       }; // Initialize Firebase
 
-      this.app = firebase.initializeApp(firebaseConfig); // // // Initialize Firebase Authentication and get a reference to the service
+      this.app = initializeApp(firebaseConfig); // // // Initialize Firebase Authentication and get a reference to the service
 
-      this.auth = firebase.auth(this.app);
-      this.provider = new firebase.auth.GithubAuthProvider();
+      this.auth = getAuth(this.app);
+      this.provider = new GithubAuthProvider();
       this.provider.setCustomParameters({
         'allow_signup': 'false'
       });
@@ -93,15 +99,12 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/Message
     },
     githubSignInPopup: function _githubSignInPopup(provider) {
       // [START auth_github_signin_popup]
-      firebase.auth().signInWithPopup(provider).then(result => {
+      const auth = getAuth();
+      signInWithPopup(auth, provider).then(result => {
         /** @type {firebase.auth.OAuthCredential} */
-        var credential = result.credential; // This gives you a GitHub Access Token. You can use it to access the GitHub API.
-
-        var token = credential.accessToken;
-        this.token = token;
-        this.getModel("data").setProperty("/token", token); // The signed-in user info.
-
-        var user = result.user; // ...
+        // This gives you a GitHub Access Token. You can use it to access the GitHub API.
+        this.token = result._tokenResponse.oauthAccessToken;
+        this.getModel("data").setProperty("/token", this.token); // ...
       }).catch(error => {
         // Handle Errors here.
         var errorCode = error.code;
