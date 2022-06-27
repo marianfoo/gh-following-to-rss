@@ -9,7 +9,7 @@
         "strict": true,
         "strictNullChecks": false,
         "strictPropertyInitialization": false,
-        "rootDir": "./src",
+        "rootDir": "./",
         "outDir": "./dist",
         "baseUrl": "./",
         "moduleResolution": "Node",
@@ -20,13 +20,14 @@
         "paths": {
             "de/marianzeis/githubfollower/*": [
                 "./src/*"
-            ]
+            ],
             "githubfollower/lib/*": [
                 "./lib/*"
             ]
         }
     },
     "include": [
-        "./src/**/*"
+        "./src/**/*",
+        "./lib/**/*"
     ]
 }
