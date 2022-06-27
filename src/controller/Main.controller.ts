@@ -2,6 +2,8 @@
 import BaseController from "./BaseController";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import MessageBox from "sap/m/MessageBox";
+import { Octokit } from "@octokit/core";
+import { initializeApp, getAuth} from "de/marianzeis/githubfollower/lib/firebase";
 
 /**
  * @namespace de.marianzeis.githubfollower.controller
@@ -18,11 +20,11 @@ export default class Main extends BaseController {
 	};
 
     // Initialize Firebase
-    this.app = firebase.initializeApp(firebaseConfig);
+    this.app = initializeApp(firebaseConfig);
 
     // // // Initialize Firebase Authentication and get a reference to the service
-    this.auth = firebase.auth(this.app);
-    this.provider = new firebase.auth.GithubAuthProvider();
+    this.auth = getAuth(this.app);
+    this.provider = new this.auth.GithubAuthProvider();
 	this.provider.setCustomParameters({
 		'allow_signup': 'false'
 	  });
