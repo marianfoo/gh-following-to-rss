@@ -3,7 +3,7 @@ import BaseController from "./BaseController";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import MessageBox from "sap/m/MessageBox";
 import { Octokit } from "@octokit/core";
-import { initializeApp, getAuth} from "de/marianzeis/githubfollower/lib/firebase";
+import { initializeApp, getAuth} from "githubfollower/lib/firebase";
 
 /**
  * @namespace de.marianzeis.githubfollower.controller
