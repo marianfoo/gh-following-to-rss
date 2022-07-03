@@ -18,6 +18,6 @@ jobs:
     - name: Azure CLI script
       uses: azure/CLI@v1
       with:
-        azcliversion: 2.30.0
+        azcliversion: 2.37.0
         inlineScript: |
           az staticwebapp create -n bestofui5-patch-2 -g github-followers
