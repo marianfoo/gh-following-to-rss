@@ -26,13 +26,13 @@ jobs:
     #- name: test
     #  run : sed -e 's/^"//' -e 's/"$//' <<<"$GITHUB_ENV" 
     - name: echo
-      run: echo ${{ env.GITHUB_SHA_SHORT }}
+      run: echo $GITHUB_SHA_SHORT
     - name: Run Azure CLI Script Against AzureStack
       run: |
           hostname
           az group list --output table
     - name: echo
-      run: echo ${{ env.GITHUB_SHA_SHORT }}
+      run: echo $GITHUB_SHA_SHORT
     - uses: gliech/create-github-secret-action@v1
       with:
         name: bestofui5_patch_2
