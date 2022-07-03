@@ -1,0 +1,45 @@
+name: deploy
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}  
+    - name: Set env
+      run: echo "azuresecret=$(az staticwebapp secrets list --name bestofui5-patch-2 --query "properties.apiKey" | tr -d '"')" >> $GITHUB_ENV
+    #- uses: gliech/create-github-secret-action@v1
+    #  with:
+    #    name: bestofui5_patch_2
+    #    value: ${{ env.azuresecret }}
+    #    pa_token: ${{ secrets.PAT_TOKEN }}
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+    - name: use node 16
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16
+    - name: install
+      run: npm install
+    - name: build
+      run: npm run build:self
+    - name: Build And Deploy
+      id: builddeploy
+      uses: Azure/static-web-apps-deploy@v1
+      with:
+        azure_static_web_apps_api_token: ${{ env.azuresecret }}
+        repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+        action: "upload"
+        skip_api_build: true
+        skip_app_build: true
+        app_location: "docs" # App source code path
+        output_location: "" # Built app content directory - optional
+        is_static_export: true
