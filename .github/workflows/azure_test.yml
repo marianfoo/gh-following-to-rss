@@ -3,7 +3,6 @@ name: deploy
 on:
   workflow_dispatch:
 
-name: AzureCLISampleForFile
 
 jobs:
 
