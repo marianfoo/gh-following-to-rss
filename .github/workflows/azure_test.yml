@@ -18,7 +18,7 @@ jobs:
       run: echo "azuresecret=$(az staticwebapp secrets list --name bestofui5-patch-2 --query "properties.apiKey")" >> $GITHUB_ENV
     - name: remove quotes
       run : sed -e 's/^"//' -e 's/"$//' <<<"${{ env.azuresecret }}"
-            echo "azuresecret=${{ env.azuresecret }}" | tr -d '"' >> $GITHUB_ENV
+            echo "azuresecret=$({{ env.azuresecret }}" | tr -d '"')" >> $GITHUB_ENV
     - name: echo
       run: echo "${{ env.azuresecret }}"
     - uses: gliech/create-github-secret-action@v1
