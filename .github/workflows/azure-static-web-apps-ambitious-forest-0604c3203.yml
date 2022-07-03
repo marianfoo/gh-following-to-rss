@@ -26,6 +26,7 @@ jobs:
           skip_api_build: true
           app_location: "/src" # App source code path
           output_location: "docs" # Built app content directory - optional
+          is_static_export: true
           app_build_command: "npm run build:ui5:self"
           ###### End of Repository/Build Configurations ######
 
