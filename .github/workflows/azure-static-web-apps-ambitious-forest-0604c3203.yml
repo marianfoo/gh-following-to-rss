@@ -16,7 +16,7 @@ jobs:
           submodules: true
       - name: build ui5
         run: npm install
-             npm build:ui5:self
+             npm run build:ui5:self
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
