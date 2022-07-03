@@ -15,10 +15,10 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}  
     - name: Set env
-      run: echo "azuresecret=$(az staticwebapp secrets list --name bestofui5-patch-2 --query "properties.apiKey")" >> $GITHUB_ENV
+      run: echo "azuresecret=$(az staticwebapp secrets list --name bestofui5-patch-2 --query "properties.apiKey" | tr -d '"')" >> $GITHUB_ENV
     - name: remove quotes
-      run : 
-            echo "azuresecret=$({{ env.azuresecret }} | tr -d '"')" >> $GITHUB_ENV
+      #run : 
+           # echo "azuresecret=$({{ env.azuresecret }} | tr -d '"')" >> $GITHUB_ENV
     - name: echo
       run: echo "${{ env.azuresecret }}"
     - uses: gliech/create-github-secret-action@v1
