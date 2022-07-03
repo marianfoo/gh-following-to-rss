@@ -24,7 +24,7 @@ jobs:
     - name: Set env
       run: echo `GITHUB_SHA_SHORT=$(az staticwebapp secrets list --name bestofui5-patch-2 --query "properties.apiKey"` >> $GITHUB_ENV
     - name: test
-      run : echo ${{ env.GITHUB_SHA_SHORT }}
+      run : sed -e 's/^"//' -e 's/"$//' <<<"$GITHUB_ENV" 
     - uses: gliech/create-github-secret-action@v1
       with:
         name: bestofui5_patch_2
