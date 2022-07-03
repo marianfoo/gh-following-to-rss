@@ -33,7 +33,11 @@ jobs:
     #- name: test
     #  run : sed -e 's/^"//' -e 's/"$//' <<<"$GITHUB_ENV" 
     - name: run az
-      run: az staticwebapp secrets list --name bestofui5-patch-2 --query "properties.apiKey"`
+      run: az staticwebapp secrets list --name bestofui5-patch-2 --query "properties.apiKey"
+    - name: Run Azure CLI Script Against AzureStack
+      run: |
+          hostname
+          az group list --output table
     - uses: gliech/create-github-secret-action@v1
       with:
         name: bestofui5_patch_2
