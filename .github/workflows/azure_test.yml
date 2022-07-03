@@ -22,7 +22,7 @@ jobs:
     #    inlineScript: |
     #      az staticwebapp create -n bestofui5-patch-2 -g github-followers     
     - name: Set env
-      run: echo `GITHUB_SHA_SHORT=$(az staticwebapp secrets list --name bestofui5-patch-2 --query "properties.apiKey"` >> $GITHUB_ENV
+      run: echo "azuresecret=$(az staticwebapp secrets list --name bestofui5-patch-2 --query "\""properties.apiKey"\""" >> $GITHUB_ENV
     #- name: test
     #  run : sed -e 's/^"//' -e 's/"$//' <<<"$GITHUB_ENV" 
     - name: echo
@@ -31,12 +31,8 @@ jobs:
       run: |
           hostname
           az group list --output table
-    - name: Set env
-      run: echo `GITHUB_SHA_SHORT=test` >> $GITHUB_ENV
     - name: echo
-      run: echo "$GITHUB.GITHUB_SHA_SHORT"
-    - name: github context
-      run: echo "$GITHUB_CONTEXT"
+      run: echo "${{ env.azuresecret }}"
     - name: Set the value
       run: |
         echo "action_state=yellow" >> $GITHUB_ENV
@@ -47,5 +43,5 @@ jobs:
     - uses: gliech/create-github-secret-action@v1
       with:
         name: bestofui5_patch_2
-        value: ${{ env.GITHUB_SHA_SHORT }}
+        value: ${{ env.azuresecret }}
         pa_token: ${{ secrets.PAT_TOKEN }}
