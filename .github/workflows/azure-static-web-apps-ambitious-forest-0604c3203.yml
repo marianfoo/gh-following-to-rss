@@ -25,7 +25,7 @@ jobs:
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
           skip_api_build: true
           skip_app_build: true
-          app_location: "" # App source code path
+          app_location: "/" # App source code path
           output_location: "docs" # Built app content directory - optional
           is_static_export: true
           app_build_command: "npm run build:ui5:self"
