@@ -7,19 +7,19 @@ on:
     types: [closed]
     branches:
       - main
-      
-  close_pull_request_job:
+jobs:
+
+  delete:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
-    name: Close Pull Request Job
     steps:
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}  
-      - name: Delete Static Web App
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.37.0
-          inlineScript: |
-            az staticwebapp delete -n "$GITHUB_HEAD_REF" -g github-followers    
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}  
+    - name: Delete Static Web App
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.37.0
+        inlineScript: |
+          az staticwebapp delete -n "$GITHUB_HEAD_REF" -g github-followers    
