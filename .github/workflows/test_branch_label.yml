@@ -11,6 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    #- uses: actions/checkout@v2
     - name: branch name
-      run: echo "${{ env.GITHUB_REF_NAME }}"
+      run: echo "$env.GITHUB_HEAD_REF"
+    - name: branch
+      run: echo "$GITHUB_HEAD_REF"
+    - name: test
+      run: echo '${{ toJSON(github) }}'

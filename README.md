@@ -12,6 +12,7 @@ For example, for my profile it would be "https://github.com/marianfoo.atom".
 
 So that you don't have to do this manually, this app simply reads the GitHub Following from your profile and creates an OPML file from it.
 
+
 # How To
 
 1. Login to GitHub via OAuth
