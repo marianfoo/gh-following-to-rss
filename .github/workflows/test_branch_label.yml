@@ -12,5 +12,5 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Run a one-line script
-      run: echo "$GITHUB_CONTEXT"
+    - name: branch name
+      run: echo "${{ env.GITHUB_REF_NAME }}"
