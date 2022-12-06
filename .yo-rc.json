@@ -3,10 +3,10 @@
     "application": "githubfollower",
     "namespace": "de.marianzeis",
     "framework": "OpenUI5",
-    "frameworkVersion": "1.103.0",
+    "frameworkVersion": "1.108.1",
     "author": "Marian Zeis",
     "tstypes": "@openui5/ts-types-esm",
-    "tstypesVersion": "1.103.0",
+    "tstypesVersion": "1.108.1",
     "appId": "de.marianzeis.githubfollower",
     "appURI": "de/marianzeis/githubfollower",
     "setupCompleted": true
