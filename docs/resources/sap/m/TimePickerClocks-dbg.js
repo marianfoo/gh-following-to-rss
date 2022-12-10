@@ -50,7 +50,7 @@ sap.ui.define([
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @public
@@ -70,7 +70,9 @@ sap.ui.define([
 					 */
 					_clocks: { type: "sap.m.TimePickerClock", multiple: true, visibility: "hidden" }
 				}
-			}
+			},
+
+			renderer: TimePickerClocksRenderer
 		});
 
 		/*********************************************************************************************************
@@ -998,8 +1000,10 @@ sap.ui.define([
 
 			aButtons = this.getAggregation("_buttons");
 			aClocks = this.getAggregation("_clocks");
-			this._clockCount = aClocks.length;
-			this._switchClock(0);
+			this._clockCount = aClocks ? aClocks.length : 0;
+			if (this._clockCount) {
+				this._switchClock(0);
+			}
 
 			// attach events to the controls
 			for (iIndex = 0; iIndex < this._clockCount; iIndex++) {

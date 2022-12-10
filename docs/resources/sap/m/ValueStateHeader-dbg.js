@@ -23,12 +23,11 @@ sap.ui.define(
 		 *
 		 * @extends sap.ui.core.Control
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @private
 		 * @alias sap.m.ValueStateHeader
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var ValueStateHeader = Control.extend("sap.m.ValueStateHeader", /** @lends sap.m.ValueStateHeader.prototype */ {
 			metadata: {

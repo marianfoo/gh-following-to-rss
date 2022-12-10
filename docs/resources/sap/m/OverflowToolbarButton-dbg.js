@@ -27,13 +27,12 @@ sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 	 * @implements sap.f.IShellBar
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.28
 	 * @alias sap.m.OverflowToolbarButton
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var OverflowToolbarButton = Button.extend("sap.m.OverflowToolbarButton", /** @lends sap.m.OverflowToolbarButton.prototype */ {
 		metadata: {
@@ -73,7 +72,7 @@ sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 		OverflowToolbarButton.prototype.getOverflowToolbarConfig = function () {
 			var oConfig = {
 				canOverflow: true,
-				propsUnrelatedToSize: ["enabled", "type"],
+				propsUnrelatedToSize: ["enabled", "type", "accesskey"],
 				autoCloseEvents: ["press"]
 			};
 

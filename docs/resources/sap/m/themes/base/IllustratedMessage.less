@@ -10,18 +10,31 @@
 	padding: 1rem;
 	box-sizing: border-box;
 
+	.sapMIllustratedMessageMainContent {
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		min-height: 0;
+	}
+
 	figcaption {
 		margin: inherit;
 	}
 
 	.sapMTitle {
 		display: block;
-		font-size: @sapMFontHeader5Size;
 	}
 
 	.sapMIllustratedMessageDescription {
 		color: @sapNeutralTextColor;
 		font-size: @sapMFontMediumSize;
+	}
+
+	&.sapMIllustratedMessageScalable {
+		height: 100%;
+		display: flex;
+		align-items: center;
+		flex-direction: column;
 	}
 
 	&.sapMIllustratedMessage-Base {
@@ -34,6 +47,42 @@
 			display: none;
 		}
 	}
+
+	&.sapMIllustratedMessage-Dot {
+		padding: 0.5rem;
+
+		.sapMIllustratedMessageMainContent {
+			display: inline-flex;
+			justify-content: center;
+			flex-direction: row;
+		}
+
+		figcaption {
+			max-width: 18rem;
+		}
+
+		.sapMIllustration {
+			flex-shrink: 0;
+			width: 2.813rem;
+			height: 2.813rem;
+			margin: 0.5rem 0;
+		}
+
+		.sapMTitle {
+			margin-top: 0.5rem;
+			margin-bottom: 0.25rem;
+		}
+
+		.sapMIllustratedMessageDescription {
+			margin-bottom: 0.5rem;
+		}
+
+		.sapMIllustratedMessageAdditionalContent {
+			margin-top: 0.25rem;
+			margin-bottom: 0.5rem;
+		}
+	}
+
 
 	&.sapMIllustratedMessage-Spot {
 		figcaption {

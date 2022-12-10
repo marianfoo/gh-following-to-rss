@@ -33,12 +33,11 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @since 1.38
 	 *
 	 * @public
 	 * @alias sap.m.ImageContent
-	 * @ui5-metamodel This control will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ImageContent = Control.extend("sap.m.ImageContent", /** @lends sap.m.ImageContent.prototype */ {
 		metadata: {
@@ -67,7 +66,9 @@ sap.ui.define([
 				 */
 				press: {}
 			}
-		}
+		},
+
+		renderer: ImageContentRenderer
 	});
 
 	/* --- Lifecycle Handling --- */

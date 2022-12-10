@@ -7,30 +7,20 @@
 // Provides control sap.m.StandardDynamicDateOption.
 sap.ui.define([
 		'sap/ui/core/library',
-		'sap/ui/core/Element',
 		'./DynamicDateOption',
 		'./Label',
-		'./StepInput',
 		'./RadioButton',
 		'./RadioButtonGroup',
-		'sap/ui/unified/Calendar',
-		'sap/ui/unified/calendar/MonthPicker',
-		'sap/ui/core/format/DateFormat',
 		'sap/ui/core/date/UniversalDateUtils',
 		'sap/ui/core/date/UniversalDate',
 		'sap/m/DynamicDateValueHelpUIType',
 		'./library'],
 	function(
 		coreLibrary,
-		Element,
 		DynamicDateOption,
 		Label,
-		StepInput,
 		RadioButton,
 		RadioButtonGroup,
-		Calendar,
-		MonthPicker,
-		DateFormat,
 		UniversalDateUtils,
 		UniversalDate,
 		DynamicDateValueHelpUIType,
@@ -52,11 +42,10 @@ sap.ui.define([
 		 * @extends sap.m.DynamicDateOption
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @public
 		 * @alias sap.m.StandardDynamicDateOption
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 * @experimental Since 1.92. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 		 */
 		var StandardDynamicDateOption = DynamicDateOption.extend("sap.m.StandardDynamicDateOption", /** @lends sap.m.StandardDynamicDateOption.prototype */ {
@@ -411,6 +400,10 @@ sap.ui.define([
 				}
 
 				var oInputControl;
+				var bUTC = false;
+				if (oControl && oValue) {
+					bUTC = oControl._checkFormatterUTCTimezone(oValue.operator);
+				}
 
 				switch (aParams[iIndex].getType()) {
 					case "int":
@@ -422,18 +415,18 @@ sap.ui.define([
 						}
 						break;
 					case "date":
-						oInputControl = this._createDateControl(oValue, iIndex, fnControlsUpdated);
+						oInputControl = this._createDateControl(oValue, iIndex, fnControlsUpdated, bUTC);
 						break;
 					case "datetime":
 						if (aParams.length === 1) {
 							// creates "single" DateTime option (embedded in the DynamicDateRange popup)
-							oInputControl = this._createDateTimeInnerControl(oValue, iIndex, fnControlsUpdated);
+							oInputControl = this._createDateTimeInnerControl(oValue, iIndex, fnControlsUpdated, bUTC);
 						} else if (aParams.length === 2) {
-							oInputControl = this._createDateTimeControl(oValue, iIndex, fnControlsUpdated);
+							oInputControl = this._createDateTimeControl(oValue, iIndex, fnControlsUpdated, bUTC);
 						}
 						break;
 					case "daterange":
-						oInputControl = this._createDateRangeControl(oValue, iIndex, fnControlsUpdated);
+						oInputControl = this._createDateRangeControl(oValue, iIndex, fnControlsUpdated, bUTC);
 					break;
 					case "month":
 						oInputControl = this._createMonthControl(oValue, iIndex, fnControlsUpdated);

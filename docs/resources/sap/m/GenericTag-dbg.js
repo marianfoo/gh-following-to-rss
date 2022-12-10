@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Icon",
 	"./GenericTagRenderer"
-], function(Control, KeyCodes, library, coreLibrary, Icon /* ,  GenericTagRenderer */) {
+], function(Control, KeyCodes, library, coreLibrary, Icon, GenericTagRenderer) {
 	"use strict";
 
 	//shortcut for sap.m.GenericTagValueState
@@ -53,13 +53,12 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.62.0
 	 * @alias sap.m.GenericTag
-	 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 	 */
 	var GenericTag = Control.extend("sap.m.GenericTag", /** @lends sap.m.GenericTag.prototype */ {
 		metadata: {
@@ -118,7 +117,9 @@ sap.ui.define([
 				 */
 				press: {}
 			}
-		}
+		},
+
+		renderer: GenericTagRenderer
 	});
 
 	/**

@@ -14,13 +14,6 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/base/ManagedObjectMetadata',
 	'sap/ui/base/ManagedObjectObserver',
-	'sap/ui/Device',
-	'./Popover',
-	'./List',
-	'./Title',
-	'./Bar',
-	'./Toolbar',
-	'./StandardListItem',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/IconPool',
 	'./MultiInputRenderer',
@@ -43,13 +36,6 @@ function(
 	ManagedObject,
 	ManagedObjectMetadata,
 	ManagedObjectObserver,
-	Device,
-	Popover,
-	List,
-	Title,
-	Bar,
-	Toolbar,
-	StandardListItem,
 	ResizeHandler,
 	IconPool,
 	MultiInputRenderer,
@@ -121,13 +107,12 @@ function(
 	* @implements sap.ui.core.ISemanticFormContent
 	*
 	* @author SAP SE
-	* @version 1.103.0
+	* @version 1.108.1
 	*
 	* @constructor
 	* @public
 	* @alias sap.m.MultiInput
 	* @see {@link fiori:https://experience.sap.com/fiori-design-web/multiinput/ Multi-Input Field}
-	* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	*/
 	var MultiInput = Input.extend("sap.m.MultiInput", /** @lends sap.m.MultiInput.prototype */ {
 		metadata: {
@@ -246,7 +231,9 @@ function(
 				}
 			},
 			dnd: { draggable: false, droppable: true }
-		}
+		},
+
+		renderer: MultiInputRenderer
 	});
 
 	EnabledPropagator.apply(MultiInput.prototype, [true]);
@@ -864,7 +851,7 @@ function(
 
 		// if only one piece of text was pasted, we can assume that the user wants to alter it before it is converted into a token
 		// in this case we leave it as plain text input
-		if (aSeparatedText.length <= 1) {
+		if (this._shouldSkipTokenCreationOnPaste(aSeparatedText)) {
 			return;
 		}
 
@@ -2022,6 +2009,18 @@ function(
 				fValidateCallback && fValidateCallback(false);
 			}
 		};
+	};
+
+	/**
+	 * Should return true/false if token creation on paste should be skipped
+	 *
+	 * @param aSeparatedText array with pasted text parts
+	 * @returns {boolean}
+	 * @ui5-restricted sap.ui.comp.smartfilterbar.FilterProvider
+	 * @private
+	 */
+	MultiInput.prototype._shouldSkipTokenCreationOnPaste = function (aSeparatedText) {
+		return aSeparatedText.length <= 1;
 	};
 
 	/**

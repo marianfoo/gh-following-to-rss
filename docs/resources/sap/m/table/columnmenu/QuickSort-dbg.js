@@ -5,10 +5,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Element",
 	"sap/m/table/columnmenu/QuickActionBase"
 ], function (
-	Element,
 	QuickActionBase
 ) {
 	"use strict";
@@ -25,7 +23,7 @@ sap.ui.define([
 	 * @extends sap.m.table.columnmenu.QuickActionBase
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @private
 	 * @experimental
@@ -65,9 +63,11 @@ sap.ui.define([
 		var aItems = this.getItems();
 		var aEffectiveQuickActions = [];
 
-		aItems.forEach(function(oItem) {
-			aEffectiveQuickActions.push(oItem._getAction());
-		}, this);
+		if (this.getVisible()) {
+			aItems.forEach(function(oItem) {
+				aEffectiveQuickActions.push(oItem._getAction());
+			}, this);
+		}
 
 		return aEffectiveQuickActions;
 	};

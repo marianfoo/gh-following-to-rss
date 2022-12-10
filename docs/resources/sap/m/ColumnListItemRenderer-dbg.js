@@ -8,12 +8,11 @@ sap.ui.define([
 	"sap/ui/core/Renderer",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
-	"sap/ui/Device",
 	"sap/base/Log",
 	"./library",
 	"./ListItemBaseRenderer"
 ],
-	function(Renderer, coreLibrary, Core, Device, Log, library, ListItemBaseRenderer) {
+	function(Renderer, coreLibrary, Core, Log, library, ListItemBaseRenderer) {
 	"use strict";
 
 	// shortcut for sap.m.PopinDisplay
@@ -257,9 +256,6 @@ sap.ui.define([
 	 * @param {sap.m.Table} oTable Table control
 	 */
 	ColumnListItemRenderer.renderPopin = function(rm, oLI, oTable) {
-		// remove existing popin first
-		oLI.removePopin();
-
 		// popin row
 		rm.openStart("tr", oLI.getPopin());
 		rm.class("sapMListTblSubRow");

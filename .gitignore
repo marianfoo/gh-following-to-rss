@@ -1,6 +1,8 @@
 # build results
 webapp
 dist
+functions
+functions/
 
 # Logs
 logs

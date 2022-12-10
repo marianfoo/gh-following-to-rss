@@ -30,7 +30,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/InvisibleText",
 	'./Button',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
 ],
 function(
 	InputBase,
@@ -57,7 +58,8 @@ function(
 	Log,
 	InvisibleText,
 	Button,
-	jQuery
+	jQuery,
+	Configuration
 ) {
 		"use strict";
 
@@ -142,7 +144,7 @@ function(
 		 * @extends sap.m.DateTimeField
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @public
@@ -288,12 +290,34 @@ function(
 					 * Fired when <code>value help</code> dialog closes.
 					 * @since 1.102.0
 					 */
-					afterValueHelpClose: {}
+					afterValueHelpClose: {},
 
+					/**
+					 * Fired when the value of the <code>TimePicker</code> is changed by user interaction - each keystroke, delete, paste, etc.
+					 *
+					 * <b>Note:</b> Browsing autocomplete suggestions doesn't fire the event.
+					 * @since 1.104.0
+					 */
+					liveChange: {
+						parameters : {
+							/**
+							 * The current value of the input, after a live change event.
+							 */
+							value: {type : "string"},
+
+							/**
+						 	 * The previous value of the input, before the last user interaction.
+							 */
+							previousValue: {type : "string"}
+						}
+					}
 				},
 
 				dnd: { draggable: false, droppable: true }
-		}});
+		},
+
+			renderer: TimePickerRenderer
+		});
 
 		/**
 		 * Determines the format, displayed in the input field and the picker clocks/numeric inputs.
@@ -372,11 +396,11 @@ function(
 			this._bValid = false;
 
 			/*  stores the type of the used locale (e.g. 'medium', 'long') for the display
-			 see https://openui5.hana.ondemand.com/api/sap.ui.core.LocaleData#methods/getTimePattern */
+			 see https://sdk.openui5.org/api/sap.ui.core.LocaleData/methods/getTimePattern */
 			this._sUsedDisplayPattern = null;
 
 			/*  stores the type of the used locale (e.g. 'medium', 'long') for inputting
-				 see https://openui5.hana.ondemand.com/api/sap.ui.core.LocaleData#methods/getTimePattern */
+				 see https://sdk.openui5.org/api/sap.ui.core.LocaleData/methods/getTimePattern */
 			this._sUsedValuePattern = null;
 
 			this._oDisplayFormat = null;
@@ -391,7 +415,8 @@ function(
 				src: this.getIconSrc(),
 				noTabStop: true,
 				title: "",
-				tooltip: this._oResourceBundle.getText("OPEN_PICKER_TEXT")
+				decorative: false,
+				useIconTooltip: false
 			});
 
 			// indicates whether the clock picker is still open
@@ -601,7 +626,7 @@ function(
 			oClocks.setValue(sDisplayFormattedValue);
 
 			sFormattedDate = this._getPickerParser().format(oDateValue || new Date(),
-				sap.ui.getCore().getConfiguration().getTimezone());
+				Configuration.getTimezone());
 			oDateValue = this._getPickerParser().parse(sFormattedDate, TimezoneUtil.getLocalTimezone())[ 0 ];
 			oDateValue.setMilliseconds(iDateValueMilliseconds);
 
@@ -956,7 +981,8 @@ function(
 				oClocks = this._getClocks(),
 				oInputs = this._getInputs(),
 				iIndexOfHH,
-				iIndexOfH;
+				iIndexOfH,
+				bEmpty = false;
 
 			sFormat = sFormat ? sFormat : "";
 			iIndexOfHH = sFormat.indexOf("HH");
@@ -971,7 +997,18 @@ function(
 				this._sLastChangeValue = sValue;
 			}
 
+			if (this.getDomRef() && !this._getInputValue()) {
+				bEmpty = true;
+			}
+
 			MaskEnabler.setValue.call(this, sValue);
+
+			// Make sure that the input element is empty in case it was empty before calling the setter,
+			// in order to enable the input field value selection, which is part of the prefered user interaction restricted API.
+			// Later on the updateDomValue method will fill the input field element properly
+			if (this.getDomRef() && this._bPreferUserInteraction && bEmpty) {
+				this.getFocusDomRef().value = "";
+			}
 
 			// We need to reset the mask temporary value when using a setter
 			// as the given value might not formatted according to mask value format
@@ -1028,40 +1065,6 @@ function(
 		 TimePicker.prototype.setDateValue = function(oDate) {
 			this._initMask();
 			return DateTimeField.prototype.setDateValue.apply(this, arguments);
-		};
-
-		/**
-		 * Sets tooltip of the control.
-		 *
-		 * @public
-		 * @override
-		 * @param {string|sap.ui.core.TooltipBase} vTooltip
-		 * @returns {this} A reference to <code>this</code> instance to allow method chaining.
-		 */
-		TimePicker.prototype.setTooltip = function(vTooltip) {
-			/*
-			 * We need this override the default setter from <code>sap.m.Input</code> because the super class method
-			 * doesn't respect the custom role id of the TimePicker which we add in 'aria-describedby' internally.
-			 */
-			var oDomRef = this.getDomRef(),
-				sTooltip;
-
-			this._refreshTooltipBaseDelegate(vTooltip);
-			this.setAggregation("tooltip", vTooltip, true);
-
-			if (!oDomRef) {
-				return this;
-			}
-
-			sTooltip = this.getTooltip_AsString();
-
-			if (sTooltip) {
-				oDomRef.setAttribute("title", sTooltip);
-			} else {
-				oDomRef.removeAttribute("title");
-			}
-
-			return this;
 		};
 
 		/**
@@ -1134,7 +1137,7 @@ function(
 		TimePicker.prototype._getLocale = function () {
 			var sLocaleId = this.getLocaleId();
 
-			return sLocaleId ? new Locale(sLocaleId) : sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+			return sLocaleId ? new Locale(sLocaleId) : Configuration.getFormatSettings().getFormatLocale();
 		};
 
 		/**
@@ -1510,7 +1513,7 @@ function(
 			if (Device.system.phone) {
 				sArialabelledby = this.$("inner").attr("aria-labelledby");
 				sLabelId = sArialabelledby && sArialabelledby.split(" ")[0];
-				sLabel = sLabelId ? document.getElementById(sLabelId).getAttribute("aria-label") : "";
+				sLabel = sLabelId ? document.getElementById(sLabelId).textContent : "";
 
 				if (sLabel) {
 					oPicker.setTitle(sLabel);
@@ -1601,7 +1604,13 @@ function(
 				],
 
 				ariaLabelledBy: InvisibleText.getStaticId("sap.m", "TIMEPICKER_SET_TIME"),
-				beforeOpen: this.onBeforeNumericOpen.bind(this)
+				beforeOpen: this.onBeforeNumericOpen.bind(this),
+				afterOpen: function() {
+					this.fireAfterValueHelpOpen();
+				}.bind(this),
+				afterClose: function() {
+					this.fireAfterValueHelpClose();
+				}.bind(this)
 			});
 
 			oPicker.open = function() {
@@ -1654,7 +1663,7 @@ function(
 				sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
 
 			oDate = this._getPickerParser()
-				.parse(sFormattedDate, sap.ui.getCore().getConfiguration().getTimezone())[0];
+				.parse(sFormattedDate, Configuration.getTimezone())[0];
 
 			this._isClockPicker = true;
 			this._isNumericPicker = false;
@@ -1688,7 +1697,7 @@ function(
 				sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
 
 			oDate = this._getPickerParser()
-				.parse(sFormattedDate, sap.ui.getCore().getConfiguration().getTimezone())[0];
+				.parse(sFormattedDate, Configuration.getTimezone())[0];
 
 			this._isClockPicker = false;
 			this._isNumericPicker = true;
@@ -1716,7 +1725,7 @@ function(
 		 */
 		 TimePicker.prototype._getLocaleBasedPattern = function (sPlaceholder) {
 			return LocaleData.getInstance(
-				sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()
+				Configuration.getFormatSettings().getFormatLocale()
 			).getTimePattern(sPlaceholder);
 		};
 
@@ -1904,8 +1913,10 @@ function(
 			if (oTimePicker._checkStyle(sDisplayFormat)) {
 				sMask = LocaleData.getInstance(oLocale).getTimePattern(sDisplayFormat);
 			} else {
-				sDisplayFormat = sDisplayFormat.replace(/'/g, ""); // single quotes (like 'ч') are irrelevant for DateFormat, so they are for the mask
-				sMask = sDisplayFormat;
+				sMask = sDisplayFormat
+					.replace(/hh/ig, "h")
+					.replace(/h(?!')/ig, "h9")
+					.replace(/'h(?=')/ig, "'^h"); // add escape caret character for the mask before the hour character surrounded by single quotes
 			}
 
 			this._oTimePicker = oTimePicker;
@@ -1928,7 +1939,6 @@ function(
 			oTimePicker.setPlaceholderSymbol(PLACEHOLDER_SYMBOL);
 
 			//set hours allowed chars in the mask
-			sMask = sMask.replace(/hh/ig, "h").replace(/h/ig, "h9");
 			if (this.b24H) {
 				sAllowedHourChars = "[" + this.sLeadingRegexChar + "012]";
 			} else {
@@ -1945,9 +1955,14 @@ function(
 
 			//set minutes and seconds allowed chars in the mask
 			this.iMinuteNumber1Index = sMask.indexOf("mm");
-			sMask = sMask.replace(/mm/g, "59");
 			this.iSecondNumber1Index = sMask.indexOf("ss");
-			sMask = sMask.replace(/ss/g, "59");
+
+			sMask = sMask
+				.replace(/'mm(?=')/g, "'^mm")
+				.replace(/mm(?!')/g, "59")
+				.replace(/'ss(?=')/g, "'^ss")
+				.replace(/ss(?!')/g, "59")
+				.replace(/'/g, ""); // single quotes (like 'ч') are irrelevant for DateFormat, so they are for the mask
 
 			this._maskRuleMinSec = new MaskInputRule({
 				maskFormatSymbol: "5",
@@ -2256,15 +2271,14 @@ function(
 				type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT"),
 				description: [sValue, oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim(),
 				autocomplete: "none",
-				haspopup: true,
-				owns: this.getId() + "-clocks"
+				haspopup: true
 			});
 
 			return oInfo;
 		};
 
 		function getDefaultDisplayFormat() {
-			var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
+			var oLocale = Configuration.getFormatSettings().getFormatLocale(),
 				oLocaleData = LocaleData.getInstance(oLocale);
 
 			return oLocaleData.getTimePattern(TimeFormatStyles.Medium);
@@ -2301,6 +2315,7 @@ function(
 			}
 
 			this._resetTempValue(iBegin, iEnd);
+			this._bCheckForLiveChange = true;
 			this.updateDomValue(this._oTempValue.toString());
 			this._setCursorPosition(Math.max(this._iUserInputStartPosition, iStart));
 		};

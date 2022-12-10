@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(["sap/ui/Device"], function(Device) {
+sap.ui.define(["sap/ui/Device", "sap/ui/core/Configuration"], function(Device, Configuration) {
 	"use strict";
 
 	/**
@@ -26,7 +26,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			sLabelText = oControl.getLabelText() || "",
 			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 			iSliderIndex,
-			bRtl = sap.ui.getCore().getConfiguration().getRTL();
+			bRtl = Configuration.getRTL();
 
 		oRM.openStart("div", oControl);
 		oRM.class("sapMTimePickerContainer");

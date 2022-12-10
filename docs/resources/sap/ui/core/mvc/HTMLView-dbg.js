@@ -43,16 +43,23 @@ sap.ui.define([
 	 * @extends sap.ui.core.mvc.View
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @public
 	 * @since 1.9.2
 	 * @alias sap.ui.core.mvc.HTMLView
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated Since version 1.108, as there are no more known usages of <code>HTMLViews</code>,
+	 *    and as the use of HTML as syntax does not bring any advantages over XML. The HTML necessary for
+	 *    the <code>HTMLView</code> is not re-used for the HTML of the controls, but is fully replaced.
+	 *
+	 *    Consider using {@link sap.ui.core.mvx.XMLView XMLViews} or "typed views" (view classes
+	 *    written in JavaScript) instead. For more information, see the documentation on
+	 *    {@link topic:91f27e3e6f4d1014b6dd926db0e91070 View types}.
 	 */
 	var HTMLView = View.extend("sap.ui.core.mvc.HTMLView", /** @lends sap.ui.core.mvc.HTMLView.prototype */ {
 		metadata : {
-			library : "sap.ui.core"
+			library : "sap.ui.core",
+			deprecated: true
 		},
 		renderer: HTMLViewRenderer
 	});

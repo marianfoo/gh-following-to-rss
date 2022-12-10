@@ -30,17 +30,20 @@ sap.ui.define([
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.42.0
 	 * @alias sap.m.TreeItemBase
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var TreeItemBase = ListItemBase.extend("sap.m.TreeItemBase", /** @lends sap.m.TreeItemBase.prototype */ { metadata : {
-		library : "sap.m"
-	}});
+	var TreeItemBase = ListItemBase.extend("sap.m.TreeItemBase", /** @lends sap.m.TreeItemBase.prototype */ {
+		metadata : {
+			library : "sap.m"
+		},
+
+		renderer: TreeItemBaseRenderer
+	});
 
 	TreeItemBase.prototype.ExpandedIconURI = IconPool.getIconURI("navigation-down-arrow");
 	TreeItemBase.prototype.CollapsedIconURI = IconPool.getIconURI("navigation-right-arrow");
@@ -64,12 +67,11 @@ sap.ui.define([
 	 */
 	TreeItemBase.prototype.getItemNodeContext = function() {
 		var oTree = this.getTree();
+		var oTreeProxy = this._getTreeBindingProxy();
 		var oNode = null;
-		var oBinding = oTree ? oTree.getBinding("items") : null;
 
-		if (oTree && oBinding) {
-			oBinding = oTree.getBinding("items");
-			oNode = oBinding.getNodeByIndex(oTree.indexOfItem(this));
+		if (oTreeProxy) {
+			oNode = oTreeProxy.getNodeByIndex(oTree.indexOfItem(this));
 		}
 
 		return oNode;
@@ -127,9 +129,14 @@ sap.ui.define([
 	 */
 	TreeItemBase.prototype.isLeaf = function() {
 		var oTree = this.getTree(),
-			oNode = this.getItemNodeContext();
+			oTreeProxy = this._getTreeBindingProxy();
 
-		return oNode ? !oTree.getBinding("items").nodeHasChildren(oNode) : false;
+		if (oTreeProxy) {
+			var iIndex = oTree.indexOfItem(this);
+			return oTreeProxy.isLeaf(iIndex);
+		}
+
+		return false;
 	};
 
 	/**
@@ -162,14 +169,14 @@ sap.ui.define([
 	 * @since 1.42.0
 	 */
 	TreeItemBase.prototype.getExpanded = function() {
-		var oTree = this.getTree();
-		if (!oTree) {
+		var oTree = this.getTree(),
+			oTreeProxy = this._getTreeBindingProxy();
+		if (!oTree || !oTreeProxy) {
 			return false;
 		}
 
 		var iIndex = oTree.indexOfItem(this);
-		var oBinding = oTree.getBinding("items");
-		return (oBinding && oBinding.isExpanded(iIndex));
+		return oTreeProxy.isExpanded(iIndex);
 	};
 
 	TreeItemBase.prototype.setSelected = function (bSelected) {
@@ -373,6 +380,13 @@ sap.ui.define([
 
 	TreeItemBase.prototype.onlongdragover = function(oEvent) {
 		this.informTree("LongDragOver");
+	};
+
+	TreeItemBase.prototype._getTreeBindingProxy = function() {
+		var oTree = this.getTree();
+		if (oTree) {
+			return oTree._oProxy;
+		}
 	};
 
 	return TreeItemBase;

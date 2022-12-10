@@ -6,14 +6,10 @@
 
 sap.ui.define([
 	'./InputBase',
-	'./ComboBoxTextField',
 	'./ComboBoxBase',
 	'./Tokenizer',
 	'./Token',
-	'./List',
-	'./StandardListItem',
 	'./Popover',
-	'./GroupHeaderListItem',
 	'./CheckBox',
 	'./Toolbar',
 	'./library',
@@ -22,7 +18,6 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'sap/ui/core/Item',
-	'sap/ui/core/SeparatorItem',
 	'sap/ui/core/ResizeHandler',
 	'./MultiComboBoxRenderer',
 	"sap/ui/dom/containsOrEquals",
@@ -32,8 +27,6 @@ sap.ui.define([
 	"sap/m/inputUtils/ListHelpers",
 	"sap/m/inputUtils/filterItems",
 	"sap/m/inputUtils/itemsVisibilityHandler",
-	"sap/m/inputUtils/selectionRange",
-	"sap/m/inputUtils/calculateSelectionStart",
 	"sap/m/inputUtils/forwardItemPropertiesToToken",
 	"sap/m/inputUtils/getTokenByItem",
 	"sap/ui/events/KeyCodes",
@@ -50,14 +43,10 @@ sap.ui.define([
 ],
 function(
 	InputBase,
-	ComboBoxTextField,
 	ComboBoxBase,
 	Tokenizer,
 	Token,
-	List,
-	StandardListItem,
 	Popover,
-	GroupHeaderListItem,
 	CheckBox,
 	Toolbar,
 	library,
@@ -66,7 +55,6 @@ function(
 	coreLibrary,
 	Device,
 	Item,
-	SeparatorItem,
 	ResizeHandler,
 	MultiComboBoxRenderer,
 	containsOrEquals,
@@ -76,8 +64,6 @@ function(
 	ListHelpers,
 	filterItems,
 	itemsVisibilityHandler,
-	selectionRange,
-	calculateSelectionStart,
 	forwardItemPropertiesToToken,
 	getTokenByItem,
 	KeyCodes,
@@ -159,7 +145,7 @@ function(
 	 * </ul>
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @extends sap.m.ComboBoxBase
@@ -167,90 +153,93 @@ function(
 	 * @since 1.22.0
 	 * @alias sap.m.MultiComboBox
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/multi-combobox/ Multi-Combo Box}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var MultiComboBox = ComboBoxBase.extend("sap.m.MultiComboBox", /** @lends sap.m.MultiComboBox.prototype */ { metadata: {
+	var MultiComboBox = ComboBoxBase.extend("sap.m.MultiComboBox", /** @lends sap.m.MultiComboBox.prototype */ {
+		metadata: {
 
-		library: "sap.m",
-		designtime: "sap/m/designtime/MultiComboBox.designtime",
-		properties: {
+			library: "sap.m",
+			designtime: "sap/m/designtime/MultiComboBox.designtime",
+			properties: {
 
-			/**
-			 * Keys of the selected items. If the key has no corresponding item, no changes will apply. If duplicate keys exists the first item matching the key is used.
-			 */
-			selectedKeys: { type: "string[]", group: "Data", defaultValue: [] },
+				/**
+				 * Keys of the selected items. If the key has no corresponding item, no changes will apply. If duplicate keys exists the first item matching the key is used.
+				 */
+				selectedKeys: { type: "string[]", group: "Data", defaultValue: [] },
 
-			/**
-			 * Defines if there are selected items or not.
-			 */
-			hasSelection: { type: "boolean", visibility: "hidden", defaultValue: false },
+				/**
+				 * Defines if there are selected items or not.
+				 */
+				hasSelection: { type: "boolean", visibility: "hidden", defaultValue: false },
 
-			/**
-			 * Determines if the select all checkbox is visible on top of suggestions.
-			 */
-			showSelectAll: { type: "boolean", defaultValue: false }
-		},
-		associations: {
+				/**
+				 * Determines if the select all checkbox is visible on top of suggestions.
+				 */
+				showSelectAll: { type: "boolean", defaultValue: false }
+			},
+			associations: {
 
-			/**
-			 * Provides getter and setter for the selected items from
-			 * the aggregation named items.
-			 */
-			selectedItems: { type: "sap.ui.core.Item", multiple: true, singularName: "selectedItem" }
-		},
-		aggregations: {
-			/**
-			 * The tokenizer which displays the tokens
-			 */
-			tokenizer: {type: "sap.m.Tokenizer", multiple: false, visibility: "hidden"}
-		},
-		events: {
+				/**
+				 * Provides getter and setter for the selected items from
+				 * the aggregation named items.
+				 */
+				selectedItems: { type: "sap.ui.core.Item", multiple: true, singularName: "selectedItem" }
+			},
+			aggregations: {
+				/**
+				 * The tokenizer which displays the tokens
+				 */
+				tokenizer: {type: "sap.m.Tokenizer", multiple: false, visibility: "hidden"}
+			},
+			events: {
 
-			/**
-			 * Event is fired when selection of an item is changed.
-			 * Note: please do not use the "change" event inherited from sap.m.InputBase
-			 */
-			selectionChange: {
-				parameters: {
+				/**
+				 * Event is fired when selection of an item is changed.
+				 * Note: please do not use the "change" event inherited from sap.m.InputBase
+				 */
+				selectionChange: {
+					parameters: {
 
-					/**
-					 * Item which selection is changed
-					 */
-					changedItem: { type: "sap.ui.core.Item" },
+						/**
+						 * Item which selection is changed
+						 */
+						changedItem: { type: "sap.ui.core.Item" },
 
-					/**
-					 * Array of items whose selection has changed.
-					 */
-					changedItems : {type : "sap.ui.core.Item[]"},
+						/**
+						 * Array of items whose selection has changed.
+						 */
+						changedItems : {type : "sap.ui.core.Item[]"},
 
-					/**
-					 * Selection state: true if item is selected, false if
-					 * item is not selected
-					 */
-					selected: { type: "boolean" },
+						/**
+						 * Selection state: true if item is selected, false if
+						 * item is not selected
+						 */
+						selected: { type: "boolean" },
 
-					/**
-					 * Indicates whether the select all action is triggered or not.
-					 */
-					selectAll : {type : "boolean"}
+						/**
+						 * Indicates whether the select all action is triggered or not.
+						 */
+						selectAll : {type : "boolean"}
+					}
+				},
+
+				/**
+				 * Event is fired when user has finished a selection of items in a list box and list box has been closed.
+				 */
+				selectionFinish: {
+					parameters: {
+
+						/**
+						 * The selected items which are selected after list box has been closed.
+						 */
+						selectedItems: { type: "sap.ui.core.Item[]" }
+					}
 				}
 			},
-
-			/**
-			 * Event is fired when user has finished a selection of items in a list box and list box has been closed.
-			 */
-			selectionFinish: {
-				parameters: {
-
-					/**
-					 * The selected items which are selected after list box has been closed.
-					 */
-					selectedItems: { type: "sap.ui.core.Item[]" }
-				}
-			}
+			dnd: { draggable: false, droppable: true }
 		},
-		dnd: { draggable: false, droppable: true }
-	}});
+
+		renderer: MultiComboBoxRenderer
+	});
 
 	IconPool.insertFontFaceStyle();
 	EnabledPropagator.apply(MultiComboBox.prototype, [true]);
@@ -1176,6 +1165,9 @@ function(
 		if (!oList) {
 			return;
 		}
+
+		// apply aria role="listbox" to List control
+		oList.applyAriaRole("listbox");
 
 		// configure the list
 		oList.setMode(ListMode.MultiSelect);
@@ -2309,20 +2301,16 @@ function(
 		var bItemSelected = false;
 		var aSelectedItems = this.getSelectedItems();
 
-		// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
-		if (window.clipboardData) {
 
-			// IE
-			sOriginalText = window.clipboardData.getData("Text");
-		} else {
+		sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
 
-			// Chrome, Firefox, Safari
-			sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
+		if (sOriginalText.length && sOriginalText.endsWith("\r\n")) {
+			sOriginalText = sOriginalText.substring(0, sOriginalText.lastIndexOf("\r\n"));
 		}
 
-		var aSeparatedText = sOriginalText.split(/\r\n|\r|\n/g);
+		var aSeparatedText = sOriginalText.split(/\r\n|\r|\n|\t/g);
 
-		if (aSeparatedText && aSeparatedText.length > 0) {
+		if (aSeparatedText && aSeparatedText.length > 1) {
 			ListHelpers.getSelectableItems(this.getItems())
 				.filter(function (oItem) {
 					return aSelectedItems.indexOf(oItem) === -1;
@@ -2878,7 +2866,6 @@ function(
 	 * @param {string[]} aKeys An array of item keys that identifies the items to be removed
 	 * @returns {sap.ui.core.Item[]} The removed items
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	MultiComboBox.prototype.removeSelectedKeys = function (aKeys) {
 		var oItem, aItems = [];
@@ -2934,7 +2921,6 @@ function(
 	 * @param {string[]} aKeys An array of item keys that identifies the items to be added as selected
 	 * @returns {this} <code>this</code> to allow method chaining.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	MultiComboBox.prototype.addSelectedKeys = function (aKeys) {
 		var aStoredSelectedKeys,
@@ -3045,7 +3031,7 @@ function(
 	 * Map an item type of sap.ui.core.Item to an item type of sap.m.StandardListItem.
 	 *
 	 * @param {sap.ui.core.Item} oItem The item to be matched
-	 * @returns {sap.m.StandardListItem | GroupHeaderListItem | null} The matched StandardListItem
+	 * @returns {sap.m.StandardListItem | sap.m.GroupHeaderListItem | null} The matched StandardListItem
 	 * @private
 	 */
 	MultiComboBox.prototype._mapItemToListItem = function (oItem) {

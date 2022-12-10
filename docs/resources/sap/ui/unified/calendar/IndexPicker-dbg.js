@@ -32,13 +32,12 @@ sap.ui.define([
 	 * This control serves for picking an item from a grid with items which are relative periods in Plannig Calendar.
 	 * This is used inside the sap.m.PlanningCalendar relative views. Not for stand alone usage.
 	 * @extends sap.ui.core.Control
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @private
 	 * @since 1.93.0
 	 * @alias sap.ui.unified.calendar.IndexPicker
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var IndexPicker = Control.extend("sap.ui.unified.calendar.IndexPicker", {
 		metadata: {

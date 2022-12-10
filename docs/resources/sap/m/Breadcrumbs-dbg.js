@@ -64,13 +64,12 @@ sap.ui.define([
 	 * @implements sap.m.IBreadcrumbs, sap.m.IOverflowToolbarContent, sap.ui.core.IShrinkable
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.34
 	 * @alias sap.m.Breadcrumbs
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 *
 	 */
 	var Breadcrumbs = Control.extend("sap.m.Breadcrumbs", {
@@ -127,7 +126,9 @@ sap.ui.define([
 					type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"
 				}
 			}
-		}
+		},
+
+		renderer: BreadcrumbsRenderer
 	});
 
 	/*
@@ -785,7 +786,7 @@ sap.ui.define([
 		var oConfig = {
 			canOverflow: true,
 			getCustomImportance: function () {
-				return "High";
+				return "Medium";
 			}
 		};
 

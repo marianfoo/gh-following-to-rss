@@ -221,7 +221,7 @@ sap.ui.define(["./library", "sap/ui/core/Core", "sap/ui/Device", "sap/ui/core/In
 	 * @protected
 	 */
 	ListItemBaseRenderer.getAriaRole = function(oLI) {
-		return "option";
+		return "listitem";
 	};
 
 	/**
@@ -283,13 +283,11 @@ sap.ui.define(["./library", "sap/ui/core/Core", "sap/ui/Device", "sap/ui/core/In
 	ListItemBaseRenderer.getAccessibilityState = function(oLI) {
 		var sAriaLabelledBy = this.getAriaLabelledBy(oLI),
 			sAriaDescribedBy = this.getAriaDescribedBy(oLI),
+			sRole = this.getAriaRole(oLI),
 			mAccessibilityState = {
-				role: this.getAriaRole(oLI)
+				role: sRole,
+				roledescription: sRole === "listitem" ? oLI.getAccessibilityType(Core.getLibraryResourceBundle("sap.m")) : null
 			};
-
-		if (oLI.isSelectable()) {
-			mAccessibilityState.selected = oLI.getProperty("selected");
-		}
 
 		if (sAriaLabelledBy) {
 			mAccessibilityState.labelledby = {
@@ -307,6 +305,19 @@ sap.ui.define(["./library", "sap/ui/core/Core", "sap/ui/Device", "sap/ui/core/In
 
 		if (oLI.getNavigated()) {
 			mAccessibilityState.current = true;
+		}
+
+		if (sRole === "listitem") {
+			mAccessibilityState.selected = null;
+			if (oLI.isGroupHeader()) {
+				mAccessibilityState.role = "group";
+				var aGroupedItems = oLI.getGroupedItems();
+				if (aGroupedItems && aGroupedItems.length) {
+					mAccessibilityState.owns = aGroupedItems.join(" ");
+				}
+			}
+		} else if (oLI.isSelectable()) {
+			mAccessibilityState.selected = oLI.getSelected();
 		}
 
 		return mAccessibilityState;
@@ -400,7 +411,7 @@ sap.ui.define(["./library", "sap/ui/core/Core", "sap/ui/Device", "sap/ui/core/In
 		rm.class("sapMLIBShowSeparator");
 		rm.class("sapMLIBType" + oLI.getType());
 
-		if (Device.system.desktop && oLI.isActionable()) {
+		if (oLI.isActionable(true)) {
 			rm.class("sapMLIBActionable");
 			rm.class("sapMLIBHoverable");
 		}

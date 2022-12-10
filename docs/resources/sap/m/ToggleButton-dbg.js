@@ -32,40 +32,43 @@ sap.ui.define([
 	 * @extends sap.m.Button
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @alias sap.m.ToggleButton
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/button/ Toggle Button}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ToggleButton = Button.extend("sap.m.ToggleButton", /** @lends sap.m.ToggleButton.prototype */ { metadata : {
+	var ToggleButton = Button.extend("sap.m.ToggleButton", /** @lends sap.m.ToggleButton.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		designtime: "sap/m/designtime/ToggleButton.designtime",
-		properties : {
+			library : "sap.m",
+			designtime: "sap/m/designtime/ToggleButton.designtime",
+			properties : {
 
-			/**
-			 * The property is “true” when the control is toggled. The default state of this property is "false".
-			 */
-			pressed : {type : "boolean", group : "Data", defaultValue : false}
-		},
-		events: {
-			/**
-			 * Fired when the user clicks or taps on the control.
-			 */
-			press: {
-				parameters: {
+				/**
+				 * The property is “true” when the control is toggled. The default state of this property is "false".
+				 */
+				pressed : {type : "boolean", group : "Data", defaultValue : false}
+			},
+			events: {
+				/**
+				 * Fired when the user clicks or taps on the control.
+				 */
+				press: {
+					parameters: {
 
-					/**
-					 * The current pressed state of the control.
-					 */
-					pressed: { type: "boolean" }
+						/**
+						 * The current pressed state of the control.
+						 */
+						pressed: { type: "boolean" }
+					}
 				}
 			}
-		}
-	}});
+		},
+
+		renderer: ToggleButtonRenderer
+	});
 
 	EnabledPropagator.call(ToggleButton.prototype);
 
@@ -101,7 +104,7 @@ sap.ui.define([
 	 */
 	ToggleButton.prototype.onkeydown = function(oEvent) {
 
-		if (oEvent.which === KeyCodes.ENTER) {
+		if (oEvent.which === KeyCodes.ENTER && !oEvent.ctrlKey && !oEvent.metaKey) {
 			this.ontap(oEvent);
 		}
 	};

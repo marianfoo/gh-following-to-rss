@@ -7,13 +7,15 @@
 // Provides the base implementation for all model implementations
 sap.ui.define([
 	'sap/ui/core/message/MessageProcessor',
+	'./ManagedObjectBindingSupport',
 	'./BindingMode',
 	'./Context',
 	'./Filter',
 	"sap/base/util/deepEqual",
 	"sap/base/util/each"
 ],
-	function(MessageProcessor, BindingMode, Context, Filter, deepEqual, each) {
+	function(MessageProcessor, ManagedObjectBindingSupport, BindingMode, Context, Filter, deepEqual,
+		each) {
 	"use strict";
 
 
@@ -49,7 +51,7 @@ sap.ui.define([
 	 * @extends sap.ui.core.message.MessageProcessor
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @public
 	 * @alias sap.ui.model.Model
@@ -101,7 +103,6 @@ sap.ui.define([
 			]
 		}
 	});
-
 
 	/**
 	 * Map of event names, that are provided by the model.
@@ -719,7 +720,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oContext] Context with which the path should be resolved
 	 * @param {object} [mParameters] Additional model-specific parameters
 	 *
-	 * @returns {any}
+	 * @returns {any|undefined}
 	 *   The value for the given path/context or <code>undefined</code> if data could not be found
 	 * @public
 	 */
@@ -1118,7 +1119,7 @@ sap.ui.define([
 	 * model type.
 	 * @abstract
 	 * @public
-	 * @returns {sap.ui.model.MetaModel}
+	 * @returns {sap.ui.model.MetaModel|undefined}
 	 *   The meta model or <code>undefined</code> if no meta model exists.
 	 */
 	Model.prototype.getMetaModel = function() {
@@ -1228,6 +1229,16 @@ sap.ui.define([
 			_traverseFilter(oFilter.aFilters, fnCheck);
 		}
 	}
+
+	/**
+	 * Introduces data binding support on the ManagedObject prototype via mixin.
+	 * Called by the ManagedObject during property propagation.
+	 * @param {sap.ui.base.ManagedObject.prototype} ManagedObject
+	 *   the sap.ui.base.ManagedObject.prototype
+	 */
+	Model.prototype.mixinBindingSupport = function(ManagedObject) {
+		Object.assign(ManagedObject, ManagedObjectBindingSupport);
+	};
 
 	return Model;
 

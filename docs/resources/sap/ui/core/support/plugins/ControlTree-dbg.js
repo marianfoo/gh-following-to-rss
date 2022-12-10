@@ -58,7 +58,7 @@ sap.ui.define([
 		 * @class This class represents the ControlTree plugin for the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
 		 *
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 * @private
 		 * @alias sap.ui.core.support.plugins.ControlTree
 		 */
@@ -1244,7 +1244,7 @@ sap.ui.define([
 						// By now just XML and HTML can be serialized
 						mViews = (sType && sType !== "XML") ? oViewSerializer.serializeToHTML() : oViewSerializer.serializeToXML();
 					} else {
-						var oUIArea = this.oCore.getUIArea(oEvent.getParameter("controlID"));
+						var oUIArea = UIArea.registry.get(oEvent.getParameter("controlID"));
 						var aContent = oUIArea.getContent();
 						for ( var i = 0; i < aContent.length; i++) {
 							oView.addContent(aContent[i]);
@@ -1400,7 +1400,7 @@ sap.ui.define([
 				return mElement;
 			}
 
-			each(oCore.mUIAreas, function(iIndex, oUIArea) {
+			each(UIArea.registry.all(), function(iIndex, oUIArea) {
 				var mElement = serializeElement(oUIArea);
 				aControlTree.push(mElement);
 			});
@@ -1464,7 +1464,7 @@ sap.ui.define([
 
 			var oControl = this.oCore.byId(sId);
 
-			if (!oControl && this.oCore.getUIArea(sId)) {
+			if (!oControl && UIArea.registry.get(sId)) {
 
 				aControlProps.push({
 					control: "sap.ui.core.UIArea",

@@ -83,7 +83,7 @@ sap.ui.define([
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @private
@@ -219,7 +219,9 @@ sap.ui.define([
 						}
 					}
 				}
-			}
+			},
+
+			renderer: SinglePlanningCalendarMonthGridRenderer
 		});
 
 		SinglePlanningCalendarMonthGrid.prototype.init = function() {
@@ -235,6 +237,8 @@ sap.ui.define([
 
 			this.setStartDate(new Date());
 			this._configureAppointmentsDragAndDrop();
+
+			this._oUnifiedRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype.exit = function() {
@@ -335,13 +339,18 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._findSrcControl = function (oEvent) {
-			if (!oEvent.target.parentElement || !oEvent.target.parentElement.classList.contains("sapUiCalendarRowApps")) {
-				return oEvent.srcControl;
-			}
-
 			// data-sap-ui-related - This is a relation to appointment object.
 			// This is the connection between the DOM Element and the Object representing an appointment.
-			var sAppointmentId = oEvent.target.parentElement.getAttribute("data-sap-ui-related");
+			var oTargetElement = oEvent.target,
+				oTargetsParentElement = oTargetElement.parentElement,
+				sAppointmentId;
+			if (!oTargetsParentElement || oTargetsParentElement.classList.contains("sapMSPCMonthDays")) {
+				return oEvent.srcControl;
+			} else if (oTargetsParentElement.classList.contains("sapUiCalendarRowApps")) {
+				sAppointmentId = oTargetsParentElement.getAttribute("data-sap-ui-related") || oTargetsParentElement.id;
+			} else {
+				sAppointmentId = oTargetElement.getAttribute("data-sap-ui-related") || oTargetElement.id;
+			}
 
 			// finding the appointment
 			return this.getAppointments().find(function (oAppointment) {

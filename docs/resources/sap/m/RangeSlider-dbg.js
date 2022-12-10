@@ -7,21 +7,21 @@ sap.ui.define([
     "sap/ui/core/InvisibleText",
     "sap/base/Log",
     "./Slider",
-    "./SliderTooltip",
     "./SliderUtilities",
     "./RangeSliderRenderer",
     "sap/ui/thirdparty/jquery",
-    "sap/ui/events/KeyCodes"
+    "sap/ui/events/KeyCodes",
+    "sap/ui/core/Configuration"
 ],
     function(
         InvisibleText,
         log,
         Slider,
-        SliderTooltip,
         SliderUtilities,
         RangeSliderRenderer,
         jQuery,
-        KeyCodes
+        KeyCodes,
+        Configuration
     ) {
         "use strict";
 
@@ -51,14 +51,13 @@ sap.ui.define([
          * @extends sap.m.Slider
          *
          * @author SAP SE
-         * @version 1.103.0
+         * @version 1.108.1
          *
          * @constructor
          * @public
          * @since 1.38
          * @alias sap.m.RangeSlider
          * @see {@link fiori:https://experience.sap.com/fiori-design-web/range-slider/ Range Slider}
-         * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
          */
         var RangeSlider = Slider.extend("sap.m.RangeSlider", /** @lends sap.m.RangeSlider.prototype */ {
             metadata: {
@@ -100,7 +99,9 @@ sap.ui.define([
                     endHandlePressed: { type: "boolean", visibility: "hidden" }
                 },
                 designtime: "sap/m/designtime/RangeSlider.designtime"
-            }
+            },
+
+            renderer: RangeSliderRenderer
         });
 
         RangeSlider.prototype.init = function () {
@@ -167,7 +168,7 @@ sap.ui.define([
         };
 
         RangeSlider.prototype.onBeforeRendering = function () {
-            this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
+            this._bRTL = Configuration.getRTL();
 
             var aRange = this.getRange();
 

@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/InvisibleText"], function (Renderer, SliderRenderer, InvisibleText) {
+sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/InvisibleText", "sap/ui/core/Configuration"], function (Renderer, SliderRenderer, InvisibleText, Configuration) {
 	"use strict";
 
 	/**
@@ -45,7 +45,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 		var fValue,
 			aRange = oControl.getRange(),
 			bEnabled = oControl.getEnabled(),
-			bRTL = sap.ui.getCore().getConfiguration().getRTL();
+			bRTL = Configuration.getRTL();
 
 		oRM.openStart("span", mOptions && mOptions.id);
 		if (mOptions && (mOptions.position !== undefined)) {

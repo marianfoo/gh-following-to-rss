@@ -28,12 +28,11 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @since 1.34
 	 *
 	 * @public
 	 * @alias sap.m.FeedContent
-	 * @ui5-metamodel This control will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FeedContent = Control.extend("sap.m.FeedContent", /** @lends sap.m.FeedContent.prototype */ {
 		metadata : {
@@ -86,7 +85,9 @@ sap.ui.define([
 				 */
 				"press" : {}
 			}
-		}
+		},
+
+		renderer: FeedContentRenderer
 	});
 
 	/* --- Lifecycle Handling --- */

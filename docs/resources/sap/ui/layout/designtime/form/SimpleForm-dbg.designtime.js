@@ -101,6 +101,9 @@ sap.ui.define([
 							};
 						}
 					},
+					remove : {
+						removeLastElement: true
+					},
 					createContainer: {
 						changeType: "addSimpleFormGroup",
 						changeOnRelevantContainer: true,

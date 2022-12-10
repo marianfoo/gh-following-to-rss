@@ -1,4 +1,3 @@
-
 /*!
  * OpenUI5
  * (c) Copyright 2009-2022 SAP SE or an SAP affiliate company.
@@ -27,7 +26,8 @@ sap.ui.define([
 	"sap/ui/dom/getScrollbarSize",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
-	"sap/ui/dom/jquery/Focusable", // jQuery Plugin "firstFocusableDomRef", lastFocusableDomRef
+	"sap/ui/core/Configuration",
+	"sap/ui/dom/jquery/Focusable", // jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
 	"sap/ui/dom/jquery/rect", // jQuery Plugin "rect"
 	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ],
@@ -51,7 +51,8 @@ sap.ui.define([
 		jQuery,
 		getScrollbarSize,
 		KeyCodes,
-		Log
+		Log,
+		Configuration
 	) {
 		"use strict";
 
@@ -120,12 +121,11 @@ sap.ui.define([
 		* @extends sap.ui.core.Control
 		* @implements sap.ui.core.PopupInterface
 		* @author SAP SE
-		* @version 1.103.0
+		* @version 1.108.1
 		*
 		* @public
 		* @alias sap.m.Popover
 		* @see {@link fiori:https://experience.sap.com/fiori-design-web/popover/ Popover}
-		* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		*/
 		var Popover = Control.extend("sap.m.Popover", /** @lends sap.m.Popover.prototype */ {
 			metadata: {
@@ -388,7 +388,9 @@ sap.ui.define([
 					}
 				},
 				designtime: "sap/m/designtime/Popover.designtime"
-			}
+			},
+
+			renderer: PopoverRenderer
 		});
 
 
@@ -750,6 +752,8 @@ sap.ui.define([
 					this._marginTopInit = true;
 				}
 			}
+
+			this._repositionOffset();
 		};
 
 		/**
@@ -803,7 +807,6 @@ sap.ui.define([
 		 * @param {boolean} bSkipInstanceManager Indicates whether popover should be managed by InstanceManager or not
 		 * @returns {this} Reference to the control instance for chaining
 		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Popover.prototype.openBy = function (oControl, bSkipInstanceManager) {
 			// If already opened with the needed content then return
@@ -823,6 +826,13 @@ sap.ui.define([
 			bForceCompactArrowOffset = Parameters.get({
 					name: "_sap_m_Popover_ForceCompactArrowOffset"
 			}) || "true"; // ensure a default value is added in case the parameter is not loaded
+
+			arrowOffset = Parameters.get({
+				name: "_sap_m_Popover_ArrowOffset",
+				callback: function(sValue) {
+					arrowOffset = parseFloat(sValue);
+				}
+			}) || 8;
 
 			// cast the string value to boolean
 			bForceCompactArrowOffset = bForceCompactArrowOffset === "true";
@@ -934,7 +944,6 @@ sap.ui.define([
 		 *
 		 * @return {this} Reference to the control instance for chaining
 		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Popover.prototype.close = function () {
 			var eOpenState = this.oPopup.getOpenState(),
@@ -972,7 +981,6 @@ sap.ui.define([
 		 * @return {boolean} whether the Popover is currently opened
 		 * @public
 		 * @since 1.9.1
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Popover.prototype.isOpen = function () {
 			return this.oPopup && this.oPopup.isOpen();
@@ -1070,7 +1078,7 @@ sap.ui.define([
 
 		Popover.prototype._onOrientationChange = function () {
 			var ePopupState = (this.oPopup && this.oPopup.getOpenState()) || {};
-			if (ePopupState !== OpenState.OPEN) {
+			if (ePopupState !== OpenState.OPEN && ePopupState !== OpenState.OPENING) {
 				return;
 			}
 
@@ -1116,8 +1124,6 @@ sap.ui.define([
 		Popover.prototype._handleOpened = function () {
 			var that = this;
 			this.oPopup.detachOpened(this._handleOpened, this);
-
-			this._repositionOffset();
 
 			//	recalculate the arrow position when the size of the popover changes.
 			if (!Device.support.touch) {
@@ -1238,7 +1244,7 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent The event object
 		 */
 		Popover.prototype.onmousedown = function (oEvent) {
-			var bRTL = sap.ui.getCore().getConfiguration().getRTL();
+			var bRTL = Configuration.getRTL();
 			if (!oEvent.target.classList || !oEvent.target.classList.contains("sapMPopoverResizeHandle")) {
 				return;
 			}
@@ -1383,7 +1389,7 @@ sap.ui.define([
 				iFlipOffset = oFlipPlacement === PlacementType.PreferredRightOrFlip ? Math.abs(iParentWidth) : -Math.abs(iParentWidth);
 			}
 
-			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+			var bRtl = Configuration.getRTL();
 			var iOffsetX = iFlipOffset * (bRtl ? -1 : 1) + this.getOffsetX() * (bRtl ? -1 : 1);
 			return iOffsetX;
 		};
@@ -1519,7 +1525,7 @@ sap.ui.define([
 			var iPopoverWidth = this.$().outerWidth();
 			var bPreferredLeftOrFlip = this.getPlacement() === PlacementType.PreferredLeftOrFlip;
 			var bPreferredRightOrFlip = this.getPlacement() === PlacementType.PreferredRightOrFlip;
-			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+			var bRtl = Configuration.getRTL();
 
 			if (bPreferredPlacementLeft && iLeftSpace > iPopoverWidth + this._arrowOffset) {
 					this._bHorizontalFlip = false;
@@ -1617,7 +1623,7 @@ sap.ui.define([
 			var $this = this.$();
 			var iHeight = $this.outerHeight();
 			var iWidth = $this.outerWidth();
-			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+			var bRtl = Configuration.getRTL();
 
 			var $parent = jQuery(this._getOpenByDomRef());
 			var bHasParent = $parent[0] !== undefined;
@@ -1791,7 +1797,7 @@ sap.ui.define([
 		 */
 		Popover.prototype._recalculateMargins = function (sCalculatedPlacement, oPosParams) {
 			var fNewCalc;
-			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+			var bRtl = Configuration.getRTL();
 
 			//make the popover never cover the control or dom node that opens the popover
 			switch (sCalculatedPlacement) {
@@ -1844,7 +1850,7 @@ sap.ui.define([
 				bOverRight = iPosToRightBorder < (oPosParams._fPopoverMarginRight + fScrollbarSize),
 				bOverTop = oPosParams._fPopoverOffset.top < oPosParams._fPopoverMarginTop,
 				bOverBottom = iPosToBottomBorder < oPosParams._fPopoverMarginBottom,
-				bRtl = sap.ui.getCore().getConfiguration().getRTL();
+				bRtl = Configuration.getRTL();
 
 			if (bExceedHorizontal) {
 				iLeft = oPosParams._fPopoverMarginLeft;
@@ -1977,7 +1983,7 @@ sap.ui.define([
 		 */
 		Popover.prototype._getArrowOffsetCss = function (sCalculatedPlacement, oPosParams) {
 			var iPosArrow,
-				bRtl = sap.ui.getCore().getConfiguration().getRTL();
+				bRtl = Configuration.getRTL();
 
 			// Recalculate Popover width and height because they can be changed after position adjustments
 			oPosParams._fPopoverWidth = oPosParams._$popover.outerWidth();

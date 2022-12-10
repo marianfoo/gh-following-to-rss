@@ -3,8 +3,9 @@
  * (c) Copyright 2009-2022 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
-sap.ui.define(["sap/ui/core/library"],
-	function(coreLibrary) {
+sap.ui.define(["sap/ui/core/library",
+"sap/ui/core/Configuration"],
+	function(coreLibrary,  Configuration) {
 	"use strict";
 
 
@@ -37,7 +38,9 @@ sap.ui.define(["sap/ui/core/library"],
 			sTextDirectionLowerCase = oControl.getTextDirection().toLowerCase(),
 			sControlId = oControl.getId(),
 			bEnabled = oControl.getEnabled(),
-			bAnimate = sap.ui.getCore().getConfiguration().getAnimation() && oControl.getDisplayAnimation();
+			sAnimationMode = Configuration.getAnimationMode(),
+			bAnimate = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal
+				&& oControl.getDisplayAnimation();
 
 		// PI container
 		oRm.openStart("div", oControl);

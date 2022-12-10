@@ -12,7 +12,7 @@ sap.ui.define(function () {
 	 *
 	 * @alias sap.m.changeHandler.ChangeLinkTarget
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @experimental Since 1.71
 	 */
 	var ChangeLinkTarget = {};
@@ -30,8 +30,7 @@ sap.ui.define(function () {
 	 */
 	ChangeLinkTarget.applyChange = function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
-		var oChangeDefinition = oChange.getDefinition();
-		var sTarget = oChangeDefinition.content;
+		var sTarget = oChange.getContent();
 		return Promise.resolve()
 			.then(oModifier.getProperty.bind(oModifier, oControl, "target"))
 			.then(function(oProperty) {

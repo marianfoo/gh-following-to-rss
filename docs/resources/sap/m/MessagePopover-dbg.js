@@ -91,14 +91,13 @@ function(
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @public
 		 * @since 1.28
 		 * @alias sap.m.MessagePopover
 		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/message-popover/ Message Popover}
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var MessagePopover = Control.extend("sap.m.MessagePopover", /** @lends sap.m.MessagePopover.prototype */ {
 			metadata: {
@@ -114,7 +113,7 @@ function(
 					 * @param {function} config.promise.resolve Method to resolve promise
 					 * @param {function} config.promise.reject Method to reject promise
 					 */
-					asyncDescriptionHandler: {type: "any", group: "Behavior", defaultValue: null},
+					asyncDescriptionHandler: {type: "function", group: "Behavior", defaultValue: null},
 
 					/**
 					 * Callback function for resolving a promise after a link has been asynchronously validated inside this function.
@@ -127,7 +126,7 @@ function(
 					 * @param {function} config.promise.resolve Method to resolve promise
 					 * @param {function} config.promise.reject Method to reject promise
 					 */
-					asyncURLHandler: {type: "any", group: "Behavior", defaultValue: null},
+					asyncURLHandler: {type: "function", group: "Behavior", defaultValue: null},
 
 					/**
 					 * Determines the position, where the control will appear on the screen.
@@ -270,7 +269,9 @@ function(
 						}
 					}
 				}
-			}
+			},
+
+			renderer: MessagePopoverRenderer
 		});
 
 
@@ -378,6 +379,9 @@ function(
 				modal: false,
 				afterOpen: function (oEvent) {
 					that.fireAfterOpen({openBy: oEvent.getParameter("openBy")});
+
+					// ensure that the focus is in the correct place
+					that.getInitiallyExpanded() && that._oMessageView._restoreFocus();
 				},
 				afterClose: function (oEvent) {
 					that._oMessageView._navContainer.backToTop();
@@ -514,7 +518,6 @@ function(
 		 * @param {sap.ui.core.Control} oControl Control which opens the MessagePopover
 		 * @returns {this} Reference to the 'this' for chaining purposes
 		 * @public
-		 * @ui5-metamodel
 		 */
 		MessagePopover.prototype.openBy = function (oControl) {
 			var oResponsivePopoverControl = this._oPopover.getAggregation("_popup"),

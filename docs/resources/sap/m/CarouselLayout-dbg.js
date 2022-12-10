@@ -15,7 +15,7 @@ sap.ui.define(["sap/ui/base/ManagedObject"], function (ManagedObject) {
 	 * Applies a <code>sap.m.CarouselLayout</code> to a provided DOM element or Control.
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @extends sap.ui.base.ManagedObject
 	 *
@@ -23,7 +23,6 @@ sap.ui.define(["sap/ui/base/ManagedObject"], function (ManagedObject) {
 	 * @constructor
 	 * @public
 	 * @alias sap.m.CarouselLayout
-	 * @ui5-metamodel This simple type will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CarouselLayout = ManagedObject.extend("sap.m.CarouselLayout", /** @lends sap.m.CarouselLayout.prototype */ {
 		metadata: {

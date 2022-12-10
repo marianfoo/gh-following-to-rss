@@ -4,9 +4,11 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 sap.ui.define([
-	"sap/m/table/columnmenu/Entry"
+	"sap/m/table/columnmenu/Entry",
+	"sap/m/library"
 ], function(
-	Entry
+	Entry,
+	library
 ) {
 	"use strict";
 
@@ -23,7 +25,7 @@ sap.ui.define([
 	 * @extends sap.m.table.columnmenu.Entry
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @private
 	 * @experimental
@@ -47,7 +49,7 @@ sap.ui.define([
 	 * @public
 	 */
 	QuickActionBase.prototype.getEffectiveQuickActions = function() {
-		return [this];
+		return this.getVisible() ? [this] : [];
 	};
 
 	QuickActionBase.prototype.setVisible = function (bVisible) {
@@ -58,6 +60,19 @@ sap.ui.define([
 		this.setProperty("visible", bVisible);
 		this.getMenu() && this.getMenu()._createQuickActionGrids();
 		return this;
+	};
+
+	/**
+	 * Gets the category of this quick action.
+	 *
+	 * @returns {sap.m.table.columnmenu.Category} The category
+	 * @virtual
+	 */
+	QuickActionBase.prototype.getCategory = function() {
+		if (this.getMetadata().hasProperty("category")) {
+			return this.getProperty("category");
+		}
+		return library.table.columnmenu.Category.Generic;
 	};
 
 	return QuickActionBase;

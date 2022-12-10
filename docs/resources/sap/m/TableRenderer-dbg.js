@@ -4,8 +4,8 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/InvisibleText", "./library", "./ListBaseRenderer", "./ColumnListItemRenderer", "sap/m/table/Util"],
-	function(Renderer, Core, InvisibleText, library, ListBaseRenderer, ColumnListItemRenderer, Util) {
+sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/InvisibleText", "./library", "./ListBaseRenderer", "./ColumnListItemRenderer"],
+	function(Renderer, Core, InvisibleText, library, ListBaseRenderer, ColumnListItemRenderer) {
 	"use strict";
 
 
@@ -123,11 +123,11 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/Invisibl
 		rm.openEnd();
 
 		rm.openStart("tr", oTable.addNavSection(idPrefix + type + "er"));
-		rm.attr("tabindex", -1);
 
 		if (bHeaderHidden) {
 			rm.class("sapMListTblHeaderNone");
 		} else {
+			rm.attr("tabindex", -1);
 			rm.class("sapMListTblRow").class("sapMListTbl" + type + "er");
 			rm.class("sapMLIBFocusable").class("sapMTableRowCustomFocus");
 		}
@@ -208,16 +208,19 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/Invisibl
 
 			if (control) {
 				if (type === "Head") {
-					rm.openStart("div");
+					rm.openStart("div", oColumn.getId() + "-ah");
 					rm.class("sapMColumnHeader");
 
-					var oMenu = oColumn.getColumnHeaderMenu();
+					var oMenu = oColumn._getHeaderMenuInstance();
 					if ((oTable.bActiveHeaders || oMenu)  && !control.isA("sap.ui.core.InvisibleText")) {
 						// add active header attributes and style class
 						rm.attr("tabindex", 0);
 						rm.attr("role", "button");
 						rm.class("sapMColumnHeaderActive");
 						rm.attr("aria-haspopup", oMenu ? oMenu.getAriaHasPopupType().toLowerCase() : "dialog");
+						if (control.isA("sap.m.Label") && control.getRequired()) {
+							rm.attr("aria-describedby", InvisibleText.getStaticId("sap.m", "CONTROL_IN_COLUMN_REQUIRED"));
+						}
 					} else if (oTable.bFocusableHeaders) {
 						rm.attr("tabindex", 0);
 						rm.class("sapMColumnHeaderFocusable");
@@ -302,13 +305,6 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/Invisibl
 	};
 
 	/**
-	 * returns aria accessibility role
-	 */
-	TableRenderer.getAriaRole = function(oControl) {
-		return "";
-	};
-
-	/**
 	 * generate table columns
 	 */
 	TableRenderer.renderListHeadAttributes = function(rm, oControl) {
@@ -382,8 +378,8 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/Invisibl
 		rm.openEnd();
 
 		if (!oControl.shouldRenderItems()) {
-			var vNoData = oControl.getNoData();
-			if (vNoData && typeof vNoData !== "string" && vNoData.isA("sap.m.IllustratedMessage")) {
+			if (oControl.getAggregation("_noColumnsMessage")) {
+				// If _noColumnsMessage is set, there is for sure an IllustratedMessage used for no data visualization
 				rm.renderControl(oControl.getAggregation("_noColumnsMessage"));
 			} else {
 				rm.text(Core.getLibraryResourceBundle("sap.m").getText("TABLE_NO_COLUMNS"));

@@ -4,8 +4,8 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdparty/jquery"],
-	function(library, encodeCSS, jQuery) {
+sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdparty/jquery", "sap/ui/core/Configuration"],
+	function(library, encodeCSS, jQuery, Configuration) {
 	"use strict";
 
 	// shortcut for sap.m.GenericTileScope
@@ -13,8 +13,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 
 	// shortcut for sap.m.LoadState
 	var LoadState = library.LoadState;
-
-	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	/**
 	 * GenericTileLineMode renderer.
@@ -45,7 +43,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 		// Render a link when URL is provided, not in action scope and the state is enabled
 		var bRenderLink = oControl.getUrl() && !oControl._isInActionScope() && sState !== LoadState.Disabled;
 
-		this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
+		this._bRTL = Configuration.getRTL();
 
 		if (sScope === GenericTileScope.Actions) {
 			// given class only needs to be added if the tile's state is not disabled
@@ -74,8 +72,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 		oRm.attr("aria-label", sAriaText);
 		if (sAriaRoleDescription) {
 			oRm.attr("aria-roledescription", sAriaRoleDescription );
-		} else {
-			oRm.attr("aria-roledescription", oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION"));
 		}
 		if (sAriaRole) {
 			oRm.attr("role", sAriaRole);
@@ -87,7 +83,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 		oRm.class("sapMGT");
 		oRm.class(sScopeClass);
 		if (sScope ===  GenericTileScope.ActionMore) {
-				oRm.style("padding-right", "2.25rem");
+				oRm.style("padding-right", "3.3rem");
 		}
 		if (sState !== LoadState.Disabled && sScope === GenericTileScope.ActionRemove) {
 			oRm.class("sapMGTAcionRemove");
@@ -117,6 +113,10 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 			oRm.class("sapMGTFailed");
 		}
 		oRm.openEnd();
+		if (sTooltipText) {
+			oControl.getAggregation("_invisibleText").setText(sTooltipText);
+			oRm.renderControl(oControl.getAggregation("_invisibleText"));
+		}
 		// focus div was only getting rendered when screen size was small
 		// which in turn was not rendering active state when screen size was large and thus default browser active state would suffice
 		// in the new line tile visualisation we need active state same as other generic tiles
@@ -214,7 +214,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 
 			oRm.close("div"); //.sapMGTTouchArea
 		}
-
+		if (oControl._isInActionScope() && oControl.getState() !== LoadState.Disabled) {
+			oRm.renderControl(oControl._oRemoveButton);
+		}
 		if (bRenderLink) {
 			oRm.close("a");
 		} else {
@@ -299,8 +301,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 			oRm.openEnd();
 
 			oRm.renderControl(oControl._oMoreIcon);
-			oRm.renderControl(oControl._oRemoveButton);
-
 			oRm.close("span");
 		}
 	};

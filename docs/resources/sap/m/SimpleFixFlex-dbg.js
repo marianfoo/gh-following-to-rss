@@ -10,7 +10,7 @@ sap.ui.define([
 	'sap/base/Log',
 	'./SimpleFixFlexRenderer'
 ],
-function (Control, ResizeHandler, Log /**, SimpleFixFlexRenderer */) {
+function(Control, ResizeHandler, Log, SimpleFixFlexRenderer) {
 	"use strict";
 	/**
 	 * Constructor for a new <code>sap.m.SimpleFixFlex</code>.
@@ -31,16 +31,14 @@ function (Control, ResizeHandler, Log /**, SimpleFixFlexRenderer */) {
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @private
 	 * @since 1.65
 	 * @alias sap.m.SimpleFixFlex
-	 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 	 */
 	var SimpleFixFlex = Control.extend("sap.m.SimpleFixFlex", /** @lends sap.m.SimpleFixFlex.prototype */ {
-
 		metadata: {
 			library: "sap.m",
 			aggregations: {
@@ -70,7 +68,9 @@ function (Control, ResizeHandler, Log /**, SimpleFixFlexRenderer */) {
 					defaultValue: true
 				}
 			}
-		}
+		},
+
+		renderer: SimpleFixFlexRenderer
 	});
 
 	/*************************************** Static members ******************************************/

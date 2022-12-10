@@ -19,13 +19,12 @@ sap.ui.define(['sap/m/semantic/SemanticButton'], function(SemanticButton) {
 	 * @extends sap.m.semantic.SemanticButton
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.36
 	 * @alias sap.m.semantic.DeleteAction
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	var DeleteAction = SemanticButton.extend("sap.m.semantic.DeleteAction", /** @lends sap.m.semantic.DeleteAction.prototype */ {

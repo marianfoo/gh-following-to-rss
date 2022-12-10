@@ -20,7 +20,7 @@ sap.ui.define([
 	});
 
 	ItemContainer.prototype.getEffectiveItems = function() {
-		return this.getItems().reduce(function(aItems, oItem) {
+		return !this.getVisible() ? [] : this.getItems().reduce(function(aItems, oItem) {
 			return aItems.concat(oItem.getEffectiveItems());
 		}, []);
 	};

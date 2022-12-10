@@ -3,8 +3,8 @@
  * (c) Copyright 2009-2022 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
-sap.ui.define(["sap/m/InputBaseRenderer", 'sap/ui/core/Renderer'],
-	function(InputBaseRenderer, Renderer) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 	/**
@@ -25,6 +25,9 @@ sap.ui.define(["sap/m/InputBaseRenderer", 'sap/ui/core/Renderer'],
 
 		oRm.openStart("div", oControl);
 		oRm.class("sapMDynamicDateRange");
+		if (oControl.getHideInput()) {
+			oRm.class("sapMDDRHiddenInput");
+		}
 		oRm.openEnd();
 
 		oRm.renderControl(oControl._oInput);

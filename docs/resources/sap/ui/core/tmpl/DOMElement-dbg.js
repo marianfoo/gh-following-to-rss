@@ -27,13 +27,12 @@ sap.ui.define([
 	 * @class
 	 * Represents a DOM element. It allows to use databinding for the properties and nested DOM attributes.
 	 * @extends sap.ui.core.Control
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @public
 	 * @since 1.15
 	 * @deprecated since 1.56
 	 * @alias sap.ui.core.tmpl.DOMElement
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DOMElement = Control.extend("sap.ui.core.tmpl.DOMElement", /** @lends sap.ui.core.tmpl.DOMElement.prototype */ {
 		metadata : {
@@ -164,7 +163,6 @@ sap.ui.define([
 	 *         The value of the DOM attribute. If the value is undefined the DOM attribute will be removed.
 	 * @return {any} value of attribute or <code>this</code> when called as a setter
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	DOMElement.prototype.attr = function(sKey, sValue) {
 
@@ -219,7 +217,6 @@ sap.ui.define([
 	 *         The name of the DOM attribute.
 	 * @return {this}
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	DOMElement.prototype.removeAttr = function(sKey) {
