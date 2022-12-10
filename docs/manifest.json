@@ -9,7 +9,13 @@
 		"description": "{{appDescription}}",
 		"applicationVersion": {
 			"version": "1.0.0"
-		}
+		},
+		"dataSources": {
+			"tags": {
+			  "uri": "/data/tags.json",
+			  "type": "JSON"
+			}
+		  }
 	},
 
 	"sap.ui": {
@@ -55,6 +61,10 @@
 				"settings": {
 					"bundleName": "de.marianzeis.githubfollower.i18n.i18n"
 				}
+			},
+			"tags":{
+				"type": "sap.ui.model.json.JSONModel",
+        "dataSource": "tags"
 			}
 		},
 

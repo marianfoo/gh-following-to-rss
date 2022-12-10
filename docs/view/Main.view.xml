@@ -20,56 +20,66 @@
 
 				</core:Icon>
 				<FlexBox direction="Row" alignItems="Start" class="sapUiTinyMarginBottom">
-					<Label text="GitHub Username" >
+					<Label text="GitHub Username">
 						<layoutData>
 							<FlexItemData growFactor="1" />
 						</layoutData>
 					</Label>
-					<Input id="gitHubUsernameInput"
-						value="{
+					<Input id="gitHubUsernameInput" value="{
 							path : 'data>/gitHubUsername',
 							type : 'sap.ui.model.type.String',
 							constraints : {
 								minLength: 1
 							}
-						}"
-						>
+						}">
 						<layoutData>
 							<FlexItemData growFactor="1" />
 						</layoutData>
 					</Input>
-					<Button text="Load GitHub Data"  press="loadGitHubData" busyIndicatorDelay="50" busy="{data>/busyGitHubButton}" type="{data>/typeGitHubButton}">
+					<Button text="Load GitHub Data" press="loadGitHubData" busyIndicatorDelay="50" busy="{data>/busyGitHubButton}" type="{data>/typeGitHubButton}">
 						<layoutData>
 							<FlexItemData growFactor="1" />
 						</layoutData>
 					</Button>
 				</FlexBox>
-				<FlexBox direction="Row"  alignItems="Start" class="sapUiTinyMarginBottom">
+				<FlexBox direction="Row" alignItems="Start" class="sapUiTinyMarginBottom">
 					<Label text="SAP Community Username" wrapping="true">
 						<layoutData>
 							<FlexItemData growFactor="1" />
 						</layoutData>
 					</Label>
-					<Input id="SAPCommunityUsernameInput" 
-						value="{
+					<Input id="SAPCommunityUsernameInput" value="{
 							path : 'data>/SAPCommunityUsername',
 							type : 'sap.ui.model.type.String',
 							constraints : {
 								minLength: 1
 							}
-						}"
-						>
+						}">
 						<layoutData>
 							<FlexItemData growFactor="1" />
 						</layoutData>
 					</Input>
-					<Button text="Load SAP Data"  press="loadSAPData" busyIndicatorDelay="50" busy="{data>/busySAPButton}" type="{data>/typeSAPButton}">
+					<Button text="Load SAP Data" press="loadSAPData" busyIndicatorDelay="50" busy="{data>/busySAPButton}" type="{data>/typeSAPButton}">
 						<layoutData>
 							<FlexItemData growFactor="1" />
 						</layoutData>
 					</Button>
 				</FlexBox>
-				<Button text="Generate and Download OPML File"  press="opml" busyIndicatorDelay="50" busy="{data>/busyOPMLButton}" enabled="{data>/OPMLButtonEnabled}">
+				<FlexBox direction="Row" alignItems="Start" class="sapUiTinyMarginBottom">
+					<Label text="SAP Blogs Tags" wrapping="true">
+						<layoutData>
+							<FlexItemData growFactor="1" />
+						</layoutData>
+					</Label>
+					<MultiInput id="multiInput" suggestionItems="{
+									path: 'tags>/',
+									sorter: { path: 'title' }
+								}" valueHelpRequest="handleValueHelp" tokenUpdate="onTokenUpdate">
+						<core:Item key="{tags>tag}" text="{tags>title}" />
+					</MultiInput>
+				</FlexBox>
+
+				<Button text="Generate and Download OPML File" press="opml" busyIndicatorDelay="50" busy="{data>/busyOPMLButton}" enabled="{data>/OPMLButtonEnabled}">
 					<layoutData>
 						<FlexItemData growFactor="1" />
 					</layoutData>

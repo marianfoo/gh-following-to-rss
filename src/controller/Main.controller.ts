@@ -15,6 +15,10 @@ import {
   connectFunctionsEmulator,
   httpsCallable,
 } from "githubfollower/lib/firebase";
+import Fragment from "sap/ui/core/Fragment";
+import FilterOperator from "sap/ui/model/FilterOperator";
+import Token from "sap/m/Token";
+import Filter from "sap/ui/model/Filter";
 
 /**
  * @namespace de.marianzeis.githubfollower.controller
@@ -166,8 +170,10 @@ export default class Main extends BaseController {
       this.getModel("data").getProperty("/GitHubFollowing") || [];
     const SAPFollowing =
       this.getModel("data").getProperty("/SAPFollowing") || [];
+    const SAPBlogs = this.byId("multiInput").getTokens();
     let outlinesGitHub = [];
     let outlinesSAP = [];
+    let outlinesSAPBlogs = [];
     var header = {
       title: "title-text",
       dateCreated: new Date(2014, 2, 9),
@@ -191,10 +197,20 @@ export default class Main extends BaseController {
         htmlUrl: SAPFollowing[i].profileUrl,
       });
     }
+    for (var i = 0; i < SAPBlogs.length; i++) {
+      outlinesSAPBlogs.push({
+        text: SAPBlogs[i].getText(),
+        title: SAPBlogs[i].getText(),
+        type: "rss",
+        xmlUrl: `https://content.services.sap.com/feed?type=blogpost&amp;tags=&amp;${SAPBlogs[i].getKey()}`,
+        htmlUrl: `https://blogs.sap.com/tags/${SAPBlogs[i].getKey()}`,
+      });
+    }
     let headerXML =
       "<head><title>Sample OPML file for RSSReader</title></head>";
     let outlinesXMLGitHub = [];
     let outlinesXMLSAP = [];
+    let outlinesXMLSAPBlogs = [];
     for (let i = 0; i < outlinesGitHub.length; i++) {
       let outlinesXML =
         '<outline text="' +
@@ -225,6 +241,21 @@ export default class Main extends BaseController {
         '" />';
       outlinesXMLSAP.push(outlinesXML);
     }
+    for (let i = 0; i < outlinesSAPBlogs.length; i++) {
+      let outlinesXML =
+        '<outline text="' +
+        outlinesSAPBlogs[i].text +
+        '" title="' +
+        outlinesSAPBlogs[i].title +
+        '" type="' +
+        outlinesSAPBlogs[i].type +
+        '" xmlUrl="' +
+        outlinesSAPBlogs[i].xmlUrl +
+        '" htmlUrl="' +
+        outlinesSAPBlogs[i].htmlUrl +
+        '" />';
+      outlinesXMLSAPBlogs.push(outlinesXML);
+    }
     let outlinesXML = "";
     if (outlinesXMLSAP.length > 0) {
       outlinesXML =
@@ -237,6 +268,13 @@ export default class Main extends BaseController {
         outlinesXML +
         '<outline text="GitHub Following" title="GitHub Following">' +
         outlinesXMLGitHub +
+        " </outline>";
+    }
+    if (outlinesXMLSAPBlogs.length > 0) {
+      outlinesXML =
+        outlinesXML +
+        '<outline text="SAP Blogs" title="SAP Blogs">' +
+        outlinesXMLSAPBlogs +
         " </outline>";
     }
     let xml =
@@ -288,4 +326,68 @@ export default class Main extends BaseController {
 
     document.body.removeChild(element);
   }
+
+  public handleValueHelp(oEvent): any {
+    var sInputValue = oEvent.getSource().getValue(),
+      oView = this.getView();
+
+    // create value help dialog
+    if (!this._pValueHelpDialog) {
+      this._pValueHelpDialog = Fragment.load({
+        id: oView.getId(),
+        name: "de.marianzeis.githubfollower.view.Dialog",
+        controller: this
+      }).then(function (oValueHelpDialog) {
+        oView.addDependent(oValueHelpDialog);
+        return oValueHelpDialog;
+      });
+    }
+
+    this._pValueHelpDialog.then(function (oValueHelpDialog) {
+      // create a filter for the binding
+      oValueHelpDialog.getBinding("items").filter([new Filter(
+        "title",
+        FilterOperator.Contains,
+        sInputValue
+      )]);
+      // open value help dialog filtered by the input value
+      oValueHelpDialog.open(sInputValue);
+    });
+  }
+
+  public _handleValueHelpSearch(evt):any {
+    var sValue = evt.getParameter("value");
+    var oFilter = new Filter(
+      "title",
+      FilterOperator.Contains,
+      sValue
+    );
+    var oddIdFilter = new Filter({
+      path: 'title',
+      test: function(value) {
+          return value.toLowerCase().indexOf(sValue.toLowerCase()) !== -1
+      }
+  });
+    evt.getSource().getBinding("items").filter(oddIdFilter);
+  }
+
+  public onTokenUpdate(evt):any {
+    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
+  }
+
+  public _handleValueHelpClose(evt):any {
+    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
+    var aSelectedItems = evt.getParameter("selectedItems"),
+      oMultiInput = this.byId("multiInput");
+
+    if (aSelectedItems && aSelectedItems.length > 0) {
+      aSelectedItems.forEach(function (oItem) {
+        oMultiInput.addToken(new Token({
+          text: oItem.getTitle(),
+          key: oItem.getBindingContext("tags").getObject().tag
+        }));
+      });
+    }
+  }
+
 }
