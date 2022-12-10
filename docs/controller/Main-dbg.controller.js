@@ -40,7 +40,10 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/Message
         data = JSON.parse(response.data);
         console.log(data);
       } catch (error) {
-        MessageBox.error("Error while loading SAP Data");
+        this.getModel("data").setProperty("/busySAPButton", false);
+        this.getModel("data").setProperty("/busyOPMLButton", false);
+        MessageBox.error("Error while loading SAP Data (maybe User not found)");
+        return;
       }
       this.getModel("data").setProperty("/SAPFollowing", data.list_items);
       this.getModel("data").setProperty("/typeSAPButton", "Success");
@@ -117,8 +120,12 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/Message
       } catch (error) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         if (error.status === 404) {
+          this.getModel("data").setProperty("/busyGitHubButton", false);
+          this.getModel("data").setProperty("/busyOPMLButton", false);
           MessageBox.error(`User ${githubUsername} not found`);
         } else {
+          this.getModel("data").setProperty("/busyGitHubButton", false);
+          this.getModel("data").setProperty("/busyOPMLButton", false);
           MessageBox.error(error.message);
         }
       }
