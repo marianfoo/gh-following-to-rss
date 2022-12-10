@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(["sap/ui/Device"], function(Device) {
+sap.ui.define([], function() {
 	"use strict";
 
 	/**
@@ -45,6 +45,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			oSegButton = oControl.getAggregation("_buttonAmPm"),
 			aSeparators = oControl._getTimeSeparators(oControl._getDisplayFormatPattern()),
 			sSeparator,
+			iSepearatorsIndex,
 			iIndex;
 
 		if (aButtons) {
@@ -61,7 +62,8 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			for (iIndex = 0; iIndex < aButtons.length; iIndex++) {
 				oRm.renderControl(aButtons[iIndex]);
 				if (iIndex < aButtons.length - 1) {
-					sSeparator = aSeparators.shift();
+					iSepearatorsIndex = aSeparators.length - (aButtons.length - 1)  + iIndex;
+					sSeparator = aSeparators[iSepearatorsIndex];
 					if (!sSeparator) {
 						sSeparator = " ";
 					}

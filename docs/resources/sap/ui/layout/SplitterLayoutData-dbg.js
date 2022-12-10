@@ -24,7 +24,7 @@ sap.ui.define(['sap/ui/core/LayoutData', './library'],
 	 * (The CSS value "auto" is used internally to recalculate the size of the content
 	 * dynamically and is not directly set as style property.)
 	 * @extends sap.ui.core.LayoutData
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
@@ -32,7 +32,6 @@ sap.ui.define(['sap/ui/core/LayoutData', './library'],
 	 * @experimental Since version 1.22.0.
 	 * API is not yet finished and might change completely
 	 * @alias sap.ui.layout.SplitterLayoutData
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SplitterLayoutData = LayoutData.extend("sap.ui.layout.SplitterLayoutData", /** @lends sap.ui.layout.SplitterLayoutData.prototype */ { metadata : {
 

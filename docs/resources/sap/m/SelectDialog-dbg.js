@@ -119,13 +119,12 @@ function(
 	 * @extends sap.m.SelectDialogBase
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @alias sap.m.SelectDialog
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/select-dialog/ Select Dialog}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SelectDialog = SelectDialogBase.extend("sap.m.SelectDialog", /** @lends sap.m.SelectDialog.prototype */ { metadata : {
 
@@ -599,7 +598,6 @@ function(
 	 * @param {string} sSearchValue  A value for the search can be passed to match with the filter applied to the list binding.
 	 * @returns {this} <code>this</code> pointer for chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SelectDialog.prototype.open = function (sSearchValue) {
 		// CSN #80686/2014: only invalidate inner dialog if call does not come from inside
@@ -1052,25 +1050,33 @@ function(
 			fnOKAfterClose = null;
 
 		fnOKAfterClose = function () {
-			// reset internal selection value
-			that._sSearchFieldValue = null;
-
 			//after searching we need all the items
 			var oBindings = that._oList.getBinding("items");
-			if (oBindings && oBindings.aFilters && oBindings.aFilters.length) {
-
-				// When reset the filter, the selected items might go outside
-				// the currently visible items (outside the current growing number).
-				// Set the growing to false to prevent this.
+			if (oBindings && ((oBindings.getAllCurrentContexts().length > that._oList.getItems().length) || that._sSearchFieldValue)) {
+				// There are 2 cases where the model items are more that the currently visible items
+				//  - search
+				//  - not all items are currently loaded (growing=true)
+				// In that cases we need to reset the filter (filter([])) and load all the items (growing=false),
+				// so we'll have all the selected items.
+				that._oList.destroyItems(); // fixes creating list items with duplicate ids
 				that._oList.setGrowing(false);
 				oBindings.filter([]);
 				that._oList.setGrowing(that.getGrowing());
-			}
-			that._oSelectedItem = that._oList.getSelectedItem();
-			that._aSelectedItems = that._oList.getSelectedItems();
+				that._oList.attachEventOnce("updateFinished", function () {
+					that._oSelectedItem = that._oList.getSelectedItem();
+					that._aSelectedItems = that._oList.getSelectedItems();
 
-			that._oDialog.detachAfterClose(fnOKAfterClose);
-			that._fireConfirmAndUpdateSelection();
+					that._fireConfirmAndUpdateSelection();
+				});
+			} else {
+				that._oSelectedItem = that._oList.getSelectedItem();
+				that._aSelectedItems = that._oList.getSelectedItems();
+
+				that._fireConfirmAndUpdateSelection();
+			}
+
+			// reset internal selection value
+			that._sSearchFieldValue = null;
 		};
 
 		if (!this._oOkButton) {
@@ -1079,7 +1085,7 @@ function(
 				text: this.getConfirmButtonText() || this._oRb.getText("SELECT_CONFIRM_BUTTON"),
 				press: function () {
 					// attach the reset function to afterClose to hide the dialog changes from the end user
-					that._oDialog.attachAfterClose(fnOKAfterClose);
+					that._oDialog.attachEventOnce("afterClose", fnOKAfterClose);
 					that._oDialog.close();
 				}
 			});

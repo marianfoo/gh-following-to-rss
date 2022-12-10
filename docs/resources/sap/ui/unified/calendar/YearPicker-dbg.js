@@ -15,9 +15,12 @@ sap.ui.define([
 	'sap/ui/unified/library',
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/library',
+	'sap/ui/core/Locale',
+	'sap/ui/core/LocaleData',
 	"./YearPickerRenderer",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
 ], function(
 	Control,
 	Device,
@@ -28,9 +31,12 @@ sap.ui.define([
 	library,
 	DateFormat,
 	coreLibrary,
+	Locale,
+	LocaleData,
 	YearPickerRenderer,
 	KeyCodes,
-	jQuery
+	jQuery,
+	Configuration
 ) {
 	"use strict";
 
@@ -54,13 +60,12 @@ sap.ui.define([
 	 * As in all date-time controls, all pubic JS Date objects that are given (e.g. <code>setDate()</code>) or read
 	 * (e.g. <code>getFirstRenderedDate</code>) with values which are considered as date objects in browser(local) timezone.
 	 * @extends sap.ui.core.Control
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.28.0
 	 * @alias sap.ui.unified.calendar.YearPicker
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var YearPicker = Control.extend("sap.ui.unified.calendar.YearPicker", /** @lends sap.ui.unified.calendar.YearPicker.prototype */ { metadata : {
 
@@ -108,6 +113,13 @@ sap.ui.define([
 			primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"},
 
 			/**
+			 * If set, the years are also displayed in this calendar type
+			 * If not set, the years are only displayed in the primary calendar type
+			 * @since 1.104.0
+			 */
+			secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"},
+
+			/**
 			 * Date as CalendarDate object. Holds the rendered date in the middle of the grid.
 			 * @since 1.84.0
 			 */
@@ -141,7 +153,7 @@ sap.ui.define([
 	YearPicker.prototype.init = function(){
 
 		// set default calendar type from configuration
-		var sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+		var sCalendarType = Configuration.getCalendarType();
 		this.setProperty("primaryCalendarType", sCalendarType);
 
 		// to format year with era in Japanese
@@ -303,6 +315,11 @@ sap.ui.define([
 		this._oMinDate = new CalendarDate(this._oMinDate, sCalendarType);
 		this._oMaxDate = new CalendarDate(this._oMaxDate, sCalendarType);
 
+		if (this._getSecondaryCalendarType()) {
+			this.setColumns(2);
+			this.setYears(8);
+		}
+
 		return this;
 
 	};
@@ -312,7 +329,6 @@ sap.ui.define([
 	 *
 	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	YearPicker.prototype.nextPage = function(){
 
@@ -327,7 +343,6 @@ sap.ui.define([
 	 *
 	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	YearPicker.prototype.previousPage = function(){
 
@@ -435,14 +450,14 @@ sap.ui.define([
 			oFocusedDate = CalendarDate.fromUTCDate(this._oFormatYyyymmdd.parse(sYyyymmdd, true), this.getPrimaryCalendarType());
 
 			if (this._bMousedownChange) {
-				if (oFocusedDate.isSame(oStartDate) || oFocusedDate.isSame(oEndDate)) {
+				if ((oFocusedDate.isSame(oStartDate) || oFocusedDate.isSame(oEndDate)) && !CalendarUtils._isOutside(oFocusedDate, this._oMinDate, this._oMaxDate)) {
 					jQuery(aDomRefs[i]).addClass("sapUiCalItemSel");
 				} else {
 					jQuery(aDomRefs[i]).removeClass("sapUiCalItemSel");
 				}
 			}
 
-			if (CalendarUtils._isBetween(oFocusedDate, oStartDate, oEndDate)) {
+			if (CalendarUtils._isBetween(oFocusedDate, oStartDate, oEndDate) && CalendarUtils._isBetween(oFocusedDate, this._oMinDate, this._oMaxDate)) {
 				jQuery(aDomRefs[i]).addClass("sapUiCalItemSelBetween");
 			} else {
 				jQuery(aDomRefs[i]).removeClass("sapUiCalItemSelBetween");
@@ -457,7 +472,6 @@ sap.ui.define([
 	 *
 	 * @returns {object} JavaScript Date Object
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @since 1.38.0
 	 */
 	YearPicker.prototype.getFirstRenderedDate = function(){
@@ -486,6 +500,83 @@ sap.ui.define([
 			iUpperThreshold = iReference + iThreshold;
 
 		return iValue >= iLowerThreshold && iValue <= iUpperThreshold;
+	};
+
+	YearPicker.prototype.setSecondaryCalendarType = function(sCalendarType){
+		this.setProperty("secondaryCalendarType", sCalendarType);
+		if (this._getSecondaryCalendarType()) {
+			this.setColumns(2);
+			this.setYears(8);
+		}
+		return this;
+	};
+
+	/**
+	 * Returns if there is secondary calendar type set and if it is different from the primary one.
+	 * @returns {boolean} if there is secondary calendar type set and if it is different from the primary one
+	 */
+	YearPicker.prototype._getSecondaryCalendarType = function(){
+		return this.getSecondaryCalendarType() === this.getPrimaryCalendarType() ? undefined : this.getSecondaryCalendarType();
+	};
+
+	/**
+	 * Calculates the first and last displayed date about a given year.
+	 * @param {CalendarDate} oDate the date about which the new dates are calculated
+	 * @returns {object} two values - start and end date
+	 */
+	YearPicker.prototype._getDisplayedSecondaryDates = function(oDate){
+		var sSecondaryCalendarType = this.getSecondaryCalendarType(),
+			oFirstDate = new CalendarDate(oDate, oDate.getCalendarType()),
+			oLastDate = new CalendarDate(oDate, oDate.getCalendarType());
+
+		oFirstDate.setMonth(0, 1);
+		oFirstDate = new CalendarDate(oFirstDate, sSecondaryCalendarType);
+
+		oLastDate.setYear(oLastDate.getYear() + 1); // create first day of next year
+		oLastDate.setMonth(0, 1);
+		oLastDate.setDate(oLastDate.getDate() - 1); // go back one day to receive last day in previous year
+		oLastDate = new CalendarDate(oLastDate, sSecondaryCalendarType);
+
+		return {start: oFirstDate, end: oLastDate};
+	};
+
+	/*
+	 * Use rendered locale for stand alone control
+	 * But as Calendar can have an own locale, use this one if used inside Calendar
+	 */
+	YearPicker.prototype._getLocale = function(){
+
+		var oParent = this._oSelectedDatesControlOrigin;
+
+		if (oParent && oParent._getLocale) {
+			return oParent._getLocale();
+		} else if (!this._sLocale) {
+			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
+		}
+
+		return this._sLocale;
+
+	};
+
+	/*
+	 * gets localeData for used locale
+	 * Use rendered locale for stand alone control
+	 * But as Calendar can have an own locale, use this one if used inside Calendar
+	 */
+	YearPicker.prototype._getLocaleData = function(){
+
+		var oParent = this._oSelectedDatesControlOrigin;
+
+		if (oParent && oParent._getLocaleData) {
+			return oParent._getLocaleData();
+		} else if (!this._oLocaleData) {
+			var sLocale = this._getLocale();
+			var oLocale = new Locale(sLocale);
+			this._oLocaleData = LocaleData.getInstance(oLocale);
+		}
+
+		return this._oLocaleData;
+
 	};
 
 	/**

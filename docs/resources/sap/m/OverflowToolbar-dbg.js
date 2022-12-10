@@ -13,14 +13,11 @@ sap.ui.define([
 	"sap/m/ToggleButton",
 	"sap/ui/core/InvisibleText",
 	"sap/m/Toolbar",
-	"sap/m/ToolbarSpacer",
 	"sap/m/OverflowToolbarLayoutData",
 	"sap/m/OverflowToolbarAssociativePopover",
 	"sap/m/OverflowToolbarAssociativePopoverControls",
 	'sap/ui/core/ResizeHandler',
 	"sap/ui/core/IconPool",
-	'sap/ui/core/theming/Parameters',
-	'sap/ui/dom/units/Rem',
 	"sap/ui/Device",
 	"./OverflowToolbarRenderer",
 	"sap/base/Log",
@@ -34,14 +31,11 @@ sap.ui.define([
 	ToggleButton,
 	InvisibleText,
 	Toolbar,
-	ToolbarSpacer,
 	OverflowToolbarLayoutData,
 	OverflowToolbarAssociativePopover,
 	OverflowToolbarAssociativePopoverControls,
 	ResizeHandler,
 	IconPool,
-	Parameters,
-	DomUnitsRem,
 	Device,
 	OverflowToolbarRenderer,
 	Log,
@@ -135,13 +129,12 @@ sap.ui.define([
 	 * @implements sap.ui.core.Toolbar,sap.m.IBar
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.28
 	 * @alias sap.m.OverflowToolbar
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 *
 	 */
 	var OverflowToolbar = Toolbar.extend("sap.m.OverflowToolbar", {
@@ -165,13 +158,16 @@ sap.ui.define([
 				_popover: {type: "sap.m.Popover", multiple: false, visibility: "hidden"}
 			},
 			designtime: "sap/m/designtime/OverflowToolbar.designtime"
-		}
+		},
+
+		renderer: OverflowToolbarRenderer
 	});
 
 	/**
 	 * STATIC MEMBERS
 	 */
 	OverflowToolbar.ARIA_ROLE_DESCRIPTION = "OVERFLOW_TOOLBAR_ROLE_DESCRIPTION";
+	OverflowToolbar.TOGGLE_BUTTON_TOOLTIP = "OVERFLOW_TOOLBAR_TOGGLE_BUTTON_TOOLTIP";
 
 	OverflowToolbar.CONTENT_SIZE_TOLERANCE = 1;
 
@@ -977,7 +973,7 @@ sap.ui.define([
 				id: this.getId() + sIdPrefix,
 				icon: IconPool.getIconURI("overflow"),
 				press: this._overflowButtonPressed.bind(this),
-				ariaLabelledBy: InvisibleText.getStaticId("sap.ui.core", "Icon.overflow"),
+				tooltip: oCore.getLibraryResourceBundle("sap.m").getText(OverflowToolbar.TOGGLE_BUTTON_TOOLTIP),
 				type: ButtonType.Transparent
 		});
 	};

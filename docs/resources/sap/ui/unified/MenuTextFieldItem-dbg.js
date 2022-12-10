@@ -15,6 +15,7 @@ sap.ui.define([
 	'sap/ui/events/PseudoEvents',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/Core',
+	'sap/ui/core/Configuration',
 	'sap/ui/core/IconPool', // required by RenderManager#icon
 	'sap/ui/dom/jquery/cursorPos' // provides jQuery.fn.cursorPos
 ],
@@ -27,7 +28,8 @@ sap.ui.define([
 		Log,
 		PseudoEvents,
 		InvisibleText,
-		Core
+		Core,
+		Configuration
 	) {
 	"use strict";
 
@@ -50,13 +52,12 @@ sap.ui.define([
 	 * @extends sap.ui.unified.MenuItemBase
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @since 1.21.0
 	 *
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.unified.MenuTextFieldItem
-	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) design time meta model
 	 */
 	var MenuTextFieldItem = MenuItemBase.extend("sap.ui.unified.MenuTextFieldItem", /** @lends sap.ui.unified.MenuTextFieldItem.prototype */ { metadata : {
 
@@ -86,7 +87,6 @@ sap.ui.define([
 	}});
 
 
-	(function() {
 
 	MenuTextFieldItem.prototype.render = function(oRenderManager, oItem, oMenu, oInfo){
 		var rm = oRenderManager,
@@ -349,7 +349,7 @@ sap.ui.define([
 
 
 	MenuTextFieldItem.prototype._checkCursorPosForNav = function(bForward) {
-		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		var bRtl = Configuration.getRTL();
 		var bBack = bForward ? bRtl : !bRtl;
 		var $input = this.$("tf");
 		var iPos = $input.cursorPos();
@@ -375,8 +375,6 @@ sap.ui.define([
 
 		return this._invisibleCountInformation;
 	};
-
-	}());
 
 
 	return MenuTextFieldItem;

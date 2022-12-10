@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration",
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos"
 ], function(
@@ -34,7 +35,8 @@ sap.ui.define([
 	DateTimeFieldRenderer,
 	deepEqual,
 	Log,
-	jQuery
+	jQuery,
+	Configuration
 ) {
 	"use strict";
 
@@ -59,13 +61,12 @@ sap.ui.define([
 	 * @extends sap.m.InputBase
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.50.0
 	 * @alias sap.m.DateTimeField
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DateTimeField = InputBase.extend("sap.m.DateTimeField", /** @lends sap.m.DateTimeField.prototype */ {
 		metadata: {
@@ -108,8 +109,32 @@ sap.ui.define([
 				 * @since 1.54
 				 */
 				initialFocusedDateValue: {type: "object", group: "Data", defaultValue: null}
+			},
+			events : {
+
+				/**
+				 * Fired when the value of the <code>DateTimeField</code> is changed by user interaction - each keystroke, delete, paste, etc.
+				 *
+				 * <b>Note:</b> Browsing autocomplete suggestions doesn't fire the event.
+				 * @since 1.104.0
+				 */
+				liveChange: {
+					parameters : {
+						/**
+						 * The current value of the input, after a live change event.
+						 */
+						value: {type : "string"},
+
+						/**
+						 * The previous value of the input, before the last user interaction.
+						 */
+						previousValue: {type : "string"}
+					}
+				}
 			}
-		}
+		},
+
+		renderer: DateTimeFieldRenderer
 	});
 
 	DateTimeField.prototype.setValue = function (sValue) {
@@ -123,8 +148,18 @@ sap.ui.define([
 			this.setLastValue(sValue);
 		}
 
-		// set the property in any case but check validity on output
-		this.setProperty("value", sValue);
+		// convert to date object and check validity on output
+		var oDate = this._parseAndValidateValue(sValue);
+		this.setProperty("dateValue", oDate, this._bPreferUserInteraction);
+
+		// do not call InputBase.setValue because the displayed value and the output value might have different pattern
+		this._formatValueAndUpdateOutput(oDate, sValue);
+		this.setProperty("value", sValue, this._bPreferUserInteraction);
+
+		return this;
+	};
+
+	DateTimeField.prototype._parseAndValidateValue = function(sValue) {
 		this._bValid = true;
 
 		// convert to date object
@@ -146,25 +181,26 @@ sap.ui.define([
 			}
 		}
 
-		this.setProperty("dateValue", oDate);
+		return oDate;
+	};
 
-		// do not call InputBase.setValue because the displayed value and the output value might have different pattern
-		if (this.getDomRef()) {
-			// convert to output
-			var sOutputValue;
-			if (oDate) {
-				sOutputValue = this._formatValue(oDate);
-			} else {
-				sOutputValue = sValue;
-			}
-
-			if (this._$input.val() !== sOutputValue) {
-				this._$input.val(sOutputValue);
-				this._curpos = this._$input.cursorPos();
-			}
+	DateTimeField.prototype._formatValueAndUpdateOutput = function(oDate, sValue) {
+		if (!this.getDomRef()) {
+			return;
 		}
+		// convert to output
+		var sOutputValue = oDate ? this._formatValue(oDate) : sValue;
 
-		return this;
+		if (this._bPreferUserInteraction) {
+			// Handle the value concurrency before setting the value property of the control,
+			// in order to distinguish whether the user only focused the input field or typed in it
+			this.handleInputValueConcurrency(sOutputValue);
+		} else if (this._$input.val() !== sOutputValue) {
+			// update the DOM value when necessary
+			// otherwise cursor can go to the end of text unnecessarily
+			this._$input.val(sOutputValue);
+			this._curpos = this._$input.cursorPos();
+		}
 	};
 
 	DateTimeField.prototype.setDateValue = function (oDate) {
@@ -245,6 +281,40 @@ sap.ui.define([
 				.setVisible(this.getValueState() !== ValueState.None);
 		}
 
+		this._sPreviousValue = this.getDOMValue();
+	};
+
+	/**
+	 * Event handler for user input.
+	 *
+	 * @public
+	 * @param {jQuery.Event} oEvent User input.
+	 */
+	 DateTimeField.prototype.oninput = function(oEvent) {
+		InputBase.prototype.oninput.call(this, oEvent);
+		if (oEvent.isMarked("invalid")) {
+			return;
+		}
+
+		var sValue = this.getDOMValue();
+
+		if (sValue !== this._sPreviousValue) {
+			this.fireLiveChange({
+				value: sValue,
+				previousValue : this._sPreviousValue
+			});
+			this._sPreviousValue = sValue;
+		}
+	 };
+
+	/**
+	 * Gets the inner input DOM value.
+	 *
+	 * @protected
+	 * @returns {any} The value of the input.
+	 */
+	 DateTimeField.prototype.getDOMValue = function() {
+		return this._$input.val();
 	};
 
 	DateTimeField.prototype._getValueStateHeader = function () {
@@ -297,7 +367,7 @@ sap.ui.define([
 
 	DateTimeField.prototype._getLocaleBasedPattern = function (sPlaceholder) {
 		return LocaleData.getInstance(
-			sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()
+			Configuration.getFormatSettings().getFormatLocale()
 		).getDatePattern(sPlaceholder);
 	};
 
@@ -343,7 +413,7 @@ sap.ui.define([
 				// convert to local date because it was parsed as UTC date
 				sFormatted = this._getTimezoneFormatter().format(oDate, "UTC");
 				oDateLocal = this._getTimezoneFormatter().parse(sFormatted,
-					sap.ui.getCore().getConfiguration().getTimezone())[0];
+					Configuration.getTimezone())[0];
 
 				oDate = oDateLocal;
 			}
@@ -368,7 +438,7 @@ sap.ui.define([
 		if (this._isSupportedBindingType(oBindingType)) {
 			if ((oBindingType.oFormatOptions && oBindingType.oFormatOptions.UTC) || (oBindingType.oConstraints && oBindingType.oConstraints.isDateOnly)) {
 				// convert to UTC date because it will be formatted as UTC date
-				sFormatted = this._getTimezoneFormatter().format(oDate, sap.ui.getCore().getConfiguration().getTimezone());
+				sFormatted = this._getTimezoneFormatter().format(oDate, Configuration.getTimezone());
 				oDateUTC = this._getTimezoneFormatter().parse(sFormatted, "UTC")[ 0 ];
 
 				oDate = oDateUTC;
@@ -436,7 +506,7 @@ sap.ui.define([
 		}
 
 		if (!sCalendarType) {
-			sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+			sCalendarType = Configuration.getCalendarType();
 		}
 
 		if (bDisplayFormat) {

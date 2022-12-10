@@ -23,8 +23,10 @@ sap.ui.define([
 	'sap/base/util/UriParameters',
 	'sap/base/util/isPlainObject',
 	'sap/base/util/LoaderExtensions',
+	'sap/ui/core/_UrlResolver',
 	'sap/ui/VersionInfo',
-	'sap/ui/core/mvc/ViewType'
+	'sap/ui/core/mvc/ViewType',
+	'sap/ui/core/Configuration'
 ], function(
 	Manifest,
 	ComponentMetadata,
@@ -43,8 +45,10 @@ sap.ui.define([
 	UriParameters,
 	isPlainObject,
 	LoaderExtensions,
+	_UrlResolver,
 	VersionInfo,
-	ViewType
+	ViewType,
+	Configuration
 ) {
 	"use strict";
 
@@ -65,7 +69,7 @@ sap.ui.define([
 	function addSapParams(oUri) {
 		['sap-client', 'sap-server'].forEach(function(sName) {
 			if (!oUri.hasSearch(sName)) {
-				var sValue = sap.ui.getCore().getConfiguration().getSAPParam(sName);
+				var sValue = Configuration.getSAPParam(sName);
 				if (sValue) {
 					oUri.addSearch(sName, sValue);
 				}
@@ -244,7 +248,7 @@ sap.ui.define([
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @alias sap.ui.core.Component
 	 * @since 1.9.2
 	 */
@@ -390,14 +394,29 @@ sap.ui.define([
 	// apply the registry plugin
 	ManagedObjectRegistry.apply(Component, {
 		onDeregister: function(sComponentId) {
-			Element.registry.forEach(function(oElement) {
-				if ( oElement._sapui_candidateForDestroy && oElement._sOwnerId === sComponentId && !oElement.getParent() ) {
+			forEachChildElement(function(oElement) {
+				if ( oElement._sapui_candidateForDestroy) {
 					Log.debug("destroying dangling template " + oElement + " when destroying the owner component");
 					oElement.destroy();
 				}
-			});
+			}, sComponentId);
 		}
 	});
+
+	/**
+	 * Executes the given callback function for each sap.ui.core.Element whose owner-component
+	 * has the given ID and which has no parent.
+	 * @param {function(sap.ui.core.Element, sap.ui.core.ID)} fn callback function
+	 * @param {sap.ui.core.ID} sComponentId the component ID used for the owner check
+	 */
+	function forEachChildElement(fn, sComponentId) {
+		Element.registry.forEach(function(oElement, sId) {
+			var sElementOwnerId = Component.getOwnerIdFor(oElement);
+			if (sElementOwnerId === sComponentId && !oElement.getParent()) {
+				fn(oElement, sId);
+			}
+		});
+	}
 
 	/**
 	 * Helper function to retrieve owner (extension) component holding the customizing configuration.
@@ -408,7 +427,7 @@ sap.ui.define([
 	function getCustomizingComponent(vObject) {
 		var oComponent, sComponentId;
 
-		if (!sap.ui.getCore().getConfiguration().getDisableCustomizing()) {
+		if (!Configuration.getDisableCustomizing()) {
 			if (typeof vObject === "string") {
 				sComponentId = vObject;
 			} else if (vObject && typeof vObject.isA === "function" && !vObject.isA("sap.ui.core.Component")) {
@@ -646,7 +665,7 @@ sap.ui.define([
 	 * not a guarantee for the existence of the corresponding owner.
 	 *
 	 * @param {sap.ui.base.ManagedObject} oObject Object to retrieve the owner ID for
-	 * @return {string} ID of the owner or <code>undefined</code>
+	 * @return {string|undefined} ID of the owner or <code>undefined</code>
 	 * @static
 	 * @public
 	 * @since 1.15.1
@@ -667,7 +686,7 @@ sap.ui.define([
 	 * will be returned.
 	 *
 	 * @param {sap.ui.base.ManagedObject} oObject Object to retrieve the owner Component for
-	 * @return {sap.ui.core.Component} the owner Component or <code>undefined</code>.
+	 * @return {sap.ui.core.Component|undefined} the owner Component or <code>undefined</code>.
 	 * @static
 	 * @public
 	 * @since 1.25.1
@@ -796,7 +815,7 @@ sap.ui.define([
 	 * clean up the component and its dependent entities like models or event handlers
 	 */
 	Component.prototype.destroy = function() {
-
+		var pAsyncDestroy, bSomeRejected = false;
 		// destroy all services
 		for (var sLocalServiceAlias in this._mServices) {
 			if (this._mServices[sLocalServiceAlias].instance) {
@@ -836,11 +855,29 @@ sap.ui.define([
 				oInstance.destroy();
 			}
 		}
+		function fnError(oError) {
+			// We ignore errors if we are in destroy phase and try to cleanup dangling objects
+			// via the Element registry and the owner Component
+			// remember rejections so we can do a defensive destruction of dangling controls in this case
+			bSomeRejected = true;
+		}
 
 		// trigger an async destroy for all registered commponent promises
 		var aDestroyables = this._getDestroyables();
 		for (var i = 0; i < aDestroyables.length; i++ ) {
-			aDestroyables[i] = aDestroyables[i].then(fnDestroy);
+			aDestroyables[i] = aDestroyables[i].then(fnDestroy, fnError);
+		}
+		if (aDestroyables.length > 0) {
+			pAsyncDestroy = Promise.all(aDestroyables).then(function() {
+				// defensive destroy: Do it only if some collected Promises rejected
+				if (bSomeRejected) {
+					// destroy dangling Controls
+					forEachChildElement(function(oElement) {
+						// we assume that we can safely destroy a control that has no parent
+						oElement.destroy();
+					}, this.getId());
+				}
+			}.bind(this));
 		}
 
 		// destroy the object
@@ -857,7 +894,7 @@ sap.ui.define([
 		} else {
 			this.getMetadata().exit();
 		}
-		return Promise.all(aDestroyables);
+		return pAsyncDestroy;
 	};
 
 
@@ -1407,7 +1444,7 @@ sap.ui.define([
 	};
 
 	Component._applyCacheToken = function(oUri, oLogInfo, mMetadataUrlParams) {
-		var oConfig = sap.ui.getCore().getConfiguration();
+		var oConfig = Configuration;
 		var sSource = mMetadataUrlParams ? "Model" : "DataSource";
 		var sManifestPath = mMetadataUrlParams ? "[\"sap.ui5\"][\"models\"]" : "[\"sap.app\"][\"dataSources\"]";
 		var sLanguage = mMetadataUrlParams && mMetadataUrlParams["sap-language"] || oUri.search(true)["sap-language"];
@@ -1575,7 +1612,7 @@ sap.ui.define([
 		var bMergeParent = mOptions.mergeParent;
 		var mCacheTokens = mOptions.cacheTokens || {};
 		var sLogComponentName = oComponent ? oComponent.getMetadata().getComponentName() : oManifest.getComponentName();
-		var oConfig = sap.ui.getCore().getConfiguration();
+		var oConfig = Configuration;
 		var aActiveTerminologies = mOptions.activeTerminologies;
 
 		if (!mOptions.models) {
@@ -1726,7 +1763,7 @@ sap.ui.define([
 
 							// resolve relative to component, ui5:// URLs are already resolved upfront
 							var oAnnotationSourceManifest = mConfig.origin.dataSources[aAnnotations[i]] || oManifest;
-							var sAnnotationUri = oAnnotationSourceManifest._resolveUri(oAnnotationUri).toString();
+							var sAnnotationUri = oAnnotationSourceManifest.resolveUri(oAnnotationUri.toString());
 
 							// add uri to annotationURI array in settings (this parameter applies for ODataModel v1 & v2)
 							oModelConfig.settings = oModelConfig.settings || {};
@@ -1772,7 +1809,7 @@ sap.ui.define([
 
 				// resolve URI relative to component which defined it
 				var oUriSourceManifest = (bIsDataSourceUri ? mConfig.origin.dataSources[oModelConfig.dataSource] : mConfig.origin.models[sModelName]) || oManifest;
-				oUri = oUriSourceManifest._resolveUri(oUri);
+				oUri = new URI(oUriSourceManifest.resolveUri(oModelConfig.uri));
 
 				// inherit sap-specific parameters from document (only if "sap.app/dataSources" reference is defined)
 				if (oModelConfig.dataSource) {
@@ -1906,7 +1943,13 @@ sap.ui.define([
 				if (aActiveTerminologies) {
 					oModelConfig.settings.activeTerminologies = aActiveTerminologies;
 				}
-				oManifest._processResourceConfiguration(oModelConfig.settings, /*bundleUrlRelativeTo=*/undefined, /*alreadyResolvedOnRoot=*/true);
+
+				_UrlResolver._processResourceConfiguration(oModelConfig.settings, {
+					alreadyResolvedOnRoot: true,
+					baseURI: oManifest._oBaseUri,
+					manifestBaseURI: oManifest._oManifestBaseUri,
+					relativeTo: undefined
+				});
 			}
 
 			// normalize settings object to array
@@ -2425,8 +2468,17 @@ sap.ui.define([
 	 */
 	function componentFactory(vConfig, bLegacy) {
 		var oOwnerComponent = Component.get(ManagedObject._sOwnerId);
+
+		if (Array.isArray(vConfig.activeTerminologies) && vConfig.activeTerminologies.length &&
+			Array.isArray(Configuration.getActiveTerminologies()) && Configuration.getActiveTerminologies().length) {
+			if (JSON.stringify(vConfig.activeTerminologies) !== JSON.stringify(Configuration.getActiveTerminologies())) {
+				Log.warning(bLegacy ? "sap.ui.component: " : "Component.create: " +
+					"The 'activeTerminolgies' passed to the component factory differ from the ones defined on the global 'sap.ui.core.Configuration#getActiveTerminologies';" +
+					"This might lead to inconsistencies; ResourceModels that are not defined in the manifest and created by the component will use the globally configured terminologies.");
+			}
+		}
 		// get terminologies information: API -> Owner Component -> Configuration
-		var aActiveTerminologies = vConfig.activeTerminologies || (oOwnerComponent && oOwnerComponent.getActiveTerminologies()) || sap.ui.getCore().getConfiguration().getActiveTerminologies();
+		var aActiveTerminologies = vConfig.activeTerminologies || (oOwnerComponent && oOwnerComponent.getActiveTerminologies()) || Configuration.getActiveTerminologies();
 
 		// Inherit cacheTokens from owner component if not defined in asyncHints
 		if (!vConfig.asyncHints || !vConfig.asyncHints.cacheTokens) {
@@ -2635,7 +2687,7 @@ sap.ui.define([
 	 * Returns an existing component instance, identified by its ID.
 	 *
 	 * @param {string} sId ID of the component.
-	 * @returns {sap.ui.core.Component} Component instance or <code>undefined</code> when no component
+	 * @returns {sap.ui.core.Component|undefined} Component instance or <code>undefined</code> when no component
 	 *     with the given ID exists.
 	 * @since 1.56.0
 	 * @static
@@ -2720,7 +2772,7 @@ sap.ui.define([
 	 *                                        component preload (should only be set via <code>sap.ui.component</code>)
 	 * @param {boolean} mOptions.preloadOnly see <code>sap.ui.component.load</code> (<code>vConfig.asyncHints.preloadOnly</code>)
 	 * @param {Promise|Promise[]} mOptions.waitFor see <code>sap.ui.component</code> (<code>vConfig.asyncHints.waitFor</code>)
-	 * @return {function|Promise} the constructor of the Component class or a Promise that will be fulfilled with the same
+	 * @return {function|Promise<function>} the constructor of the Component class or a Promise that will be fulfilled with the same
 	 *
 	 * @private
 	*/
@@ -2728,7 +2780,7 @@ sap.ui.define([
 		var aActiveTerminologies = mOptions.activeTerminologies,
 			sName = oConfig.name,
 			sUrl = oConfig.url,
-			oConfiguration = sap.ui.getCore().getConfiguration(),
+			oConfiguration = Configuration,
 			bComponentPreload = /^(sync|async)$/.test(oConfiguration.getComponentPreload()),
 			vManifest = oConfig.manifest,
 			bManifestFirst,
@@ -2941,7 +2993,7 @@ sap.ui.define([
 		function preload(sComponentName, bAsync) {
 
 			var sController = sComponentName + '.Component',
-				http2 = sap.ui.getCore().getConfiguration().getDepCache(),
+				http2 = Configuration.getDepCache(),
 				sPreloadName,
 				oTransitiveDependencies,
 				aLibs,
@@ -3746,13 +3798,10 @@ sap.ui.define([
 		this._bIsActive = false;
 
 		// deactivate all child elements
-		Element.registry.filter(function(oElement) {
-			var sOwnerId = Component.getOwnerIdFor(oElement);
-			if (sOwnerId === this.getId()) {
-				ResizeHandler.suspend(oElement.getDomRef());
-				return oElement.onOwnerDeactivation();
-			}
-		}, this);
+		forEachChildElement(function(oElement) {
+			ResizeHandler.suspend(oElement.getDomRef());
+			oElement.onOwnerDeactivation();
+		}, this.getId());
 
 		// deactivate all child components
 		Component.registry.filter(function(oComponent) {
@@ -3812,13 +3861,10 @@ sap.ui.define([
 		this._bIsActive = true;
 
 		// resume all child elements
-		Element.registry.forEach(function(oElement) {
-			var sCompId = Component.getOwnerIdFor(oElement);
-			if (sCompId === this.getId()) {
-				ResizeHandler.resume(oElement.getDomRef());
-				return oElement.onOwnerActivation();
-			}
-		}, this);
+		forEachChildElement(function(oElement) {
+			ResizeHandler.resume(oElement.getDomRef());
+			oElement.onOwnerActivation();
+		}, this.getId());
 
 		// activate all child components
 		Component.registry.forEach(function(oComponent) {

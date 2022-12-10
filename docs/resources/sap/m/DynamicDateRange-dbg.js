@@ -11,13 +11,13 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/ListItem',
 	'sap/ui/core/library',
-	"sap/ui/core/Renderer",
+	'sap/ui/core/Renderer',
 	'sap/ui/core/message/MessageMixin',
 	'sap/m/DynamicDateFormat',
 	'sap/m/DynamicDateUtil',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/Icon',
-	"sap/ui/core/LabelEnablement",
+	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/format/TimezoneUtil',
 	'sap/ui/base/ManagedObjectObserver',
@@ -38,8 +38,9 @@ sap.ui.define([
 	'./StandardDynamicDateOption',
 	'./library',
 	'sap/ui/thirdparty/jquery',
-	'sap/ui/dom/jquery/Focusable'], // provides jQuery.fn.firstFocusableDomRef
-	function(
+	'sap/ui/core/Configuration',
+	'sap/ui/dom/jquery/Focusable' // provides jQuery.fn.firstFocusableDomRef
+], function(
 		InvisibleText,
 		Element,
 		Control,
@@ -71,7 +72,8 @@ sap.ui.define([
 		DynamicDateRangeRenderer,
 		StandardDynamicDateOption,
 		library,
-		jQuery
+		jQuery,
+		Configuration
 	) {
 		"use strict";
 
@@ -121,13 +123,12 @@ sap.ui.define([
 		 * is opened. The dialog is closed via a date time period value selection or by pressing the "Cancel" button.
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @public
 		 * @since 1.92.0
 		 * @alias sap.m.DynamicDateRange
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 * @extends sap.ui.core.Control
 		 * @experimental Since 1.92. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 		 */
@@ -280,7 +281,23 @@ sap.ui.define([
 							"NEXTYEAR",
 							"DATETIME"
 						]
-					}
+					},
+
+					/**
+					 * Determines whether the input field of the control is hidden or visible.
+					 * When set to <code>true</code>, the input field becomes invisible and there is no way to open the value help popover.
+					 * In that case it can be opened by another control through calling of control's <code>openBy</code> method, and
+					 * the opening control's DOM reference must be provided as parameter.
+					 *
+					 * Note: Since the Dynamic Date Range is not responsible for accessibility attributes of the control which opens its popover,
+					 * those attributes should be added by the application developer. The following is recommended to be added to the
+					 * opening control: a text or tooltip that describes the action (example: "Open Dynamic Date Range"), and also aria-haspopup
+					 * attribute with value of <code>true</code>.
+					 *
+					 * @since 1.105
+					 */
+					 hideInput: { type: "boolean", group: "Misc", defaultValue: false }
+
 				},
 				aggregations: {
 					_input: { type: "sap.m.Input", multiple: false, visibility: "hidden" },
@@ -338,7 +355,8 @@ sap.ui.define([
 				}
 			};
 
-			this._oInput._getValueHelpIcon().setTooltip(oResourceBundle.getText("INPUT_VALUEHELP_BUTTON"));
+			this._oInput._getValueHelpIcon().setDecorative(false);
+			this._oInput._getValueHelpIcon().resetProperty("alt");
 			this._oInput.addDelegate(this._onBeforeInputRenderingDelegate, this);
 
 			this.setAggregation("_input", this._oInput, false);
@@ -413,11 +431,12 @@ sap.ui.define([
 		/**
 		 * Opens the value help dialog.
 		 *
+		 * @param {HTMLElement} oDomRef DOM reference of the opening control. On tablet or desktop, the popover is positioned relatively to this control.
 		 * @returns {void}
 		 * @since 1.92
 		 * @public
 		 */
-		DynamicDateRange.prototype.open = function() {
+		DynamicDateRange.prototype.open = function(oDomRef) {
 			if (this.getEditable() && this.getEnabled()) {
 				this._createPopup();
 				this._createPopupContent();
@@ -456,7 +475,7 @@ sap.ui.define([
 				//reset value help page
 				this._oNavContainer.to(this._oNavContainer.getPages()[0]);
 
-				this._openPopup();
+				this._openPopup(oDomRef);
 			}
 		};
 
@@ -717,7 +736,7 @@ sap.ui.define([
 
 		DynamicDateRange.prototype._convertDate = function(oDate, bUTCTimezone) {
 			var sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
-			var sFormatTimezone = bUTCTimezone ? "UTC" : sap.ui.getCore().getConfiguration().getTimezone();
+			var sFormatTimezone = bUTCTimezone ? "UTC" : Configuration.getTimezone();
 			var oParts = this._getPickerParser().parse(
 				sFormattedDate,
 				sFormatTimezone
@@ -730,7 +749,7 @@ sap.ui.define([
 		DynamicDateRange.prototype._reverseConvertDate = function(oDate) {
 			var sFormattedDate = this._getPickerParser().format(
 				oDate,
-				sap.ui.getCore().getConfiguration().getTimezone()
+				Configuration.getTimezone()
 			);
 			var oParts = this._getPickerParser().parse(
 				sFormattedDate,
@@ -1177,13 +1196,37 @@ sap.ui.define([
 				oControl.isA("sap.ui.unified.calendar.Month");
 		};
 
-		DynamicDateRange.prototype._openPopup = function() {
+		/**
+		 * Opens the value help popover. The popover is positioned relatively to the control given as <code>oDomRef</code> parameter on tablet or desktop
+		 * and is full screen on phone. Therefore the control parameter is only used on tablet or desktop and is ignored on phone.
+		 *
+		 * Note: use this method to open the value help popover only when the <code>hideInput</code> property is set to <code>true</code>. Please consider
+		 * opening of the value help popover by another control only in scenarios that comply with Fiori guidelines. For example, opening the value help
+		 * popover by another popover is not recommended.
+		 * The application developer should implement the following accessibility attributes to the opening control: a text or tooltip that describes
+		 * the action (example: "Open Dynamic Date Range"), and aria-haspopup attribute with value of <code>true</code>.
+		 *
+		 * @since 1.105
+		 * @param {HTMLElement} oDomRef DOM reference of the opening control. On tablet or desktop, the popover is positioned relatively to this control.
+		 * @public
+		 */
+		DynamicDateRange.prototype.openBy = function(oDomRef) {
+			this.open(oDomRef);
+		};
+
+		/**
+		 * Opens the value help popup.
+		 *
+		 * @param {HTMLElement} oDomRef DOM reference of the opening control. On tablet or desktop, the value help popover is positioned relative to this control.
+		 * @private
+		 */
+		 DynamicDateRange.prototype._openPopup = function(oDomRef) {
 			if (!this._oPopup) {
 				return;
 			}
 
 			this._oPopup._getPopup().setExtraContent([this._oInput.getDomRef()]);
-			this._oPopup.openBy(this._oInput);
+			this._oPopup.openBy(oDomRef || this._oInput);
 		};
 
 		DynamicDateRange.prototype._applyValue = function() {
@@ -1428,8 +1471,9 @@ sap.ui.define([
 		};
 
 		DynamicDateRangeInput.prototype.onfocusin = function (oEvent) {
+			var oPopup = this._getControlOrigin()._oPopup;
 			Input.prototype.onfocusin.apply(this, arguments);
-			if (this._getControlOrigin()._oPopup && this._getControlOrigin()._oPopup.isOpen() && !this.isMobileDevice()) {
+			if (oPopup && oPopup.isOpen() && !Device.system.tablet && !Device.system.mobile) {
 				this._getControlOrigin()._closePopup();
 			}
 		};

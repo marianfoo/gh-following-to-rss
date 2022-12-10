@@ -6,11 +6,12 @@
 /*global QUnit */
 sap.ui.define([
 	'sap/base/util/each',
+	'sap/ui/Global',
 	'sap/ui/test/Opa',
 	'sap/ui/test/Opa5',
 	'sap/ui/test/qunitPause',
 	'sap/ui/thirdparty/jquery'
-], function(each, Opa, Opa5, QUnitPause, jQuery) {
+], function(each, Global, Opa, Opa5, QUnitPause, jQuery) {
 	"use strict";
 
 	QUnitPause.setupAfterQUnit();
@@ -18,8 +19,8 @@ sap.ui.define([
 	QUnit.begin(function (oDetails) {
 		// add ui5 version in the user agent string bar
 		var oQUnitUserAgent = document.getElementById("#qunit-userAgent");
-		if (sap && sap.ui && oQUnitUserAgent) {
-			oQUnitUserAgent.innerText += "; UI5: " + sap.ui.version;
+		if (oQUnitUserAgent) {
+			oQUnitUserAgent.innerText += "; UI5: " + Global.version;
 		}
 
 		Opa._usageReport.begin({uri: window.location.href, totalTests: oDetails.totalTests});
@@ -292,12 +293,17 @@ sap.ui.define([
 					// assertion is async, push results when ready
 					var oAssertionPromise = fnAssertion.apply(oParams.appWindow, arguments)
 						.always(function (oResult) {
-							qunitThis.push(
-								oResult.result,
-								oResult.actual,
-								oResult.expected,
-								oResult.message
-							);
+							if ( typeof qunitThis.pushResult === "function" ) {
+								qunitThis.pushResult(oResult);
+							} else {
+								// fallback for QUnit < 1.22.0
+								qunitThis.push(
+									oResult.result,
+									oResult.actual,
+									oResult.expected,
+									oResult.message
+								);
+							}
 						});
 
 					// schedule async assertion promise on waitFor flow so test waits till assertion is ready

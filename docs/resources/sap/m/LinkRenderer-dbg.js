@@ -7,11 +7,12 @@
  sap.ui.define([
 	 "sap/ui/core/Renderer",
 	 "sap/ui/core/library",
+	 'sap/ui/core/AccessKeysEnablement',
 	 "sap/ui/util/defaultLinkTypes",
 	 './library',
 	 'sap/ui/core/Core'
 	],
-	function(Renderer, coreLibrary, defaultLinkTypes, mobileLibrary, Core) {
+	function(Renderer, coreLibrary, AccessKeysEnablement, defaultLinkTypes, mobileLibrary, Core) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -19,6 +20,9 @@
 
 	// shortcut for sap.ui.core.aria.HasPopup
 	var AriaHasPopup = coreLibrary.aria.HasPopup;
+
+	// shortcut for sap.m.LinkAccessibleRole
+	var LinkAccessibleRole = mobileLibrary.LinkAccessibleRole;
 
 	/**
 	 * Link renderer
@@ -46,15 +50,16 @@
 			sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir),
 			bShouldHaveOwnLabelledBy = oControl._determineSelfReferencePresence(),
 			sHasPopupType = oControl.getAriaHasPopup(),
-			sHref = oControl.getHref(),
 			sRel = defaultLinkTypes(oControl.getRel(), oControl.getTarget()),
+			sHref = oControl.getHref(),
+			sAccessibleRole = oControl.getAccessibleRole(),
 			oAccAttributes =  {
 				labelledby: bShouldHaveOwnLabelledBy ? {value: oControl.getId(), append: true } : undefined,
 				haspopup: (sHasPopupType === AriaHasPopup.None) ? null : sHasPopupType.toLowerCase()
 			},
-			bIsValid = sHref && oControl._isHrefValid(sHref),
 			bEnabled = oControl.getEnabled(),
-			sTypeSemanticInfo = "";
+			sTypeSemanticInfo = "",
+			sAcccessKey = oControl.getProperty("accesskey");
 
 		// Link is rendered as a "<a>" element
 		oRm.openStart("a", oControl);
@@ -70,6 +75,23 @@
 			sTypeSemanticInfo += " " + oControl._sAriaLinkEmphasizedId;
 		}
 
+		if (sAcccessKey) {
+			oRm.attr("data-ui5-accesskey", sAcccessKey);
+		}
+
+		switch (sAccessibleRole) {
+			case LinkAccessibleRole.Button:
+				oAccAttributes.role = LinkAccessibleRole.Button.toLowerCase();
+				break;
+			default:
+				// Set a valid non empty value for the href attribute representing that there is no navigation,
+				// so we don't confuse the screen readers.
+				/*eslint-disable no-script-url */
+				sHref = sHref && oControl._isHrefValid(sHref) && oControl.getEnabled() ? sHref : "javascript:void(0)";
+		}
+
+		sHref && oRm.attr("href", sHref);
+
 		oAccAttributes.describedby = sTypeSemanticInfo ? {value: sTypeSemanticInfo.trim(), append: true} : undefined;
 
 		if (!bEnabled) {
@@ -82,16 +104,12 @@
 			oRm.class("sapMLnkWrapping");
 		}
 
-		if (oControl.getTooltip_AsString()) {
-			oRm.attr("title", oControl.getTooltip_AsString());
+		if (oControl.getEmptyIndicatorMode() !== EmptyIndicatorMode.Off && !oControl.getText()) {
+			oRm.class("sapMLinkContainsEmptyIdicator");
 		}
 
-		/* set href only if link is enabled - BCP incident 1570020625 */
-		if (bIsValid && bEnabled) {
-			oRm.attr("href", sHref);
-		} else if (oControl.getText()) {
-			// Add href only if there's text. Otherwise virtual cursor would stop on the empty link. BCP 2070055617
-			oRm.attr("href", "");
+		if (oControl.getTooltip_AsString()) {
+			oRm.attr("title", oControl.getTooltip_AsString());
 		}
 
 		if (oControl.getTarget()) {

@@ -6,19 +6,21 @@
 
 // Provides control sap.ui.layout.ResponsiveFlowLayout.
 sap.ui.define([
+	'sap/ui/core/Configuration',
 	'sap/ui/core/Control',
-	'./ResponsiveFlowLayoutData',
-	'./library',
 	'sap/ui/core/ResizeHandler',
+	'./library',
+	'./ResponsiveFlowLayoutData',
 	'./ResponsiveFlowLayoutRenderer',
-	"sap/ui/thirdparty/jquery",
+	'sap/ui/thirdparty/jquery',
 	'sap/ui/dom/jquery/rect' // jQuery Plugin "rect"
 ],
 	function(
+		Configuration,
 		Control,
-		ResponsiveFlowLayoutData,
-		library,
 		ResizeHandler,
+		library,
+		ResponsiveFlowLayoutData,
 		ResponsiveFlowLayoutRenderer,
 		jQuery
 	) {
@@ -37,41 +39,44 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.16.0
 	 * @alias sap.ui.layout.ResponsiveFlowLayout
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ResponsiveFlowLayout = Control.extend("sap.ui.layout.ResponsiveFlowLayout", /** @lends sap.ui.layout.ResponsiveFlowLayout.prototype */ { metadata : {
+	var ResponsiveFlowLayout = Control.extend("sap.ui.layout.ResponsiveFlowLayout", /** @lends sap.ui.layout.ResponsiveFlowLayout.prototype */ {
+		metadata : {
 
-		library : "sap.ui.layout",
-		properties : {
+			library : "sap.ui.layout",
+			properties : {
 
-			/**
-			 * If set to false, all added controls will keep their width, or otherwise, the controls will be stretched to the possible width of a row.
-			 */
-			responsive : {type : "boolean", group : "Misc", defaultValue : true}
+				/**
+				 * If set to false, all added controls will keep their width, or otherwise, the controls will be stretched to the possible width of a row.
+				 */
+				responsive : {type : "boolean", group : "Misc", defaultValue : true}
+			},
+			defaultAggregation : "content",
+			aggregations : {
+
+				/**
+				 * Added content that should be positioned. Every content item should have a ResponsiveFlowLayoutData attached, or otherwise, the default values are used.
+				 */
+				content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
+			},
+			associations: {
+
+				/**
+				 * Association to controls / IDs that label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
+				 * @since 1.48.7
+				 */
+				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+			}
 		},
-		defaultAggregation : "content",
-		aggregations : {
 
-			/**
-			 * Added content that should be positioned. Every content item should have a ResponsiveFlowLayoutData attached, or otherwise, the default values are used.
-			 */
-			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
-		},
-		associations: {
-
-			/**
-			 * Association to controls / IDs that label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
-			 * @since 1.48.7
-			 */
-			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
-		}
-	}});
+		renderer: ResponsiveFlowLayoutRenderer
+	});
 
 
 	(function() {
@@ -208,7 +213,7 @@ sap.ui.define([
 			};
 
 			// Find out the "rows" within a row
-			if (sap.ui.getCore().getConfiguration().getRTL()) {
+			if (Configuration.getRTL()) {
 				// for RTL-mode the elements have to be checked the other way round
 				for (var i = oRow.cont.length - 1; i >= 0; i--) {
 					fnCurrentWrapping(i);

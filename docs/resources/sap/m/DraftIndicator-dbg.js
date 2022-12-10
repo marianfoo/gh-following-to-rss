@@ -27,13 +27,12 @@ sap.ui.define([
 	 * @abstract
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.32.0
 	 * @alias sap.m.DraftIndicator
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	var DraftIndicator = Control.extend("sap.m.DraftIndicator", /** @lends sap.m.DraftIndicator.prototype */ {
@@ -65,7 +64,9 @@ sap.ui.define([
 				 */
 				_label : {type : "sap.m.Label", multiple : false, visibility: "hidden"}
 			}
-		}
+		},
+
+		renderer: DraftIndicatorRenderer
 	});
 
 	var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");

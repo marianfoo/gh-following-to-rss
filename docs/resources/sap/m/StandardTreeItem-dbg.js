@@ -26,29 +26,32 @@ sap.ui.define([
 	 * @extends sap.m.TreeItemBase
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.42.0
 	 * @alias sap.m.StandardTreeItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var StandardTreeItem = TreeItemBase.extend("sap.m.StandardTreeItem", /** @lends sap.m.StandardTreeItem.prototype */ { metadata : {
+	var StandardTreeItem = TreeItemBase.extend("sap.m.StandardTreeItem", /** @lends sap.m.StandardTreeItem.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
-			/**
-			 * Defines the title of the item.
-			 */
-			title : {type : "string", group : "Misc", defaultValue : ""},
+			library : "sap.m",
+			properties : {
+				/**
+				 * Defines the title of the item.
+				 */
+				title : {type : "string", group : "Misc", defaultValue : ""},
 
-			/**
-			 * Defines the tree item icon.
-			 */
-			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null}
-		}
-	}});
+				/**
+				 * Defines the tree item icon.
+				 */
+				icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null}
+			}
+		},
+
+		renderer: StandardTreeItemRenderer
+	});
 
 	/**
 	 * Gets the image control to be rendered as Icon.

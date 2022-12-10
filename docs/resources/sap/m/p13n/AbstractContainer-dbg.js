@@ -1,5 +1,5 @@
-/*
- * ! OpenUI5
+/*!
+ * OpenUI5
  * (c) Copyright 2009-2022 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
@@ -22,12 +22,12 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @alias sap.m.p13n.AbstractContainer
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @experimental Since 1.96.
 	 * @since 1.96
 	 *
@@ -256,13 +256,13 @@ sap.ui.define([
 	/**
 	 * This method can be used to retrieve the current view by using the related <code>ContainerItem</code> key.
 	 *
-  	 * @param {string} sKey The key of the ContainerItem which is retrieved
+  	 * @param {string|sap.ui.core.Control} vView The key or the content of the ContainerItem which is retrieved
 	 *
 	 * @returns {sap.m.p13n.AbstractContainerItem} The matching ContainerItem
 	 */
-	AbstractContainer.prototype.getView = function(sKey) {
+	 AbstractContainer.prototype.getView = function(vView) {
 		return this.getViews().find(function(oView){
-			if (oView.getKey() === sKey) {
+			if (oView.getKey() === vView || oView.getContent() === vView) {
 				return oView;
 			}
 		});

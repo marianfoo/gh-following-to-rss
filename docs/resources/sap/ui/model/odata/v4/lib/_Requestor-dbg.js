@@ -13,8 +13,10 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/cache/CacheManager",
+	"sap/ui/core/Configuration",
 	"sap/ui/thirdparty/jquery"
-], function (_Batch, _GroupLock, _Helper, asV2Requestor, Log, SyncPromise, CacheManager, jQuery) {
+], function (_Batch, _GroupLock, _Helper, asV2Requestor, Log, SyncPromise, CacheManager,
+		Configuration, jQuery) {
 	"use strict";
 
 	var mBatchHeaders = { // headers for the $batch request
@@ -452,7 +454,7 @@ sap.ui.define([
 		}
 
 		function isUsingStrictHandling(oRequest) {
-			return oRequest.headers["Prefer"] === "handling=strict";
+			return oRequest.headers.Prefer === "handling=strict";
 		}
 
 		// do not look past aRequests.iChangeSet because these cannot be change sets
@@ -531,6 +533,13 @@ sap.ui.define([
 		 */
 		function addToChangeSet(oChange) {
 			if (!mergePatch(oChange)) {
+				if (oChange.method === "DELETE" && oChange.headers["If-Match"]
+						&& oChange.headers["If-Match"]["@odata.etag"]
+						&& aChangeSet.find(function (oCandidate) {
+							return oCandidate.headers["If-Match"] === oChange.headers["If-Match"];
+						})) {
+					oChange.headers["If-Match"] = {"@odata.etag" : "*"};
+				}
 				aChangeSet.push(oChange);
 			}
 		}
@@ -550,6 +559,8 @@ sap.ui.define([
 						&& oCandidate.headers["If-Match"] === oChange.headers["If-Match"]) {
 					_Helper.merge(oCandidate.body, oChange.body);
 					oChange.$resolve(oCandidate.$promise);
+					oCandidate.$mergeRequests(oChange.$mergeRequests());
+
 					return true;
 				}
 			});
@@ -1033,6 +1044,32 @@ sap.ui.define([
 	};
 
 	/**
+	 * Tells whether there are only PATCH requests with the "Prefer" header set to "return=minimal"
+	 * (results from using $$patchWithoutSideEffects=true) enqueued in the batch queue with the
+	 * given group ID.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @returns {boolean}
+	 *   Returns <code>true</code> if only PATCHes are enqueued in the batch queue with the given
+	 *   group ID
+	 *
+	 * @private
+	 */
+	_Requestor.prototype.hasOnlyPatchesWithoutSideEffects = function (sGroupId) {
+		return this.getGroupSubmitMode(sGroupId) === "Auto"
+			&& !!this.mBatchQueue[sGroupId]
+			&& this.mBatchQueue[sGroupId].every(function (vChangeSetOrRequest) {
+				// PATCH requests must be in a change set which is modeled as an array
+				return Array.isArray(vChangeSetOrRequest)
+					&& vChangeSetOrRequest.every(function (oRequest) {
+					return oRequest.method === "PATCH"
+						&& oRequest.headers.Prefer === "return=minimal";
+				});
+			});
+	};
+
+	/**
 	 * Tells whether there are changes (that is, updates via PATCH or bound actions via POST) for
 	 * the given group ID and given entity.
 	 *
@@ -1372,13 +1409,13 @@ sap.ui.define([
 
 	/**
 	 * This function has two tasks:
-	 *   <ul>
-	 *     <li>We are in the 1st app start, no optimistic batch payload stored so far. If optimistic
-	 *       batch handling is enabled via
-	*        {@link sap.ui.model.odata.v4.ODataModel#setOptimisticBatchEnabler}, this function
-	 *       stores the current batch requests in cache.
-	 *     <li>If an optimistic batch was already sent, it returns its result promise.
-	 *   </ul>
+	 * <ul>
+	 *   <li> We are in the 1st app start, no optimistic batch payload stored so far. If optimistic
+	 *     batch handling is enabled via
+	 *     {@link sap.ui.model.odata.v4.ODataModel#setOptimisticBatchEnabler}, this function stores
+	 *     the current batch requests in cache.
+	 *   <li> If an optimistic batch was already sent, it returns its result promise.
+	 * </ul>
 	 *
 	 * @param {object[]} aRequests The requests of the current batch
 	 * @param {string} sGroupId The group ID
@@ -1386,12 +1423,12 @@ sap.ui.define([
 	 *   The optimistic batch result or <code>undefined</code> if the batch should be sent
 	 *   normally. <code>undefined</code> can have the following reasons:
 	 *   <ul>
-	 *     <li>We are in the 1st app start, no optimistic batch payload stored so far, or
-	 *     <li>the optimistic batch was sent, but its payload did not match to the current one, or
-	 *     <li>we are not in the first #sendBatch call within the _Requestors lifecycle, or
-	 *     <li>#sendBatch was called before first batch payload could be read via CacheManager or
-	 *     <li>we are in the first #sendBatch but the batch is modifying, means contains others than
-	 *       GET requests.
+	 *     <li> We are in the 1st app start, no optimistic batch payload stored so far, or
+	 *     <li> the optimistic batch was sent, but its payload did not match to the current one, or
+	 *     <li> we are not in the first #sendBatch call within the _Requestors lifecycle, or
+	 *     <li> #sendBatch was called before first batch payload could be read via CacheManager or
+	 *     <li> we are in the first #sendBatch but the batch is modifying, means contains others
+	 *       than GET requests.
 	 *   </ul>
 	 *
 	 * @private
@@ -1463,7 +1500,7 @@ sap.ui.define([
 
 		this.oSecurityTokenPromise = null;
 
-		sap.ui.getCore().getConfiguration().getSecurityTokenHandlers().some(function (fnHandler) {
+		Configuration.getSecurityTokenHandlers().some(function (fnHandler) {
 			var oSecurityTokenPromise = fnHandler(that.sServiceUrl);
 
 			if (oSecurityTokenPromise !== undefined) {
@@ -1597,18 +1634,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes the pending PATCH request for the given promise from its group. Only requests for
-	 * which the <code>$cancel</code> callback is defined are removed.
+	 * Removes the pending PATCH or DELETE request for the given promise from its group. Only
+	 * requests for which the <code>$cancel</code> callback is defined are removed.
 	 *
 	 * @param {Promise} oPromise
-	 *   A promise that has been returned for a PATCH request. That request will be rejected with
-	 *   an error with property <code>canceled = true</code>.
+	 *   A promise that has been returned for a PATCH or DELETE request. That request will be
+	 *   rejected with an error with property <code>canceled = true</code>.
 	 * @throws {Error}
 	 *   If the request is not in the queue, assuming that it has been submitted already
 	 *
 	 * @private
 	 */
-	_Requestor.prototype.removePatch = function (oPromise) {
+	_Requestor.prototype.removeChangeRequest = function (oPromise) {
 		var bCanceled = this.cancelChangesByFilter(function (oChangeRequest) {
 				return oChangeRequest.$promise === oPromise;
 			});
@@ -1711,7 +1748,7 @@ sap.ui.define([
 	 * @param {any} [vOwner]
 	 *   An additional precondition for the merging of GET requests: the owner must be identical.
 	 * @param {function(string[]):string[]} [fnMergeRequests]
-	 *   Function which is called during merging of GET requests. If a merged request has a
+	 *   Function which is called during merging of GET or PATCH requests. If a merged request has a
 	 *   function given, this function will be called and its return value is
 	 *   given to the one remaining request's function as a parameter.
 	 * @returns {Promise}
@@ -2029,7 +2066,10 @@ sap.ui.define([
 
 	/**
 	 * Waits until all group locks for the given group ID have been unlocked and submits the
-	 * requests associated with this group ID in one batch request.
+	 * requests associated with this group ID in one batch request. If only PATCH requests are
+	 * enqueued (see {@link #hasOnlyPatchesWithoutSideEffects}), this will delay the execution to
+	 * wait for potential side effect requests triggered by
+	 * {@link sap.ui.core.Control#event:validateFieldGroup}.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
@@ -2053,7 +2093,19 @@ sap.ui.define([
 		if (bBlocked) {
 			Log.info("submitBatch('" + sGroupId + "') is waiting for locks", null, sClassName);
 		}
+
 		return oPromise.then(function () {
+			if (that.hasOnlyPatchesWithoutSideEffects(sGroupId)) {
+				bBlocked = true;
+				Log.info("submitBatch('" + sGroupId
+					+ "') is waiting for potential side effect requests", null, sClassName);
+				return new Promise(function (fnResolve) {
+					setTimeout(function () {
+						fnResolve();
+					}, 0);
+				});
+			}
+		}).then(function () {
 			if (bBlocked) {
 				Log.info("submitBatch('" + sGroupId + "') continues", null, sClassName);
 			}
@@ -2141,24 +2193,34 @@ sap.ui.define([
 	 *   An interface allowing to call back to the owning model
 	 * @param {function} oModelInterface.fetchEntityContainer
 	 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
-	 *   container is fully available, or rejected with an error.
+	 *   container is fully available, or rejected with an error
 	 * @param {function} oModelInterface.fetchMetadata
 	 *   A function that returns a SyncPromise which resolves with the metadata instance for a
 	 *   given meta path
+	 * @param {function} oModelInterface.fireMessageChange
+	 *   A function that fires the 'messageChange' event for the given messages
+	 * @param {function} oModelInterface.fireDataReceived
+	 *   A function that fires the 'dataReceived' event at the model with an optional parameter
+	 *   <code>oError</code>
+	 * @param {function} oModelInterface.fireDataRequested
+	 *   A function that fires the 'dataRequested' event at the model
 	 * @param {function} oModelInterface.fireSessionTimeout
 	 *   A function that fires the 'sessionTimeout' event (when the server has created a session for
-	 *   the model and this session ran into a timeout due to inactivity).
+	 *   the model and this session ran into a timeout due to inactivity)
 	 * @param {function} oModelInterface.getGroupProperty
 	 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
 	 *   returning the property value in question. Only 'submit' is supported for <code>
-	 *   sPropertyName</code>. Supported property values are: 'API', 'Auto' and 'Direct'.
+	 *   sPropertyName</code>. Supported property values are: 'API', 'Auto' and 'Direct'
+	 * @param {function} oModelInterface.getMessagesByPath
+	 *   A function returning model messages for which the target matches the given resolved binding
+	 *   path
 	 * @param {function} oModelInterface.getOptimisticBatchEnabler
 	 *   A function that returns a callback function which controls the optimistic batch handling,
-	 *   see also {@link sap.ui.model.odata.v4.ODataModel#setOptimisticBatchEnabler}.
+	 *   see also {@link sap.ui.model.odata.v4.ODataModel#setOptimisticBatchEnabler}
 	 * @param {function} oModelInterface.getReporter
 	 *   A catch handler function expecting an <code>Error</code> instance. This function will call
 	 *   {@link sap.ui.model.odata.v4.ODataModel#reportError} if the error has not been reported
-	 *   yet.
+	 *   yet
 	 * @param {function} oModelInterface.onCreateGroup
 	 *   A callback function that is called with the group name as parameter when the first
 	 *   request is added to a group

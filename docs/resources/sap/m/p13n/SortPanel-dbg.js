@@ -1,5 +1,5 @@
-/*
- * ! OpenUI5
+/*!
+ * OpenUI5
  * (c) Copyright 2009-2022 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @extends sap.m.p13n.QueryPanel
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @public
 	 * @experimental Since 1.96.
@@ -31,6 +31,16 @@ sap.ui.define([
 
 	var SortPanel = QueryPanel.extend("sap.m.p13n.SortPanel", {
 		metadata: {
+			properties: {
+				/**
+				 * A short text describing the panel.
+				 * <b>Note:</b> This text will only be displayed if the panel is being used in a <code>sap.m.p13n.Popup</code>.
+				 */
+				 title: {
+					type: "string",
+					defaultValue: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("p13n.DEFAULT_TITLE_SORT")
+				}
+			},
 			library: "sap.m"
 		},
 		renderer: {
@@ -79,7 +89,7 @@ sap.ui.define([
 		var oSortOrderSwitch = new SegmentedButton({
 			enabled: sKey ? true : false,
 			layoutData: new GridData({
-				span: "XL2 L2 M2 S4" //on "S" the Asc/Desc text is invisible, we need to increase the size then
+				span: "XL2 L2 M2 S3" //on "S" the Asc/Desc text is invisible, we need to increase the size then
 			}),
 			items: [
 				new SegmentedButtonItem({
@@ -124,7 +134,7 @@ sap.ui.define([
 
 		return new Grid({
 			containerQuery: true,
-			defaultSpan: "XL4 L4 M4 S4",
+			defaultSpan: "XL4 L4 M4 S5",
 			content: [
 				oSelect,
 				oSortOrderSwitch,

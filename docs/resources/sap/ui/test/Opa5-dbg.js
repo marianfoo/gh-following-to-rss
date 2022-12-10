@@ -163,7 +163,6 @@ sap.ui.define([
 		 */
 		Opa5.prototype.iStartMyUIComponent = function iStartMyUIComponent(oOptions) {
 			var that = this;
-			var bComponentLoaded = false;
 			oOptions = oOptions || {};
 
 			// apply the appParams to this frame URL so the application under test uses appParams
@@ -185,22 +184,17 @@ sap.ui.define([
 
 				HashChanger.getInstance().setHash(oOptions.hash || "");
 
-				componentLauncher.start(oOptions.componentConfig).then(function () {
-					bComponentLoaded = true;
-				});
+				// wait till component is started
+				var oComponentStartedOptions = createWaitForObjectWithoutDefaults();
+				oComponentStartedOptions.errorMessage = "Unable to load the component with the name: " + oOptions.componentConfig.name;
+				if (oOptions.timeout) {
+					oComponentStartedOptions.timeout = oOptions.timeout;
+				}
+				Opa.prototype._schedulePromiseOnFlow.call(that,
+					componentLauncher.start(oOptions.componentConfig),
+					oComponentStartedOptions);
 			};
 			this.waitFor(oStartComponentOptions);
-
-			// wait till component is started
-			var oComponentStartedOptions = createWaitForObjectWithoutDefaults();
-			oComponentStartedOptions.errorMessage = "Unable to load the component with the name: " + oOptions.name;
-			oComponentStartedOptions.check = function () {
-				return bComponentLoaded;
-			};
-			if (oOptions.timeout) {
-				oComponentStartedOptions.timeout = oOptions.timeout;
-			}
-			that.waitFor(oComponentStartedOptions);
 
 			// load extensions
 			var oLoadExtensionOptions = createWaitForObjectWithoutDefaults();
@@ -860,7 +854,7 @@ sap.ui.define([
 		/**
 		 * Returns the QUnit utils object in the current context. If an iframe is launched, it will return the iframe's QUnit utils.
 		 * @public
-		 * @returns {sap.ui.test.qunit} The QUnit utils
+		 * @returns {object} The QUnit utils
 		 */
 		Opa5.getUtils = function () {
 			return iFrameLauncher.getUtils() || QUnitUtils;

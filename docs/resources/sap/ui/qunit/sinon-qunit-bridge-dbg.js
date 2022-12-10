@@ -85,7 +85,7 @@
 					useFakeTimers: bUseFakeTimers
 				};
 
-				if (sinon.createSandBox) {
+				if (sinon.createSandbox) {
 					this._oSandbox = sinon.createSandbox(oSandboxConfig);
 				} else {
 					this._oSandbox = sinon.sandbox.create(oSandboxConfig);

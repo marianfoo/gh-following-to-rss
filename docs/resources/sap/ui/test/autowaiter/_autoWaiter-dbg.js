@@ -12,6 +12,9 @@ sap.ui.define([
 	"sap/ui/test/autowaiter/_timeoutWaiter",
 	"sap/ui/test/autowaiter/_promiseWaiter",
 	"sap/ui/test/autowaiter/_navigationContainerWaiter",
+	"sap/ui/test/autowaiter/_cssTransitionWaiter",
+	"sap/ui/test/autowaiter/_cssAnimationWaiter",
+	"sap/ui/test/autowaiter/_jsAnimationWaiter",
 	"sap/ui/test/autowaiter/_UIUpdatesWaiter",
 	"sap/ui/test/autowaiter/_moduleWaiter",
 	"sap/ui/test/autowaiter/_resourceWaiter"
@@ -23,6 +26,9 @@ sap.ui.define([
 	_timeoutWaiter,
 	_promiseWaiter,
 	_navigationContainerWaiter,
+	_cssTransitionWaiter,
+	_cssAnimationWaiter,
+	_jsAnimationWaiter,
 	_UIUpdatesWaiter,
 	_moduleWaiter,
 	_resourceWaiter
@@ -105,6 +111,9 @@ sap.ui.define([
 		timeoutWaiter: _timeoutWaiter,
 		promiseWaiter: _promiseWaiter,
 		navigationWaiter: _navigationContainerWaiter,
+		cssTransitionWaiter: _cssTransitionWaiter,
+		cssAnimationWaiter: _cssAnimationWaiter,
+		jsAnimationWaiter: _jsAnimationWaiter,
 		uiUpdatesWaiter: _UIUpdatesWaiter,
 		moduleWaiter: _moduleWaiter,
 		resourceWaiter: _resourceWaiter

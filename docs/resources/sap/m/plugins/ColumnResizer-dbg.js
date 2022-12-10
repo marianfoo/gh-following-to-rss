@@ -39,12 +39,11 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.core.Element
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @public
 	 * @since 1.91
 	 * @alias sap.m.plugins.ColumnResizer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ColumnResizer = PluginBase.extend("sap.m.plugins.ColumnResizer", /** @lends sap.m.plugins.ColumnResizer.prototype */ { metadata: {
 		library: "sap.m",
@@ -243,6 +242,7 @@ sap.ui.define([
 
 		var $HiddenArea = jQuery("<div></div>").addClass(CSS_CLASS + "SizeDetector").addClass(this.getConfig("cellPaddingStyleClass"));
 		var $ClonedCells = $Cells.children().clone().removeAttr("id");
+		this.getConfig("additionalColumnWidth", $Cells, $ClonedCells);
 		this._$Container.append($HiddenArea);
 		var iWidth = Math.round($HiddenArea.append($ClonedCells)[0].getBoundingClientRect().width);
 		var iDistanceX = iWidth - oSession.fCurrentColumnWidth;
@@ -578,6 +578,19 @@ sap.ui.define([
 			},
 			columnRelatedCells: function($oContainer, sColumnId) {
 				return $oContainer.find(".sapMListTblCell[data-sap-ui-column='" + sColumnId + "']");
+			},
+			additionalColumnWidth: function($Cells, $ClonedCellsChildren) {
+				// first element in the $Cells is the <th> element
+				var oTH = $Cells[0];
+
+				if (!oTH.hasAttribute("aria-sort") || oTH.getAttribute("aria-sort") === 'none') {
+					return;
+				}
+
+				var oColumnHeaderDIV = $ClonedCellsChildren[0];
+				var oColumnComputedStyle = window.getComputedStyle(oTH.firstChild, ":after");
+				// add margin-left to the cloned column header <div> which is the width of the pseudo element containing the sort-indicator
+				oColumnHeaderDIV.style.marginLeft = Math.round(parseInt(oColumnComputedStyle.getPropertyValue("width"))) + "px";
 			}
 		}
 	}, ColumnResizer);

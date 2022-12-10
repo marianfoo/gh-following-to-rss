@@ -107,6 +107,10 @@ sap.ui.define([
 
 			if (oOwnerComponent) {
 				vPromiseOrObject = oOwnerComponent.runAsOwner(fnCreateObjectAsync);
+
+				if (vPromiseOrObject instanceof Promise) {
+					oOwnerComponent.registerForDestroy(vPromiseOrObject);
+				}
 			} else {
 				vPromiseOrObject = fnCreateObjectAsync();
 			}

@@ -1,12 +1,12 @@
-/*
- * ! OpenUI5
+/*!
+ * OpenUI5
  * (c) Copyright 2009-2022 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
 sap.ui.define([
-	'sap/ui/model/json/JSONModel', 'sap/m/VBox', 'sap/ui/core/Control', 'sap/m/Column', 'sap/m/Text', 'sap/ui/model/Filter', "sap/m/Table", "sap/m/OverflowToolbar", "sap/m/SearchField", "sap/m/ToolbarSpacer", "sap/m/OverflowToolbarButton", "sap/m/OverflowToolbarLayoutData", "sap/base/util/merge", "sap/ui/core/dnd/DragDropInfo"
-], function(JSONModel, VBox, Control, Column, Text, Filter, Table, OverflowToolbar, SearchField, ToolbarSpacer, OverflowToolbarButton, OverflowToolbarLayoutData, merge, DragDropInfo) {
+	'sap/ui/model/json/JSONModel', 'sap/m/VBox', 'sap/ui/core/Control', 'sap/m/Column', 'sap/m/Text', 'sap/ui/model/Filter', "sap/m/Table", "sap/m/OverflowToolbar", "sap/m/SearchField", "sap/m/ToolbarSpacer", "sap/m/OverflowToolbarButton", "sap/m/OverflowToolbarLayoutData", "sap/ui/core/dnd/DragDropInfo"
+], function(JSONModel, VBox, Control, Column, Text, Filter, Table, OverflowToolbar, SearchField, ToolbarSpacer, OverflowToolbarButton, OverflowToolbarLayoutData, DragDropInfo) {
 	"use strict";
 
 	/**
@@ -22,10 +22,11 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
-	 * @private
-	 * @ui5-restricted
+	 * @public
+	 * @abstract
+	 *
 	 * @experimental Since 1.96.
 	 * @since 1.96
 	 * @alias sap.m.p13n.BasePanel
@@ -230,14 +231,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * The <code>enableReorder</code> property determines whether additional move buttons are shown when hovering over
-	 * the inner list. In addition, drag and drop will be enabled for the inner list control.
-	 *
 	 * @param {boolean} bEnableReorder Determines whether reordering is enabled
-	 * @public
+	 * @private
 	 * @returns {sap.m.p13n.BasePanel} The BasePanel instance
 	 */
-	BasePanel.prototype.setEnableReorder = function(bEnableReorder) {
+	BasePanel.prototype._updateMovement = function(bEnableReorder) {
 		var oTemplate = this.getAggregation("_template");
 		if (bEnableReorder) {
 			this._addHover(oTemplate);
@@ -246,11 +244,24 @@ sap.ui.define([
 		}
 		this._getDragDropConfig().setEnabled(bEnableReorder);
 		this._setMoveButtonVisibility(bEnableReorder);
-		this.setProperty("enableReorder", bEnableReorder);
 
 		return this;
 	};
 
+	/**
+	 * The <code>enableReorder</code> property determines whether additional move buttons are shown when hovering over
+	 * the inner list. In addition, drag and drop will be enabled for the inner list control.
+	 *
+	 * @param {boolean} bEnableReorder Determines whether reordering is enabled
+	 * @public
+	 * @returns {sap.m.p13n.BasePanel} The BasePanel instance
+	 */
+	BasePanel.prototype.setEnableReorder = function(bEnableReorder) {
+		this.setProperty("enableReorder", bEnableReorder);
+		this._updateMovement(bEnableReorder);
+
+		return this;
+	};
 
 	BasePanel.prototype._getDragDropConfig = function() {
 		if (!this._oDragDropInfo){
@@ -409,6 +420,10 @@ sap.ui.define([
 
 	BasePanel.prototype._setTemplate = function(oTemplate) {
 		oTemplate.setType("Active");
+		var oCurrentTemplate = this.getAggregation("_template");
+		if (oCurrentTemplate) {
+			oCurrentTemplate.destroy();
+		}
 		this.setAggregation("_template", oTemplate);
 		if (oTemplate) {
 			if (this.getEnableReorder()){

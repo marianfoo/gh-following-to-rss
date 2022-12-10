@@ -3,4 +3,4 @@
  * (c) Copyright 2009-2022 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
-sap.ui.define(["sap/m/table/columnmenu/Entry"],function(t){"use strict";var e=t.extend("sap.m.table.columnmenu.QuickActionBase",{metadata:{abstract:true,library:"sap.m"}});e.prototype.getEffectiveQuickActions=function(){return[this]};e.prototype.setVisible=function(t){if(this.getVisible()==t){return this}this.setProperty("visible",t);this.getMenu()&&this.getMenu()._createQuickActionGrids();return this};return e});
+sap.ui.define(["sap/m/table/columnmenu/Entry","sap/m/library"],function(t,e){"use strict";var i=t.extend("sap.m.table.columnmenu.QuickActionBase",{metadata:{abstract:true,library:"sap.m"}});i.prototype.getEffectiveQuickActions=function(){return this.getVisible()?[this]:[]};i.prototype.setVisible=function(t){if(this.getVisible()==t){return this}this.setProperty("visible",t);this.getMenu()&&this.getMenu()._createQuickActionGrids();return this};i.prototype.getCategory=function(){if(this.getMetadata().hasProperty("category")){return this.getProperty("category")}return e.table.columnmenu.Category.Generic};return i});

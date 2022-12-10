@@ -32,13 +32,12 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.98
 	 * @alias sap.m.Illustration
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Illustration = Control.extend("sap.m.Illustration", /** @lends sap.m.Illustration.prototype */ {
 		metadata: {
@@ -65,8 +64,17 @@ sap.ui.define([
 				 */
 				type: {type: "string", defaultValue: null}
 			},
+			associations : {
+				/**
+				 * Association to controls / IDs which label those controls (see WAI-ARIA attribute aria-labelledBy).
+	 			 * @since 1.106.0
+				 */
+				ariaLabelledBy: {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+			},
 			dnd: { draggable: true, droppable: false }
-		}
+		},
+
+		renderer: IllustrationRenderer
 	});
 
 	/**

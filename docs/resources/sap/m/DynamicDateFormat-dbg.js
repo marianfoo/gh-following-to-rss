@@ -10,14 +10,12 @@ sap.ui.define([
 	'sap/ui/core/format/NumberFormat',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
-	"sap/base/Log",
 	"sap/base/util/deepExtend",
-	"sap/base/util/isEmptyObject",
-	"sap/ui/core/date/UniversalDateUtils",
 	"sap/ui/unified/calendar/CalendarUtils",
-	"./library"
+	"./library",
+	"sap/ui/core/Configuration"
 ],
-	function(DateFormat, NumberFormat, Locale, LocaleData, Log, deepExtend, isEmptyObject, UniversalDateUtils, CalendarUtils, library) {
+	function(DateFormat, NumberFormat, Locale, LocaleData, deepExtend, CalendarUtils, library, Configuration) {
 		"use strict";
 
 		/**
@@ -138,7 +136,7 @@ sap.ui.define([
 			}
 
 			if (!oLocale) {
-				oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+				oLocale = Configuration.getFormatSettings().getFormatLocale();
 			}
 			oFormat.oLocale = oLocale;
 			oFormat.oLocaleData = LocaleData.getInstance(oLocale);
@@ -332,7 +330,7 @@ sap.ui.define([
 		DynamicDateFormat.prototype._checkFormatterUTCTimezone = function(sOption) {
 			var sType = "";
 			if (aParameterTypesByStandardOptionKey[sOption]) {
-				sType = aParameterTypesByStandardOptionKey[sOption];
+				sType = aParameterTypesByStandardOptionKey[sOption][0];
 			}
 
 			// ensure that in options like last/next days or +/- days we still use correct timezone when formatting the dates.

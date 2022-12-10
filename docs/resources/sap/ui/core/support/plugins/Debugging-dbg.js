@@ -77,7 +77,7 @@ sap.ui.define([
 
 				rm.openStart("div").class("sapUISupportLabel").openEnd().text("Boot application with different UI5 version on next reload:").close("div");
 				rm.openStart("select", this.getId() + "-RebootSelect").class("sapUiSupportSelect").openEnd();
-				rm.openStart("option").attr("value", "none").openEnd().text("Disabled (no custom reboot URL").close("option");
+				rm.openStart("option").attr("value", "none").openEnd().text("Disabled (no custom reboot URL)").close("option");
 				rm.openStart("option", this.getId() + "-RebootOther").attr("value", "other").openEnd().text("Other (enter URL to sap-ui-core.js below)...:").close("option");
 				rm.close("select");
 				rm.voidStart("input", this.getId() + "-RebootInput").attr("type", "text").attr("disabled", "disabled").voidEnd();
@@ -450,9 +450,9 @@ sap.ui.define([
 			// these are the known standard URLs; add them to the dropdown if reachable
 			this._mRebootUrls = {
 				// unfortunately we are not allowed to add the known internal URLs here
-				"https://openui5.hana.ondemand.com/resources/sap-ui-core.js": "Public OpenUI5 server",
-				"https://openui5beta.hana.ondemand.com/resources/sap-ui-core.js": "Public OpenUI5 PREVIEW server",
-				"https://sapui5.hana.ondemand.com/resources/sap-ui-core.js": "Public SAPUI5 server",
+				"https://sdk.openui5.org/resources/sap-ui-core.js": "Public OpenUI5 server",
+				"https://sdk.openui5.org/nightly/resources/sap-ui-core.js": "Public OpenUI5 PREVIEW server",
+				"https://ui5.sap.com/resources/sap-ui-core.js": "Public SAPUI5 server",
 				"http://localhost:8080/testsuite/resources/sap-ui-core.js": "Localhost (port 8080), /testsuite ('grunt serve' URL)",
 				"http://localhost:8080/sapui5/resources/sap-ui-core.js": "Localhost (port 8080), /sapui5 (maven URL)"
 			};

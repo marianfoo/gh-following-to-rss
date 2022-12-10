@@ -27,18 +27,19 @@ function(
 	 * @extends sap.m.ListBase
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.90
 	 * @alias sap.m.NotificationList
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NotificationList = ListBase.extend('sap.m.NotificationList', /** @lends sap.m.NotificationList.prototype */ {
 		metadata: {
 			library: 'sap.m'
-		}
+		},
+
+		renderer: NotificationListRenderer
 	});
 
 	NotificationList.prototype.onItemFocusIn = function() { };

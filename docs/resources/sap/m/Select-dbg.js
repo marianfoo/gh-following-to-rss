@@ -103,12 +103,11 @@ function(
 		 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @public
 		 * @alias sap.m.Select
-		 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 		 */
 		var Select = Control.extend("sap.m.Select", /** @lends sap.m.Select.prototype */ {
 			metadata: {
@@ -346,7 +345,6 @@ function(
 					 *
 					 * <b>Note:</b> This property takes effect only when the <code>showSecondaryValues</code> property is set to <code>true</code>.
 					 * @since 1.86
-					 * @experimental As of version 1.86
 					 */
 					columnRatio: {
 						type: "sap.m.SelectColumnRatio",
@@ -499,7 +497,9 @@ function(
 					}
 				},
 				designtime: "sap/m/designtime/Select.designtime"
-			}
+			},
+
+			renderer: SelectRenderer
 		});
 
 		IconPool.insertFontFaceStyle();
@@ -2152,17 +2152,29 @@ function(
 		 * @since 1.26.0
 		 */
 		Select.prototype.searchNextItemByText = function(sText) {
-			var aItems = this.getItems(),
-				iSelectedIndex = this.getSelectedIndex(),
-				aItemsAfterSelection = aItems.splice(iSelectedIndex + 1, aItems.length - iSelectedIndex),
-				aItemsBeforeSelection = aItems.splice(0, aItems.length - 1);
+			var oSelectedItem = this.getSelectedItem(), aItems, iSelectedIndex, aItemsAfterSelection, aItemsBeforeSelection;
+
+			// validation if sText is relevant string
+			if (!(typeof sText === "string" && sText !== "")) {
+				return null; // return null if sText is invalid
+			}
+			// if sText's length is 2 or more characters that means that the user is still typing.
+			// If the user is still typing and the string/word is the starting of the currently
+			// selected item we shouldn't move to the next one.
+			if (sText.length > 1 && oSelectedItem.getText().toLowerCase().startsWith(sText.toLowerCase())){
+				return oSelectedItem;
+			}
+
+			aItems = this.getItems();
+			iSelectedIndex = this.getSelectedIndex();
+			aItemsAfterSelection = aItems.splice(iSelectedIndex + 1, aItems.length - iSelectedIndex);
+			aItemsBeforeSelection = aItems.splice(0, aItems.length - 1);
 
 			aItems = aItemsAfterSelection.concat(aItemsBeforeSelection);
 
 			for (var i = 0, oItem; i < aItems.length; i++) {
 				oItem = aItems[i];
-				var bTextIsRelevantString = typeof sText === "string" && sText !== "";
-				if (oItem.getEnabled() && !(oItem.isA("sap.ui.core.SeparatorItem")) && oItem.getText().toLowerCase().startsWith(sText.toLowerCase()) && bTextIsRelevantString) {
+				if (oItem.getEnabled() && !(oItem.isA("sap.ui.core.SeparatorItem")) && oItem.getText().toLowerCase().startsWith(sText.toLowerCase())) {
 					return oItem;
 				}
 			}
@@ -2323,6 +2335,7 @@ function(
 		 * Retrieves the index of the selected item from the aggregation named <code>items</code>.
 		 *
 		 * @returns {int} An integer specifying the selected index, or -1 if no item is selected.
+		 * @private
 		 * @since 1.26.0
 		 */
 		Select.prototype.getSelectedIndex = function() {
@@ -2369,7 +2382,7 @@ function(
 		/**
 		 * Checks whether the provided element is the open area.
 		 *
-		 * @param {Element} oDomRef
+		 * @param {HTMLElement} oDomRef
 		 * @returns {boolean}
 		 * @since 1.22.0
 		 */
@@ -2881,35 +2894,29 @@ function(
 
 		Select.prototype.setValueState = function(sValueState) {
 			var sOldValueState = this.getValueState(),
+				oDomRef,
 				oPicker;
 
 			if (sValueState === sOldValueState) {
 				return this;
 			}
-
 			oPicker = this.getPicker();
 
 			if (oPicker && oPicker.isA("sap.m.Popover") && oPicker.isOpen() && oPicker.oPopup.getOpenState() === OpenState.CLOSING) {
 				oPicker.attachEventOnce("afterClose", function(oEvent) {
-					return this._finishSettingValueState(sValueState);
+					this._updatePickerAriaLabelledBy(sValueState);
 				}, this);
 			} else {
-				return this._finishSettingValueState(sValueState);
+				this._updatePickerAriaLabelledBy(sValueState);
 			}
 
-		};
-
-		Select.prototype._finishSettingValueState = function(sValueState) {
-
 			this.setProperty("valueState", sValueState);
-
-			this._updatePickerAriaLabelledBy(sValueState);
 
 			if (this._isFocused()) {
 				this._announceValueStateText();
 			}
 
-			var oDomRef = this.getDomRefForValueState();
+			oDomRef = this.getDomRefForValueState();
 
 			if (!oDomRef) {
 				return this;
@@ -3012,7 +3019,7 @@ function(
 		 * <b>Note: </b> If duplicate keys exist, the first item matching the key is returned.
 		 *
 		 * @param {string} sKey An item key that specifies the item to be retrieved.
-		 * @returns {sap.ui.core.Item} The <code>sap.ui.core.Item</code> instance or <code>null</code> if thre is no such item
+		 * @returns {sap.ui.core.Item|null} The <code>sap.ui.core.Item</code> instance or <code>null</code> if there is no such item
 		 * @public
 		 * @since 1.16
 		 */

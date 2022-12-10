@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Core",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
 	"./DateRange"
 ], function(
 	CalendarUtils,
@@ -39,7 +38,6 @@ sap.ui.define([
 	CalendarType,
 	Core,
 	Log,
-	jQuery,
 	DateRange
 ) {
 	"use strict";
@@ -58,13 +56,12 @@ sap.ui.define([
 	 * @class
 	 * <code>CalendarDateInterval</code> only visualizes the dates in a one-line interval and allows the selection of a single day.
 	 * @extends sap.ui.unified.Calendar
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.30.0
 	 * @alias sap.ui.unified.CalendarDateInterval
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CalendarDateInterval = Calendar.extend("sap.ui.unified.CalendarDateInterval", /** @lends sap.ui.unified.CalendarDateInterval.prototype */ { metadata : {
 
@@ -108,13 +105,13 @@ sap.ui.define([
 	};
 
 	CalendarDateInterval.prototype.onBeforeRendering = function() {
-		Calendar.prototype.onBeforeRendering.apply(this, arguments);
-
-		this._bPoupupMode = this.getPickerPopup();
-
 		if (this._getSucessorsPickerPopup()) {
 			this.setProperty("_currentPicker", "month");
 		}
+
+		Calendar.prototype.onBeforeRendering.apply(this, arguments);
+
+		this._bPoupupMode = this.getPickerPopup();
 	};
 
 	CalendarDateInterval.prototype._selectYearRange = function() {

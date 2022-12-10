@@ -52,7 +52,7 @@ sap.ui.define([
 	 * @alias sap.m.SuggestionsPopover
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 */
 	var SuggestionsPopover = EventProvider.extend("sap.m.SuggestionsPopover", /** @lends sap.m.SuggestionsPopover.prototype */ {
 
@@ -171,6 +171,8 @@ sap.ui.define([
 				showSeparators: ListSeparators.None,
 				busyIndicatorDelay: 0
 			});
+
+			oList.applyAriaRole("listbox");
 		}
 
 		this.addContent(oList);
@@ -188,7 +190,7 @@ sap.ui.define([
 	/**
 	 * Adds flex content.
 	 *
-	 * @param {sap.m.Control} oControl Control to be added
+	 * @param {sap.ui.core.Control} oControl Control to be added
 	 * @protected
 	 */
 	SuggestionsPopover.prototype.addContent = function(oControl) {

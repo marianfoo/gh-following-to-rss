@@ -20,13 +20,13 @@ sap.ui.define([
 	 * @namespace
 	 * @alias sap.ui.layout
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @since 1.15
 	 * @public
 	 */
 	var thisLib = sap.ui.getCore().initLibrary({
 		name : "sap.ui.layout",
-		version: "1.103.0",
+		version: "1.108.1",
 		dependencies: ["sap.ui.core"],
 		designtime: "sap/ui/layout/designtime/library.designtime",
 		types: [
@@ -195,7 +195,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.36.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.BackgroundDesign = {
 
@@ -232,7 +231,6 @@ sap.ui.define([
 	 * @final
 	 * @namespace
 	 * @public
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.GridIndent = DataType.createType('sap.ui.layout.GridIndent', {
 	    isValid : function(vValue) {
@@ -249,7 +247,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.GridPosition = {
 
@@ -287,7 +284,6 @@ sap.ui.define([
 	 * @final
 	 * @namespace
 	 * @public
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.GridSpan = DataType.createType('sap.ui.layout.GridSpan', {
 	    isValid : function(vValue) {
@@ -303,7 +299,6 @@ sap.ui.define([
 		 * the control.
 		 * @enum {string}
 		 * @public
-		 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 		 */
 	thisLib.BlockBackgroundType = {
 		/**
@@ -340,7 +335,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.BlockRowColorSets = {
 		/**
@@ -388,7 +382,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.48
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.BlockLayoutCellColorSet = {
 		/**
@@ -466,7 +459,6 @@ sap.ui.define([
 		 * @enum {string}
 		 * @public
 		 * @since 1.48
-		 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.BlockLayoutCellColorShade = {
 			/**
@@ -517,7 +509,6 @@ sap.ui.define([
 	 *
 	 * @namespace
 	 * @public
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.form.GridElementCells = DataType.createType('sap.ui.layout.form.GridElementCells', {
 		isValid : function(vValue) {
@@ -535,7 +526,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.16.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.form.SimpleFormLayout = {
 
@@ -577,7 +567,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.30
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.SideContentVisibility = {
 		/**
@@ -613,7 +602,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.30
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.SideContentFallDown = {
 		/**
@@ -643,7 +631,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.SideContentPosition = {
 		/**
@@ -670,7 +657,6 @@ sap.ui.define([
 	 * @namespace
 	 * @public
 	 * @since 1.56.0
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.form.ColumnsXL = DataType.createType('sap.ui.layout.form.ColumnsXL', {
 		isValid : function(vValue) {
@@ -695,7 +681,6 @@ sap.ui.define([
 	 * @namespace
 	 * @public
 	 * @since 1.56.0
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.form.ColumnsL = DataType.createType('sap.ui.layout.form.ColumnsL', {
 		isValid : function(vValue) {
@@ -720,7 +705,6 @@ sap.ui.define([
 	 * @namespace
 	 * @public
 	 * @since 1.56.0
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.form.ColumnsM = DataType.createType('sap.ui.layout.form.ColumnsM', {
 		isValid : function(vValue) {
@@ -745,7 +729,6 @@ sap.ui.define([
 	 * @namespace
 	 * @public
 	 * @since 1.56.0
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.form.ColumnCells = DataType.createType('sap.ui.layout.form.ColumnCells', {
 		isValid : function(vValue) {
@@ -773,7 +756,6 @@ sap.ui.define([
 	 * @namespace
 	 * @public
 	 * @since 1.56.0
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.form.EmptyCells = DataType.createType('sap.ui.layout.form.EmptyCells', {
 		isValid : function(vValue) {
@@ -823,7 +805,6 @@ sap.ui.define([
 	 * @public
 	 * @namespace
 	 * @final
-	 * @ui5-metamodel This simple type will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.cssgrid.CSSGridTrack = DataType.createType("sap.ui.layout.cssgrid.CSSGridTrack", {
 			isValid: function (sValue) {
@@ -857,7 +838,6 @@ sap.ui.define([
 	 * @public
 	 * @namespace
 	 * @final
-	 * @ui5-metamodel This simple type will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.cssgrid.CSSGridGapShortHand = DataType.createType("sap.ui.layout.cssgrid.CSSGridGapShortHand", {
 			isValid: function (vValue) {
@@ -900,7 +880,6 @@ sap.ui.define([
 	 * @public
 	 * @namespace
 	 * @final
-	 * @ui5-metamodel This simple type will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.cssgrid.CSSGridLine = DataType.createType("sap.ui.layout.cssgrid.CSSGridLine", {
 			isValid: function (sValue) {
@@ -918,7 +897,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @since 1.60.0
 	 * @public
-	 * @ui5-metamodel This simple type will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.cssgrid.CSSGridAutoFlow = {
 
@@ -958,7 +936,6 @@ sap.ui.define([
 	 * @public
 	 * @namespace
 	 * @final
-	 * @ui5-metamodel This simple type will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.BoxesPerRowConfig = DataType.createType("sap.ui.layout.BoxesPerRowConfig", {
 			isValid : function(vValue) {

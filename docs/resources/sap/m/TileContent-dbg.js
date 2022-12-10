@@ -4,8 +4,8 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './TileContentRenderer'],
-	function(library, Core, Control, TileContentRenderer) {
+sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './TileContentRenderer', 'sap/ui/core/Configuration'],
+	function(library, Core, Control, TileContentRenderer, Configuration) {
 	"use strict";
 
 	var Priority = library.Priority;
@@ -24,12 +24,11 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @since 1.34.0
 	 *
 	 * @public
 	 * @alias sap.m.TileContent
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TileContent = Control.extend("sap.m.TileContent", /** @lends sap.m.TileContent.prototype */ {
 		metadata : {
@@ -84,7 +83,9 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 				 */
 				"content" : {type : "sap.ui.core.Control", multiple : false, bindable : "bindable"}
 			}
-		}
+		},
+
+		renderer: TileContentRenderer
 	});
 
 	/* --- Lifecycle methods --- */
@@ -168,6 +169,11 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 						thisRef.attr("title",  sCntTooltip);
 				}
 
+				//It applies a style class to the elements inside the FormattedText
+				if (this.getParent() && this.getParent().isA("sap.m.ActionTile") && this.getContent().isA("sap.m.FormattedText") && this.getContent().getDomRef()) {
+					this._applyStyleClassesOnContent(this.getContent().getDomRef());
+				}
+
 			// removing all inner elements tooltip om every mouse enter
 			aTooltipEments.removeAttr("title").off("mouseenter");
 		}
@@ -200,7 +206,7 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 		var sUnit = this.getUnit();
 		if (sUnit) {
 			if (sFooter) {
-				if (sap.ui.getCore().getConfiguration().getRTL()) {
+				if (Configuration.getRTL()) {
 					return resourceBundle.getText('TILECONTENT_FOOTER_TEXT', [sFooter, sUnit]);
 				} else {
 					return resourceBundle.getText('TILECONTENT_FOOTER_TEXT', [sUnit, sFooter]);
@@ -223,8 +229,13 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 		var bIsFirst = true;
 		var oContent = this.getContent();
 		var oParent = this.getParent();
-
-		if (oContent) {
+		var sPriority = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TEXT_CONTENT_PRIORITY");
+		var sPriorityText = this.getPriorityText();
+		if (sPriorityText && this.getPriority() !== Priority.None){
+			sAltText += sPriorityText + " " + sPriority;
+			bIsFirst = false;
+		}
+		if (oContent && oContent.getVisible()) {
 			var oContentDom = oContent.getDomRef();
 			if (oContent.getAltText) {
 				sAltText += oContent.getAltText();
@@ -232,13 +243,10 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 			} else if (oContent.getTooltip_AsString()) {
 				sAltText += oContent.getTooltip_AsString();
 				bIsFirst = false;
+			} else if (oParent && oParent.isA("sap.m.ActionTile") && oContentDom) {
+				sAltText += (bIsFirst ? "" : "\n") + this._getInnerText(oContentDom);
+				bIsFirst = false;
 			} else if (oParent && oParent.isA("sap.m.GenericTile") && oParent.getMode() === GenericTileMode.ActionMode) {
-				var sPriority = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TEXT_CONTENT_PRIORITY"),
-					sPriorityText = this.getPriorityText();
-				if (sPriorityText && this.getPriority()){
-					sAltText += sPriorityText + " " + sPriority;
-					bIsFirst = false;
-				}
 				if (oContent.isA("sap.m.Text")){
 					sAltText += (bIsFirst ? "" : "\n") + oContent.getText();
 					bIsFirst = false;
@@ -257,6 +265,21 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 			sAltText += (bIsFirst ? "" : "\n") + this.getFooter();
 		}
 		return sAltText;
+	};
+
+	/**
+	 * Fetches the text within the tile content when rendered inside an ActionTile
+	 * @param {Element} oContentDom It gives the control inside the tile content
+	 * @returns {string} Returns the text inside the tile content when wrapped around a ActionTile
+	 * @private
+	 */
+	TileContent.prototype._getInnerText = function(oContentDom) {
+		var sAriaTooltipText = "";
+		var aHTMLCollection = [].slice.call(oContentDom.children);
+		aHTMLCollection.forEach(function(oElement,iIndex) {
+			sAriaTooltipText += (oElement.innerText + "\n");
+		});
+		return sAriaTooltipText.trim();
 	};
 
 	TileContent.prototype.getTooltip_AsString = function() { //eslint-disable-line
@@ -289,6 +312,33 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 	TileContent.prototype.setRenderContent = function(value) {
 		this._bRenderContent = value;
 		return this;
+	};
+
+	/**
+	 * This control applies the style class if there is a <br> tag inside a <p> tag
+	 * @param {Object} oContent Determines whether the control's content is rendered or not
+	 * @private
+	 */
+	 TileContent.prototype._applyStyleClassesOnContent = function(oContent) {
+		var aElements = this._filterElements(oContent.childNodes);
+		aElements.forEach(function(oElement) {
+			var bIsPTagWithBreak = oElement.tagName === "P" && oElement.innerHTML.includes("br");
+			if (bIsPTagWithBreak) {
+				oElement.classList.add("sapMbrPresent");
+			}
+		});
+	};
+
+	/**
+	 * Filters the element that has a nodetype one
+	 * @param {object} oChildElements It displays all the ChildElements inside the formattedText
+	 * @returns {string} Returns the elements that has a nodeType one
+	 * @private
+	 */
+	TileContent.prototype._filterElements = function(oChildElements) {
+		return [].slice.call(oChildElements).filter(function(oElement) {
+			return oElement.nodeType === 1;
+		});
 	};
 
 	return TileContent;

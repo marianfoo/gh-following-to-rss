@@ -50,19 +50,22 @@ sap.ui.define([
 	 * @extends sap.ui.layout.form.FormLayout
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.16.0
 	 * @deprecated As of version 1.93, replaced by {@link sap.ui.layout.form.ColumnLayout ColumnLayout}
 	 * @alias sap.ui.layout.form.ResponsiveLayout
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ResponsiveLayout = FormLayout.extend("sap.ui.layout.form.ResponsiveLayout", /** @lends sap.ui.layout.form.ResponsiveLayout.prototype */ { metadata : {
+	var ResponsiveLayout = FormLayout.extend("sap.ui.layout.form.ResponsiveLayout", /** @lends sap.ui.layout.form.ResponsiveLayout.prototype */ {
+		metadata : {
 
-		library : "sap.ui.layout"
-	}});
+			library : "sap.ui.layout"
+		},
+
+		renderer: ResponsiveLayoutRenderer
+	});
 
 	/*
 	 * The ResponsiveLayout for forms inside is using ResponsiveFlowLayouts to render the form.
@@ -812,7 +815,7 @@ sap.ui.define([
 		var aVisibleContainers = oForm.getVisibleFormContainers();
 		var oContainer;
 		var iLength = aVisibleContainers.length;
-		var iContentLenght = 0;
+		var iContentLength = 0;
 		var i = 0;
 		var j = 0;
 
@@ -823,10 +826,10 @@ sap.ui.define([
 			} else {
 				// update containers
 				var aLayoutContent = this._mainRFLayout.getContent();
-				iContentLenght = aLayoutContent.length;
+				iContentLength = aLayoutContent.length;
 				var bExchangeContent = false;
 				// check if content has changed
-				for ( i = 0; i < iContentLenght; i++) {
+				for ( i = 0; i < iContentLength; i++) {
 					var oContentElement = aLayoutContent[i];
 					oContainer = undefined;
 					if (oContentElement.getContainer) {
@@ -864,14 +867,14 @@ sap.ui.define([
 				if (bExchangeContent) {
 					// remove all content and add it new.
 					this._mainRFLayout.removeAllContent();
-					iContentLenght = 0;
+					iContentLength = 0;
 				}
 			}
-			if (iContentLenght < iLength) {
+			if (iContentLength < iLength) {
 				// new containers added
 				var iStartIndex = 0;
-				if (iContentLenght > 0) {
-					iStartIndex = iContentLenght--;
+				if (iContentLength > 0) {
+					iStartIndex = iContentLength--;
 				}
 				for ( i = iStartIndex; i < iLength; i++) {
 					oContainer = aVisibleContainers[i];

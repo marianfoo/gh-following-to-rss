@@ -54,14 +54,13 @@ function(library, Core, Control, coreLibrary, Device, HyphenationSupport, TextRe
 	 * @implements sap.ui.core.IShrinkable, sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @alias sap.m.Text
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/text/ Text}
 	 * @see {@link topic:f94deb45de184a3a87850b75d610d9c0 Text}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Text = Control.extend("sap.m.Text", /** @lends sap.m.Text.prototype */ {
 		metadata: {
@@ -135,7 +134,9 @@ function(library, Core, Control, coreLibrary, Device, HyphenationSupport, TextRe
 			},
 
 			designtime: "sap/m/designtime/Text.designtime"
-		}
+		},
+
+		renderer: TextRenderer
 	});
 
 	/**

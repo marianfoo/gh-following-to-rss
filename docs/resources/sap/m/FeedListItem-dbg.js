@@ -15,7 +15,8 @@ sap.ui.define([
 	"./FeedListItemRenderer",
 	"sap/m/Avatar",
 	"sap/m/AvatarShape",
-	"sap/m/AvatarSize"
+	"sap/m/AvatarSize",
+	"sap/ui/core/Configuration"
 ],
 function(
 	ListItemBase,
@@ -28,7 +29,8 @@ function(
 	FeedListItemRenderer,
 	Avatar,
 	AvatarShape,
-	AvatarSize
+	AvatarSize,
+	Configuration
 	) {
 	"use strict";
 
@@ -54,13 +56,12 @@ function(
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.12
 	 * @alias sap.m.FeedListItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FeedListItem = ListItemBase.extend("sap.m.FeedListItem", /** @lends sap.m.FeedListItem.prototype */ {
 		metadata: {
@@ -246,7 +247,9 @@ function(
 					}
 				}
 			}
-		}
+		},
+
+		renderer: FeedListItemRenderer
 	});
 
 	FeedListItem._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -325,7 +328,7 @@ function(
 			return;
 		}
 
-		sTheme = sap.ui.getCore().getConfiguration().getTheme();
+		sTheme = Configuration.getTheme();
 		oActionSheetPopover = event.getSource().getParent();
 		oActionSheetPopover.removeStyleClass("sapContrast sapContrastPlus");
 

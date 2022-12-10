@@ -1,5 +1,5 @@
-/*
- * ! OpenUI5
+/*!
+ * OpenUI5
  * (c) Copyright 2009-2022 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
@@ -21,17 +21,24 @@ sap.ui.define([
 	 * @extends sap.m.p13n.QueryPanel
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @public
-	 * @experimental Since 1.96.
-	 * @since 1.96
+	 * @experimental Since 1.104. Please note that the API of this control is not yet finalized!
 	 * @alias sap.m.p13n.GroupPanel
 	 */
 	var GroupPanel = QueryPanel.extend("sap.m.p13n.GroupPanel", {
 		metadata: {
 			library: "sap.m",
 			properties: {
+				/**
+				 * A short text describing the panel.
+				 * <b>Note:</b> This text will only be displayed if the panel is being used in a <code>sap.m.p13n.Popup</code>.
+				 */
+				title: {
+					type: "string",
+					defaultValue: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("p13n.DEFAULT_TITLE_GROUP")
+				},
 				/**
 				 * Toggles an additional checkbox in the group panel to define whether items are made visible.
 				 */

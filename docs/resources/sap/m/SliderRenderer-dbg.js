@@ -4,8 +4,8 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
-	function(SliderUtilities, InvisibleText) {
+sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText", "sap/ui/core/Configuration"],
+	function(SliderUtilities, InvisibleText, Configuration) {
 		"use strict";
 
 		/**
@@ -117,7 +117,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 			}
 
 			this.addHandleClass(oRm, oSlider);
-			oRm.style(sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left", oSlider._sProgressValue);
+			oRm.style(Configuration.getRTL() ? "right" : "left", oSlider._sProgressValue);
 			this.writeAccessibilityState(oRm, oSlider, mOptions);
 
 
@@ -244,7 +244,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 
 		SliderRenderer.renderTickmarksLabel = function (oRm, oSlider, fValue) {
 			var fOffset = oSlider._getPercentOfValue(fValue);
-			var sLeftOrRightPosition = sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left";
+			var sLeftOrRightPosition = Configuration.getRTL() ? "right" : "left";
 			var sValue;
 			fValue = oSlider.toFixed(fValue, oSlider.getDecimalPrecisionOfNumber(oSlider.getStep()));
 

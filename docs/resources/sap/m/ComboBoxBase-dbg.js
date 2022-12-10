@@ -19,8 +19,6 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/security/encodeXML",
-	"sap/base/strings/escapeRegExp",
 	"sap/m/inputUtils/forwardItemProperties",
 	"sap/m/inputUtils/highlightDOMElements",
 	"sap/m/inputUtils/ListHelpers",
@@ -42,8 +40,6 @@ sap.ui.define([
 		containsOrEquals,
 		KeyCodes,
 		jQuery,
-		encodeXML,
-		escapeRegExp,
 		forwardItemProperties,
 		highlightDOMElements,
 		ListHelpers,
@@ -70,13 +66,12 @@ sap.ui.define([
 		 * @abstract
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @public
 		 * @since 1.22.0
 		 * @alias sap.m.ComboBoxBase
-		 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 		 */
 		var ComboBoxBase = ComboBoxTextField.extend("sap.m.ComboBoxBase", /** @lends sap.m.ComboBoxBase.prototype */ {
 			metadata: {
@@ -874,7 +869,7 @@ sap.ui.define([
 		/**
 		 * Gets the <code>list</code>.
 		 *
-		 * @returns {sap.m.List} The list instance object or <code>null</code>.
+		 * @returns {sap.m.List|null} The list instance object or <code>null</code>.
 		 * @protected
 		 * @deprecated As of version 1.62. The list structure should not be used as per SAP note: 2746748.
 		 */
@@ -891,7 +886,7 @@ sap.ui.define([
 		/**
 		 * Gets the <code>list</code>.
 		 *
-		 * @returns {sap.m.List} The list instance object or <code>null</code>.
+		 * @returns {sap.m.List|null} The list instance object or <code>null</code>.
 		 * @private
 		 */
 		ComboBoxBase.prototype._getList = function() {

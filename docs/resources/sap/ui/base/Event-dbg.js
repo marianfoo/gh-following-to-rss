@@ -23,7 +23,7 @@ sap.ui.define(['./Object', "sap/base/assert"],
 	 * @extends sap.ui.base.Object
 	 * @implements sap.ui.base.Poolable
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @alias sap.ui.base.Event
 	 * @public
 	 */
@@ -107,7 +107,7 @@ sap.ui.define(['./Object', "sap/base/assert"],
 	/**
 	 * Returns an object with all parameter values of the event.
 	 *
-	 * @returns {object} All parameters of the event
+	 * @returns {Object<string, any>} All parameters of the event
 	 * @public
 	 */
 	Event.prototype.getParameters = function() {

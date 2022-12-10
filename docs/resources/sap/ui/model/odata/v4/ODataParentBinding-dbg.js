@@ -54,11 +54,13 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to call when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
 	 * @public
 	 * @since 1.59.0
 	 */
 	ODataParentBinding.prototype.attachPatchCompleted = function (fnFunction, oListener) {
-		this.attachEvent("patchCompleted", fnFunction, oListener);
+		return this.attachEvent("patchCompleted", fnFunction, oListener);
 	};
 
 	/**
@@ -66,11 +68,13 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to call when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
 	 * @public
 	 * @since 1.59.0
 	 */
 	ODataParentBinding.prototype.detachPatchCompleted = function (fnFunction, oListener) {
-		this.detachEvent("patchCompleted", fnFunction, oListener);
+		return this.detachEvent("patchCompleted", fnFunction, oListener);
 	};
 
 	/**
@@ -138,11 +142,13 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to call when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
 	 * @public
 	 * @since 1.59.0
 	 */
 	ODataParentBinding.prototype.attachPatchSent = function (fnFunction, oListener) {
-		this.attachEvent("patchSent", fnFunction, oListener);
+		return this.attachEvent("patchSent", fnFunction, oListener);
 	};
 
 	/**
@@ -150,11 +156,13 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to call when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
 	 * @public
 	 * @since 1.59.0
 	 */
 	ODataParentBinding.prototype.detachPatchSent = function (fnFunction, oListener) {
-		this.detachEvent("patchSent", fnFunction, oListener);
+		return this.detachEvent("patchSent", fnFunction, oListener);
 	};
 
 	/**
@@ -332,9 +340,11 @@ sap.ui.define([
 	 *   1.93.0, string values for "$expand" and "$select" are ignored if they are unchanged;
 	 *   pending changes are ignored if all parameters are unchanged. Since 1.97.0, pending changes
 	 *   are ignored if they relate to a
-	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding.
+	 *   {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive} context of this binding.
 	 *   Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts
-	 *   of a {@link #getRootBinding root binding} do not count as pending changes.
+	 *   of a {@link #getRootBinding root binding} do not count as pending changes. Since 1.108.0,
+	 *   {@link sap.ui.model.odata.v4.Context#delete deleted} contexts do not count as pending
+	 *   changes.
 	 *
 	 * @public
 	 * @since 1.45.0
@@ -416,7 +426,7 @@ sap.ui.define([
 	 *
 	 * @abstract
 	 * @function
-	 * @name sap.ui.model.odata.v4.ODataListBinding#checkKeepAlive
+	 * @name sap.ui.model.odata.v4.ODataParentBinding#checkKeepAlive
 	 * @private
 	 * @see sap.ui.model.odata.v4.Context#setKeepAlive
 	 */
@@ -564,17 +574,22 @@ sap.ui.define([
 	/**
 	 * Creates a promise for the refresh to be resolved by the binding's GET request.
 	 *
-	 * @returns {Promise} the created promise
+	 * @param {boolean} bPreventBubbling
+	 *   Whether the dataRequested and dataReceived events related to the refresh must not be
+	 *   bubbled up to the model
+	 * @returns {Promise} The created promise
 	 *
+	 * @see #isRefreshWithoutBubbling
 	 * @see #resolveRefreshPromise
 	 * @private
 	 */
-	ODataParentBinding.prototype.createRefreshPromise = function () {
+	ODataParentBinding.prototype.createRefreshPromise = function (bPreventBubbling) {
 		var oPromise, fnResolve;
 
 		oPromise = new Promise(function (resolve) {
 			fnResolve = resolve;
 		});
+		oPromise.$preventBubbling = bPreventBubbling;
 		oPromise.$resolve = fnResolve;
 		this.oRefreshPromise = oPromise;
 		return oPromise;
@@ -588,7 +603,7 @@ sap.ui.define([
 	 *   A lock for the group ID to be used for the DELETE request; w/o a lock, no DELETE is sent.
 	 *   For a transient entity, the lock is ignored (use NULL)!
 	 * @param {string} sEditUrl
-	 *   The entity's edit URL to be used for the DELETE request;  w/o a lock, this is mostly
+	 *   The entity's edit URL to be used for the DELETE request; w/o a lock, this is mostly
 	 *   ignored.
 	 * @param {string} sPath
 	 *   The path of the entity relative to this binding
@@ -596,14 +611,10 @@ sap.ui.define([
 	 *   An entity with the ETag of the binding for which the deletion was requested. This is
 	 *   provided if the deletion is delegated from a context binding with empty path to a list
 	 *   binding. W/o a lock, this is ignored.
-	 * @param {boolean} [bDoNotRequestCount]
-	 *   Whether not to request the new count from the server; useful in case of
-	 *   {@link sap.ui.model.odata.v4.Context#replaceWith} where it is known that the count remains
-	 *   unchanged; w/o a lock this should be true
-	 * @param {function} fnCallback
-	 *   A function which is called after a transient entity has been deleted from the cache or
-	 *   after the entity has been deleted from the server and from the cache; the index of the
-	 *   entity and the entity list are both passed as parameter, or none of them
+	 * @param {function} [fnCallback]
+	 *  A function which is called immediately when an entity has been deleted from the cache, or
+	 *   when it was re-inserted due to an error; only used in the list binding; the index of the
+	 *   entity and an offset (-1 for deletion, 1 for re-insertion) are passed as parameter
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure; returns <code>undefined</code> if the
@@ -614,10 +625,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.deleteFromCache = function (oGroupLock, sEditUrl, sPath,
-			oETagEntity, bDoNotRequestCount, fnCallback) {
+			oETagEntity, fnCallback) {
 		return this.withCache(function (oCache, sCachePath) {
-			return oCache._delete(oGroupLock, sEditUrl, sCachePath, oETagEntity, bDoNotRequestCount,
-				fnCallback);
+			return oCache._delete(oGroupLock, sEditUrl, sCachePath, oETagEntity, fnCallback);
 		}, sPath, /*bSync*/true);
 	};
 
@@ -720,8 +730,8 @@ sap.ui.define([
 
 		if (bDependsOnOperation && !sResolvedChildPath.includes("/$Parameter/")
 				|| this.getRootBinding().isSuspended()
-				|| this.mParameters && this.mParameters.$$aggregation) {
-			// With $$aggregation, no auto-$expand/$select is needed, but the child may still use
+				|| _Helper.isDataAggregation(this.mParameters)) {
+			// With data aggregation, no auto-$expand/$select is needed, but the child may still use
 			// the parent's cache
 			// Note: Operation bindings do not support auto-$expand/$select yet
 			return SyncPromise.resolve(sResolvedChildPath);
@@ -1081,6 +1091,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Whether the dataRequested and dataReceived events related to the refresh must not be bubbled
+	 * up to the model.
+	 *
+	 * @returns {boolean} Whether to prevent bubbling
+	 *
+	 * @private
+	 * @see #createRefreshPromise
+	 */
+	ODataParentBinding.prototype.isRefreshWithoutBubbling = function () {
+		return this.oRefreshPromise && this.oRefreshPromise.$preventBubbling;
+	};
+
+	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#onDelete
 	 */
@@ -1275,10 +1298,10 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If this binding
 	 *   <ul>
-	 *   <li>is relative to a {@link sap.ui.model.odata.v4.Context},
-	 *   <li>is an operation binding,
-	 *   <li>has {@link sap.ui.model.Binding#isSuspended} set to <code>false</code>,
-	 *   <li>is not a root binding. Use {@link #getRootBinding} to determine the root binding.
+	 *     <li> is relative to a {@link sap.ui.model.odata.v4.Context},
+	 *     <li> is an operation binding,
+	 *     <li> has {@link sap.ui.model.Binding#isSuspended} set to <code>false</code>,
+	 *     <li> is not a root binding. Use {@link #getRootBinding} to determine the root binding.
 	 *   </ul>
 	 *
 	 * @public
@@ -1332,18 +1355,20 @@ sap.ui.define([
 	 * Suspends this binding. A suspended binding does not fire change events nor does it trigger
 	 * data service requests. Call {@link #resume} to resume the binding. Before 1.53.0, this method
 	 * was not supported and threw an error. Since 1.97.0, pending changes are ignored if they
-	 * relate to a {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this
+	 * relate to a {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive} context of this
 	 * binding. Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts
-	 * of a {@link #getRootBinding root binding} do not count as pending changes.
+	 * of a {@link #getRootBinding root binding} do not count as pending changes. Since 1.108.0
+	 * {@link sap.ui.model.odata.v4.Context#delete deleted} contexts do not count as pending
+	 * changes.
 	 *
 	 * @throws {Error}
 	 *   If this binding
 	 *   <ul>
-	 *   <li>is relative to a {@link sap.ui.model.odata.v4.Context},
-	 *   <li>is an operation binding,
-	 *   <li>has {@link sap.ui.model.Binding#isSuspended} set to <code>true</code>,
-	 *   <li>has pending changes that cannot be ignored,
-	 *   <li>is not a root binding. Use {@link #getRootBinding} to determine the root binding.
+	 *     <li> is relative to a {@link sap.ui.model.odata.v4.Context},
+	 *     <li> is an operation binding,
+	 *     <li> has {@link sap.ui.model.Binding#isSuspended} set to <code>true</code>,
+	 *     <li> has pending changes that cannot be ignored,
+	 *     <li> is not a root binding. Use {@link #getRootBinding} to determine the root binding.
 	 *   </ul>
 	 *
 	 * @public
@@ -1417,8 +1442,8 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#visitSideEffects
 	 */
-	ODataParentBinding.prototype.visitSideEffects = function (sGroupId, aPaths, oContext,
-			mNavigationPropertyPaths, aPromises, sPrefix) {
+	ODataParentBinding.prototype.visitSideEffects = function (sGroupId, aPaths, oContext, aPromises,
+			sPrefix) {
 		var aDependentBindings = oContext
 				? this.oModel.getDependentBindings(oContext)
 				: this.getDependentBindings();
@@ -1435,11 +1460,8 @@ sap.ui.define([
 					aPromises.push(
 						oDependentBinding.requestSideEffects(sGroupId, aStrippedPaths));
 				}
-			} else if (mNavigationPropertyPaths[sPath]) {
-				aPromises.push(oDependentBinding.refreshInternal("", sGroupId));
 			} else {
-				oDependentBinding.visitSideEffects(sGroupId, aPaths, null,
-					mNavigationPropertyPaths, aPromises, sPath);
+				oDependentBinding.visitSideEffects(sGroupId, aPaths, null, aPromises, sPath);
 			}
 		});
 	};

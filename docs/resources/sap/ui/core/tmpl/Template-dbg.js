@@ -7,6 +7,7 @@
 // Provides base class sap.ui.core.tmpl.Template for all templates
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
+	'sap/ui/base/BindingInfo',
 	'sap/ui/base/BindingParser',
 	'sap/ui/core/Control',
 	'sap/ui/core/RenderManager',
@@ -19,6 +20,7 @@ sap.ui.define([
 ],
 function(
 	ManagedObject,
+	BindingInfo,
 	BindingParser,
 	Control,
 	RenderManager,
@@ -52,11 +54,10 @@ function(
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @alias sap.ui.core.tmpl.Template
 	 * @since 1.15
-	 * @deprecated since 1.56, use an {@link sap.ui.core.mvc.XMLView XMLView} or {@link sap.ui.core.mvc.JSView JSView} instead.
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated since 1.56, use an {@link sap.ui.core.mvc.XMLView XMLView} or a {@link topic:e6bb33d076dc4f23be50c082c271b9f0 Typed View} instead.
 	 */
 	var Template = ManagedObject.extend("sap.ui.core.tmpl.Template", /** @lends sap.ui.core.tmpl.Template.prototype */
 	{
@@ -186,7 +187,7 @@ function(
 			throw new Error("The class 'sap.ui.core.tmpl.Template' is abstract and must not be instantiated!");
 		}
 		// check for complex binding syntax
-		if (ManagedObject.bindingParser === BindingParser.complexParser) {
+		if (BindingInfo.parse === BindingParser.complexParser) {
 			/*
 			 * we disable the complex binding parser for Templates
 			 * TODO: reconsider a better solution later
@@ -194,9 +195,9 @@ function(
 			 * @function
 			 */
 			Template.prototype.extractBindingInfo = function(oValue, bIgnoreObjects, oScope) {
-				ManagedObject.bindingParser = BindingParser.simpleParser;
+				BindingInfo.parse = BindingParser.simpleParser;
 				var oReturnValue = Control.prototype.extractBindingInfo.apply(this, arguments);
-				ManagedObject.bindingParser = BindingParser.complexParser;
+				BindingInfo.parse = BindingParser.complexParser;
 				return oReturnValue;
 			};
 		}

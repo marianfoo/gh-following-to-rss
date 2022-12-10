@@ -20,7 +20,7 @@ sap.ui.define([
 	 *
 	 * @alias sap.m.changeHandler.SplitMenuButton
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @experimental Since 1.48
 	 */
 	var SplitMenuButton = {};
@@ -43,7 +43,7 @@ sap.ui.define([
 			return Promise.reject(new Error("Split change can't be applied on XML tree"));
 		}
 
-		var oChangeDefinition = oChange.getDefinition();
+		var oChangeContent = oChange.getContent();
 		var oModifier = mPropertyBag.modifier;
 		var oView = mPropertyBag.view;
 		var oAppComponent = mPropertyBag.appComponent;
@@ -77,7 +77,7 @@ sap.ui.define([
 			})
 			.then(function(iRetrievedAggregationIndex) {
 				iAggregationIndex = iRetrievedAggregationIndex;
-				aNewElementSelectors = oChangeDefinition.content.newElementIds;
+				aNewElementSelectors = oChangeContent.newElementIds;
 				oRevertData = {
 					parentAggregation: sParentAggregation,
 					insertIndex: iAggregationIndex,
@@ -228,7 +228,6 @@ sap.ui.define([
 	SplitMenuButton.completeChangeContent = function(oChange, oSpecificChangeInfo, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var oAppComponent = mPropertyBag.appComponent;
-		var oChangeDefinition = oChange.getDefinition();
 
 		if (!oSpecificChangeInfo.newElementIds) {
 			throw new Error("Split of MenuButton cannot be applied : oSpecificChangeInfo.newElementIds attribute required");
@@ -239,10 +238,12 @@ sap.ui.define([
 		}
 
 		oChange.addDependentControl(oSpecificChangeInfo.sourceControlId, SOURCE_CONTROL, mPropertyBag);
-		oChangeDefinition.content.sourceSelector = oModifier.getSelector(oSpecificChangeInfo.sourceControlId, oAppComponent);
-		oChangeDefinition.content.newElementIds = oSpecificChangeInfo.newElementIds.map(function (sElementId) {
+		var oContent = {};
+		oContent.sourceSelector = oModifier.getSelector(oSpecificChangeInfo.sourceControlId, oAppComponent);
+		oContent.newElementIds = oSpecificChangeInfo.newElementIds.map(function (sElementId) {
 			return oModifier.getSelector(sElementId, oAppComponent);
 		});
+		oChange.setContent(oContent);
 	};
 
 	/**

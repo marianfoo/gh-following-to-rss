@@ -57,7 +57,7 @@ sap.ui.define([
 		 * Navigation via year picker switches to the corresponding year and the same month as before the navigation.
 		 *
 		 * @extends sap.ui.unified.CalendarDateInterval
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @private
@@ -82,7 +82,7 @@ sap.ui.define([
 				oCalendar.attachEvent("select", function () {
 					var oCalPicker = this._getCalendar(),
 						oCalPickerFocusedDate = oCalPicker._getFocusedDate(),
-						oNewStartDate = CalendarUtils._getFirstDateOfMonth(oCalPickerFocusedDate);
+						oNewStartDate = CalendarUtils._getFirstDateOfMonth(new CalendarDate(oCalPickerFocusedDate, this.getPrimaryCalendarType()));
 					var oOneMonthDateRow = this.getAggregation("month")[0];
 
 					this._setStartDate(oNewStartDate);
@@ -133,7 +133,7 @@ sap.ui.define([
 		CalendarOneMonthInterval.prototype._handleFocus = function (oEvent) {
 			var bOutsideVisibleArea = !!oEvent.getParameter("_outsideBorder"),
 				oDateTime = oEvent.getParameter("date"),
-				oCalDate = CalendarDate.fromLocalJSDate(oDateTime),
+				oCalDate = CalendarDate.fromLocalJSDate(oDateTime, this.getPrimaryCalendarType()),
 				oCalStartDate = CalendarDate.fromLocalJSDate(this.getStartDate()),
 				bIsOtherMonth = !CalendarUtils._isSameMonthAndYear(oCalDate, oCalStartDate),
 				iDays,
@@ -302,7 +302,7 @@ sap.ui.define([
 			var iYearMin = this._oMinDate.getYear();
 			var iMonthMax = this._oMaxDate.getMonth();
 			var iMonthMin = this._oMinDate.getMonth();
-			var oFirstOfMonth = CalendarUtils._getFirstDateOfMonth(oDate);
+			var oFirstOfMonth = CalendarUtils._getFirstDateOfMonth(new CalendarDate(oDate, this.getPrimaryCalendarType()));
 			var oFirstOfNextMonth = new CalendarDate(oFirstOfMonth),
 				iYear, iMonth;
 			oFirstOfNextMonth.setMonth(oFirstOfNextMonth.getMonth() + 1);

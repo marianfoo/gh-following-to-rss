@@ -237,21 +237,12 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	};
 
 	/**
-	 * Returns aria accessibility role
-	 *
-	 * @param {sap.m.ListBase} oControl an object representation of the control
-	 * @returns {string}
-	 */
-	ListBaseRenderer.getAriaRole = function(oControl) {
-		return "listbox";
-	};
-
-	/**
 	 * Returns aria accessibility role for the no data entry.
+	 * @param {sap.m.ListBase} oControl the control instance
 	 *
-	 * @returns {string}
+	 * @returns {string|null} the no data role attribute
 	 */
-	ListBaseRenderer.getNoDataAriaRole = function() {
+	ListBaseRenderer.getNoDataAriaRole = function(oControl) {
 		return null;
 	};
 
@@ -292,12 +283,13 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	 * Returns the accessibility state of the control
 	 *
 	 * @param {sap.m.ListBase} oControl an object representation of the control
+	 * @returns {object} the accessibility state object
 	 */
 	ListBaseRenderer.getAccessibilityState = function(oControl) {
-		var sRole = this.getAriaRole(oControl);
+		var sRole = oControl.getAriaRole();
 		return {
 			role : sRole,
-			multiselectable : (sRole && oControl._bSelectionMode) ? oControl.getMode() == "MultiSelect" : undefined,
+			multiselectable : (sRole === "listbox" && oControl._bSelectionMode) ? oControl.getMode() == "MultiSelect" : undefined,
 			labelledby : {
 				value : this.getAriaLabelledBy(oControl),
 				append : true
@@ -328,7 +320,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	ListBaseRenderer.renderNoData = function(rm, oControl) {
 		rm.openStart("li", oControl.getId("nodata"));
 		rm.attr("tabindex", oControl.getKeyboardMode() == ListKeyboardMode.Navigation ? -1 : 0);
-		var sAriaRole = this.getNoDataAriaRole();
+		var sAriaRole = this.getNoDataAriaRole(oControl);
 		if (sAriaRole) {
 			rm.attr("role", sAriaRole);
 		}
@@ -360,7 +352,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	};
 
 	ListBaseRenderer.renderDummyArea = function(rm, oControl, sAreaId, iTabIndex) {
-		rm.openStart("div", oControl.getId(sAreaId)).attr("tabindex", iTabIndex);
+		rm.openStart("div", oControl.getId(sAreaId)).attr("role", "none").attr("tabindex", iTabIndex); // role = none because focusable elements must have a role
 
 		if (Device.system.desktop) {
 			rm.class("sapMListDummyArea");

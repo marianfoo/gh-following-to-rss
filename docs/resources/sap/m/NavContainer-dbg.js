@@ -7,18 +7,18 @@
 // Provides control sap.m.NavContainer.
 sap.ui.define([
 	'./library',
+	"sap/ui/core/Configuration",
 	'sap/ui/core/Control',
 	'sap/ui/core/RenderManager',
-	'sap/ui/Device',
 	'./NavContainerRenderer',
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
 	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "firstFocusableDomRef"
 ], function(
 	library,
+	Configuration,
 	Control,
 	RenderManager,
-	Device,
 	NavContainerRenderer,
 	jQuery,
 	Log
@@ -43,12 +43,11 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @alias sap.m.NavContainer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NavContainer = Control.extend("sap.m.NavContainer", /** @lends sap.m.NavContainer.prototype */ {
 		metadata: {
@@ -245,7 +244,9 @@ sap.ui.define([
 					}
 				}
 			}
-		}
+		},
+
+		renderer: NavContainerRenderer
 	});
 
 	// Delegate registered by the NavContainer#showPlaceholder function
@@ -257,21 +258,23 @@ sap.ui.define([
 		}
 	};
 
-	var bUseAnimations = sap.ui.getCore().getConfiguration().getAnimation(),
-		fnGetDelay = function (iDelay) {
-			return bUseAnimations ? iDelay : 0;
-		},
-		fnHasParent = function(oControl) {
-			return !!(oControl && oControl.getParent());
-		},
-		fnSetAnimationDirection = function (oPage, sDirection) {
-			if (fnHasParent(oPage)) {
-				oPage.$().css({
-					'-webkit-animation-direction': sDirection,
-					'animation-direction':  sDirection
-				});
-			}
-		};
+	var fnGetDelay = function (iDelay) {
+		var sAnimationMode = Configuration.getAnimationMode(),
+			bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
+
+		return bUseAnimations ? iDelay : 0;
+	},
+	fnHasParent = function(oControl) {
+		return !!(oControl && oControl.getParent());
+	},
+	fnSetAnimationDirection = function (oPage, sDirection) {
+		if (fnHasParent(oPage)) {
+			oPage.$().css({
+				'-webkit-animation-direction': sDirection,
+				'animation-direction':  sDirection
+			});
+		}
+	};
 
 	NavContainer.TransitionDirection = {
 		BACK: "back",
@@ -406,7 +409,6 @@ sap.ui.define([
 	 *
 	 * @param {string} pageId The ID of the aggregated control to find
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {sap.ui.core.Control|null} The control with the given ID or <code>null</code> if it doesn't exist
 	 */
 	NavContainer.prototype.getPage = function (pageId) {
@@ -438,7 +440,6 @@ sap.ui.define([
 	 * <code>sap.ui.core.mvc.View</code>, <code>sap.m.Carousel</code> or whatever is aggregated.
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {sap.ui.core.Control} The current page
 	 */
 	NavContainer.prototype.getCurrentPage = function () {
@@ -461,7 +462,6 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @since 1.7.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {sap.ui.core.Control} The previous page
 	 */
 	NavContainer.prototype.getPreviousPage = function () {
@@ -486,7 +486,6 @@ sap.ui.define([
 	 * but logically one is not at the top level, so this method returns "false" in this case.
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {boolean} Whether the current page is a top page
 	 */
 	NavContainer.prototype.currentPageIsTopPage = function () {
@@ -508,7 +507,6 @@ sap.ui.define([
 	 * @param {object} data This optional object can carry any payload data which would have been given to the inserted previous page if the user would have done a normal forward navigation to it.
 	 * @public
 	 * @since 1.16.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {this} The <code>sap.m.NavContainer</code> instance
 	 */
 	NavContainer.prototype.insertPreviousPage = function (pageId, transitionName, data) {
@@ -671,7 +669,7 @@ sap.ui.define([
 	 *
 	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "BeforeHide" pseudo event on the source page and "BeforeFirstShow" (if applicable) and"BeforeShow" on the target page. Later - after the transition has completed - the "AfterShow" pseudo event is triggered on the target page and "AfterHide" on the page which has been left. The given data object is available in the "BeforeFirstShow", "BeforeShow" and "AfterShow" event object as "data" property.
 	 *
-	 * @param {string} vPageIdOrControl
+	 * @param {string | sap.ui.core.Control} vPageIdOrControl
 	 *         The screen to which drilldown should happen. The ID or the control itself can be given.
 	 * @param {string} [sTransitionName=slide]
 	 *         The type of the transition/animation to apply. Options are "slide" (horizontal movement from the right), "baseSlide", "fade", "flip", and "show"
@@ -693,7 +691,6 @@ sap.ui.define([
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 *         The "show", "slide", "baseSlide" and "fade" transitions do not use any parameter.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {this} The <code>sap.m.NavContainer</code> instance
 	 */
 	NavContainer.prototype.to = function (vPageIdOrControl, sTransitionName, oData, oTransitionParameters, bFromQueue) {
@@ -878,7 +875,6 @@ sap.ui.define([
 	 *
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {this} The <code>sap.m.NavContainer</code> instance
 	 */
 	NavContainer.prototype.back = function (backData, oTransitionParameters) {
@@ -908,7 +904,6 @@ sap.ui.define([
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
 	 * @since 1.7.2
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {this} The <code>sap.m.NavContainer</code> instance
 	 */
 	NavContainer.prototype.backToPage = function (pageId, backData, oTransitionParameters) {
@@ -937,7 +932,6 @@ sap.ui.define([
 	 * @type this
 	 * @public
 	 * @since 1.7.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	NavContainer.prototype.backToTop = function (backData, oTransitionParameters) {
 		this._backTo("backToTop", backData, oTransitionParameters);
@@ -1639,7 +1633,6 @@ sap.ui.define([
 	 *
 	 *         See the documentation of NavContainer.addCustomTransitions for more details about this function.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {this} The <code>sap.m.NavContainer</code> instance
 	 */
 	NavContainer.prototype.addCustomTransition = function (sName, fTo, fBack) {
@@ -1828,7 +1821,7 @@ sap.ui.define([
 	NavContainer.prototype.showPlaceholder = function(mSettings) {
 		var pLoaded;
 
-		if (!sap.ui.getCore().getConfiguration().getPlaceholder()) {
+		if (!Configuration.getPlaceholder()) {
 			return;
 		}
 

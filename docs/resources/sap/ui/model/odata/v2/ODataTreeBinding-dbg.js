@@ -94,7 +94,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.TreeBinding
 	 * @hideconstructor
 	 * @public
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 */
 	var ODataTreeBinding = TreeBinding.extend("sap.ui.model.odata.v2.ODataTreeBinding", /** @lends sap.ui.model.odata.v2.ODataTreeBinding.prototype */ {
 
@@ -181,6 +181,9 @@ sap.ui.define([
 			this.oAllKeys = null;
 			this.oAllLengths = null;
 			this.oAllFinalLengths = null;
+
+			// Whether a refresh has been performed
+			this.bRefresh = false;
 		}
 
 	});
@@ -1511,7 +1514,8 @@ sap.ui.define([
 				}
 			}
 			if (mChangedEntities && !bChangeDetected) {
-				bChangeDetected = this._hasChangedEntity(mChangedEntities);
+				bChangeDetected = this._isRefreshAfterChangeAllowed()
+					&& this._hasChangedEntity(mChangedEntities);
 			}
 			if (!mChangedEntities && !mEntityTypes) { // default
 				bChangeDetected = true;
@@ -1523,6 +1527,18 @@ sap.ui.define([
 			this.bRefresh = true;
 			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
+	};
+
+	/**
+	 * Checks whether this binding with its configuration is allowed to perform a refresh triggered
+	 * by refreshAfterChange.
+	 *
+	 * @returns {boolean} Whether a refresh caused by refreshAfterChange is allowed
+	 *
+	 * @private
+	 */
+	ODataTreeBinding.prototype._isRefreshAfterChangeAllowed = function () {
+		return true;
 	};
 
 	/**
@@ -2543,7 +2559,7 @@ sap.ui.define([
 	 *
 	 * See the API documentation for the function {@link sap.ui.model.odata.v2.ODataTreeBinding#createEntry createEntry}.
 	 *
-	 * This feature is only available when the underlying OData service exposes the "hierarchy-descendant-count-for" annotation.
+	 * This feature is only available when the underlying OData service exposes the "hierarchy-node-descendant-count-for" annotation.
 	 * See the constructor documentation for more details.
 	 *
 	 * @function
@@ -2559,7 +2575,7 @@ sap.ui.define([
 	 *
 	 * Calling <code>removeContext</code> for a given context implicitly removes the complete subtree underneath it.
 	 *
-	 * This feature is only available when the underlying OData service exposes the "hierarchy-descendant-count-for" annotation.
+	 * This feature is only available when the underlying OData service exposes the "hierarchy-node-descendant-count-for" annotation.
 	 * See the constructor documentation for more details.
 	 *
 	 * @function
@@ -2576,7 +2592,7 @@ sap.ui.define([
 	 * The available API is the same as for the v2.ODataModel.
 	 * See the API documentation here: {@link sap.ui.model.odata.v2.ODataModel#createEntry createEntry}.
 	 *
-	 * This feature is only available when the underlying OData service exposes the "hierarchy-descendant-count-for" annotation.
+	 * This feature is only available when the underlying OData service exposes the "hierarchy-node-descendant-count-for" annotation.
 	 * See the constructor documentation for more details.
 	 *
 	 * @function
@@ -2592,7 +2608,7 @@ sap.ui.define([
 	 * The available API is the same as for the v2.ODataModel.
 	 * See the API documentation here: {@link sap.ui.model.odata.v2.ODataModel#submitChanges submitChanges}.
 	 *
-	 * This feature is only available when the underlying OData service exposes the "hierarchy-descendant-count-for" annotation.
+	 * This feature is only available when the underlying OData service exposes the "hierarchy-node-descendant-count-for" annotation.
 	 * See the Constructor documentation for more details.
 	 *
 	 * @function

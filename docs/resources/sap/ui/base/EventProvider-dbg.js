@@ -18,7 +18,7 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 	 * @abstract
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @public
 	 * @alias sap.ui.base.EventProvider
 	 */
@@ -335,7 +335,7 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 	 * structured, this can be overwritten to make the object hierarchy visible to the eventing and
 	 * enables the use of event bubbling within this object hierarchy.
 	 *
-	 * @return {sap.ui.base.EventProvider} The parent event provider
+	 * @return {sap.ui.base.EventProvider|null} The parent event provider
 	 * @protected
 	 */
 	EventProvider.prototype.getEventingParent = function() {

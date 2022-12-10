@@ -7,18 +7,12 @@
 sap.ui.define([
 	'./InputBase',
 	'./library',
-	'sap/ui/core/InvisibleText',
-	'sap/ui/core/library',
-	'sap/ui/Device',
 	'sap/ui/core/LabelEnablement',
 	"./ComboBoxTextFieldRenderer"
 ],
 	function(
 		InputBase,
 		library,
-		InvisibleText,
-		coreLibrary,
-		Device,
 		LabelEnablement,
 		ComboBoxTextFieldRenderer
 	) {
@@ -35,13 +29,12 @@ sap.ui.define([
 		 * @extends sap.m.InputBase
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @public
 		 * @since 1.34
 		 * @alias sap.m.ComboBoxTextField
-		 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 		 */
 		var ComboBoxTextField = InputBase.extend("sap.m.ComboBoxTextField", /** @lends sap.m.ComboBoxTextField.prototype */ {
 			metadata: {
@@ -67,7 +60,9 @@ sap.ui.define([
 						defaultValue: true
 					}
 				}
-			}
+			},
+
+			renderer: ComboBoxTextFieldRenderer
 		});
 
 		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");

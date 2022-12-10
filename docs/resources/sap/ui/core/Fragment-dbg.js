@@ -60,7 +60,7 @@ function(
 	 * @class
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @public
 	 * @alias sap.ui.core.Fragment
 	 */
@@ -906,7 +906,10 @@ function(
 
 
 	// ###   HTML Fragments   ###
-
+	/**
+	 * @deprecated As of version 1.108, together with the HTMLView. If you need declarative fragments,
+	 *    use XML fragments instead.
+	 */
 	(function() {
 
 		/**

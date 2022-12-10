@@ -96,7 +96,7 @@ sap.ui.define([
 	 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout MDN web docs: CSS Grid Layout}
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.layout.cssgrid.IGridConfigurable
@@ -105,7 +105,6 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.layout.cssgrid.CSSGrid
-	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CSSGrid = Control.extend("sap.ui.layout.cssgrid.CSSGrid", {
 		metadata: {

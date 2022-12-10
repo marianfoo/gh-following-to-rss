@@ -3,8 +3,8 @@
  * (c) Copyright 2009-2022 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
-sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/ui/core/Icon", "sap/ui/core/IconPool", "sap/ui/Device"],
-	function(Element, coreLibrary, Icon, IconPool, Device) {
+sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/ui/core/IconPool", "sap/ui/Device"],
+	function(Element, coreLibrary, IconPool, Device) {
 		"use strict";
 
 		// shortcut for sap.ui.core.TextDirection

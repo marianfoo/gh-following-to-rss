@@ -11,9 +11,11 @@ sap.ui.define([
 	'sap/ui/core/LocaleData',
 	'sap/base/Log',
 	'sap/base/assert',
-	'sap/base/util/extend'
+	'sap/base/util/extend',
+	'sap/ui/core/Configuration'
+
 ],
-	function(BaseObject, Locale, LocaleData, Log, assert, extend) {
+	function(BaseObject, Locale, LocaleData, Log, assert, extend, Configuration) {
 	"use strict";
 
 
@@ -48,6 +50,22 @@ sap.ui.define([
 	var rNumPlaceHolder = /0+(\.0+)?/;
 	// Regex for checking that the given string only consists of '0' characters
 	var rOnlyZeros = /^0+$/;
+
+	// Indian currency INR (e.g. xx.xx.yyy.xx.xx.yyy.xx.xx.yyy)
+	var getIndianCurrencyINRGroupingRegExp = function() {
+		return /^(?:\d{1,2},?\d{2},?\d{3}|\d{1,2},?\d{3}|\d{1,3})(?:,?\d{2},?\d{2},?\d{3})*$/;
+	};
+
+	/*
+	 * Is used to validate existing grouping separators.
+	 * e.g. yyy.yyy.yyy -> /^\d+(?:\.?\d{3})*\.?\d{3}$/
+	 */
+	var getGroupingRegExp = function(groupingSeparator, groupingSize, groupingBaseSize) {
+		var sGroupingEscaped = quote(groupingSeparator);
+		return new RegExp("^\\d+"
+			+ "(?:" + sGroupingEscaped + "?" + "\\d{" + groupingSize + "}" + ")*"
+			+ "" + sGroupingEscaped + "?" + "\\d{" + groupingBaseSize + "}" + "$");
+	};
 
 	/**
 	 * Internal enumeration to differentiate number types
@@ -149,6 +167,7 @@ sap.ui.define([
 		maxIntegerDigits: 99,
 		minFractionDigits: 0,
 		maxFractionDigits: 0,
+		strictGroupingValidation: false,
 		groupingEnabled: false,
 		groupingSize: 3,
 		groupingSeparator: ",",
@@ -175,6 +194,7 @@ sap.ui.define([
 		maxIntegerDigits: 99,
 		minFractionDigits: 0,
 		maxFractionDigits: 99,
+		strictGroupingValidation: false,
 		groupingEnabled: true,
 		groupingSize: 3,
 		groupingSeparator: ",",
@@ -201,6 +221,7 @@ sap.ui.define([
 		maxIntegerDigits: 99,
 		minFractionDigits: 0,
 		maxFractionDigits: 99,
+		strictGroupingValidation: false,
 		groupingEnabled: true,
 		groupingSize: 3,
 		groupingSeparator: ",",
@@ -229,6 +250,7 @@ sap.ui.define([
 		maxIntegerDigits: 99,
 		// the default value for min/maxFractionDigits is defined in oLocaleData.getCurrencyDigits
 		// they need to be left undefined here in order to detect whether they are set from outside
+		strictGroupingValidation: false,
 		groupingEnabled: true,
 		groupingSize: 3,
 		groupingSeparator: ",",
@@ -260,6 +282,7 @@ sap.ui.define([
 	NumberFormat.oDefaultUnitFormat = {
 		minIntegerDigits: 1,
 		maxIntegerDigits: 99,
+		strictGroupingValidation: false,
 		groupingEnabled: true,
 		groupingSize: 3,
 		groupingSeparator: ",",
@@ -368,6 +391,7 @@ sap.ui.define([
 	 *  used for all numbers which are formatted with this format instance. This option has effect only when the option 'style' is set to 'short' or 'long'. This option is by default set
 	 *  with <code>undefined</code> which means the scale factor is selected automatically for each number being formatted.
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
+	 * @param {boolean} [oFormatOptions.strictGroupingValidation=false] whether the positions of grouping separators are validated. Space characters used as grouping separators are not validated.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are
 	 *   'short, 'long' or 'standard' (based on the CLDR decimalFormat). When set to 'short' or 'long',
 	 *   numbers are formatted into compact forms. When this option is set, the default value of the
@@ -460,6 +484,7 @@ sap.ui.define([
 	 *  used for all numbers which are formatted with this format instance. This option has effect only when the option 'style' is set to 'short' or 'long'. This option is by default set
 	 *  with <code>undefined</code> which means the scale factor is selected automatically for each number being formatted.
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
+	 * @param {boolean} [oFormatOptions.strictGroupingValidation=false] whether the positions of grouping separators are validated. Space characters used as grouping separators are not validated.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are
 	 *   'short, 'long' or 'standard' (based on the CLDR decimalFormat). When set to 'short' or 'long',
 	 *   numbers are formatted into compact forms. When this option is set, the default value of the
@@ -602,6 +627,7 @@ sap.ui.define([
 	 *  If both <code>showMeasure</code> and <code>showNumber</code> are false, an empty string is returned
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number.
 	 *   This option takes effect only when the 'style' options is set to either 'short' or 'long'.
+	 * @param {boolean} [oFormatOptions.strictGroupingValidation=false] whether the positions of grouping separators are validated. Space characters used as grouping separators are not validated.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are
 	 *   'short, 'long' or 'standard' (based on the CLDR decimalFormat). When set to 'short' or 'long',
 	 *   numbers are formatted into compact forms. When this option is set, the default value of the
@@ -737,6 +763,7 @@ sap.ui.define([
 	 *      <code>NumberFormat.getUnitInstance({showNumber:false}).format(2, "duration-day"); // "days"</code>
 	 *  If both <code>showMeasure</code> and <code>showNumber</code> are false, an empty string is returned
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
+	 * @param {boolean} [oFormatOptions.strictGroupingValidation=false] whether the positions of grouping separators are validated. Space characters used as grouping separators are not validated.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are
 	 *   'short, 'long' or 'standard' (based on the CLDR decimalFormat). When set to 'short' or 'long',
 	 *   numbers are formatted into compact forms. When this option is set, the default value of the
@@ -819,6 +846,7 @@ sap.ui.define([
 	 *  used for all numbers which are formatted with this format instance. This option has effect only when the option 'style' is set to 'short' or 'long'. This option is by default set
 	 *  with <code>undefined</code> which means the scale factor is selected automatically for each number being formatted.
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
+	 * @param {boolean} [oFormatOptions.strictGroupingValidation=false] whether the positions of grouping separators are validated. Space characters used as grouping separators are not validated.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are
 	 *   'short, 'long' or 'standard' (based on the CLDR decimalFormat). When set to 'short' or 'long',
 	 *   numbers are formatted into compact forms. When this option is set, the default value of the
@@ -853,7 +881,7 @@ sap.ui.define([
 			oFormatOptions = undefined;
 		}
 		if (!oLocale) {
-			oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+			oLocale = Configuration.getFormatSettings().getFormatLocale();
 		}
 		oFormat.oLocale = oLocale;
 		oFormat.oLocaleData = LocaleData.getInstance(oLocale);
@@ -1135,7 +1163,7 @@ sap.ui.define([
 	 * @param {string} sIntegerPart a string with the integer value, e.g. "1234567"
 	 * @param {object} oOptions the format options, relevant are: groupingSeparator,
 	 *   groupingBaseSize, groupingSize
-	 * @param {boolean} bIndianCurrency if it is an Indian currency
+	 * @param {boolean} bIndianCurrency if it is an Indian currency (locale en-IN and currency INR)
 	 * @returns {string} integer part with grouping, e.g. "1.234.567" for locale de-DE
 	 * @private
 	 */
@@ -1604,7 +1632,7 @@ sap.ui.define([
 	};
 
 	NumberFormat.prototype._addOriginInfo = function(sResult) {
-		if (sap.ui.getCore().getConfiguration().getOriginInfo()) {
+		if (Configuration.getOriginInfo()) {
 			// String object is created on purpose and must not be a string literal
 			// eslint-disable-next-line no-new-wrappers
 			sResult = new String(sResult);
@@ -1682,7 +1710,7 @@ sap.ui.define([
 	 * Parse a string which is formatted according to the given format options.
 	 *
 	 * @param {string} sValue the string containing a formatted numeric value
-	 * @return {number|array|string} the parsed value as:
+	 * @return {number|array|string|null} the parsed value as:
 	 * <ul>
 	 *  <li>number</li>
 	 *  <li>array which contains the parsed value and the currency code (symbol) or unit for currency and unit instances</li>
@@ -1694,8 +1722,9 @@ sap.ui.define([
 	 */
 	NumberFormat.prototype.parse = function(sValue) {
 		var oOptions = this.oFormatOptions,
-			sPlusSigns = oOptions.plusSign + this.oLocaleData.getLenientNumberSymbols("plusSign") ,
-			sMinusSigns = oOptions.minusSign + this.oLocaleData.getLenientNumberSymbols("minusSign") ,
+			sPlusSigns = oOptions.plusSign + this.oLocaleData.getLenientNumberSymbols("plusSign"),
+			sMinusSigns = oOptions.minusSign + this.oLocaleData.getLenientNumberSymbols("minusSign"),
+			// Note: the minus sign ('-') needs to be quoted as well such that it is not confused with the range operator, e.g. in [A-Z]
 			sPlusMinusSigns = quote(sPlusSigns + sMinusSigns),
 			sGroupingSeparator = quote(oOptions.groupingSeparator),
 			sDecimalSeparator = quote(oOptions.decimalSeparator),
@@ -1935,7 +1964,7 @@ sap.ui.define([
 		}
 
 		// strict grouping validation
-		var bIsGroupingValid = checkGrouping(sValueWithGrouping, oOptions, bScientificNotation, oGroupingRegExp);
+		var bIsGroupingValid = this._checkGrouping(sValueWithGrouping, oOptions, bScientificNotation, bIndianCurrency && sMeasure === "INR");
 		if (!bIsGroupingValid) {
 			// treat invalid grouping the same way as if the value cannot be parsed
 			return (oOptions.type === mNumberType.CURRENCY || oOptions.type === mNumberType.UNIT) ? null : NaN;
@@ -2282,7 +2311,7 @@ sap.ui.define([
 	 * @returns {boolean}
 	 */
 	function showTrailingCurrencyCode(oFormatOptions) {
-		var bShowTrailingCurrencyCodes = sap.ui.getCore().getConfiguration().getFormatSettings().getTrailingCurrencyCode();
+		var bShowTrailingCurrencyCodes = Configuration.getFormatSettings().getTrailingCurrencyCode();
 		if (oFormatOptions) {
 
 			// overwritten by instance configuration
@@ -2441,13 +2470,14 @@ sap.ui.define([
 	 *   <li>remove short/long format (e.g. "Mio"/"Million")</li>
 	 *   <li>resolve lenient symbols</li>
 	 *  </ul>
+	 * This means grouping separators which are space characters or RTL characters are not validated.
 	 * @param {object} oOptions the format options, relevant are: groupingSeparator, groupingSize, groupingBaseSize and decimalSeparator
 	 * @param {boolean} bScientificNotation is scientific notation, e.g. "1.234e+1"
-	 * @param {RegExp} oGroupingRegExp grouping regular expression
+	 * @param {boolean} bIndianCurrency is an indian currency, e.g. number in combination with currency "INR" and locale is "en_IN"
 	 * @returns {boolean} true if the grouping is done correctly, e.g. "1.23" is not grouped correctly for grouping separator "." and groupingSize 3
 	 * @private
 	 */
-	function checkGrouping(sValueWithGrouping, oOptions, bScientificNotation, oGroupingRegExp) {
+	NumberFormat.prototype._checkGrouping = function(sValueWithGrouping, oOptions, bScientificNotation, bIndianCurrency) {
 		if (oOptions.groupingSeparator && sValueWithGrouping.includes(oOptions.groupingSeparator)) {
 			// All following checks are only done, if the value contains at least one (non-falsy) grouping separator.
 			// The examples below use the German locale:
@@ -2476,32 +2506,69 @@ sap.ui.define([
 				sValueWithGrouping = sValueWithGrouping.replace(/[eE].*/, "");
 			}
 
-			// if value includes a decimal separator, it is valid and no further checks are needed.
-			// Integer types are skipped, which often have identical decimal and grouping separators configured
-			// e.g. "1.2,3" (valid)
-			if (oOptions.decimalSeparator !== oOptions.groupingSeparator
-				&& sValueWithGrouping.includes(oOptions.decimalSeparator)) {
-				return true;
+			var bHasDecimalSeparator = sValueWithGrouping.includes(oOptions.decimalSeparator);
+			// Integer types often have identical decimal and grouping separators configured,
+			// therefore we do not remove the decimals part and validate them as if they would not
+			// have decimals
+			if (oOptions.decimalSeparator === oOptions.groupingSeparator) {
+				bHasDecimalSeparator = false;
+			} else if (bHasDecimalSeparator) {
+				// remove decimals part to be able to validate grouping
+				sValueWithGrouping = sValueWithGrouping.split(oOptions.decimalSeparator)[0];
 			}
 
-			// if value doesn't include exactly one grouping separator, it is valid and no further checks are needed
-			// e.g. 1.2.3 (valid)
-			if (sValueWithGrouping.split(oGroupingRegExp).length !== 2) {
-				return true;
+			// check if decimal and grouping separator were confused.
+			// This check is performed in addition to stricter grouping validation (strictGroupingValidation)
+			// to reduce the confusion between decimal and grouping separator.
+			// e.g. for "de": 1.234567 (is invalid)
+			// Pre-requisites (examples for "de")
+			// * number has exactly one grouping separator, e.g. "1.23"
+			//   since there can be only one decimal separator, if there is exactly one grouping
+			//   separator they could have been confused
+			// * number has no decimal separator, e.g. 1.23
+			//   if there is a decimal separator and a grouping separator present,
+			//   there cannot be a confusion
+			var bHasExactlyOneGroupingSeparator = sValueWithGrouping.split(oOptions.groupingSeparator).length === 2;
+			if (bHasExactlyOneGroupingSeparator && !bHasDecimalSeparator) {
+				// find least-significant ("lowest") grouping separator
+				var iLowestGroupingIndex = sValueWithGrouping.length - sValueWithGrouping.lastIndexOf(oOptions.groupingSeparator);
+				var iBaseGroupSize = oOptions.groupingBaseSize || oOptions.groupingSize;
+				// if least-significant grouping size doesn't match grouping base size, the value is invalid
+				// e.g. 12.34 (invalid)
+				if (iLowestGroupingIndex !== iBaseGroupSize + oOptions.groupingSeparator.length) {
+					return false;
+				}
 			}
 
-			// find least-significant ("lowest") grouping separator
-			var iLowestGroupingIndex = sValueWithGrouping.length - sValueWithGrouping.lastIndexOf(oOptions.groupingSeparator);
-			var iBaseGroupSize = oOptions.groupingBaseSize || oOptions.groupingSize;
-			// if least-significant grouping size doesn't match grouping base size, the value is invalid
-			// e.g. 12.34 (invalid)
-			if (iLowestGroupingIndex !== iBaseGroupSize + oOptions.groupingSeparator.length) {
-				return false;
+			/**
+			 * With strictGroupingValidation enabled the behaviour is closer to ABAP, the position
+			 * of the grouping separators are validated as well.
+			 * e.g. for "de" <code>1.2.3</code> becomes invalid
+			 */
+			if (oOptions.strictGroupingValidation) {
+				var rGrouping;
+				if (bIndianCurrency) {
+					this._rIndianCurrencyINRGrouping = this._rIndianCurrencyINRGrouping || getIndianCurrencyINRGroupingRegExp();
+					rGrouping = this._rIndianCurrencyINRGrouping;
+				} else {
+					this._rGrouping = this._rGrouping || getGroupingRegExp(oOptions.groupingSeparator, oOptions.groupingSize, oOptions.groupingBaseSize || oOptions.groupingSize);
+					rGrouping = this._rGrouping;
+				}
+
+				// e.g. for "de" with valid grouping separators at the correct position
+				// rGrouping: /^\d+(?:\.?\d{3})*\.?\d{3}$/
+				// sValueWithGrouping: 123 456.789
+				//                     123 456 789
+				//                     123.456.789
+				// Note: spaces are just there for visual aid.
+				if (!rGrouping.test(sValueWithGrouping)) {
+					return false;
+				}
 			}
 		}
 
 		return true;
-	}
+	};
 
 	/**
 	 * Whether or not the given value is in scientific notation
@@ -2715,25 +2782,63 @@ sap.ui.define([
 	 * Identify the longest match between a sub string of <code>sValue</code>
 	 * and one of the values of the <code>mCollection</code> map.
 	 *
-	 * @param {string} sValue the string value which is checked for all currency codes/symbols during a parse call
-	 * @param {object} mCollection a collection of currency codes or symbols
-	 *
-	 * @return {object} returns object containing matched symbol/ code
+	 * @param {string} sValue
+	 *   The string value which is checked for all currency codes/symbols
+	 * @param {Object<string, string>} mCollection
+	 *   An object mapping a currency code to a either a currency symbol or the currency code itself
+	 * @param {boolean} bCaseInsensitive Whether case insensitive matches are allowed
+	 * @return {{code: string, recognizedCurrency: string, symbol: string}}
+	 *   An object with the code, the recognized currency and the symbol found in the given value;
+	 *   an empty object in case of either conflicting case insensitive matches, or no match
 	 */
-	function findLongestMatch(sValue, mCollection) {
-		var sSymbol = "", sCode, sCurSymbol;
+	function findLongestMatch(sValue, mCollection, bCaseInsensitive) {
+		var sCode, sCurCode, sCurSymbol, sCurSymbolToUpperCase, iIndex, sLanguageTag,
+			sRecognizedCurrency, sValueSubStr,
+			bDuplicate = false,
+			bExactMatch = false,
+			sSymbol = "";
 
-		for (var sCurCode in mCollection) {
+		for (sCurCode in mCollection) {
 			sCurSymbol = mCollection[sCurCode];
-			if (sValue.indexOf(sCurSymbol) >= 0 && sSymbol.length < sCurSymbol.length) {
-				sSymbol = sCurSymbol;
+			if (!sCurSymbol) {
+				continue;
+			}
+			if (sValue.indexOf(sCurSymbol) >= 0 && sSymbol.length <= sCurSymbol.length) {
 				sCode = sCurCode;
+				bDuplicate = false;
+				bExactMatch = true;
+				sSymbol = sCurSymbol;
+				sRecognizedCurrency = sCurSymbol;
+			} else if (bCaseInsensitive) {
+				sLanguageTag = Configuration.getLanguageTag();
+				sCurSymbolToUpperCase = sCurSymbol.toLocaleUpperCase(sLanguageTag);
+				iIndex = sValue.toLocaleUpperCase(sLanguageTag).indexOf(sCurSymbolToUpperCase);
+				if (iIndex >= 0) {
+					if (sSymbol.length === sCurSymbol.length && !bExactMatch) {
+						bDuplicate = true;
+					} else if (sSymbol.length < sCurSymbol.length) {
+						sValueSubStr = sValue.substring(iIndex, iIndex + sCurSymbol.length);
+						if (sValueSubStr.toLocaleUpperCase(sLanguageTag)
+								=== sCurSymbolToUpperCase) {
+							sCode = sCurCode;
+							bDuplicate = false;
+							bExactMatch = false;
+							sSymbol = sCurSymbol;
+							sRecognizedCurrency = sValueSubStr;
+						}
+					}
+				}
 			}
 		}
 
+		if (bDuplicate || !sCode) {
+			return {};
+		}
+
 		return {
-			symbol: sSymbol,
-			code: sCode
+			code : sCode,
+			recognizedCurrency : sRecognizedCurrency,
+			symbol : sSymbol
 		};
 	}
 
@@ -2756,7 +2861,8 @@ sap.ui.define([
 	 * @returns {object|undefined} returns object containing numberValue and currencyCode or undefined
 	 */
 	function parseNumberAndCurrency(oConfig) {
-		var sValue = oConfig.value;
+		var aIsoMatches,
+			sValue = oConfig.value;
 
 		// Search for known symbols (longest match)
 		// no distinction between default and custom currencies
@@ -2766,26 +2872,28 @@ sap.ui.define([
 		if (!oMatch.code) {
 			// before falling back to the default regex for ISO codes we check the
 			// codes for custom currencies (if defined)
-			oMatch = findLongestMatch(sValue, oConfig.customCurrencyCodes);
+			oMatch = findLongestMatch(sValue, oConfig.customCurrencyCodes, true);
 
 			if (!oMatch.code && !oConfig.customCurrenciesAvailable) {
 				// Match 3-letter iso code
-				var aIsoMatches = sValue.match(/(^[A-Z]{3}|[A-Z]{3}$)/);
-				oMatch.code = aIsoMatches && aIsoMatches[0];
+				aIsoMatches = sValue.match(/(^[A-Z]{3}|[A-Z]{3}$)/i);
+				oMatch.code = aIsoMatches
+					&& aIsoMatches[0].toLocaleUpperCase(Configuration.getLanguageTag());
+				oMatch.recognizedCurrency = aIsoMatches && aIsoMatches[0];
 			}
 		}
 
 		// Remove symbol/code from value
 		if (oMatch.code) {
-			var iLastCodeIndex = oMatch.code.length - 1;
-			var sLastCodeChar = oMatch.code.charAt(iLastCodeIndex);
+			var iLastCodeIndex = oMatch.recognizedCurrency.length - 1;
+			var sLastCodeChar = oMatch.recognizedCurrency.charAt(iLastCodeIndex);
 			var iDelimiterPos;
 			var rValidDelimiters = /[\-\s]+/;
 
 			// Check whether last character of matched code is a number
 			if (/\d$/.test(sLastCodeChar)) {
 				// Check whether parse string starts with the matched code
-				if (sValue.startsWith(oMatch.code)) {
+				if (sValue.startsWith(oMatch.recognizedCurrency)) {
 					iDelimiterPos = iLastCodeIndex + 1;
 					// \s matching any whitespace character including
 					// non-breaking ws and invisible non-breaking ws
@@ -2794,16 +2902,16 @@ sap.ui.define([
 					}
 				}
 			// Check whether first character of matched code is a number
-			} else if (/^\d/.test(oMatch.code)) {
+			} else if (/^\d/.test(oMatch.recognizedCurrency)) {
 				// Check whether parse string ends with the matched code
-				if (sValue.endsWith(oMatch.code)) {
-					iDelimiterPos = sValue.indexOf(oMatch.code) - 1;
+				if (sValue.endsWith(oMatch.recognizedCurrency)) {
+					iDelimiterPos = sValue.indexOf(oMatch.recognizedCurrency) - 1;
 					if (!rValidDelimiters.test(sValue.charAt(iDelimiterPos))) {
 						return undefined;
 					}
 				}
 			}
-			sValue = sValue.replace(oMatch.symbol || oMatch.code, "");
+			sValue = sValue.replace(oMatch.recognizedCurrency, "");
 		}
 
 		// Set currency code to undefined, as the defined custom currencies

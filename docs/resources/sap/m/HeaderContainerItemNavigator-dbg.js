@@ -5,11 +5,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/delegate/ItemNavigation",
-	"sap/base/assert",
-	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/KeyCodes"
-], function (ItemNavigation, assert, containsOrEquals, KeyCodes) {
+	"sap/ui/core/delegate/ItemNavigation"
+], function (ItemNavigation) {
 	"use strict";
 
 	/**
@@ -19,7 +16,7 @@ sap.ui.define([
 	 * @since 1.67.0
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @alias sap.m.HeaderContainerItemNavigator

@@ -86,14 +86,13 @@ sap.ui.define([
 		 * @extends sap.m.ListItemBase
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @public
 		 * @abstract
 		 * @since 1.38
 		 * @alias sap.m.NotificationListBase
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var NotificationListBase = ListItemBase.extend('sap.m.NotificationListBase', /** @lends sap.m.NotificationListBase.prototype */ {
 			metadata: {
@@ -349,9 +348,9 @@ sap.ui.define([
 						this.close();
 					}.bind(this)
 				});
-
-				this.setAggregation("_closeButton", closeButton);
 			}
+
+			this.setAggregation("_closeButton", closeButton);
 
 			return closeButton;
 		};
@@ -462,6 +461,7 @@ sap.ui.define([
 
 		NotificationListBase.prototype._arrangeButtons = function () {
 			this._destroyCloseBtnAndSeparator();
+			this._createCloseButton();
 
 			if (this._isSmallSize()) {
 				this._arrangeSSizeButtons();
@@ -475,8 +475,6 @@ sap.ui.define([
 				buttons = this.getButtons(),
 				buttonOverflowPriorityType = buttons.length > 1 ? OverflowToolbarPriority.AlwaysOverflow : OverflowToolbarPriority.NeverOverflow;
 
-			this._createCloseButton();
-
 			for (var i = 0; i < buttons.length; i++) {
 				button = buttons[i];
 
@@ -488,7 +486,7 @@ sap.ui.define([
 
 		NotificationListBase.prototype._arrangeSSizeButtons = function () {
 			var overflowToolbar = this._getOverflowToolbar(),
-				closeButton = this._createCloseButton(),
+				closeButton = this._getCloseButton(),
 				isNotificationListGroup = this.isA("sap.m.NotificationListGroup"),
 				buttonText = isNotificationListGroup ? closeAllText : closeText,
 				isCollapsed = isNotificationListGroup && this.getCollapsed(),

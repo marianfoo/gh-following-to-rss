@@ -26,13 +26,12 @@ sap.ui.define([
 	 * @extends sap.ui.core.LayoutData
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.56.0
 	 * @alias sap.ui.layout.form.ColumnElementData
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ColumnElementData = LayoutData.extend("sap.ui.layout.form.ColumnElementData", /** @lends sap.ui.layout.form.ColumnElementData.prototype */ { metadata : {
 

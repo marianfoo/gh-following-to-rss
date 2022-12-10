@@ -11,7 +11,7 @@
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.103.0
+ * @version 1.108.1
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -32,7 +32,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function") {
-		var apiVersion = "1.103.0";
+		var apiVersion = "1.108.1";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -105,7 +105,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	Device._checkAPIVersion = function(sVersion) {
-		var v = "1.103.0";
+		var v = "1.108.1";
 		if (v != sVersion) {
 			oLogger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -1192,7 +1192,7 @@ if (typeof window.sap.ui !== "object") {
 	 * <li><code>mParams.name</code>: The name of the entered interval, if available</li>
 	 * </ul>
 	 *
-	 * @param {function}
+	 * @param {function({from: number, to: number, unit: string, name: string | undefined})}
 	 *            fnFunction The handler function to call when the event occurs. This function will be called in the context of the
 	 *                       <code>oListener</code> instance (if present) or on the <code>window</code> instance. A map with information
 	 *                       about the entered range set is provided as a single argument to the handler (see details above).
@@ -1351,7 +1351,7 @@ if (typeof window.sap.ui !== "object") {
 	 * @param {string} sName The name of the range set. The range set must be initialized beforehand ({@link sap.ui.Device.media.initRangeSet})
 	 * @param {int} [iWidth] An optional width, based on which the range should be determined;
 	 *             If <code>iWidth</code> is not a number, the window size will be used.
-	 * @returns {object} Information about the current active interval of the range set. The returned object has the same structure as the argument of the event handlers ({@link sap.ui.Device.media.attachHandler})
+	 * @returns {{from: number, to: number, unit: string, name: string | undefined}} Information about the current active interval of the range set. The returned object has the same structure as the argument of the event handlers ({@link sap.ui.Device.media.attachHandler})
 	 *
 	 * @name sap.ui.Device.media.getCurrentRange
 	 * @function

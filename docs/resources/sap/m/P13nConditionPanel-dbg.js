@@ -1,5 +1,5 @@
-/*
- * ! OpenUI5
+/*!
+ * OpenUI5
  * (c) Copyright 2009-2022 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
@@ -112,13 +112,12 @@ sap.ui.define([
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The ConditionPanel Control will be used to implement the Sorting, Filtering and Grouping panel of the new Personalization dialog.
 	 * @extends sap.ui.core.Control
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @constructor
 	 * @public
 	 * @since 1.26.0
 	 * @experimental since version 1.26 !!! THIS CONTROL IS ONLY FOR INTERNAL USE !!!
 	 * @alias sap.m.P13nConditionPanel
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nConditionPanel = Control.extend("sap.m.P13nConditionPanel", /** @lends sap.m.P13nConditionPanel.prototype */ {
 		metadata: {
@@ -1376,6 +1375,9 @@ sap.ui.define([
 						var vValue = oConditionGridData[field["ID"]];
 
 						if (oControl instanceof Select) {
+							if (typeof vValue === "string") {
+								vValue = oConditionGrid.oType.parseValue(vValue, "string");
+							}
 							if (typeof vValue === "boolean") {
 								oControl.setSelectedIndex(vValue ? 2 : 1);
 							}
@@ -1921,6 +1923,10 @@ sap.ui.define([
 					oConditionGrid.oType.validateValue(oValue);
 
 					sValue = oConditionGrid.oType.formatValue(oValue, "string");
+					if (sValue && sValue.toUpperCase && this.getDisplayFormat() === "UpperCase") {
+						sValue = sValue.toUpperCase();
+					}
+
 					oCtrl.setValue(sValue);
 				} catch (err) {
 					var sMsg = err.message;

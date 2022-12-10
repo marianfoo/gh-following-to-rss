@@ -12,8 +12,9 @@ sap.ui.define([
 	"sap/m/Image",
 	"./NumericContentRenderer",
 	"sap/ui/events/KeyCodes",
-	"sap/base/util/deepEqual"
-], function (library, Control, IconPool, ResizeHandler, Image, NumericContentRenderer, KeyCodes, deepEqual) {
+	"sap/base/util/deepEqual",
+	"sap/ui/core/Configuration"
+], function (library, Control, IconPool, ResizeHandler, Image, NumericContentRenderer, KeyCodes, deepEqual, Configuration) {
 	"use strict";
 
 	var LANG_MAP = { // keys are compared in lowercase
@@ -107,12 +108,11 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @since 1.34
 	 *
 	 * @public
 	 * @alias sap.m.NumericContent
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NumericContent = Control.extend("sap.m.NumericContent", /** @lends sap.m.NumericContent.prototype */ {
 		metadata: {
@@ -210,7 +210,9 @@ sap.ui.define([
 				 */
 				"press": {}
 			}
-		}
+		},
+
+		renderer: NumericContentRenderer
 	});
 
 	/* --- Lifecycle methods --- */
@@ -236,7 +238,7 @@ sap.ui.define([
 
 	NumericContent.prototype._getMaxDigitsData = function () {
 		var sFontClass = null,
-			sLang = sap.ui.getCore().getConfiguration().getLanguage().toLowerCase(),
+			sLang = Configuration.getLanguage().toLowerCase(),
 			iMaxLength = LANG_MAP[sLang] || 4;
 
 		if (this.getAdaptiveFontSize()) {

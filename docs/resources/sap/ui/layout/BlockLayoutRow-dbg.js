@@ -32,13 +32,12 @@ sap.ui.define([
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @public
 		 * @since 1.34
 		 * @alias sap.ui.layout.BlockLayoutRow
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var BlockLayoutRow = Control.extend("sap.ui.layout.BlockLayoutRow", {
 			metadata: {
@@ -80,7 +79,9 @@ sap.ui.define([
 					accentCells: {type: "sap.ui.layout.BlockLayoutCell", multiple: true, singularName: "accentCell"}
 				},
 				designtime: "sap/ui/layout/designtime/BlockLayoutRow.designtime"
-			}
+			},
+
+			renderer: BlockLayoutRowRenderer
 		});
 
 		BlockLayoutRow.prototype.init = function () {

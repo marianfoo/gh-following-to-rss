@@ -6,8 +6,9 @@
 sap.ui.define([
 	"sap/m/library",
 	"sap/ui/Device",
-	"sap/ui/core/library"
-], function (library, Device, coreLibrary) {
+	"sap/ui/core/library",
+	"sap/ui/core/Core"
+], function (library, Device, coreLibrary, Core) {
 	"use strict";
 
 	// shortcut for sap.m.DialogType
@@ -159,6 +160,7 @@ sap.ui.define([
 			// In that case, the controller will focus the last focusable element.
 			oRM.openStart("span", sId + "-firstfe")
 				.class("sapMDialogFirstFE")
+				.attr("role", "none")
 				.attr("tabindex", "0")
 				.openEnd()
 				.close("span");
@@ -167,15 +169,26 @@ sap.ui.define([
 		if (oHeader) {
 			oHeader._applyContextClassFor("header");
 			oRM.openStart("header")
-				.class("sapMDialogTitle");
+				.class("sapMDialogTitle")
+				.openEnd()
+				.openStart("div")
+				.class("sapMDialogTitleGroup");
 
 			if (oDialog._isDraggableOrResizable()) {
-				oRM.attr("tabindex", 0);
+				oRM.attr("tabindex", 0)
+					.accessibilityState(oHeader, {
+						role: "group",
+						roledescription: Core.getLibraryResourceBundle("sap.m").getText("DIALOG_HEADER_ARIA_ROLE_DESCRIPTION"),
+						describedby: { value: oDialog.getId() + "-ariaDescribedbyText", append: true }
+					});
 			}
 
 			oRM.openEnd()
-				.renderControl(oHeader)
-				.close("header");
+			.renderControl(oHeader)
+			.renderControl(oDialog._oAriaDescribedbyText)
+			.close("div")
+			.close("header");
+
 		}
 
 		if (oSubHeader && oSubHeader.getVisible()) {
@@ -229,6 +242,7 @@ sap.ui.define([
 			// In that case, the controller will focus the first focusable element.
 			oRM.openStart("span", sId + "-lastfe")
 				.class("sapMDialogLastFE")
+				.attr("role", "none")
 				.attr("tabindex", "0")
 				.openEnd()
 				.close("span");

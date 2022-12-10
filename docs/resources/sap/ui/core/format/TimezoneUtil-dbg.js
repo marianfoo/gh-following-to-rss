@@ -11,7 +11,7 @@ sap.ui.define([], function() {
 	 * Static collection of utility functions to handle time zone related conversions
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @namespace
 	 * @alias sap.ui.core.format.TimezoneUtil
 	 * @private
@@ -129,7 +129,9 @@ sap.ui.define([], function() {
 	 * var oDate = new Date("2021-10-13T15:22:33Z"); // UTC
 	 * // time zone difference UTC-4 (DST)
 	 * TimezoneUtil.convertToTimezone(oDate, "America/New_York");
+	 * result is:
 	 * // 2021-10-13 11:22:33 in America/New_York
+	 * // same as new Date("2021-10-13T11:22:33Z"); // UTC
 	 *
 	 * @param {Date} oDate The date which should be converted.
 	 * @param {string} sTargetTimezone The target IANA timezone ID, e.g <code>"Europe/Berlin"</code>
@@ -211,7 +213,7 @@ sap.ui.define([], function() {
 			parseInt(oParts.hour),
 			parseInt(oParts.minute),
 			parseInt(oParts.second),
-			parseInt(oParts.fractionalSecond));
+			parseInt(oParts.fractionalSecond || 0)); // some older browsers don't support fractionalSecond, e.g. Safari < 14.1 */
 
 		return oDate;
 	};

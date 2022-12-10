@@ -135,6 +135,7 @@ sap.ui.define([
 
 			if (Array.isArray(aSymbols)) {
 				aSymbols.forEach(function(sSymbol) {
+					IllustrationPool.loadAsset(sIllustrationSet + "-Dot-" + sSymbol);
 					IllustrationPool.loadAsset(sIllustrationSet + "-Spot-" + sSymbol);
 					IllustrationPool.loadAsset(sIllustrationSet + "-Dialog-" + sSymbol);
 					IllustrationPool.loadAsset(sIllustrationSet + "-Scene-" + sSymbol);
@@ -211,6 +212,7 @@ sap.ui.define([
 			if (oDOMPool === null) {
 				oDOMPool = document.createElement("div");
 				oDOMPool.id = SAP_ILLUSTRATION_POOL_ID;
+				oDOMPool.setAttribute("aria-hidden", "true");
 
 				Core.getStaticAreaRef().appendChild(oDOMPool);
 
@@ -336,6 +338,7 @@ sap.ui.define([
 					error: function (jqXHR, sStatus) {
 						if (sStatus !== "abort") { // log an error if it isn't aborted
 							delete oAssetRegistry[sId];
+							Core.getEventBus().publish("sapMIllusPool-assetLdgFailed");
 							Log.error(sId + " asset could not be loaded");
 							fnResolve();
 						}

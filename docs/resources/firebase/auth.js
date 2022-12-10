@@ -12,6 +12,232 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         globalThis.process = { env:env };
     })();
 
+    var global$1 = (typeof global !== "undefined" ? global :
+      typeof self !== "undefined" ? self :
+      typeof window !== "undefined" ? window : {});
+
+    // shim for using process in browser
+    // based off https://github.com/defunctzombie/node-process/blob/master/browser.js
+
+    function defaultSetTimout() {
+        throw new Error('setTimeout has not been defined');
+    }
+    function defaultClearTimeout () {
+        throw new Error('clearTimeout has not been defined');
+    }
+    var cachedSetTimeout = defaultSetTimout;
+    var cachedClearTimeout = defaultClearTimeout;
+    if (typeof global$1.setTimeout === 'function') {
+        cachedSetTimeout = setTimeout;
+    }
+    if (typeof global$1.clearTimeout === 'function') {
+        cachedClearTimeout = clearTimeout;
+    }
+
+    function runTimeout(fun) {
+        if (cachedSetTimeout === setTimeout) {
+            //normal enviroments in sane situations
+            return setTimeout(fun, 0);
+        }
+        // if setTimeout wasn't available but was latter defined
+        if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+            cachedSetTimeout = setTimeout;
+            return setTimeout(fun, 0);
+        }
+        try {
+            // when when somebody has screwed with setTimeout but no I.E. maddness
+            return cachedSetTimeout(fun, 0);
+        } catch(e){
+            try {
+                // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+                return cachedSetTimeout.call(null, fun, 0);
+            } catch(e){
+                // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+                return cachedSetTimeout.call(this, fun, 0);
+            }
+        }
+
+
+    }
+    function runClearTimeout(marker) {
+        if (cachedClearTimeout === clearTimeout) {
+            //normal enviroments in sane situations
+            return clearTimeout(marker);
+        }
+        // if clearTimeout wasn't available but was latter defined
+        if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+            cachedClearTimeout = clearTimeout;
+            return clearTimeout(marker);
+        }
+        try {
+            // when when somebody has screwed with setTimeout but no I.E. maddness
+            return cachedClearTimeout(marker);
+        } catch (e){
+            try {
+                // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+                return cachedClearTimeout.call(null, marker);
+            } catch (e){
+                // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+                // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+                return cachedClearTimeout.call(this, marker);
+            }
+        }
+
+
+
+    }
+    var queue = [];
+    var draining = false;
+    var currentQueue;
+    var queueIndex = -1;
+
+    function cleanUpNextTick() {
+        if (!draining || !currentQueue) {
+            return;
+        }
+        draining = false;
+        if (currentQueue.length) {
+            queue = currentQueue.concat(queue);
+        } else {
+            queueIndex = -1;
+        }
+        if (queue.length) {
+            drainQueue();
+        }
+    }
+
+    function drainQueue() {
+        if (draining) {
+            return;
+        }
+        var timeout = runTimeout(cleanUpNextTick);
+        draining = true;
+
+        var len = queue.length;
+        while(len) {
+            currentQueue = queue;
+            queue = [];
+            while (++queueIndex < len) {
+                if (currentQueue) {
+                    currentQueue[queueIndex].run();
+                }
+            }
+            queueIndex = -1;
+            len = queue.length;
+        }
+        currentQueue = null;
+        draining = false;
+        runClearTimeout(timeout);
+    }
+    function nextTick(fun) {
+        var args = new Array(arguments.length - 1);
+        if (arguments.length > 1) {
+            for (var i = 1; i < arguments.length; i++) {
+                args[i - 1] = arguments[i];
+            }
+        }
+        queue.push(new Item(fun, args));
+        if (queue.length === 1 && !draining) {
+            runTimeout(drainQueue);
+        }
+    }
+    // v8 likes predictible objects
+    function Item(fun, array) {
+        this.fun = fun;
+        this.array = array;
+    }
+    Item.prototype.run = function () {
+        this.fun.apply(null, this.array);
+    };
+    var title = 'browser';
+    var platform = 'browser';
+    var browser$1 = true;
+    var env = {};
+    var argv = [];
+    var version$3 = ''; // empty string to avoid regexp issues
+    var versions = {};
+    var release = {};
+    var config = {};
+
+    function noop$1() {}
+
+    var on = noop$1;
+    var addListener = noop$1;
+    var once = noop$1;
+    var off = noop$1;
+    var removeListener = noop$1;
+    var removeAllListeners = noop$1;
+    var emit = noop$1;
+
+    function binding(name) {
+        throw new Error('process.binding is not supported');
+    }
+
+    function cwd () { return '/' }
+    function chdir (dir) {
+        throw new Error('process.chdir is not supported');
+    }function umask() { return 0; }
+
+    // from https://github.com/kumavis/browser-process-hrtime/blob/master/index.js
+    var performance = global$1.performance || {};
+    var performanceNow =
+      performance.now        ||
+      performance.mozNow     ||
+      performance.msNow      ||
+      performance.oNow       ||
+      performance.webkitNow  ||
+      function(){ return (new Date()).getTime() };
+
+    // generate timestamp or delta
+    // see http://nodejs.org/api/process.html#process_process_hrtime
+    function hrtime(previousTimestamp){
+      var clocktime = performanceNow.call(performance)*1e-3;
+      var seconds = Math.floor(clocktime);
+      var nanoseconds = Math.floor((clocktime%1)*1e9);
+      if (previousTimestamp) {
+        seconds = seconds - previousTimestamp[0];
+        nanoseconds = nanoseconds - previousTimestamp[1];
+        if (nanoseconds<0) {
+          seconds--;
+          nanoseconds += 1e9;
+        }
+      }
+      return [seconds,nanoseconds]
+    }
+
+    var startTime = new Date();
+    function uptime() {
+      var currentTime = new Date();
+      var dif = currentTime - startTime;
+      return dif / 1000;
+    }
+
+    var browser$1$1 = {
+      nextTick: nextTick,
+      title: title,
+      browser: browser$1,
+      env: env,
+      argv: argv,
+      version: version$3,
+      versions: versions,
+      on: on,
+      addListener: addListener,
+      once: once,
+      off: off,
+      removeListener: removeListener,
+      removeAllListeners: removeAllListeners,
+      emit: emit,
+      binding: binding,
+      cwd: cwd,
+      chdir: chdir,
+      umask: umask,
+      hrtime: hrtime,
+      platform: platform,
+      release: release,
+      config: config,
+      uptime: uptime
+    };
+
     const stringToByteArray$1 = function (str) {
       const out = [];
       let p = 0;
@@ -200,7 +426,11 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
       return ua.indexOf("MSIE ") >= 0 || ua.indexOf("Trident/") >= 0;
     }
     function isIndexedDBAvailable() {
-      return typeof indexedDB === "object";
+      try {
+        return typeof indexedDB === "object";
+      } catch (e) {
+        return false;
+      }
     }
     function validateIndexedDBOpenable() {
       return new Promise((resolve, reject) => {
@@ -226,6 +456,88 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
           reject(error);
         }
       });
+    }
+    function getGlobal() {
+      if (typeof self !== "undefined") {
+        return self;
+      }
+      if (typeof window !== "undefined") {
+        return window;
+      }
+      if (typeof global$1 !== "undefined") {
+        return global$1;
+      }
+      throw new Error("Unable to locate global object.");
+    }
+    const getDefaultsFromGlobal = () => getGlobal().__FIREBASE_DEFAULTS__;
+    const getDefaultsFromEnvVariable = () => {
+      if (typeof browser$1$1 === "undefined" || typeof browser$1$1.env === "undefined") {
+        return;
+      }
+      const defaultsJsonString = browser$1$1.env.__FIREBASE_DEFAULTS__;
+      if (defaultsJsonString) {
+        return JSON.parse(defaultsJsonString);
+      }
+    };
+    const getDefaultsFromCookie = () => {
+      if (typeof document === "undefined") {
+        return;
+      }
+      let match;
+      try {
+        match = document.cookie.match(/__FIREBASE_DEFAULTS__=([^;]+)/);
+      } catch (e) {
+        return;
+      }
+      const decoded = match && base64Decode(match[1]);
+      return decoded && JSON.parse(decoded);
+    };
+    const getDefaults = () => {
+      try {
+        return getDefaultsFromGlobal() || getDefaultsFromEnvVariable() || getDefaultsFromCookie();
+      } catch (e) {
+        console.info(`Unable to get __FIREBASE_DEFAULTS__ due to: ${e}`);
+        return;
+      }
+    };
+    const getDefaultEmulatorHost = productName => {
+      var _a, _b;
+      return (_b = (_a = getDefaults()) === null || _a === void 0 ? void 0 : _a.emulatorHosts) === null || _b === void 0 ? void 0 : _b[productName];
+    };
+    const getDefaultAppConfig = () => {
+      var _a;
+      return (_a = getDefaults()) === null || _a === void 0 ? void 0 : _a.config;
+    };
+    const getExperimentalSetting = name => {
+      var _a;
+      return (_a = getDefaults()) === null || _a === void 0 ? void 0 : _a[`_${name}`];
+    };
+    class Deferred {
+      constructor() {
+        this.reject = () => {};
+        this.resolve = () => {};
+        this.promise = new Promise((resolve, reject) => {
+          this.resolve = resolve;
+          this.reject = reject;
+        });
+      }
+      wrapCallback(callback) {
+        return (error, value) => {
+          if (error) {
+            this.reject(error);
+          } else {
+            this.resolve(value);
+          }
+          if (typeof callback === "function") {
+            this.promise.catch(() => {});
+            if (callback.length === 1) {
+              callback(error);
+            } else {
+              callback(error, value);
+            }
+          }
+        };
+      }
     }
     const ERROR_NAME = "FirebaseError";
     class FirebaseError extends Error {
@@ -491,7 +803,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
              * Properties to be added to the service namespace
              */
             this.serviceProps = {};
-            this.instantiationMode = "LAZY" /* LAZY */;
+            this.instantiationMode = "LAZY" /* InstantiationMode.LAZY */;
             this.onInstanceCreated = null;
         }
         setInstantiationMode(mode) {
@@ -509,6 +821,371 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         setInstanceCreatedCallback(callback) {
             this.onInstanceCreated = callback;
             return this;
+        }
+    }
+
+    /**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+    const DEFAULT_ENTRY_NAME$1 = '[DEFAULT]';
+
+    /**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+    /**
+     * Provider for instance for service name T, e.g. 'auth', 'auth-internal'
+     * NameServiceMapping[T] is an alias for the type of the instance
+     */
+    class Provider {
+        constructor(name, container) {
+            this.name = name;
+            this.container = container;
+            this.component = null;
+            this.instances = new Map();
+            this.instancesDeferred = new Map();
+            this.instancesOptions = new Map();
+            this.onInitCallbacks = new Map();
+        }
+        /**
+         * @param identifier A provider can provide mulitple instances of a service
+         * if this.component.multipleInstances is true.
+         */
+        get(identifier) {
+            // if multipleInstances is not supported, use the default name
+            const normalizedIdentifier = this.normalizeInstanceIdentifier(identifier);
+            if (!this.instancesDeferred.has(normalizedIdentifier)) {
+                const deferred = new Deferred();
+                this.instancesDeferred.set(normalizedIdentifier, deferred);
+                if (this.isInitialized(normalizedIdentifier) ||
+                    this.shouldAutoInitialize()) {
+                    // initialize the service if it can be auto-initialized
+                    try {
+                        const instance = this.getOrInitializeService({
+                            instanceIdentifier: normalizedIdentifier
+                        });
+                        if (instance) {
+                            deferred.resolve(instance);
+                        }
+                    }
+                    catch (e) {
+                        // when the instance factory throws an exception during get(), it should not cause
+                        // a fatal error. We just return the unresolved promise in this case.
+                    }
+                }
+            }
+            return this.instancesDeferred.get(normalizedIdentifier).promise;
+        }
+        getImmediate(options) {
+            var _a;
+            // if multipleInstances is not supported, use the default name
+            const normalizedIdentifier = this.normalizeInstanceIdentifier(options === null || options === void 0 ? void 0 : options.identifier);
+            const optional = (_a = options === null || options === void 0 ? void 0 : options.optional) !== null && _a !== void 0 ? _a : false;
+            if (this.isInitialized(normalizedIdentifier) ||
+                this.shouldAutoInitialize()) {
+                try {
+                    return this.getOrInitializeService({
+                        instanceIdentifier: normalizedIdentifier
+                    });
+                }
+                catch (e) {
+                    if (optional) {
+                        return null;
+                    }
+                    else {
+                        throw e;
+                    }
+                }
+            }
+            else {
+                // In case a component is not initialized and should/can not be auto-initialized at the moment, return null if the optional flag is set, or throw
+                if (optional) {
+                    return null;
+                }
+                else {
+                    throw Error(`Service ${this.name} is not available`);
+                }
+            }
+        }
+        getComponent() {
+            return this.component;
+        }
+        setComponent(component) {
+            if (component.name !== this.name) {
+                throw Error(`Mismatching Component ${component.name} for Provider ${this.name}.`);
+            }
+            if (this.component) {
+                throw Error(`Component for ${this.name} has already been provided`);
+            }
+            this.component = component;
+            // return early without attempting to initialize the component if the component requires explicit initialization (calling `Provider.initialize()`)
+            if (!this.shouldAutoInitialize()) {
+                return;
+            }
+            // if the service is eager, initialize the default instance
+            if (isComponentEager(component)) {
+                try {
+                    this.getOrInitializeService({ instanceIdentifier: DEFAULT_ENTRY_NAME$1 });
+                }
+                catch (e) {
+                    // when the instance factory for an eager Component throws an exception during the eager
+                    // initialization, it should not cause a fatal error.
+                    // TODO: Investigate if we need to make it configurable, because some component may want to cause
+                    // a fatal error in this case?
+                }
+            }
+            // Create service instances for the pending promises and resolve them
+            // NOTE: if this.multipleInstances is false, only the default instance will be created
+            // and all promises with resolve with it regardless of the identifier.
+            for (const [instanceIdentifier, instanceDeferred] of this.instancesDeferred.entries()) {
+                const normalizedIdentifier = this.normalizeInstanceIdentifier(instanceIdentifier);
+                try {
+                    // `getOrInitializeService()` should always return a valid instance since a component is guaranteed. use ! to make typescript happy.
+                    const instance = this.getOrInitializeService({
+                        instanceIdentifier: normalizedIdentifier
+                    });
+                    instanceDeferred.resolve(instance);
+                }
+                catch (e) {
+                    // when the instance factory throws an exception, it should not cause
+                    // a fatal error. We just leave the promise unresolved.
+                }
+            }
+        }
+        clearInstance(identifier = DEFAULT_ENTRY_NAME$1) {
+            this.instancesDeferred.delete(identifier);
+            this.instancesOptions.delete(identifier);
+            this.instances.delete(identifier);
+        }
+        // app.delete() will call this method on every provider to delete the services
+        // TODO: should we mark the provider as deleted?
+        async delete() {
+            const services = Array.from(this.instances.values());
+            await Promise.all([
+                ...services
+                    .filter(service => 'INTERNAL' in service) // legacy services
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    .map(service => service.INTERNAL.delete()),
+                ...services
+                    .filter(service => '_delete' in service) // modularized services
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    .map(service => service._delete())
+            ]);
+        }
+        isComponentSet() {
+            return this.component != null;
+        }
+        isInitialized(identifier = DEFAULT_ENTRY_NAME$1) {
+            return this.instances.has(identifier);
+        }
+        getOptions(identifier = DEFAULT_ENTRY_NAME$1) {
+            return this.instancesOptions.get(identifier) || {};
+        }
+        initialize(opts = {}) {
+            const { options = {} } = opts;
+            const normalizedIdentifier = this.normalizeInstanceIdentifier(opts.instanceIdentifier);
+            if (this.isInitialized(normalizedIdentifier)) {
+                throw Error(`${this.name}(${normalizedIdentifier}) has already been initialized`);
+            }
+            if (!this.isComponentSet()) {
+                throw Error(`Component ${this.name} has not been registered yet`);
+            }
+            const instance = this.getOrInitializeService({
+                instanceIdentifier: normalizedIdentifier,
+                options
+            });
+            // resolve any pending promise waiting for the service instance
+            for (const [instanceIdentifier, instanceDeferred] of this.instancesDeferred.entries()) {
+                const normalizedDeferredIdentifier = this.normalizeInstanceIdentifier(instanceIdentifier);
+                if (normalizedIdentifier === normalizedDeferredIdentifier) {
+                    instanceDeferred.resolve(instance);
+                }
+            }
+            return instance;
+        }
+        /**
+         *
+         * @param callback - a function that will be invoked  after the provider has been initialized by calling provider.initialize().
+         * The function is invoked SYNCHRONOUSLY, so it should not execute any longrunning tasks in order to not block the program.
+         *
+         * @param identifier An optional instance identifier
+         * @returns a function to unregister the callback
+         */
+        onInit(callback, identifier) {
+            var _a;
+            const normalizedIdentifier = this.normalizeInstanceIdentifier(identifier);
+            const existingCallbacks = (_a = this.onInitCallbacks.get(normalizedIdentifier)) !== null && _a !== void 0 ? _a : new Set();
+            existingCallbacks.add(callback);
+            this.onInitCallbacks.set(normalizedIdentifier, existingCallbacks);
+            const existingInstance = this.instances.get(normalizedIdentifier);
+            if (existingInstance) {
+                callback(existingInstance, normalizedIdentifier);
+            }
+            return () => {
+                existingCallbacks.delete(callback);
+            };
+        }
+        /**
+         * Invoke onInit callbacks synchronously
+         * @param instance the service instance`
+         */
+        invokeOnInitCallbacks(instance, identifier) {
+            const callbacks = this.onInitCallbacks.get(identifier);
+            if (!callbacks) {
+                return;
+            }
+            for (const callback of callbacks) {
+                try {
+                    callback(instance, identifier);
+                }
+                catch (_a) {
+                    // ignore errors in the onInit callback
+                }
+            }
+        }
+        getOrInitializeService({ instanceIdentifier, options = {} }) {
+            let instance = this.instances.get(instanceIdentifier);
+            if (!instance && this.component) {
+                instance = this.component.instanceFactory(this.container, {
+                    instanceIdentifier: normalizeIdentifierForFactory(instanceIdentifier),
+                    options
+                });
+                this.instances.set(instanceIdentifier, instance);
+                this.instancesOptions.set(instanceIdentifier, options);
+                /**
+                 * Invoke onInit listeners.
+                 * Note this.component.onInstanceCreated is different, which is used by the component creator,
+                 * while onInit listeners are registered by consumers of the provider.
+                 */
+                this.invokeOnInitCallbacks(instance, instanceIdentifier);
+                /**
+                 * Order is important
+                 * onInstanceCreated() should be called after this.instances.set(instanceIdentifier, instance); which
+                 * makes `isInitialized()` return true.
+                 */
+                if (this.component.onInstanceCreated) {
+                    try {
+                        this.component.onInstanceCreated(this.container, instanceIdentifier, instance);
+                    }
+                    catch (_a) {
+                        // ignore errors in the onInstanceCreatedCallback
+                    }
+                }
+            }
+            return instance || null;
+        }
+        normalizeInstanceIdentifier(identifier = DEFAULT_ENTRY_NAME$1) {
+            if (this.component) {
+                return this.component.multipleInstances ? identifier : DEFAULT_ENTRY_NAME$1;
+            }
+            else {
+                return identifier; // assume multiple instances are supported before the component is provided.
+            }
+        }
+        shouldAutoInitialize() {
+            return (!!this.component &&
+                this.component.instantiationMode !== "EXPLICIT" /* InstantiationMode.EXPLICIT */);
+        }
+    }
+    // undefined should be passed to the service factory for the default instance
+    function normalizeIdentifierForFactory(identifier) {
+        return identifier === DEFAULT_ENTRY_NAME$1 ? undefined : identifier;
+    }
+    function isComponentEager(component) {
+        return component.instantiationMode === "EAGER" /* InstantiationMode.EAGER */;
+    }
+
+    /**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+    /**
+     * ComponentContainer that provides Providers for service name T, e.g. `auth`, `auth-internal`
+     */
+    class ComponentContainer {
+        constructor(name) {
+            this.name = name;
+            this.providers = new Map();
+        }
+        /**
+         *
+         * @param component Component being added
+         * @param overwrite When a component with the same name has already been registered,
+         * if overwrite is true: overwrite the existing component with the new component and create a new
+         * provider with the new component. It can be useful in tests where you want to use different mocks
+         * for different tests.
+         * if overwrite is false: throw an exception
+         */
+        addComponent(component) {
+            const provider = this.getProvider(component.name);
+            if (provider.isComponentSet()) {
+                throw new Error(`Component ${component.name} has already been registered with ${this.name}`);
+            }
+            provider.setComponent(component);
+        }
+        addOrOverwriteComponent(component) {
+            const provider = this.getProvider(component.name);
+            if (provider.isComponentSet()) {
+                // delete the existing provider from the container, so we can register the new component
+                this.providers.delete(component.name);
+            }
+            this.addComponent(component);
+        }
+        /**
+         * getProvider provides a type safe interface where it can only be called with a field name
+         * present in NameServiceMapping interface.
+         *
+         * Firebase SDKs providing services should extend NameServiceMapping interface to register
+         * themselves.
+         */
+        getProvider(name) {
+            if (this.providers.has(name)) {
+                return this.providers.get(name);
+            }
+            // create a Provider for a service that hasn't registered with Firebase
+            const provider = new Provider(name, this);
+            this.providers.set(name, provider);
+            return provider;
+        }
+        getProviders() {
+            return Array.from(this.providers.values());
         }
     }
 
@@ -959,11 +1636,11 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     function isVersionServiceProvider(provider) {
         const component = provider.getComponent();
-        return (component === null || component === void 0 ? void 0 : component.type) === "VERSION" /* VERSION */;
+        return (component === null || component === void 0 ? void 0 : component.type) === "VERSION" /* ComponentType.VERSION */;
     }
 
     const name$o = "@firebase/app";
-    const version$1 = "0.7.27";
+    const version$1 = "0.9.0";
 
     /**
      * @license
@@ -1030,7 +1707,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     const name$1 = "@firebase/firestore-compat";
 
     const name$p = "firebase";
-    const version$2 = "9.8.4";
+    const version$2 = "9.15.0";
 
     /**
      * @license
@@ -1179,20 +1856,88 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     const ERRORS = {
-        ["no-app" /* NO_APP */]: "No Firebase App '{$appName}' has been created - " +
+        ["no-app" /* AppError.NO_APP */]: "No Firebase App '{$appName}' has been created - " +
             'call Firebase App.initializeApp()',
-        ["bad-app-name" /* BAD_APP_NAME */]: "Illegal App name: '{$appName}",
-        ["duplicate-app" /* DUPLICATE_APP */]: "Firebase App named '{$appName}' already exists with different options or config",
-        ["app-deleted" /* APP_DELETED */]: "Firebase App named '{$appName}' already deleted",
-        ["invalid-app-argument" /* INVALID_APP_ARGUMENT */]: 'firebase.{$appName}() takes either no argument or a ' +
+        ["bad-app-name" /* AppError.BAD_APP_NAME */]: "Illegal App name: '{$appName}",
+        ["duplicate-app" /* AppError.DUPLICATE_APP */]: "Firebase App named '{$appName}' already exists with different options or config",
+        ["app-deleted" /* AppError.APP_DELETED */]: "Firebase App named '{$appName}' already deleted",
+        ["no-options" /* AppError.NO_OPTIONS */]: 'Need to provide options, when not being deployed to hosting via source.',
+        ["invalid-app-argument" /* AppError.INVALID_APP_ARGUMENT */]: 'firebase.{$appName}() takes either no argument or a ' +
             'Firebase App instance.',
-        ["invalid-log-argument" /* INVALID_LOG_ARGUMENT */]: 'First argument to `onLog` must be null or a function.',
-        ["storage-open" /* STORAGE_OPEN */]: 'Error thrown when opening storage. Original error: {$originalErrorMessage}.',
-        ["storage-get" /* STORAGE_GET */]: 'Error thrown when reading from storage. Original error: {$originalErrorMessage}.',
-        ["storage-set" /* STORAGE_WRITE */]: 'Error thrown when writing to storage. Original error: {$originalErrorMessage}.',
-        ["storage-delete" /* STORAGE_DELETE */]: 'Error thrown when deleting from storage. Original error: {$originalErrorMessage}.'
+        ["invalid-log-argument" /* AppError.INVALID_LOG_ARGUMENT */]: 'First argument to `onLog` must be null or a function.',
+        ["idb-open" /* AppError.IDB_OPEN */]: 'Error thrown when opening IndexedDB. Original error: {$originalErrorMessage}.',
+        ["idb-get" /* AppError.IDB_GET */]: 'Error thrown when reading from IndexedDB. Original error: {$originalErrorMessage}.',
+        ["idb-set" /* AppError.IDB_WRITE */]: 'Error thrown when writing to IndexedDB. Original error: {$originalErrorMessage}.',
+        ["idb-delete" /* AppError.IDB_DELETE */]: 'Error thrown when deleting from IndexedDB. Original error: {$originalErrorMessage}.'
     };
     const ERROR_FACTORY = new ErrorFactory('app', 'Firebase', ERRORS);
+
+    /**
+     * @license
+     * Copyright 2019 Google LLC
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *   http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+    class FirebaseAppImpl {
+        constructor(options, config, container) {
+            this._isDeleted = false;
+            this._options = Object.assign({}, options);
+            this._config = Object.assign({}, config);
+            this._name = config.name;
+            this._automaticDataCollectionEnabled =
+                config.automaticDataCollectionEnabled;
+            this._container = container;
+            this.container.addComponent(new Component('app', () => this, "PUBLIC" /* ComponentType.PUBLIC */));
+        }
+        get automaticDataCollectionEnabled() {
+            this.checkDestroyed();
+            return this._automaticDataCollectionEnabled;
+        }
+        set automaticDataCollectionEnabled(val) {
+            this.checkDestroyed();
+            this._automaticDataCollectionEnabled = val;
+        }
+        get name() {
+            this.checkDestroyed();
+            return this._name;
+        }
+        get options() {
+            this.checkDestroyed();
+            return this._options;
+        }
+        get config() {
+            this.checkDestroyed();
+            return this._config;
+        }
+        get container() {
+            return this._container;
+        }
+        get isDeleted() {
+            return this._isDeleted;
+        }
+        set isDeleted(val) {
+            this._isDeleted = val;
+        }
+        /**
+         * This function will throw an Error if the App has already been deleted -
+         * use before performing API actions on the App.
+         */
+        checkDestroyed() {
+            if (this.isDeleted) {
+                throw ERROR_FACTORY.create("app-deleted" /* AppError.APP_DELETED */, { appName: this._name });
+            }
+        }
+    }
 
     /**
      * @license
@@ -1216,6 +1961,42 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * @public
      */
     const SDK_VERSION = version$2;
+    function initializeApp(_options, rawConfig = {}) {
+        let options = _options;
+        if (typeof rawConfig !== 'object') {
+            const name = rawConfig;
+            rawConfig = { name };
+        }
+        const config = Object.assign({ name: DEFAULT_ENTRY_NAME, automaticDataCollectionEnabled: false }, rawConfig);
+        const name = config.name;
+        if (typeof name !== 'string' || !name) {
+            throw ERROR_FACTORY.create("bad-app-name" /* AppError.BAD_APP_NAME */, {
+                appName: String(name)
+            });
+        }
+        options || (options = getDefaultAppConfig());
+        if (!options) {
+            throw ERROR_FACTORY.create("no-options" /* AppError.NO_OPTIONS */);
+        }
+        const existingApp = _apps.get(name);
+        if (existingApp) {
+            // return the existing app if options and config deep equal the ones in the existing app.
+            if (deepEqual(options, existingApp.options) &&
+                deepEqual(config, existingApp.config)) {
+                return existingApp;
+            }
+            else {
+                throw ERROR_FACTORY.create("duplicate-app" /* AppError.DUPLICATE_APP */, { appName: name });
+            }
+        }
+        const container = new ComponentContainer(name);
+        for (const component of _components.values()) {
+            container.addComponent(component);
+        }
+        const newApp = new FirebaseAppImpl(options, config, container);
+        _apps.set(name, newApp);
+        return newApp;
+    }
     /**
      * Retrieves a {@link @firebase/app#FirebaseApp} instance.
      *
@@ -1247,8 +2028,11 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     function getApp(name = DEFAULT_ENTRY_NAME) {
         const app = _apps.get(name);
+        if (!app && name === DEFAULT_ENTRY_NAME) {
+            return initializeApp();
+        }
         if (!app) {
-            throw ERROR_FACTORY.create("no-app" /* NO_APP */, { appName: name });
+            throw ERROR_FACTORY.create("no-app" /* AppError.NO_APP */, { appName: name });
         }
         return app;
     }
@@ -1286,7 +2070,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             logger.warn(warning.join(' '));
             return;
         }
-        _registerComponent(new Component(`${library}-version`, () => ({ library, version }), "VERSION" /* VERSION */));
+        _registerComponent(new Component(`${library}-version`, () => ({ library, version }), "VERSION" /* ComponentType.VERSION */));
     }
 
     /**
@@ -1324,7 +2108,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                     }
                 }
             }).catch(e => {
-                throw ERROR_FACTORY.create("storage-open" /* STORAGE_OPEN */, {
+                throw ERROR_FACTORY.create("idb-open" /* AppError.IDB_OPEN */, {
                     originalErrorMessage: e.message
                 });
             });
@@ -1332,7 +2116,6 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         return dbPromise;
     }
     async function readHeartbeatsFromIndexedDB(app) {
-        var _a;
         try {
             const db = await getDbPromise();
             return db
@@ -1341,13 +2124,18 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 .get(computeKey(app));
         }
         catch (e) {
-            throw ERROR_FACTORY.create("storage-get" /* STORAGE_GET */, {
-                originalErrorMessage: (_a = e) === null || _a === void 0 ? void 0 : _a.message
-            });
+            if (e instanceof FirebaseError) {
+                logger.warn(e.message);
+            }
+            else {
+                const idbGetError = ERROR_FACTORY.create("idb-get" /* AppError.IDB_GET */, {
+                    originalErrorMessage: e === null || e === void 0 ? void 0 : e.message
+                });
+                logger.warn(idbGetError.message);
+            }
         }
     }
     async function writeHeartbeatsToIndexedDB(app, heartbeatObject) {
-        var _a;
         try {
             const db = await getDbPromise();
             const tx = db.transaction(STORE_NAME, 'readwrite');
@@ -1356,9 +2144,15 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             return tx.done;
         }
         catch (e) {
-            throw ERROR_FACTORY.create("storage-set" /* STORAGE_WRITE */, {
-                originalErrorMessage: (_a = e) === null || _a === void 0 ? void 0 : _a.message
-            });
+            if (e instanceof FirebaseError) {
+                logger.warn(e.message);
+            }
+            else {
+                const idbGetError = ERROR_FACTORY.create("idb-set" /* AppError.IDB_WRITE */, {
+                    originalErrorMessage: e === null || e === void 0 ? void 0 : e.message
+                });
+                logger.warn(idbGetError.message);
+            }
         }
     }
     function computeKey(app) {
@@ -1614,8 +2408,8 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     function registerCoreComponents(variant) {
-        _registerComponent(new Component('platform-logger', container => new PlatformLoggerServiceImpl(container), "PRIVATE" /* PRIVATE */));
-        _registerComponent(new Component('heartbeat', container => new HeartbeatServiceImpl(container), "PRIVATE" /* PRIVATE */));
+        _registerComponent(new Component('platform-logger', container => new PlatformLoggerServiceImpl(container), "PRIVATE" /* ComponentType.PRIVATE */));
+        _registerComponent(new Component('heartbeat', container => new HeartbeatServiceImpl(container), "PRIVATE" /* ComponentType.PRIVATE */));
         // Register `app` package.
         registerVersion(name$o, version$1, variant);
         // BUILD_TARGET will be replaced by values like esm5, esm2017, cjs5, etc during the compilation
@@ -1760,147 +2554,147 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     function _debugErrorMap() {
         return {
-            ["admin-restricted-operation" /* ADMIN_ONLY_OPERATION */]: 'This operation is restricted to administrators only.',
-            ["argument-error" /* ARGUMENT_ERROR */]: '',
-            ["app-not-authorized" /* APP_NOT_AUTHORIZED */]: "This app, identified by the domain where it's hosted, is not " +
+            ["admin-restricted-operation" /* AuthErrorCode.ADMIN_ONLY_OPERATION */]: 'This operation is restricted to administrators only.',
+            ["argument-error" /* AuthErrorCode.ARGUMENT_ERROR */]: '',
+            ["app-not-authorized" /* AuthErrorCode.APP_NOT_AUTHORIZED */]: "This app, identified by the domain where it's hosted, is not " +
                 'authorized to use Firebase Authentication with the provided API key. ' +
                 'Review your key configuration in the Google API console.',
-            ["app-not-installed" /* APP_NOT_INSTALLED */]: 'The requested mobile application corresponding to the identifier (' +
+            ["app-not-installed" /* AuthErrorCode.APP_NOT_INSTALLED */]: 'The requested mobile application corresponding to the identifier (' +
                 'Android package name or iOS bundle ID) provided is not installed on ' +
                 'this device.',
-            ["captcha-check-failed" /* CAPTCHA_CHECK_FAILED */]: 'The reCAPTCHA response token provided is either invalid, expired, ' +
+            ["captcha-check-failed" /* AuthErrorCode.CAPTCHA_CHECK_FAILED */]: 'The reCAPTCHA response token provided is either invalid, expired, ' +
                 'already used or the domain associated with it does not match the list ' +
                 'of whitelisted domains.',
-            ["code-expired" /* CODE_EXPIRED */]: 'The SMS code has expired. Please re-send the verification code to try ' +
+            ["code-expired" /* AuthErrorCode.CODE_EXPIRED */]: 'The SMS code has expired. Please re-send the verification code to try ' +
                 'again.',
-            ["cordova-not-ready" /* CORDOVA_NOT_READY */]: 'Cordova framework is not ready.',
-            ["cors-unsupported" /* CORS_UNSUPPORTED */]: 'This browser is not supported.',
-            ["credential-already-in-use" /* CREDENTIAL_ALREADY_IN_USE */]: 'This credential is already associated with a different user account.',
-            ["custom-token-mismatch" /* CREDENTIAL_MISMATCH */]: 'The custom token corresponds to a different audience.',
-            ["requires-recent-login" /* CREDENTIAL_TOO_OLD_LOGIN_AGAIN */]: 'This operation is sensitive and requires recent authentication. Log in ' +
+            ["cordova-not-ready" /* AuthErrorCode.CORDOVA_NOT_READY */]: 'Cordova framework is not ready.',
+            ["cors-unsupported" /* AuthErrorCode.CORS_UNSUPPORTED */]: 'This browser is not supported.',
+            ["credential-already-in-use" /* AuthErrorCode.CREDENTIAL_ALREADY_IN_USE */]: 'This credential is already associated with a different user account.',
+            ["custom-token-mismatch" /* AuthErrorCode.CREDENTIAL_MISMATCH */]: 'The custom token corresponds to a different audience.',
+            ["requires-recent-login" /* AuthErrorCode.CREDENTIAL_TOO_OLD_LOGIN_AGAIN */]: 'This operation is sensitive and requires recent authentication. Log in ' +
                 'again before retrying this request.',
-            ["dependent-sdk-initialized-before-auth" /* DEPENDENT_SDK_INIT_BEFORE_AUTH */]: 'Another Firebase SDK was initialized and is trying to use Auth before Auth is ' +
+            ["dependent-sdk-initialized-before-auth" /* AuthErrorCode.DEPENDENT_SDK_INIT_BEFORE_AUTH */]: 'Another Firebase SDK was initialized and is trying to use Auth before Auth is ' +
                 'initialized. Please be sure to call `initializeAuth` or `getAuth` before ' +
                 'starting any other Firebase SDK.',
-            ["dynamic-link-not-activated" /* DYNAMIC_LINK_NOT_ACTIVATED */]: 'Please activate Dynamic Links in the Firebase Console and agree to the terms and ' +
+            ["dynamic-link-not-activated" /* AuthErrorCode.DYNAMIC_LINK_NOT_ACTIVATED */]: 'Please activate Dynamic Links in the Firebase Console and agree to the terms and ' +
                 'conditions.',
-            ["email-change-needs-verification" /* EMAIL_CHANGE_NEEDS_VERIFICATION */]: 'Multi-factor users must always have a verified email.',
-            ["email-already-in-use" /* EMAIL_EXISTS */]: 'The email address is already in use by another account.',
-            ["emulator-config-failed" /* EMULATOR_CONFIG_FAILED */]: 'Auth instance has already been used to make a network call. Auth can ' +
+            ["email-change-needs-verification" /* AuthErrorCode.EMAIL_CHANGE_NEEDS_VERIFICATION */]: 'Multi-factor users must always have a verified email.',
+            ["email-already-in-use" /* AuthErrorCode.EMAIL_EXISTS */]: 'The email address is already in use by another account.',
+            ["emulator-config-failed" /* AuthErrorCode.EMULATOR_CONFIG_FAILED */]: 'Auth instance has already been used to make a network call. Auth can ' +
                 'no longer be configured to use the emulator. Try calling ' +
                 '"connectAuthEmulator()" sooner.',
-            ["expired-action-code" /* EXPIRED_OOB_CODE */]: 'The action code has expired.',
-            ["cancelled-popup-request" /* EXPIRED_POPUP_REQUEST */]: 'This operation has been cancelled due to another conflicting popup being opened.',
-            ["internal-error" /* INTERNAL_ERROR */]: 'An internal AuthError has occurred.',
-            ["invalid-app-credential" /* INVALID_APP_CREDENTIAL */]: 'The phone verification request contains an invalid application verifier.' +
+            ["expired-action-code" /* AuthErrorCode.EXPIRED_OOB_CODE */]: 'The action code has expired.',
+            ["cancelled-popup-request" /* AuthErrorCode.EXPIRED_POPUP_REQUEST */]: 'This operation has been cancelled due to another conflicting popup being opened.',
+            ["internal-error" /* AuthErrorCode.INTERNAL_ERROR */]: 'An internal AuthError has occurred.',
+            ["invalid-app-credential" /* AuthErrorCode.INVALID_APP_CREDENTIAL */]: 'The phone verification request contains an invalid application verifier.' +
                 ' The reCAPTCHA token response is either invalid or expired.',
-            ["invalid-app-id" /* INVALID_APP_ID */]: 'The mobile app identifier is not registed for the current project.',
-            ["invalid-user-token" /* INVALID_AUTH */]: "This user's credential isn't valid for this project. This can happen " +
+            ["invalid-app-id" /* AuthErrorCode.INVALID_APP_ID */]: 'The mobile app identifier is not registed for the current project.',
+            ["invalid-user-token" /* AuthErrorCode.INVALID_AUTH */]: "This user's credential isn't valid for this project. This can happen " +
                 "if the user's token has been tampered with, or if the user isn't for " +
                 'the project associated with this API key.',
-            ["invalid-auth-event" /* INVALID_AUTH_EVENT */]: 'An internal AuthError has occurred.',
-            ["invalid-verification-code" /* INVALID_CODE */]: 'The SMS verification code used to create the phone auth credential is ' +
+            ["invalid-auth-event" /* AuthErrorCode.INVALID_AUTH_EVENT */]: 'An internal AuthError has occurred.',
+            ["invalid-verification-code" /* AuthErrorCode.INVALID_CODE */]: 'The SMS verification code used to create the phone auth credential is ' +
                 'invalid. Please resend the verification code sms and be sure to use the ' +
                 'verification code provided by the user.',
-            ["invalid-continue-uri" /* INVALID_CONTINUE_URI */]: 'The continue URL provided in the request is invalid.',
-            ["invalid-cordova-configuration" /* INVALID_CORDOVA_CONFIGURATION */]: 'The following Cordova plugins must be installed to enable OAuth sign-in: ' +
+            ["invalid-continue-uri" /* AuthErrorCode.INVALID_CONTINUE_URI */]: 'The continue URL provided in the request is invalid.',
+            ["invalid-cordova-configuration" /* AuthErrorCode.INVALID_CORDOVA_CONFIGURATION */]: 'The following Cordova plugins must be installed to enable OAuth sign-in: ' +
                 'cordova-plugin-buildinfo, cordova-universal-links-plugin, ' +
                 'cordova-plugin-browsertab, cordova-plugin-inappbrowser and ' +
                 'cordova-plugin-customurlscheme.',
-            ["invalid-custom-token" /* INVALID_CUSTOM_TOKEN */]: 'The custom token format is incorrect. Please check the documentation.',
-            ["invalid-dynamic-link-domain" /* INVALID_DYNAMIC_LINK_DOMAIN */]: 'The provided dynamic link domain is not configured or authorized for the current project.',
-            ["invalid-email" /* INVALID_EMAIL */]: 'The email address is badly formatted.',
-            ["invalid-emulator-scheme" /* INVALID_EMULATOR_SCHEME */]: 'Emulator URL must start with a valid scheme (http:// or https://).',
-            ["invalid-api-key" /* INVALID_API_KEY */]: 'Your API key is invalid, please check you have copied it correctly.',
-            ["invalid-cert-hash" /* INVALID_CERT_HASH */]: 'The SHA-1 certificate hash provided is invalid.',
-            ["invalid-credential" /* INVALID_IDP_RESPONSE */]: 'The supplied auth credential is malformed or has expired.',
-            ["invalid-message-payload" /* INVALID_MESSAGE_PAYLOAD */]: 'The email template corresponding to this action contains invalid characters in its message. ' +
+            ["invalid-custom-token" /* AuthErrorCode.INVALID_CUSTOM_TOKEN */]: 'The custom token format is incorrect. Please check the documentation.',
+            ["invalid-dynamic-link-domain" /* AuthErrorCode.INVALID_DYNAMIC_LINK_DOMAIN */]: 'The provided dynamic link domain is not configured or authorized for the current project.',
+            ["invalid-email" /* AuthErrorCode.INVALID_EMAIL */]: 'The email address is badly formatted.',
+            ["invalid-emulator-scheme" /* AuthErrorCode.INVALID_EMULATOR_SCHEME */]: 'Emulator URL must start with a valid scheme (http:// or https://).',
+            ["invalid-api-key" /* AuthErrorCode.INVALID_API_KEY */]: 'Your API key is invalid, please check you have copied it correctly.',
+            ["invalid-cert-hash" /* AuthErrorCode.INVALID_CERT_HASH */]: 'The SHA-1 certificate hash provided is invalid.',
+            ["invalid-credential" /* AuthErrorCode.INVALID_IDP_RESPONSE */]: 'The supplied auth credential is malformed or has expired.',
+            ["invalid-message-payload" /* AuthErrorCode.INVALID_MESSAGE_PAYLOAD */]: 'The email template corresponding to this action contains invalid characters in its message. ' +
                 'Please fix by going to the Auth email templates section in the Firebase Console.',
-            ["invalid-multi-factor-session" /* INVALID_MFA_SESSION */]: 'The request does not contain a valid proof of first factor successful sign-in.',
-            ["invalid-oauth-provider" /* INVALID_OAUTH_PROVIDER */]: 'EmailAuthProvider is not supported for this operation. This operation ' +
+            ["invalid-multi-factor-session" /* AuthErrorCode.INVALID_MFA_SESSION */]: 'The request does not contain a valid proof of first factor successful sign-in.',
+            ["invalid-oauth-provider" /* AuthErrorCode.INVALID_OAUTH_PROVIDER */]: 'EmailAuthProvider is not supported for this operation. This operation ' +
                 'only supports OAuth providers.',
-            ["invalid-oauth-client-id" /* INVALID_OAUTH_CLIENT_ID */]: 'The OAuth client ID provided is either invalid or does not match the ' +
+            ["invalid-oauth-client-id" /* AuthErrorCode.INVALID_OAUTH_CLIENT_ID */]: 'The OAuth client ID provided is either invalid or does not match the ' +
                 'specified API key.',
-            ["unauthorized-domain" /* INVALID_ORIGIN */]: 'This domain is not authorized for OAuth operations for your Firebase ' +
+            ["unauthorized-domain" /* AuthErrorCode.INVALID_ORIGIN */]: 'This domain is not authorized for OAuth operations for your Firebase ' +
                 'project. Edit the list of authorized domains from the Firebase console.',
-            ["invalid-action-code" /* INVALID_OOB_CODE */]: 'The action code is invalid. This can happen if the code is malformed, ' +
+            ["invalid-action-code" /* AuthErrorCode.INVALID_OOB_CODE */]: 'The action code is invalid. This can happen if the code is malformed, ' +
                 'expired, or has already been used.',
-            ["wrong-password" /* INVALID_PASSWORD */]: 'The password is invalid or the user does not have a password.',
-            ["invalid-persistence-type" /* INVALID_PERSISTENCE */]: 'The specified persistence type is invalid. It can only be local, session or none.',
-            ["invalid-phone-number" /* INVALID_PHONE_NUMBER */]: 'The format of the phone number provided is incorrect. Please enter the ' +
+            ["wrong-password" /* AuthErrorCode.INVALID_PASSWORD */]: 'The password is invalid or the user does not have a password.',
+            ["invalid-persistence-type" /* AuthErrorCode.INVALID_PERSISTENCE */]: 'The specified persistence type is invalid. It can only be local, session or none.',
+            ["invalid-phone-number" /* AuthErrorCode.INVALID_PHONE_NUMBER */]: 'The format of the phone number provided is incorrect. Please enter the ' +
                 'phone number in a format that can be parsed into E.164 format. E.164 ' +
                 'phone numbers are written in the format [+][country code][subscriber ' +
                 'number including area code].',
-            ["invalid-provider-id" /* INVALID_PROVIDER_ID */]: 'The specified provider ID is invalid.',
-            ["invalid-recipient-email" /* INVALID_RECIPIENT_EMAIL */]: 'The email corresponding to this action failed to send as the provided ' +
+            ["invalid-provider-id" /* AuthErrorCode.INVALID_PROVIDER_ID */]: 'The specified provider ID is invalid.',
+            ["invalid-recipient-email" /* AuthErrorCode.INVALID_RECIPIENT_EMAIL */]: 'The email corresponding to this action failed to send as the provided ' +
                 'recipient email address is invalid.',
-            ["invalid-sender" /* INVALID_SENDER */]: 'The email template corresponding to this action contains an invalid sender email or name. ' +
+            ["invalid-sender" /* AuthErrorCode.INVALID_SENDER */]: 'The email template corresponding to this action contains an invalid sender email or name. ' +
                 'Please fix by going to the Auth email templates section in the Firebase Console.',
-            ["invalid-verification-id" /* INVALID_SESSION_INFO */]: 'The verification ID used to create the phone auth credential is invalid.',
-            ["invalid-tenant-id" /* INVALID_TENANT_ID */]: "The Auth instance's tenant ID is invalid.",
-            ["login-blocked" /* LOGIN_BLOCKED */]: "Login blocked by user-provided method: {$originalMessage}",
-            ["missing-android-pkg-name" /* MISSING_ANDROID_PACKAGE_NAME */]: 'An Android Package Name must be provided if the Android App is required to be installed.',
-            ["auth-domain-config-required" /* MISSING_AUTH_DOMAIN */]: 'Be sure to include authDomain when calling firebase.initializeApp(), ' +
+            ["invalid-verification-id" /* AuthErrorCode.INVALID_SESSION_INFO */]: 'The verification ID used to create the phone auth credential is invalid.',
+            ["invalid-tenant-id" /* AuthErrorCode.INVALID_TENANT_ID */]: "The Auth instance's tenant ID is invalid.",
+            ["login-blocked" /* AuthErrorCode.LOGIN_BLOCKED */]: 'Login blocked by user-provided method: {$originalMessage}',
+            ["missing-android-pkg-name" /* AuthErrorCode.MISSING_ANDROID_PACKAGE_NAME */]: 'An Android Package Name must be provided if the Android App is required to be installed.',
+            ["auth-domain-config-required" /* AuthErrorCode.MISSING_AUTH_DOMAIN */]: 'Be sure to include authDomain when calling firebase.initializeApp(), ' +
                 'by following the instructions in the Firebase console.',
-            ["missing-app-credential" /* MISSING_APP_CREDENTIAL */]: 'The phone verification request is missing an application verifier ' +
+            ["missing-app-credential" /* AuthErrorCode.MISSING_APP_CREDENTIAL */]: 'The phone verification request is missing an application verifier ' +
                 'assertion. A reCAPTCHA response token needs to be provided.',
-            ["missing-verification-code" /* MISSING_CODE */]: 'The phone auth credential was created with an empty SMS verification code.',
-            ["missing-continue-uri" /* MISSING_CONTINUE_URI */]: 'A continue URL must be provided in the request.',
-            ["missing-iframe-start" /* MISSING_IFRAME_START */]: 'An internal AuthError has occurred.',
-            ["missing-ios-bundle-id" /* MISSING_IOS_BUNDLE_ID */]: 'An iOS Bundle ID must be provided if an App Store ID is provided.',
-            ["missing-or-invalid-nonce" /* MISSING_OR_INVALID_NONCE */]: 'The request does not contain a valid nonce. This can occur if the ' +
+            ["missing-verification-code" /* AuthErrorCode.MISSING_CODE */]: 'The phone auth credential was created with an empty SMS verification code.',
+            ["missing-continue-uri" /* AuthErrorCode.MISSING_CONTINUE_URI */]: 'A continue URL must be provided in the request.',
+            ["missing-iframe-start" /* AuthErrorCode.MISSING_IFRAME_START */]: 'An internal AuthError has occurred.',
+            ["missing-ios-bundle-id" /* AuthErrorCode.MISSING_IOS_BUNDLE_ID */]: 'An iOS Bundle ID must be provided if an App Store ID is provided.',
+            ["missing-or-invalid-nonce" /* AuthErrorCode.MISSING_OR_INVALID_NONCE */]: 'The request does not contain a valid nonce. This can occur if the ' +
                 'SHA-256 hash of the provided raw nonce does not match the hashed nonce ' +
                 'in the ID token payload.',
-            ["missing-multi-factor-info" /* MISSING_MFA_INFO */]: 'No second factor identifier is provided.',
-            ["missing-multi-factor-session" /* MISSING_MFA_SESSION */]: 'The request is missing proof of first factor successful sign-in.',
-            ["missing-phone-number" /* MISSING_PHONE_NUMBER */]: 'To send verification codes, provide a phone number for the recipient.',
-            ["missing-verification-id" /* MISSING_SESSION_INFO */]: 'The phone auth credential was created with an empty verification ID.',
-            ["app-deleted" /* MODULE_DESTROYED */]: 'This instance of FirebaseApp has been deleted.',
-            ["multi-factor-info-not-found" /* MFA_INFO_NOT_FOUND */]: 'The user does not have a second factor matching the identifier provided.',
-            ["multi-factor-auth-required" /* MFA_REQUIRED */]: 'Proof of ownership of a second factor is required to complete sign-in.',
-            ["account-exists-with-different-credential" /* NEED_CONFIRMATION */]: 'An account already exists with the same email address but different ' +
+            ["missing-multi-factor-info" /* AuthErrorCode.MISSING_MFA_INFO */]: 'No second factor identifier is provided.',
+            ["missing-multi-factor-session" /* AuthErrorCode.MISSING_MFA_SESSION */]: 'The request is missing proof of first factor successful sign-in.',
+            ["missing-phone-number" /* AuthErrorCode.MISSING_PHONE_NUMBER */]: 'To send verification codes, provide a phone number for the recipient.',
+            ["missing-verification-id" /* AuthErrorCode.MISSING_SESSION_INFO */]: 'The phone auth credential was created with an empty verification ID.',
+            ["app-deleted" /* AuthErrorCode.MODULE_DESTROYED */]: 'This instance of FirebaseApp has been deleted.',
+            ["multi-factor-info-not-found" /* AuthErrorCode.MFA_INFO_NOT_FOUND */]: 'The user does not have a second factor matching the identifier provided.',
+            ["multi-factor-auth-required" /* AuthErrorCode.MFA_REQUIRED */]: 'Proof of ownership of a second factor is required to complete sign-in.',
+            ["account-exists-with-different-credential" /* AuthErrorCode.NEED_CONFIRMATION */]: 'An account already exists with the same email address but different ' +
                 'sign-in credentials. Sign in using a provider associated with this ' +
                 'email address.',
-            ["network-request-failed" /* NETWORK_REQUEST_FAILED */]: 'A network AuthError (such as timeout, interrupted connection or unreachable host) has occurred.',
-            ["no-auth-event" /* NO_AUTH_EVENT */]: 'An internal AuthError has occurred.',
-            ["no-such-provider" /* NO_SUCH_PROVIDER */]: 'User was not linked to an account with the given provider.',
-            ["null-user" /* NULL_USER */]: 'A null user object was provided as the argument for an operation which ' +
+            ["network-request-failed" /* AuthErrorCode.NETWORK_REQUEST_FAILED */]: 'A network AuthError (such as timeout, interrupted connection or unreachable host) has occurred.',
+            ["no-auth-event" /* AuthErrorCode.NO_AUTH_EVENT */]: 'An internal AuthError has occurred.',
+            ["no-such-provider" /* AuthErrorCode.NO_SUCH_PROVIDER */]: 'User was not linked to an account with the given provider.',
+            ["null-user" /* AuthErrorCode.NULL_USER */]: 'A null user object was provided as the argument for an operation which ' +
                 'requires a non-null user object.',
-            ["operation-not-allowed" /* OPERATION_NOT_ALLOWED */]: 'The given sign-in provider is disabled for this Firebase project. ' +
+            ["operation-not-allowed" /* AuthErrorCode.OPERATION_NOT_ALLOWED */]: 'The given sign-in provider is disabled for this Firebase project. ' +
                 'Enable it in the Firebase console, under the sign-in method tab of the ' +
                 'Auth section.',
-            ["operation-not-supported-in-this-environment" /* OPERATION_NOT_SUPPORTED */]: 'This operation is not supported in the environment this application is ' +
+            ["operation-not-supported-in-this-environment" /* AuthErrorCode.OPERATION_NOT_SUPPORTED */]: 'This operation is not supported in the environment this application is ' +
                 'running on. "location.protocol" must be http, https or chrome-extension' +
                 ' and web storage must be enabled.',
-            ["popup-blocked" /* POPUP_BLOCKED */]: 'Unable to establish a connection with the popup. It may have been blocked by the browser.',
-            ["popup-closed-by-user" /* POPUP_CLOSED_BY_USER */]: 'The popup has been closed by the user before finalizing the operation.',
-            ["provider-already-linked" /* PROVIDER_ALREADY_LINKED */]: 'User can only be linked to one identity for the given provider.',
-            ["quota-exceeded" /* QUOTA_EXCEEDED */]: "The project's quota for this operation has been exceeded.",
-            ["redirect-cancelled-by-user" /* REDIRECT_CANCELLED_BY_USER */]: 'The redirect operation has been cancelled by the user before finalizing.',
-            ["redirect-operation-pending" /* REDIRECT_OPERATION_PENDING */]: 'A redirect sign-in operation is already pending.',
-            ["rejected-credential" /* REJECTED_CREDENTIAL */]: 'The request contains malformed or mismatching credentials.',
-            ["second-factor-already-in-use" /* SECOND_FACTOR_ALREADY_ENROLLED */]: 'The second factor is already enrolled on this account.',
-            ["maximum-second-factor-count-exceeded" /* SECOND_FACTOR_LIMIT_EXCEEDED */]: 'The maximum allowed number of second factors on a user has been exceeded.',
-            ["tenant-id-mismatch" /* TENANT_ID_MISMATCH */]: "The provided tenant ID does not match the Auth instance's tenant ID",
-            ["timeout" /* TIMEOUT */]: 'The operation has timed out.',
-            ["user-token-expired" /* TOKEN_EXPIRED */]: "The user's credential is no longer valid. The user must sign in again.",
-            ["too-many-requests" /* TOO_MANY_ATTEMPTS_TRY_LATER */]: 'We have blocked all requests from this device due to unusual activity. ' +
+            ["popup-blocked" /* AuthErrorCode.POPUP_BLOCKED */]: 'Unable to establish a connection with the popup. It may have been blocked by the browser.',
+            ["popup-closed-by-user" /* AuthErrorCode.POPUP_CLOSED_BY_USER */]: 'The popup has been closed by the user before finalizing the operation.',
+            ["provider-already-linked" /* AuthErrorCode.PROVIDER_ALREADY_LINKED */]: 'User can only be linked to one identity for the given provider.',
+            ["quota-exceeded" /* AuthErrorCode.QUOTA_EXCEEDED */]: "The project's quota for this operation has been exceeded.",
+            ["redirect-cancelled-by-user" /* AuthErrorCode.REDIRECT_CANCELLED_BY_USER */]: 'The redirect operation has been cancelled by the user before finalizing.',
+            ["redirect-operation-pending" /* AuthErrorCode.REDIRECT_OPERATION_PENDING */]: 'A redirect sign-in operation is already pending.',
+            ["rejected-credential" /* AuthErrorCode.REJECTED_CREDENTIAL */]: 'The request contains malformed or mismatching credentials.',
+            ["second-factor-already-in-use" /* AuthErrorCode.SECOND_FACTOR_ALREADY_ENROLLED */]: 'The second factor is already enrolled on this account.',
+            ["maximum-second-factor-count-exceeded" /* AuthErrorCode.SECOND_FACTOR_LIMIT_EXCEEDED */]: 'The maximum allowed number of second factors on a user has been exceeded.',
+            ["tenant-id-mismatch" /* AuthErrorCode.TENANT_ID_MISMATCH */]: "The provided tenant ID does not match the Auth instance's tenant ID",
+            ["timeout" /* AuthErrorCode.TIMEOUT */]: 'The operation has timed out.',
+            ["user-token-expired" /* AuthErrorCode.TOKEN_EXPIRED */]: "The user's credential is no longer valid. The user must sign in again.",
+            ["too-many-requests" /* AuthErrorCode.TOO_MANY_ATTEMPTS_TRY_LATER */]: 'We have blocked all requests from this device due to unusual activity. ' +
                 'Try again later.',
-            ["unauthorized-continue-uri" /* UNAUTHORIZED_DOMAIN */]: 'The domain of the continue URL is not whitelisted.  Please whitelist ' +
+            ["unauthorized-continue-uri" /* AuthErrorCode.UNAUTHORIZED_DOMAIN */]: 'The domain of the continue URL is not whitelisted.  Please whitelist ' +
                 'the domain in the Firebase console.',
-            ["unsupported-first-factor" /* UNSUPPORTED_FIRST_FACTOR */]: 'Enrolling a second factor or signing in with a multi-factor account requires sign-in with a supported first factor.',
-            ["unsupported-persistence-type" /* UNSUPPORTED_PERSISTENCE */]: 'The current environment does not support the specified persistence type.',
-            ["unsupported-tenant-operation" /* UNSUPPORTED_TENANT_OPERATION */]: 'This operation is not supported in a multi-tenant context.',
-            ["unverified-email" /* UNVERIFIED_EMAIL */]: 'The operation requires a verified email.',
-            ["user-cancelled" /* USER_CANCELLED */]: 'The user did not grant your application the permissions it requested.',
-            ["user-not-found" /* USER_DELETED */]: 'There is no user record corresponding to this identifier. The user may ' +
+            ["unsupported-first-factor" /* AuthErrorCode.UNSUPPORTED_FIRST_FACTOR */]: 'Enrolling a second factor or signing in with a multi-factor account requires sign-in with a supported first factor.',
+            ["unsupported-persistence-type" /* AuthErrorCode.UNSUPPORTED_PERSISTENCE */]: 'The current environment does not support the specified persistence type.',
+            ["unsupported-tenant-operation" /* AuthErrorCode.UNSUPPORTED_TENANT_OPERATION */]: 'This operation is not supported in a multi-tenant context.',
+            ["unverified-email" /* AuthErrorCode.UNVERIFIED_EMAIL */]: 'The operation requires a verified email.',
+            ["user-cancelled" /* AuthErrorCode.USER_CANCELLED */]: 'The user did not grant your application the permissions it requested.',
+            ["user-not-found" /* AuthErrorCode.USER_DELETED */]: 'There is no user record corresponding to this identifier. The user may ' +
                 'have been deleted.',
-            ["user-disabled" /* USER_DISABLED */]: 'The user account has been disabled by an administrator.',
-            ["user-mismatch" /* USER_MISMATCH */]: 'The supplied credentials do not correspond to the previously signed in user.',
-            ["user-signed-out" /* USER_SIGNED_OUT */]: '',
-            ["weak-password" /* WEAK_PASSWORD */]: 'The password must be 6 characters long or more.',
-            ["web-storage-unsupported" /* WEB_STORAGE_UNSUPPORTED */]: 'This browser is not supported or 3rd party cookies and data may be disabled.',
-            ["already-initialized" /* ALREADY_INITIALIZED */]: 'initializeAuth() has already been called with ' +
+            ["user-disabled" /* AuthErrorCode.USER_DISABLED */]: 'The user account has been disabled by an administrator.',
+            ["user-mismatch" /* AuthErrorCode.USER_MISMATCH */]: 'The supplied credentials do not correspond to the previously signed in user.',
+            ["user-signed-out" /* AuthErrorCode.USER_SIGNED_OUT */]: '',
+            ["weak-password" /* AuthErrorCode.WEAK_PASSWORD */]: 'The password must be 6 characters long or more.',
+            ["web-storage-unsupported" /* AuthErrorCode.WEB_STORAGE_UNSUPPORTED */]: 'This browser is not supported or 3rd party cookies and data may be disabled.',
+            ["already-initialized" /* AuthErrorCode.ALREADY_INITIALIZED */]: 'initializeAuth() has already been called with ' +
                 'different options. To avoid this error, call initializeAuth() with the ' +
                 'same options as when it was originally called, or call getAuth() to return the' +
                 ' already initialized instance.'
@@ -1911,7 +2705,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         // nature of this error, developers will never be able to see the message
         // using the debugErrorMap (which is installed during auth initialization).
         return {
-            ["dependent-sdk-initialized-before-auth" /* DEPENDENT_SDK_INIT_BEFORE_AUTH */]: 'Another Firebase SDK was initialized and is trying to use Auth before Auth is ' +
+            ["dependent-sdk-initialized-before-auth" /* AuthErrorCode.DEPENDENT_SDK_INIT_BEFORE_AUTH */]: 'Another Firebase SDK was initialized and is trying to use Auth before Auth is ' +
                 'initialized. Please be sure to call `initializeAuth` or `getAuth` before ' +
                 'starting any other Firebase SDK.'
         };
@@ -2091,16 +2885,16 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         const errorMap = Object.assign(Object.assign({}, prodErrorMap()), { [code]: message });
         const factory = new ErrorFactory('auth', 'Firebase', errorMap);
         return factory.create(code, {
-            appName: auth.name,
+            appName: auth.name
         });
     }
     function _assertInstanceOf(auth, object, instance) {
         const constructorInstance = instance;
         if (!(object instanceof constructorInstance)) {
             if (constructorInstance.name !== object.constructor.name) {
-                _fail(auth, "argument-error" /* ARGUMENT_ERROR */);
+                _fail(auth, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
             }
-            throw _errorWithCustomMessage(auth, "argument-error" /* ARGUMENT_ERROR */, `Type of ${object.constructor.name} does not match expected instance.` +
+            throw _errorWithCustomMessage(auth, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */, `Type of ${object.constructor.name} does not match expected instance.` +
                 `Did you pass a reference from a different Auth SDK?`);
         }
     }
@@ -2228,7 +3022,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 return auth;
             }
             else {
-                _fail(auth, "already-initialized" /* ALREADY_INITIALIZED */);
+                _fail(auth, "already-initialized" /* AuthErrorCode.ALREADY_INITIALIZED */);
             }
         }
         const auth = provider.initialize({ options: deps });
@@ -2356,7 +3150,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         get() {
             if (!_isOnline()) {
                 // Pick the shorter timeout.
-                return Math.min(5000 /* OFFLINE */, this.shortDelay);
+                return Math.min(5000 /* DelayMin.OFFLINE */, this.shortDelay);
             }
             // If running in a mobile environment, return the long delay, otherwise
             // return the short delay.
@@ -2467,64 +3261,64 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     const SERVER_ERROR_MAP = {
         // Custom token errors.
-        ["CREDENTIAL_MISMATCH" /* CREDENTIAL_MISMATCH */]: "custom-token-mismatch" /* CREDENTIAL_MISMATCH */,
+        ["CREDENTIAL_MISMATCH" /* ServerError.CREDENTIAL_MISMATCH */]: "custom-token-mismatch" /* AuthErrorCode.CREDENTIAL_MISMATCH */,
         // This can only happen if the SDK sends a bad request.
-        ["MISSING_CUSTOM_TOKEN" /* MISSING_CUSTOM_TOKEN */]: "internal-error" /* INTERNAL_ERROR */,
+        ["MISSING_CUSTOM_TOKEN" /* ServerError.MISSING_CUSTOM_TOKEN */]: "internal-error" /* AuthErrorCode.INTERNAL_ERROR */,
         // Create Auth URI errors.
-        ["INVALID_IDENTIFIER" /* INVALID_IDENTIFIER */]: "invalid-email" /* INVALID_EMAIL */,
+        ["INVALID_IDENTIFIER" /* ServerError.INVALID_IDENTIFIER */]: "invalid-email" /* AuthErrorCode.INVALID_EMAIL */,
         // This can only happen if the SDK sends a bad request.
-        ["MISSING_CONTINUE_URI" /* MISSING_CONTINUE_URI */]: "internal-error" /* INTERNAL_ERROR */,
+        ["MISSING_CONTINUE_URI" /* ServerError.MISSING_CONTINUE_URI */]: "internal-error" /* AuthErrorCode.INTERNAL_ERROR */,
         // Sign in with email and password errors (some apply to sign up too).
-        ["INVALID_PASSWORD" /* INVALID_PASSWORD */]: "wrong-password" /* INVALID_PASSWORD */,
+        ["INVALID_PASSWORD" /* ServerError.INVALID_PASSWORD */]: "wrong-password" /* AuthErrorCode.INVALID_PASSWORD */,
         // This can only happen if the SDK sends a bad request.
-        ["MISSING_PASSWORD" /* MISSING_PASSWORD */]: "internal-error" /* INTERNAL_ERROR */,
+        ["MISSING_PASSWORD" /* ServerError.MISSING_PASSWORD */]: "internal-error" /* AuthErrorCode.INTERNAL_ERROR */,
         // Sign up with email and password errors.
-        ["EMAIL_EXISTS" /* EMAIL_EXISTS */]: "email-already-in-use" /* EMAIL_EXISTS */,
-        ["PASSWORD_LOGIN_DISABLED" /* PASSWORD_LOGIN_DISABLED */]: "operation-not-allowed" /* OPERATION_NOT_ALLOWED */,
+        ["EMAIL_EXISTS" /* ServerError.EMAIL_EXISTS */]: "email-already-in-use" /* AuthErrorCode.EMAIL_EXISTS */,
+        ["PASSWORD_LOGIN_DISABLED" /* ServerError.PASSWORD_LOGIN_DISABLED */]: "operation-not-allowed" /* AuthErrorCode.OPERATION_NOT_ALLOWED */,
         // Verify assertion for sign in with credential errors:
-        ["INVALID_IDP_RESPONSE" /* INVALID_IDP_RESPONSE */]: "invalid-credential" /* INVALID_IDP_RESPONSE */,
-        ["INVALID_PENDING_TOKEN" /* INVALID_PENDING_TOKEN */]: "invalid-credential" /* INVALID_IDP_RESPONSE */,
-        ["FEDERATED_USER_ID_ALREADY_LINKED" /* FEDERATED_USER_ID_ALREADY_LINKED */]: "credential-already-in-use" /* CREDENTIAL_ALREADY_IN_USE */,
+        ["INVALID_IDP_RESPONSE" /* ServerError.INVALID_IDP_RESPONSE */]: "invalid-credential" /* AuthErrorCode.INVALID_IDP_RESPONSE */,
+        ["INVALID_PENDING_TOKEN" /* ServerError.INVALID_PENDING_TOKEN */]: "invalid-credential" /* AuthErrorCode.INVALID_IDP_RESPONSE */,
+        ["FEDERATED_USER_ID_ALREADY_LINKED" /* ServerError.FEDERATED_USER_ID_ALREADY_LINKED */]: "credential-already-in-use" /* AuthErrorCode.CREDENTIAL_ALREADY_IN_USE */,
         // This can only happen if the SDK sends a bad request.
-        ["MISSING_REQ_TYPE" /* MISSING_REQ_TYPE */]: "internal-error" /* INTERNAL_ERROR */,
+        ["MISSING_REQ_TYPE" /* ServerError.MISSING_REQ_TYPE */]: "internal-error" /* AuthErrorCode.INTERNAL_ERROR */,
         // Send Password reset email errors:
-        ["EMAIL_NOT_FOUND" /* EMAIL_NOT_FOUND */]: "user-not-found" /* USER_DELETED */,
-        ["RESET_PASSWORD_EXCEED_LIMIT" /* RESET_PASSWORD_EXCEED_LIMIT */]: "too-many-requests" /* TOO_MANY_ATTEMPTS_TRY_LATER */,
-        ["EXPIRED_OOB_CODE" /* EXPIRED_OOB_CODE */]: "expired-action-code" /* EXPIRED_OOB_CODE */,
-        ["INVALID_OOB_CODE" /* INVALID_OOB_CODE */]: "invalid-action-code" /* INVALID_OOB_CODE */,
+        ["EMAIL_NOT_FOUND" /* ServerError.EMAIL_NOT_FOUND */]: "user-not-found" /* AuthErrorCode.USER_DELETED */,
+        ["RESET_PASSWORD_EXCEED_LIMIT" /* ServerError.RESET_PASSWORD_EXCEED_LIMIT */]: "too-many-requests" /* AuthErrorCode.TOO_MANY_ATTEMPTS_TRY_LATER */,
+        ["EXPIRED_OOB_CODE" /* ServerError.EXPIRED_OOB_CODE */]: "expired-action-code" /* AuthErrorCode.EXPIRED_OOB_CODE */,
+        ["INVALID_OOB_CODE" /* ServerError.INVALID_OOB_CODE */]: "invalid-action-code" /* AuthErrorCode.INVALID_OOB_CODE */,
         // This can only happen if the SDK sends a bad request.
-        ["MISSING_OOB_CODE" /* MISSING_OOB_CODE */]: "internal-error" /* INTERNAL_ERROR */,
+        ["MISSING_OOB_CODE" /* ServerError.MISSING_OOB_CODE */]: "internal-error" /* AuthErrorCode.INTERNAL_ERROR */,
         // Operations that require ID token in request:
-        ["CREDENTIAL_TOO_OLD_LOGIN_AGAIN" /* CREDENTIAL_TOO_OLD_LOGIN_AGAIN */]: "requires-recent-login" /* CREDENTIAL_TOO_OLD_LOGIN_AGAIN */,
-        ["INVALID_ID_TOKEN" /* INVALID_ID_TOKEN */]: "invalid-user-token" /* INVALID_AUTH */,
-        ["TOKEN_EXPIRED" /* TOKEN_EXPIRED */]: "user-token-expired" /* TOKEN_EXPIRED */,
-        ["USER_NOT_FOUND" /* USER_NOT_FOUND */]: "user-token-expired" /* TOKEN_EXPIRED */,
+        ["CREDENTIAL_TOO_OLD_LOGIN_AGAIN" /* ServerError.CREDENTIAL_TOO_OLD_LOGIN_AGAIN */]: "requires-recent-login" /* AuthErrorCode.CREDENTIAL_TOO_OLD_LOGIN_AGAIN */,
+        ["INVALID_ID_TOKEN" /* ServerError.INVALID_ID_TOKEN */]: "invalid-user-token" /* AuthErrorCode.INVALID_AUTH */,
+        ["TOKEN_EXPIRED" /* ServerError.TOKEN_EXPIRED */]: "user-token-expired" /* AuthErrorCode.TOKEN_EXPIRED */,
+        ["USER_NOT_FOUND" /* ServerError.USER_NOT_FOUND */]: "user-token-expired" /* AuthErrorCode.TOKEN_EXPIRED */,
         // Other errors.
-        ["TOO_MANY_ATTEMPTS_TRY_LATER" /* TOO_MANY_ATTEMPTS_TRY_LATER */]: "too-many-requests" /* TOO_MANY_ATTEMPTS_TRY_LATER */,
+        ["TOO_MANY_ATTEMPTS_TRY_LATER" /* ServerError.TOO_MANY_ATTEMPTS_TRY_LATER */]: "too-many-requests" /* AuthErrorCode.TOO_MANY_ATTEMPTS_TRY_LATER */,
         // Phone Auth related errors.
-        ["INVALID_CODE" /* INVALID_CODE */]: "invalid-verification-code" /* INVALID_CODE */,
-        ["INVALID_SESSION_INFO" /* INVALID_SESSION_INFO */]: "invalid-verification-id" /* INVALID_SESSION_INFO */,
-        ["INVALID_TEMPORARY_PROOF" /* INVALID_TEMPORARY_PROOF */]: "invalid-credential" /* INVALID_IDP_RESPONSE */,
-        ["MISSING_SESSION_INFO" /* MISSING_SESSION_INFO */]: "missing-verification-id" /* MISSING_SESSION_INFO */,
-        ["SESSION_EXPIRED" /* SESSION_EXPIRED */]: "code-expired" /* CODE_EXPIRED */,
+        ["INVALID_CODE" /* ServerError.INVALID_CODE */]: "invalid-verification-code" /* AuthErrorCode.INVALID_CODE */,
+        ["INVALID_SESSION_INFO" /* ServerError.INVALID_SESSION_INFO */]: "invalid-verification-id" /* AuthErrorCode.INVALID_SESSION_INFO */,
+        ["INVALID_TEMPORARY_PROOF" /* ServerError.INVALID_TEMPORARY_PROOF */]: "invalid-credential" /* AuthErrorCode.INVALID_IDP_RESPONSE */,
+        ["MISSING_SESSION_INFO" /* ServerError.MISSING_SESSION_INFO */]: "missing-verification-id" /* AuthErrorCode.MISSING_SESSION_INFO */,
+        ["SESSION_EXPIRED" /* ServerError.SESSION_EXPIRED */]: "code-expired" /* AuthErrorCode.CODE_EXPIRED */,
         // Other action code errors when additional settings passed.
         // MISSING_CONTINUE_URI is getting mapped to INTERNAL_ERROR above.
         // This is OK as this error will be caught by client side validation.
-        ["MISSING_ANDROID_PACKAGE_NAME" /* MISSING_ANDROID_PACKAGE_NAME */]: "missing-android-pkg-name" /* MISSING_ANDROID_PACKAGE_NAME */,
-        ["UNAUTHORIZED_DOMAIN" /* UNAUTHORIZED_DOMAIN */]: "unauthorized-continue-uri" /* UNAUTHORIZED_DOMAIN */,
+        ["MISSING_ANDROID_PACKAGE_NAME" /* ServerError.MISSING_ANDROID_PACKAGE_NAME */]: "missing-android-pkg-name" /* AuthErrorCode.MISSING_ANDROID_PACKAGE_NAME */,
+        ["UNAUTHORIZED_DOMAIN" /* ServerError.UNAUTHORIZED_DOMAIN */]: "unauthorized-continue-uri" /* AuthErrorCode.UNAUTHORIZED_DOMAIN */,
         // getProjectConfig errors when clientId is passed.
-        ["INVALID_OAUTH_CLIENT_ID" /* INVALID_OAUTH_CLIENT_ID */]: "invalid-oauth-client-id" /* INVALID_OAUTH_CLIENT_ID */,
+        ["INVALID_OAUTH_CLIENT_ID" /* ServerError.INVALID_OAUTH_CLIENT_ID */]: "invalid-oauth-client-id" /* AuthErrorCode.INVALID_OAUTH_CLIENT_ID */,
         // User actions (sign-up or deletion) disabled errors.
-        ["ADMIN_ONLY_OPERATION" /* ADMIN_ONLY_OPERATION */]: "admin-restricted-operation" /* ADMIN_ONLY_OPERATION */,
+        ["ADMIN_ONLY_OPERATION" /* ServerError.ADMIN_ONLY_OPERATION */]: "admin-restricted-operation" /* AuthErrorCode.ADMIN_ONLY_OPERATION */,
         // Multi factor related errors.
-        ["INVALID_MFA_PENDING_CREDENTIAL" /* INVALID_MFA_PENDING_CREDENTIAL */]: "invalid-multi-factor-session" /* INVALID_MFA_SESSION */,
-        ["MFA_ENROLLMENT_NOT_FOUND" /* MFA_ENROLLMENT_NOT_FOUND */]: "multi-factor-info-not-found" /* MFA_INFO_NOT_FOUND */,
-        ["MISSING_MFA_ENROLLMENT_ID" /* MISSING_MFA_ENROLLMENT_ID */]: "missing-multi-factor-info" /* MISSING_MFA_INFO */,
-        ["MISSING_MFA_PENDING_CREDENTIAL" /* MISSING_MFA_PENDING_CREDENTIAL */]: "missing-multi-factor-session" /* MISSING_MFA_SESSION */,
-        ["SECOND_FACTOR_EXISTS" /* SECOND_FACTOR_EXISTS */]: "second-factor-already-in-use" /* SECOND_FACTOR_ALREADY_ENROLLED */,
-        ["SECOND_FACTOR_LIMIT_EXCEEDED" /* SECOND_FACTOR_LIMIT_EXCEEDED */]: "maximum-second-factor-count-exceeded" /* SECOND_FACTOR_LIMIT_EXCEEDED */,
+        ["INVALID_MFA_PENDING_CREDENTIAL" /* ServerError.INVALID_MFA_PENDING_CREDENTIAL */]: "invalid-multi-factor-session" /* AuthErrorCode.INVALID_MFA_SESSION */,
+        ["MFA_ENROLLMENT_NOT_FOUND" /* ServerError.MFA_ENROLLMENT_NOT_FOUND */]: "multi-factor-info-not-found" /* AuthErrorCode.MFA_INFO_NOT_FOUND */,
+        ["MISSING_MFA_ENROLLMENT_ID" /* ServerError.MISSING_MFA_ENROLLMENT_ID */]: "missing-multi-factor-info" /* AuthErrorCode.MISSING_MFA_INFO */,
+        ["MISSING_MFA_PENDING_CREDENTIAL" /* ServerError.MISSING_MFA_PENDING_CREDENTIAL */]: "missing-multi-factor-session" /* AuthErrorCode.MISSING_MFA_SESSION */,
+        ["SECOND_FACTOR_EXISTS" /* ServerError.SECOND_FACTOR_EXISTS */]: "second-factor-already-in-use" /* AuthErrorCode.SECOND_FACTOR_ALREADY_ENROLLED */,
+        ["SECOND_FACTOR_LIMIT_EXCEEDED" /* ServerError.SECOND_FACTOR_LIMIT_EXCEEDED */]: "maximum-second-factor-count-exceeded" /* AuthErrorCode.SECOND_FACTOR_LIMIT_EXCEEDED */,
         // Blocking functions related errors.
-        ["BLOCKING_FUNCTION_ERROR_RESPONSE" /* BLOCKING_FUNCTION_ERROR_RESPONSE */]: "internal-error" /* INTERNAL_ERROR */,
+        ["BLOCKING_FUNCTION_ERROR_RESPONSE" /* ServerError.BLOCKING_FUNCTION_ERROR_RESPONSE */]: "internal-error" /* AuthErrorCode.INTERNAL_ERROR */
     };
 
     /**
@@ -2555,7 +3349,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             let body = {};
             let params = {};
             if (request) {
-                if (method === "GET" /* GET */) {
+                if (method === "GET" /* HttpMethod.GET */) {
                     params = request;
                 }
                 else {
@@ -2566,9 +3360,9 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             }
             const query = querystring(Object.assign({ key: auth.config.apiKey }, params)).slice(1);
             const headers = await auth._getAdditionalHeaders();
-            headers["Content-Type" /* CONTENT_TYPE */] = 'application/json';
+            headers["Content-Type" /* HttpHeader.CONTENT_TYPE */] = 'application/json';
             if (auth.languageCode) {
-                headers["X-Firebase-Locale" /* X_FIREBASE_LOCALE */] = auth.languageCode;
+                headers["X-Firebase-Locale" /* HttpHeader.X_FIREBASE_LOCALE */] = auth.languageCode;
             }
             return FetchProvider.fetch()(_getFinalTarget(auth, auth.config.apiHost, path, query), Object.assign({ method,
                 headers, referrerPolicy: 'no-referrer' }, body));
@@ -2588,7 +3382,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             networkTimeout.clearNetworkTimeout();
             const json = await response.json();
             if ('needConfirmation' in json) {
-                throw _makeTaggedError(auth, "account-exists-with-different-credential" /* NEED_CONFIRMATION */, json);
+                throw _makeTaggedError(auth, "account-exists-with-different-credential" /* AuthErrorCode.NEED_CONFIRMATION */, json);
             }
             if (response.ok && !('errorMessage' in json)) {
                 return json;
@@ -2596,14 +3390,14 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             else {
                 const errorMessage = response.ok ? json.errorMessage : json.error.message;
                 const [serverErrorCode, serverErrorMessage] = errorMessage.split(' : ');
-                if (serverErrorCode === "FEDERATED_USER_ID_ALREADY_LINKED" /* FEDERATED_USER_ID_ALREADY_LINKED */) {
-                    throw _makeTaggedError(auth, "credential-already-in-use" /* CREDENTIAL_ALREADY_IN_USE */, json);
+                if (serverErrorCode === "FEDERATED_USER_ID_ALREADY_LINKED" /* ServerError.FEDERATED_USER_ID_ALREADY_LINKED */) {
+                    throw _makeTaggedError(auth, "credential-already-in-use" /* AuthErrorCode.CREDENTIAL_ALREADY_IN_USE */, json);
                 }
-                else if (serverErrorCode === "EMAIL_EXISTS" /* EMAIL_EXISTS */) {
-                    throw _makeTaggedError(auth, "email-already-in-use" /* EMAIL_EXISTS */, json);
+                else if (serverErrorCode === "EMAIL_EXISTS" /* ServerError.EMAIL_EXISTS */) {
+                    throw _makeTaggedError(auth, "email-already-in-use" /* AuthErrorCode.EMAIL_EXISTS */, json);
                 }
-                else if (serverErrorCode === "USER_DISABLED" /* USER_DISABLED */) {
-                    throw _makeTaggedError(auth, "user-disabled" /* USER_DISABLED */, json);
+                else if (serverErrorCode === "USER_DISABLED" /* ServerError.USER_DISABLED */) {
+                    throw _makeTaggedError(auth, "user-disabled" /* AuthErrorCode.USER_DISABLED */, json);
                 }
                 const authError = errorMap[serverErrorCode] ||
                     serverErrorCode
@@ -2621,13 +3415,13 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             if (e instanceof FirebaseError) {
                 throw e;
             }
-            _fail(auth, "network-request-failed" /* NETWORK_REQUEST_FAILED */);
+            _fail(auth, "network-request-failed" /* AuthErrorCode.NETWORK_REQUEST_FAILED */);
         }
     }
     async function _performSignInRequest(auth, method, path, request, customErrorMap = {}) {
         const serverResponse = (await _performApiRequest(auth, method, path, request, customErrorMap));
         if ('mfaPendingCredential' in serverResponse) {
-            _fail(auth, "multi-factor-auth-required" /* MFA_REQUIRED */, {
+            _fail(auth, "multi-factor-auth-required" /* AuthErrorCode.MFA_REQUIRED */, {
                 _serverResponse: serverResponse
             });
         }
@@ -2649,7 +3443,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             this.timer = null;
             this.promise = new Promise((_, reject) => {
                 this.timer = setTimeout(() => {
-                    return reject(_createError(this.auth, "network-request-failed" /* NETWORK_REQUEST_FAILED */));
+                    return reject(_createError(this.auth, "network-request-failed" /* AuthErrorCode.NETWORK_REQUEST_FAILED */));
                 }, DEFAULT_API_TIMEOUT_MS.get());
             });
         }
@@ -2690,13 +3484,13 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     async function deleteAccount(auth, request) {
-        return _performApiRequest(auth, "POST" /* POST */, "/v1/accounts:delete" /* DELETE_ACCOUNT */, request);
+        return _performApiRequest(auth, "POST" /* HttpMethod.POST */, "/v1/accounts:delete" /* Endpoint.DELETE_ACCOUNT */, request);
     }
     async function deleteLinkedAccounts(auth, request) {
-        return _performApiRequest(auth, "POST" /* POST */, "/v1/accounts:update" /* SET_ACCOUNT_INFO */, request);
+        return _performApiRequest(auth, "POST" /* HttpMethod.POST */, "/v1/accounts:update" /* Endpoint.SET_ACCOUNT_INFO */, request);
     }
     async function getAccountInfo(auth, request) {
-        return _performApiRequest(auth, "POST" /* POST */, "/v1/accounts:lookup" /* GET_ACCOUNT_INFO */, request);
+        return _performApiRequest(auth, "POST" /* HttpMethod.POST */, "/v1/accounts:lookup" /* Endpoint.GET_ACCOUNT_INFO */, request);
     }
 
     /**
@@ -2781,7 +3575,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         const userInternal = getModularInstance(user);
         const token = await userInternal.getIdToken(forceRefresh);
         const claims = _parseToken(token);
-        _assert(claims && claims.exp && claims.auth_time && claims.iat, userInternal.auth, "internal-error" /* INTERNAL_ERROR */);
+        _assert(claims && claims.exp && claims.auth_time && claims.iat, userInternal.auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
         const firebase = typeof claims.firebase === 'object' ? claims.firebase : undefined;
         const signInProvider = firebase === null || firebase === void 0 ? void 0 : firebase['sign_in_provider'];
         return {
@@ -2798,7 +3592,6 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         return Number(seconds) * 1000;
     }
     function _parseToken(token) {
-        var _a;
         const [algorithm, payload, signature] = token.split('.');
         if (algorithm === undefined ||
             payload === undefined ||
@@ -2815,7 +3608,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             return JSON.parse(decoded);
         }
         catch (e) {
-            _logError('Caught error parsing JWT payload as JSON', (_a = e) === null || _a === void 0 ? void 0 : _a.toString());
+            _logError('Caught error parsing JWT payload as JSON', e === null || e === void 0 ? void 0 : e.toString());
             return null;
         }
     }
@@ -2824,9 +3617,9 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     function _tokenExpiresIn(token) {
         const parsedToken = _parseToken(token);
-        _assert(parsedToken, "internal-error" /* INTERNAL_ERROR */);
-        _assert(typeof parsedToken.exp !== 'undefined', "internal-error" /* INTERNAL_ERROR */);
-        _assert(typeof parsedToken.iat !== 'undefined', "internal-error" /* INTERNAL_ERROR */);
+        _assert(parsedToken, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
+        _assert(typeof parsedToken.exp !== 'undefined', "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
+        _assert(typeof parsedToken.iat !== 'undefined', "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
         return Number(parsedToken.exp) - Number(parsedToken.iat);
     }
 
@@ -2863,8 +3656,8 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         }
     }
     function isUserInvalidated({ code }) {
-        return (code === `auth/${"user-disabled" /* USER_DISABLED */}` ||
-            code === `auth/${"user-token-expired" /* TOKEN_EXPIRED */}`);
+        return (code === `auth/${"user-disabled" /* AuthErrorCode.USER_DISABLED */}` ||
+            code === `auth/${"user-token-expired" /* AuthErrorCode.TOKEN_EXPIRED */}`);
     }
 
     /**
@@ -2892,7 +3685,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             // we can't cast properly in both environments.
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             this.timerId = null;
-            this.errorBackoff = 30000 /* RETRY_BACKOFF_MIN */;
+            this.errorBackoff = 30000 /* Duration.RETRY_BACKOFF_MIN */;
         }
         _start() {
             if (this.isRunning) {
@@ -2914,14 +3707,14 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             var _a;
             if (wasError) {
                 const interval = this.errorBackoff;
-                this.errorBackoff = Math.min(this.errorBackoff * 2, 960000 /* RETRY_BACKOFF_MAX */);
+                this.errorBackoff = Math.min(this.errorBackoff * 2, 960000 /* Duration.RETRY_BACKOFF_MAX */);
                 return interval;
             }
             else {
                 // Reset the error backoff
-                this.errorBackoff = 30000 /* RETRY_BACKOFF_MIN */;
+                this.errorBackoff = 30000 /* Duration.RETRY_BACKOFF_MIN */;
                 const expTime = (_a = this.user.stsTokenManager.expirationTime) !== null && _a !== void 0 ? _a : 0;
-                const interval = expTime - Date.now() - 300000 /* OFFSET */;
+                const interval = expTime - Date.now() - 300000 /* Duration.OFFSET */;
                 return Math.max(0, interval);
             }
         }
@@ -2936,13 +3729,13 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             }, interval);
         }
         async iteration() {
-            var _a;
             try {
                 await this.user.getIdToken(true);
             }
             catch (e) {
                 // Only retry on network errors
-                if (((_a = e) === null || _a === void 0 ? void 0 : _a.code) === `auth/${"network-request-failed" /* NETWORK_REQUEST_FAILED */}`) {
+                if ((e === null || e === void 0 ? void 0 : e.code) ===
+                    `auth/${"network-request-failed" /* AuthErrorCode.NETWORK_REQUEST_FAILED */}`) {
                     this.schedule(/* wasError */ true);
                 }
                 return;
@@ -3011,7 +3804,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         const auth = user.auth;
         const idToken = await user.getIdToken();
         const response = await _logoutIfInvalidated(user, getAccountInfo(auth, { idToken }));
-        _assert(response === null || response === void 0 ? void 0 : response.users.length, auth, "internal-error" /* INTERNAL_ERROR */);
+        _assert(response === null || response === void 0 ? void 0 : response.users.length, auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
         const coreAccount = response.users[0];
         user._notifyReloadListener(coreAccount);
         const newProviderData = ((_a = coreAccount.providerUserInfo) === null || _a === void 0 ? void 0 : _a.length)
@@ -3097,11 +3890,11 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 'refresh_token': refreshToken
             }).slice(1);
             const { tokenApiHost, apiKey } = auth.config;
-            const url = _getFinalTarget(auth, tokenApiHost, "/v1/token" /* TOKEN */, `key=${apiKey}`);
+            const url = _getFinalTarget(auth, tokenApiHost, "/v1/token" /* Endpoint.TOKEN */, `key=${apiKey}`);
             const headers = await auth._getAdditionalHeaders();
-            headers["Content-Type" /* CONTENT_TYPE */] = 'application/x-www-form-urlencoded';
+            headers["Content-Type" /* HttpHeader.CONTENT_TYPE */] = 'application/x-www-form-urlencoded';
             return FetchProvider.fetch()(url, {
-                method: "POST" /* POST */,
+                method: "POST" /* HttpMethod.POST */,
                 headers,
                 body
             });
@@ -3144,19 +3937,19 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         }
         get isExpired() {
             return (!this.expirationTime ||
-                Date.now() > this.expirationTime - 30000 /* TOKEN_REFRESH */);
+                Date.now() > this.expirationTime - 30000 /* Buffer.TOKEN_REFRESH */);
         }
         updateFromServerResponse(response) {
-            _assert(response.idToken, "internal-error" /* INTERNAL_ERROR */);
-            _assert(typeof response.idToken !== 'undefined', "internal-error" /* INTERNAL_ERROR */);
-            _assert(typeof response.refreshToken !== 'undefined', "internal-error" /* INTERNAL_ERROR */);
+            _assert(response.idToken, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
+            _assert(typeof response.idToken !== 'undefined', "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
+            _assert(typeof response.refreshToken !== 'undefined', "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             const expiresIn = 'expiresIn' in response && typeof response.expiresIn !== 'undefined'
                 ? Number(response.expiresIn)
                 : _tokenExpiresIn(response.idToken);
             this.updateTokensAndExpiration(response.idToken, response.refreshToken, expiresIn);
         }
         async getToken(auth, forceRefresh = false) {
-            _assert(!this.accessToken || this.refreshToken, auth, "user-token-expired" /* TOKEN_EXPIRED */);
+            _assert(!this.accessToken || this.refreshToken, auth, "user-token-expired" /* AuthErrorCode.TOKEN_EXPIRED */);
             if (!forceRefresh && this.accessToken && !this.isExpired) {
                 return this.accessToken;
             }
@@ -3182,19 +3975,19 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             const { refreshToken, accessToken, expirationTime } = object;
             const manager = new StsTokenManager();
             if (refreshToken) {
-                _assert(typeof refreshToken === 'string', "internal-error" /* INTERNAL_ERROR */, {
+                _assert(typeof refreshToken === 'string', "internal-error" /* AuthErrorCode.INTERNAL_ERROR */, {
                     appName
                 });
                 manager.refreshToken = refreshToken;
             }
             if (accessToken) {
-                _assert(typeof accessToken === 'string', "internal-error" /* INTERNAL_ERROR */, {
+                _assert(typeof accessToken === 'string', "internal-error" /* AuthErrorCode.INTERNAL_ERROR */, {
                     appName
                 });
                 manager.accessToken = accessToken;
             }
             if (expirationTime) {
-                _assert(typeof expirationTime === 'number', "internal-error" /* INTERNAL_ERROR */, {
+                _assert(typeof expirationTime === 'number', "internal-error" /* AuthErrorCode.INTERNAL_ERROR */, {
                     appName
                 });
                 manager.expirationTime = expirationTime;
@@ -3238,13 +4031,13 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     function assertStringOrUndefined(assertion, appName) {
-        _assert(typeof assertion === 'string' || typeof assertion === 'undefined', "internal-error" /* INTERNAL_ERROR */, { appName });
+        _assert(typeof assertion === 'string' || typeof assertion === 'undefined', "internal-error" /* AuthErrorCode.INTERNAL_ERROR */, { appName });
     }
     class UserImpl {
         constructor(_a) {
             var { uid, auth, stsTokenManager } = _a, opt = __rest(_a, ["uid", "auth", "stsTokenManager"]);
             // For the user object, provider is always Firebase.
-            this.providerId = "firebase" /* FIREBASE */;
+            this.providerId = "firebase" /* ProviderId.FIREBASE */;
             this.proactiveRefresh = new ProactiveRefresh(this);
             this.reloadUserInfo = null;
             this.reloadListener = null;
@@ -3264,7 +4057,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         }
         async getIdToken(forceRefresh) {
             const accessToken = await _logoutIfInvalidated(this, this.stsTokenManager.getToken(this.auth, forceRefresh));
-            _assert(accessToken, this.auth, "internal-error" /* INTERNAL_ERROR */);
+            _assert(accessToken, this.auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             if (this.accessToken !== accessToken) {
                 this.accessToken = accessToken;
                 await this.auth._persistUserIfCurrent(this);
@@ -3282,7 +4075,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             if (this === user) {
                 return;
             }
-            _assert(this.uid === user.uid, this.auth, "internal-error" /* INTERNAL_ERROR */);
+            _assert(this.uid === user.uid, this.auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             this.displayName = user.displayName;
             this.photoURL = user.photoURL;
             this.email = user.email;
@@ -3299,7 +4092,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         }
         _onReload(callback) {
             // There should only ever be one listener, and that is a single instance of MultiFactorUser
-            _assert(!this.reloadListener, this.auth, "internal-error" /* INTERNAL_ERROR */);
+            _assert(!this.reloadListener, this.auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             this.reloadListener = callback;
             if (this.reloadUserInfo) {
                 this._notifyReloadListener(this.reloadUserInfo);
@@ -3366,13 +4159,13 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             const createdAt = (_g = object.createdAt) !== null && _g !== void 0 ? _g : undefined;
             const lastLoginAt = (_h = object.lastLoginAt) !== null && _h !== void 0 ? _h : undefined;
             const { uid, emailVerified, isAnonymous, providerData, stsTokenManager: plainObjectTokenManager } = object;
-            _assert(uid && plainObjectTokenManager, auth, "internal-error" /* INTERNAL_ERROR */);
+            _assert(uid && plainObjectTokenManager, auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             const stsTokenManager = StsTokenManager.fromJSON(this.name, plainObjectTokenManager);
-            _assert(typeof uid === 'string', auth, "internal-error" /* INTERNAL_ERROR */);
+            _assert(typeof uid === 'string', auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             assertStringOrUndefined(displayName, auth.name);
             assertStringOrUndefined(email, auth.name);
-            _assert(typeof emailVerified === 'boolean', auth, "internal-error" /* INTERNAL_ERROR */);
-            _assert(typeof isAnonymous === 'boolean', auth, "internal-error" /* INTERNAL_ERROR */);
+            _assert(typeof emailVerified === 'boolean', auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
+            _assert(typeof isAnonymous === 'boolean', auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             assertStringOrUndefined(phoneNumber, auth.name);
             assertStringOrUndefined(photoURL, auth.name);
             assertStringOrUndefined(tenantId, auth.name);
@@ -3440,7 +4233,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     class InMemoryPersistence {
         constructor() {
-            this.type = "NONE" /* NONE */;
+            this.type = "NONE" /* PersistenceType.NONE */;
             this.storage = {};
         }
         async _isAvailable() {
@@ -3490,7 +4283,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     function _persistenceKeyName(key, apiKey, appName) {
-        return `${"firebase" /* PERSISTENCE */}:${key}:${apiKey}:${appName}`;
+        return `${"firebase" /* Namespace.PERSISTENCE */}:${key}:${apiKey}:${appName}`;
     }
     class PersistenceUserManager {
         constructor(persistence, auth, userKey) {
@@ -3499,7 +4292,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             this.userKey = userKey;
             const { config, name } = this.auth;
             this.fullUserKey = _persistenceKeyName(this.userKey, config.apiKey, name);
-            this.fullPersistenceKey = _persistenceKeyName("persistence" /* PERSISTENCE_USER */, config.apiKey, name);
+            this.fullPersistenceKey = _persistenceKeyName("persistence" /* KeyName.PERSISTENCE_USER */, config.apiKey, name);
             this.boundEventHandler = auth._onStorageEvent.bind(auth);
             this.persistence._addListener(this.fullUserKey, this.boundEventHandler);
         }
@@ -3530,7 +4323,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         delete() {
             this.persistence._removeListener(this.fullUserKey, this.boundEventHandler);
         }
-        static async create(auth, persistenceHierarchy, userKey = "authUser" /* AUTH_USER */) {
+        static async create(auth, persistenceHierarchy, userKey = "authUser" /* KeyName.AUTH_USER */) {
             if (!persistenceHierarchy.length) {
                 return new PersistenceUserManager(_getInstance(inMemoryPersistence), auth, userKey);
             }
@@ -3615,42 +4408,42 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     function _getBrowserName(userAgent) {
         const ua = userAgent.toLowerCase();
         if (ua.includes('opera/') || ua.includes('opr/') || ua.includes('opios/')) {
-            return "Opera" /* OPERA */;
+            return "Opera" /* BrowserName.OPERA */;
         }
         else if (_isIEMobile(ua)) {
             // Windows phone IEMobile browser.
-            return "IEMobile" /* IEMOBILE */;
+            return "IEMobile" /* BrowserName.IEMOBILE */;
         }
         else if (ua.includes('msie') || ua.includes('trident/')) {
-            return "IE" /* IE */;
+            return "IE" /* BrowserName.IE */;
         }
         else if (ua.includes('edge/')) {
-            return "Edge" /* EDGE */;
+            return "Edge" /* BrowserName.EDGE */;
         }
         else if (_isFirefox(ua)) {
-            return "Firefox" /* FIREFOX */;
+            return "Firefox" /* BrowserName.FIREFOX */;
         }
         else if (ua.includes('silk/')) {
-            return "Silk" /* SILK */;
+            return "Silk" /* BrowserName.SILK */;
         }
         else if (_isBlackBerry(ua)) {
             // Blackberry browser.
-            return "Blackberry" /* BLACKBERRY */;
+            return "Blackberry" /* BrowserName.BLACKBERRY */;
         }
         else if (_isWebOS(ua)) {
             // WebOS default browser.
-            return "Webos" /* WEBOS */;
+            return "Webos" /* BrowserName.WEBOS */;
         }
         else if (_isSafari(ua)) {
-            return "Safari" /* SAFARI */;
+            return "Safari" /* BrowserName.SAFARI */;
         }
         else if ((ua.includes('chrome/') || _isChromeIOS(ua)) &&
             !ua.includes('edge/')) {
-            return "Chrome" /* CHROME */;
+            return "Chrome" /* BrowserName.CHROME */;
         }
         else if (_isAndroid(ua)) {
             // Android stock browser.
-            return "Android" /* ANDROID */;
+            return "Android" /* BrowserName.ANDROID */;
         }
         else {
             // Most modern browsers have name/version at end of user agent string.
@@ -3660,7 +4453,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 return matches[1];
             }
         }
-        return "Other" /* OTHER */;
+        return "Other" /* BrowserName.OTHER */;
     }
     function _isFirefox(ua = getUA()) {
         return /firefox\//i.test(ua);
@@ -3688,7 +4481,8 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         return /webos/i.test(ua);
     }
     function _isIOS(ua = getUA()) {
-        return /iphone|ipad|ipod/i.test(ua);
+        return (/iphone|ipad|ipod/i.test(ua) ||
+            (/macintosh/i.test(ua) && /mobile/i.test(ua)));
     }
     function _isIOSStandalone(ua = getUA()) {
         var _a;
@@ -3739,11 +4533,11 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     function _getClientVersion(clientPlatform, frameworks = []) {
         let reportedPlatform;
         switch (clientPlatform) {
-            case "Browser" /* BROWSER */:
+            case "Browser" /* ClientPlatform.BROWSER */:
                 // In a browser environment, report the browser name.
                 reportedPlatform = _getBrowserName(getUA());
                 break;
-            case "Worker" /* WORKER */:
+            case "Worker" /* ClientPlatform.WORKER */:
                 // Technically a worker runs from a browser but we need to differentiate a
                 // worker from a browser.
                 // For example: Chrome-Worker/JsCore/4.9.1/FirebaseCore-web.
@@ -3755,7 +4549,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         const reportedFrameworks = frameworks.length
             ? frameworks.join(',')
             : 'FirebaseCore-web'; /* default value if no other framework is used */
-        return `${reportedPlatform}/${"JsCore" /* CORE */}/${SDK_VERSION}/${reportedFrameworks}`;
+        return `${reportedPlatform}/${"JsCore" /* ClientImplementation.CORE */}/${SDK_VERSION}/${reportedFrameworks}`;
     }
 
     /**
@@ -3805,7 +4599,6 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             };
         }
         async runMiddleware(nextUser) {
-            var _a;
             if (this.auth.currentUser === nextUser) {
                 return;
             }
@@ -3829,9 +4622,13 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                     try {
                         onAbort();
                     }
-                    catch (_) { /* swallow error */ }
+                    catch (_) {
+                        /* swallow error */
+                    }
                 }
-                throw this.auth._errorFactory.create("login-blocked" /* LOGIN_BLOCKED */, { originalMessage: (_a = e) === null || _a === void 0 ? void 0 : _a.message });
+                throw this.auth._errorFactory.create("login-blocked" /* AuthErrorCode.LOGIN_BLOCKED */, {
+                    originalMessage: e === null || e === void 0 ? void 0 : e.message
+                });
             }
         }
     }
@@ -3906,7 +4703,9 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                     try {
                         await this._popupRedirectResolver._initialize(this);
                     }
-                    catch (e) { /* Ignore the error */ }
+                    catch (e) {
+                        /* Ignore the error */
+                    }
                 }
                 await this.initializeCurrentUser(popupRedirectResolver);
                 this.lastNotifiedUid = ((_b = this.currentUser) === null || _b === void 0 ? void 0 : _b.uid) || null;
@@ -3988,7 +4787,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                     return this.directlySetCurrentUser(null);
                 }
             }
-            _assert(this._popupRedirectResolver, this, "argument-error" /* ARGUMENT_ERROR */);
+            _assert(this._popupRedirectResolver, this, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
             await this.getOrInitRedirectPersistenceManager();
             // If the redirect user's event ID matches the current user's event ID,
             // DO NOT reload the current user, otherwise they'll be cleared from storage.
@@ -4029,12 +4828,12 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             return result;
         }
         async reloadAndSetCurrentUserOrClear(user) {
-            var _a;
             try {
                 await _reloadWithoutSaving(user);
             }
             catch (e) {
-                if (((_a = e) === null || _a === void 0 ? void 0 : _a.code) !== `auth/${"network-request-failed" /* NETWORK_REQUEST_FAILED */}`) {
+                if ((e === null || e === void 0 ? void 0 : e.code) !==
+                    `auth/${"network-request-failed" /* AuthErrorCode.NETWORK_REQUEST_FAILED */}`) {
                     // Something's wrong with the user's token. Log them out and remove
                     // them from storage
                     return this.directlySetCurrentUser(null);
@@ -4055,7 +4854,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 ? getModularInstance(userExtern)
                 : null;
             if (user) {
-                _assert(user.auth.config.apiKey === this.config.apiKey, this, "invalid-user-token" /* INVALID_AUTH */);
+                _assert(user.auth.config.apiKey === this.config.apiKey, this, "invalid-user-token" /* AuthErrorCode.INVALID_AUTH */);
             }
             return this._updateCurrentUser(user && user._clone(this));
         }
@@ -4064,7 +4863,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 return;
             }
             if (user) {
-                _assert(this.tenantId === user.tenantId, this, "tenant-id-mismatch" /* TENANT_ID_MISMATCH */);
+                _assert(this.tenantId === user.tenantId, this, "tenant-id-mismatch" /* AuthErrorCode.TENANT_ID_MISMATCH */);
             }
             if (!skipBeforeStateCallbacks) {
                 await this.beforeStateQueue.runMiddleware(user);
@@ -4124,8 +4923,8 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             if (!this.redirectPersistenceManager) {
                 const resolver = (popupRedirectResolver && _getInstance(popupRedirectResolver)) ||
                     this._popupRedirectResolver;
-                _assert(resolver, this, "argument-error" /* ARGUMENT_ERROR */);
-                this.redirectPersistenceManager = await PersistenceUserManager.create(this, [_getInstance(resolver._redirectPersistence)], "redirectUser" /* REDIRECT_USER */);
+                _assert(resolver, this, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
+                this.redirectPersistenceManager = await PersistenceUserManager.create(this, [_getInstance(resolver._redirectPersistence)], "redirectUser" /* KeyName.REDIRECT_USER */);
                 this.redirectUser =
                     await this.redirectPersistenceManager.getCurrentUser();
             }
@@ -4198,7 +4997,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             const promise = this._isInitialized
                 ? Promise.resolve()
                 : this._initializationPromise;
-            _assert(promise, this, "internal-error" /* INTERNAL_ERROR */);
+            _assert(promise, this, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             // The callback needs to be called asynchronously per the spec.
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             promise.then(() => cb(this.currentUser));
@@ -4217,9 +5016,9 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         async directlySetCurrentUser(user) {
             if (this.currentUser && this.currentUser !== user) {
                 this._currentUser._stopProactiveRefresh();
-                if (user && this.isProactiveRefreshEnabled) {
-                    user._startProactiveRefresh();
-                }
+            }
+            if (user && this.isProactiveRefreshEnabled) {
+                user._startProactiveRefresh();
             }
             this.currentUser = user;
             if (user) {
@@ -4236,7 +5035,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             return this.operations;
         }
         get assertedPersistence() {
-            _assert(this.persistenceManager, this, "internal-error" /* INTERNAL_ERROR */);
+            _assert(this.persistenceManager, this, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             return this.persistenceManager;
         }
         _logFramework(framework) {
@@ -4256,17 +5055,18 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             var _a;
             // Additional headers on every request
             const headers = {
-                ["X-Client-Version" /* X_CLIENT_VERSION */]: this.clientVersion,
+                ["X-Client-Version" /* HttpHeader.X_CLIENT_VERSION */]: this.clientVersion
             };
             if (this.app.options.appId) {
-                headers["X-Firebase-gmpid" /* X_FIREBASE_GMPID */] = this.app.options.appId;
+                headers["X-Firebase-gmpid" /* HttpHeader.X_FIREBASE_GMPID */] = this.app.options.appId;
             }
             // If the heartbeat service exists, add the heartbeat string
-            const heartbeatsHeader = await ((_a = this.heartbeatServiceProvider.getImmediate({
-                optional: true,
+            const heartbeatsHeader = await ((_a = this.heartbeatServiceProvider
+                .getImmediate({
+                optional: true
             })) === null || _a === void 0 ? void 0 : _a.getHeartbeatsHeader());
             if (heartbeatsHeader) {
-                headers["X-Firebase-Client" /* X_FIREBASE_CLIENT */] = heartbeatsHeader;
+                headers["X-Firebase-Client" /* HttpHeader.X_FIREBASE_CLIENT */] = heartbeatsHeader;
             }
             return headers;
         }
@@ -4288,7 +5088,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             this.addObserver = createSubscribe(observer => (this.observer = observer));
         }
         get next() {
-            _assert(this.observer, this.auth, "internal-error" /* INTERNAL_ERROR */);
+            _assert(this.observer, this.auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             return this.observer.next.bind(this.observer);
         }
     }
@@ -4317,8 +5117,8 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     function connectAuthEmulator(auth, url, options) {
         const authInternal = _castAuth(auth);
-        _assert(authInternal._canInitEmulator, authInternal, "emulator-config-failed" /* EMULATOR_CONFIG_FAILED */);
-        _assert(/^https?:\/\//.test(url), authInternal, "invalid-emulator-scheme" /* INVALID_EMULATOR_SCHEME */);
+        _assert(authInternal._canInitEmulator, authInternal, "emulator-config-failed" /* AuthErrorCode.EMULATOR_CONFIG_FAILED */);
+        _assert(/^https?:\/\//.test(url), authInternal, "invalid-emulator-scheme" /* AuthErrorCode.INVALID_EMULATOR_SCHEME */);
         const disableWarnings = !!(options === null || options === void 0 ? void 0 : options.disableWarnings);
         const protocol = extractProtocol(url);
         const { host, port } = extractHostAndPort(url);
@@ -4391,8 +5191,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 ' which is intended for local testing only.  Do not use with' +
                 ' production credentials.');
         }
-        if (typeof window !== 'undefined' &&
-            typeof document !== 'undefined') {
+        if (typeof window !== 'undefined' && typeof document !== 'undefined') {
             if (document.readyState === 'loading') {
                 window.addEventListener('DOMContentLoaded', attachBanner);
             }
@@ -4487,13 +5286,13 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     async function resetPassword(auth, request) {
-        return _performApiRequest(auth, "POST" /* POST */, "/v1/accounts:resetPassword" /* RESET_PASSWORD */, _addTidIfNecessary(auth, request));
+        return _performApiRequest(auth, "POST" /* HttpMethod.POST */, "/v1/accounts:resetPassword" /* Endpoint.RESET_PASSWORD */, _addTidIfNecessary(auth, request));
     }
     async function updateEmailPassword(auth, request) {
-        return _performApiRequest(auth, "POST" /* POST */, "/v1/accounts:update" /* SET_ACCOUNT_INFO */, request);
+        return _performApiRequest(auth, "POST" /* HttpMethod.POST */, "/v1/accounts:update" /* Endpoint.SET_ACCOUNT_INFO */, request);
     }
     async function applyActionCode$1(auth, request) {
-        return _performApiRequest(auth, "POST" /* POST */, "/v1/accounts:update" /* SET_ACCOUNT_INFO */, _addTidIfNecessary(auth, request));
+        return _performApiRequest(auth, "POST" /* HttpMethod.POST */, "/v1/accounts:update" /* Endpoint.SET_ACCOUNT_INFO */, _addTidIfNecessary(auth, request));
     }
 
     /**
@@ -4513,10 +5312,10 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     async function signInWithPassword(auth, request) {
-        return _performSignInRequest(auth, "POST" /* POST */, "/v1/accounts:signInWithPassword" /* SIGN_IN_WITH_PASSWORD */, _addTidIfNecessary(auth, request));
+        return _performSignInRequest(auth, "POST" /* HttpMethod.POST */, "/v1/accounts:signInWithPassword" /* Endpoint.SIGN_IN_WITH_PASSWORD */, _addTidIfNecessary(auth, request));
     }
     async function sendOobCode(auth, request) {
-        return _performApiRequest(auth, "POST" /* POST */, "/v1/accounts:sendOobCode" /* SEND_OOB_CODE */, _addTidIfNecessary(auth, request));
+        return _performApiRequest(auth, "POST" /* HttpMethod.POST */, "/v1/accounts:sendOobCode" /* Endpoint.SEND_OOB_CODE */, _addTidIfNecessary(auth, request));
     }
     async function sendEmailVerification$1(auth, request) {
         return sendOobCode(auth, request);
@@ -4548,10 +5347,10 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     async function signInWithEmailLink$1(auth, request) {
-        return _performSignInRequest(auth, "POST" /* POST */, "/v1/accounts:signInWithEmailLink" /* SIGN_IN_WITH_EMAIL_LINK */, _addTidIfNecessary(auth, request));
+        return _performSignInRequest(auth, "POST" /* HttpMethod.POST */, "/v1/accounts:signInWithEmailLink" /* Endpoint.SIGN_IN_WITH_EMAIL_LINK */, _addTidIfNecessary(auth, request));
     }
     async function signInWithEmailLinkForLinking(auth, request) {
-        return _performSignInRequest(auth, "POST" /* POST */, "/v1/accounts:signInWithEmailLink" /* SIGN_IN_WITH_EMAIL_LINK */, _addTidIfNecessary(auth, request));
+        return _performSignInRequest(auth, "POST" /* HttpMethod.POST */, "/v1/accounts:signInWithEmailLink" /* Endpoint.SIGN_IN_WITH_EMAIL_LINK */, _addTidIfNecessary(auth, request));
     }
 
     /**
@@ -4589,18 +5388,18 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         _password, signInMethod, 
         /** @internal */
         _tenantId = null) {
-            super("password" /* PASSWORD */, signInMethod);
+            super("password" /* ProviderId.PASSWORD */, signInMethod);
             this._email = _email;
             this._password = _password;
             this._tenantId = _tenantId;
         }
         /** @internal */
         static _fromEmailAndPassword(email, password) {
-            return new EmailAuthCredential(email, password, "password" /* EMAIL_PASSWORD */);
+            return new EmailAuthCredential(email, password, "password" /* SignInMethod.EMAIL_PASSWORD */);
         }
         /** @internal */
         static _fromEmailAndCode(email, oobCode, tenantId = null) {
-            return new EmailAuthCredential(email, oobCode, "emailLink" /* EMAIL_LINK */, tenantId);
+            return new EmailAuthCredential(email, oobCode, "emailLink" /* SignInMethod.EMAIL_LINK */, tenantId);
         }
         /** {@inheritdoc AuthCredential.toJSON} */
         toJSON() {
@@ -4622,10 +5421,10 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         static fromJSON(json) {
             const obj = typeof json === 'string' ? JSON.parse(json) : json;
             if ((obj === null || obj === void 0 ? void 0 : obj.email) && (obj === null || obj === void 0 ? void 0 : obj.password)) {
-                if (obj.signInMethod === "password" /* EMAIL_PASSWORD */) {
+                if (obj.signInMethod === "password" /* SignInMethod.EMAIL_PASSWORD */) {
                     return this._fromEmailAndPassword(obj.email, obj.password);
                 }
-                else if (obj.signInMethod === "emailLink" /* EMAIL_LINK */) {
+                else if (obj.signInMethod === "emailLink" /* SignInMethod.EMAIL_LINK */) {
                     return this._fromEmailAndCode(obj.email, obj.password, obj.tenantId);
                 }
             }
@@ -4634,39 +5433,39 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         /** @internal */
         async _getIdTokenResponse(auth) {
             switch (this.signInMethod) {
-                case "password" /* EMAIL_PASSWORD */:
+                case "password" /* SignInMethod.EMAIL_PASSWORD */:
                     return signInWithPassword(auth, {
                         returnSecureToken: true,
                         email: this._email,
                         password: this._password
                     });
-                case "emailLink" /* EMAIL_LINK */:
+                case "emailLink" /* SignInMethod.EMAIL_LINK */:
                     return signInWithEmailLink$1(auth, {
                         email: this._email,
                         oobCode: this._password
                     });
                 default:
-                    _fail(auth, "internal-error" /* INTERNAL_ERROR */);
+                    _fail(auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             }
         }
         /** @internal */
         async _linkToIdToken(auth, idToken) {
             switch (this.signInMethod) {
-                case "password" /* EMAIL_PASSWORD */:
+                case "password" /* SignInMethod.EMAIL_PASSWORD */:
                     return updateEmailPassword(auth, {
                         idToken,
                         returnSecureToken: true,
                         email: this._email,
                         password: this._password
                     });
-                case "emailLink" /* EMAIL_LINK */:
+                case "emailLink" /* SignInMethod.EMAIL_LINK */:
                     return signInWithEmailLinkForLinking(auth, {
                         idToken,
                         email: this._email,
                         oobCode: this._password
                     });
                 default:
-                    _fail(auth, "internal-error" /* INTERNAL_ERROR */);
+                    _fail(auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             }
         }
         /** @internal */
@@ -4692,7 +5491,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     async function signInWithIdp(auth, request) {
-        return _performSignInRequest(auth, "POST" /* POST */, "/v1/accounts:signInWithIdp" /* SIGN_IN_WITH_IDP */, _addTidIfNecessary(auth, request));
+        return _performSignInRequest(auth, "POST" /* HttpMethod.POST */, "/v1/accounts:signInWithIdp" /* Endpoint.SIGN_IN_WITH_IDP */, _addTidIfNecessary(auth, request));
     }
 
     /**
@@ -4750,7 +5549,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 cred.secret = params.oauthTokenSecret;
             }
             else {
-                _fail("argument-error" /* ARGUMENT_ERROR */);
+                _fail("argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
             }
             return cred;
         }
@@ -4852,24 +5651,24 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     async function sendPhoneVerificationCode(auth, request) {
-        return _performApiRequest(auth, "POST" /* POST */, "/v1/accounts:sendVerificationCode" /* SEND_VERIFICATION_CODE */, _addTidIfNecessary(auth, request));
+        return _performApiRequest(auth, "POST" /* HttpMethod.POST */, "/v1/accounts:sendVerificationCode" /* Endpoint.SEND_VERIFICATION_CODE */, _addTidIfNecessary(auth, request));
     }
     async function signInWithPhoneNumber$1(auth, request) {
-        return _performSignInRequest(auth, "POST" /* POST */, "/v1/accounts:signInWithPhoneNumber" /* SIGN_IN_WITH_PHONE_NUMBER */, _addTidIfNecessary(auth, request));
+        return _performSignInRequest(auth, "POST" /* HttpMethod.POST */, "/v1/accounts:signInWithPhoneNumber" /* Endpoint.SIGN_IN_WITH_PHONE_NUMBER */, _addTidIfNecessary(auth, request));
     }
     async function linkWithPhoneNumber$1(auth, request) {
-        const response = await _performSignInRequest(auth, "POST" /* POST */, "/v1/accounts:signInWithPhoneNumber" /* SIGN_IN_WITH_PHONE_NUMBER */, _addTidIfNecessary(auth, request));
+        const response = await _performSignInRequest(auth, "POST" /* HttpMethod.POST */, "/v1/accounts:signInWithPhoneNumber" /* Endpoint.SIGN_IN_WITH_PHONE_NUMBER */, _addTidIfNecessary(auth, request));
         if (response.temporaryProof) {
-            throw _makeTaggedError(auth, "account-exists-with-different-credential" /* NEED_CONFIRMATION */, response);
+            throw _makeTaggedError(auth, "account-exists-with-different-credential" /* AuthErrorCode.NEED_CONFIRMATION */, response);
         }
         return response;
     }
     const VERIFY_PHONE_NUMBER_FOR_EXISTING_ERROR_MAP_ = {
-        ["USER_NOT_FOUND" /* USER_NOT_FOUND */]: "user-not-found" /* USER_DELETED */
+        ["USER_NOT_FOUND" /* ServerError.USER_NOT_FOUND */]: "user-not-found" /* AuthErrorCode.USER_DELETED */
     };
     async function verifyPhoneNumberForExisting(auth, request) {
         const apiRequest = Object.assign(Object.assign({}, request), { operation: 'REAUTH' });
-        return _performSignInRequest(auth, "POST" /* POST */, "/v1/accounts:signInWithPhoneNumber" /* SIGN_IN_WITH_PHONE_NUMBER */, _addTidIfNecessary(auth, apiRequest), VERIFY_PHONE_NUMBER_FOR_EXISTING_ERROR_MAP_);
+        return _performSignInRequest(auth, "POST" /* HttpMethod.POST */, "/v1/accounts:signInWithPhoneNumber" /* Endpoint.SIGN_IN_WITH_PHONE_NUMBER */, _addTidIfNecessary(auth, apiRequest), VERIFY_PHONE_NUMBER_FOR_EXISTING_ERROR_MAP_);
     }
 
     /**
@@ -4895,7 +5694,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     class PhoneAuthCredential extends AuthCredential {
         constructor(params) {
-            super("phone" /* PHONE */, "phone" /* PHONE */);
+            super("phone" /* ProviderId.PHONE */, "phone" /* SignInMethod.PHONE */);
             this.params = params;
         }
         /** @internal */
@@ -4993,17 +5792,17 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     function parseMode(mode) {
         switch (mode) {
             case 'recoverEmail':
-                return "RECOVER_EMAIL" /* RECOVER_EMAIL */;
+                return "RECOVER_EMAIL" /* ActionCodeOperation.RECOVER_EMAIL */;
             case 'resetPassword':
-                return "PASSWORD_RESET" /* PASSWORD_RESET */;
+                return "PASSWORD_RESET" /* ActionCodeOperation.PASSWORD_RESET */;
             case 'signIn':
-                return "EMAIL_SIGNIN" /* EMAIL_SIGNIN */;
+                return "EMAIL_SIGNIN" /* ActionCodeOperation.EMAIL_SIGNIN */;
             case 'verifyEmail':
-                return "VERIFY_EMAIL" /* VERIFY_EMAIL */;
+                return "VERIFY_EMAIL" /* ActionCodeOperation.VERIFY_EMAIL */;
             case 'verifyAndChangeEmail':
-                return "VERIFY_AND_CHANGE_EMAIL" /* VERIFY_AND_CHANGE_EMAIL */;
+                return "VERIFY_AND_CHANGE_EMAIL" /* ActionCodeOperation.VERIFY_AND_CHANGE_EMAIL */;
             case 'revertSecondFactorAddition':
-                return "REVERT_SECOND_FACTOR_ADDITION" /* REVERT_SECOND_FACTOR_ADDITION */;
+                return "REVERT_SECOND_FACTOR_ADDITION" /* ActionCodeOperation.REVERT_SECOND_FACTOR_ADDITION */;
             default:
                 return null;
         }
@@ -5042,17 +5841,17 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         constructor(actionLink) {
             var _a, _b, _c, _d, _e, _f;
             const searchParams = querystringDecode(extractQuerystring(actionLink));
-            const apiKey = (_a = searchParams["apiKey" /* API_KEY */]) !== null && _a !== void 0 ? _a : null;
-            const code = (_b = searchParams["oobCode" /* CODE */]) !== null && _b !== void 0 ? _b : null;
-            const operation = parseMode((_c = searchParams["mode" /* MODE */]) !== null && _c !== void 0 ? _c : null);
+            const apiKey = (_a = searchParams["apiKey" /* QueryField.API_KEY */]) !== null && _a !== void 0 ? _a : null;
+            const code = (_b = searchParams["oobCode" /* QueryField.CODE */]) !== null && _b !== void 0 ? _b : null;
+            const operation = parseMode((_c = searchParams["mode" /* QueryField.MODE */]) !== null && _c !== void 0 ? _c : null);
             // Validate API key, code and mode.
-            _assert(apiKey && code && operation, "argument-error" /* ARGUMENT_ERROR */);
+            _assert(apiKey && code && operation, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
             this.apiKey = apiKey;
             this.operation = operation;
             this.code = code;
-            this.continueUrl = (_d = searchParams["continueUrl" /* CONTINUE_URL */]) !== null && _d !== void 0 ? _d : null;
-            this.languageCode = (_e = searchParams["languageCode" /* LANGUAGE_CODE */]) !== null && _e !== void 0 ? _e : null;
-            this.tenantId = (_f = searchParams["tenantId" /* TENANT_ID */]) !== null && _f !== void 0 ? _f : null;
+            this.continueUrl = (_d = searchParams["continueUrl" /* QueryField.CONTINUE_URL */]) !== null && _d !== void 0 ? _d : null;
+            this.languageCode = (_e = searchParams["languageCode" /* QueryField.LANGUAGE_CODE */]) !== null && _e !== void 0 ? _e : null;
+            this.tenantId = (_f = searchParams["tenantId" /* QueryField.TENANT_ID */]) !== null && _f !== void 0 ? _f : null;
         }
         /**
          * Parses the email action link string and returns an {@link ActionCodeURL} if the link is valid,
@@ -5156,22 +5955,22 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
          */
         static credentialWithLink(email, emailLink) {
             const actionCodeUrl = ActionCodeURL.parseLink(emailLink);
-            _assert(actionCodeUrl, "argument-error" /* ARGUMENT_ERROR */);
+            _assert(actionCodeUrl, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
             return EmailAuthCredential._fromEmailAndCode(email, actionCodeUrl.code, actionCodeUrl.tenantId);
         }
     }
     /**
      * Always set to {@link ProviderId}.PASSWORD, even for email link.
      */
-    EmailAuthProvider.PROVIDER_ID = "password" /* PASSWORD */;
+    EmailAuthProvider.PROVIDER_ID = "password" /* ProviderId.PASSWORD */;
     /**
      * Always set to {@link SignInMethod}.EMAIL_PASSWORD.
      */
-    EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD = "password" /* EMAIL_PASSWORD */;
+    EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD = "password" /* SignInMethod.EMAIL_PASSWORD */;
     /**
      * Always set to {@link SignInMethod}.EMAIL_LINK.
      */
-    EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD = "emailLink" /* EMAIL_LINK */;
+    EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD = "emailLink" /* SignInMethod.EMAIL_LINK */;
 
     /**
      * @license
@@ -5333,7 +6132,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
          */
         static credentialFromJSON(json) {
             const obj = typeof json === 'string' ? JSON.parse(json) : json;
-            _assert('providerId' in obj && 'signInMethod' in obj, "argument-error" /* ARGUMENT_ERROR */);
+            _assert('providerId' in obj && 'signInMethod' in obj, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
             return OAuthCredential._fromParams(obj);
         }
         /**
@@ -5362,7 +6161,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         }
         /** An internal credential method that accepts more permissive options */
         _credential(params) {
-            _assert(params.idToken || params.accessToken, "argument-error" /* ARGUMENT_ERROR */);
+            _assert(params.idToken || params.accessToken, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
             // For OAuthCredential, sign in method is same as providerId.
             return OAuthCredential._fromParams(Object.assign(Object.assign({}, params), { providerId: this.providerId, signInMethod: this.providerId }));
         }
@@ -5468,7 +6267,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     class FacebookAuthProvider extends BaseOAuthProvider {
         constructor() {
-            super("facebook.com" /* FACEBOOK */);
+            super("facebook.com" /* ProviderId.FACEBOOK */);
         }
         /**
          * Creates a credential for Facebook.
@@ -5522,9 +6321,9 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         }
     }
     /** Always set to {@link SignInMethod}.FACEBOOK. */
-    FacebookAuthProvider.FACEBOOK_SIGN_IN_METHOD = "facebook.com" /* FACEBOOK */;
+    FacebookAuthProvider.FACEBOOK_SIGN_IN_METHOD = "facebook.com" /* SignInMethod.FACEBOOK */;
     /** Always set to {@link ProviderId}.FACEBOOK. */
-    FacebookAuthProvider.PROVIDER_ID = "facebook.com" /* FACEBOOK */;
+    FacebookAuthProvider.PROVIDER_ID = "facebook.com" /* ProviderId.FACEBOOK */;
 
     /**
      * @license
@@ -5585,7 +6384,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     class GoogleAuthProvider extends BaseOAuthProvider {
         constructor() {
-            super("google.com" /* GOOGLE */);
+            super("google.com" /* ProviderId.GOOGLE */);
             this.addScope('profile');
         }
         /**
@@ -5644,9 +6443,9 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         }
     }
     /** Always set to {@link SignInMethod}.GOOGLE. */
-    GoogleAuthProvider.GOOGLE_SIGN_IN_METHOD = "google.com" /* GOOGLE */;
+    GoogleAuthProvider.GOOGLE_SIGN_IN_METHOD = "google.com" /* SignInMethod.GOOGLE */;
     /** Always set to {@link ProviderId}.GOOGLE. */
-    GoogleAuthProvider.PROVIDER_ID = "google.com" /* GOOGLE */;
+    GoogleAuthProvider.PROVIDER_ID = "google.com" /* ProviderId.GOOGLE */;
 
     /**
      * @license
@@ -5708,7 +6507,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     class GithubAuthProvider extends BaseOAuthProvider {
         constructor() {
-            super("github.com" /* GITHUB */);
+            super("github.com" /* ProviderId.GITHUB */);
         }
         /**
          * Creates a credential for Github.
@@ -5755,9 +6554,9 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         }
     }
     /** Always set to {@link SignInMethod}.GITHUB. */
-    GithubAuthProvider.GITHUB_SIGN_IN_METHOD = "github.com" /* GITHUB */;
+    GithubAuthProvider.GITHUB_SIGN_IN_METHOD = "github.com" /* SignInMethod.GITHUB */;
     /** Always set to {@link ProviderId}.GITHUB. */
-    GithubAuthProvider.PROVIDER_ID = "github.com" /* GITHUB */;
+    GithubAuthProvider.PROVIDER_ID = "github.com" /* ProviderId.GITHUB */;
 
     /**
      * @license
@@ -5875,7 +6674,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
          * @param providerId - SAML provider ID.
          */
         constructor(providerId) {
-            _assert(providerId.startsWith(SAML_PROVIDER_PREFIX), "argument-error" /* ARGUMENT_ERROR */);
+            _assert(providerId.startsWith(SAML_PROVIDER_PREFIX), "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
             super(providerId);
         }
         /**
@@ -5912,7 +6711,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
          */
         static credentialFromJSON(json) {
             const credential = SAMLAuthCredential.fromJSON(json);
-            _assert(credential, "argument-error" /* ARGUMENT_ERROR */);
+            _assert(credential, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
             return credential;
         }
         static samlCredentialFromTaggedObject({ _tokenResponse: tokenResponse }) {
@@ -5989,7 +6788,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     class TwitterAuthProvider extends BaseOAuthProvider {
         constructor() {
-            super("twitter.com" /* TWITTER */);
+            super("twitter.com" /* ProviderId.TWITTER */);
         }
         /**
          * Creates a credential for Twitter.
@@ -6039,9 +6838,9 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         }
     }
     /** Always set to {@link SignInMethod}.TWITTER. */
-    TwitterAuthProvider.TWITTER_SIGN_IN_METHOD = "twitter.com" /* TWITTER */;
+    TwitterAuthProvider.TWITTER_SIGN_IN_METHOD = "twitter.com" /* SignInMethod.TWITTER */;
     /** Always set to {@link ProviderId}.TWITTER. */
-    TwitterAuthProvider.PROVIDER_ID = "twitter.com" /* TWITTER */;
+    TwitterAuthProvider.PROVIDER_ID = "twitter.com" /* ProviderId.TWITTER */;
 
     /**
      * @license
@@ -6060,7 +6859,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     async function signUp(auth, request) {
-        return _performSignInRequest(auth, "POST" /* POST */, "/v1/accounts:signUp" /* SIGN_UP */, _addTidIfNecessary(auth, request));
+        return _performSignInRequest(auth, "POST" /* HttpMethod.POST */, "/v1/accounts:signUp" /* Endpoint.SIGN_UP */, _addTidIfNecessary(auth, request));
     }
 
     /**
@@ -6113,7 +6912,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             return response.providerId;
         }
         if ('phoneNumber' in response) {
-            return "phone" /* PHONE */;
+            return "phone" /* ProviderId.PHONE */;
         }
         return null;
     }
@@ -6154,13 +6953,13 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             return new UserCredentialImpl({
                 user: authInternal.currentUser,
                 providerId: null,
-                operationType: "signIn" /* SIGN_IN */
+                operationType: "signIn" /* OperationType.SIGN_IN */
             });
         }
         const response = await signUp(authInternal, {
             returnSecureToken: true
         });
-        const userCredential = await UserCredentialImpl._fromIdTokenResponse(authInternal, "signIn" /* SIGN_IN */, response, true);
+        const userCredential = await UserCredentialImpl._fromIdTokenResponse(authInternal, "signIn" /* OperationType.SIGN_IN */, response, true);
         await authInternal._updateCurrentUser(userCredential.user);
         return userCredential;
     }
@@ -6193,7 +6992,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 appName: auth.name,
                 tenantId: (_a = auth.tenantId) !== null && _a !== void 0 ? _a : undefined,
                 _serverResponse: error.customData._serverResponse,
-                operationType,
+                operationType
             };
         }
         static _fromErrorAndOperation(auth, error, operationType, user) {
@@ -6201,11 +7000,11 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         }
     }
     function _processCredentialSavingMfaContextIfNecessary(auth, operationType, credential, user) {
-        const idTokenProvider = operationType === "reauthenticate" /* REAUTHENTICATE */
+        const idTokenProvider = operationType === "reauthenticate" /* OperationType.REAUTHENTICATE */
             ? credential._getReauthenticationResolver(auth)
             : credential._getIdTokenResponse(auth);
         return idTokenProvider.catch(error => {
-            if (error.code === `auth/${"multi-factor-auth-required" /* MFA_REQUIRED */}`) {
+            if (error.code === `auth/${"multi-factor-auth-required" /* AuthErrorCode.MFA_REQUIRED */}`) {
                 throw MultiFactorError._fromErrorAndOperation(auth, error, operationType, user);
             }
             throw error;
@@ -6270,7 +7069,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         });
         const providersLeft = providerDataAsNames(providerUserInfo || []);
         userInternal.providerData = userInternal.providerData.filter(pd => providersLeft.has(pd.providerId));
-        if (!providersLeft.has("phone" /* PHONE */)) {
+        if (!providersLeft.has("phone" /* ProviderId.PHONE */)) {
             userInternal.phoneNumber = null;
         }
         await userInternal.auth._persistUserIfCurrent(userInternal);
@@ -6278,14 +7077,14 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     }
     async function _link$1(user, credential, bypassAuthState = false) {
         const response = await _logoutIfInvalidated(user, credential._linkToIdToken(user.auth, await user.getIdToken()), bypassAuthState);
-        return UserCredentialImpl._forOperation(user, "link" /* LINK */, response);
+        return UserCredentialImpl._forOperation(user, "link" /* OperationType.LINK */, response);
     }
     async function _assertLinkedStatus(expected, user, provider) {
         await _reloadWithoutSaving(user);
         const providerIds = providerDataAsNames(user.providerData);
         const code = expected === false
-            ? "provider-already-linked" /* PROVIDER_ALREADY_LINKED */
-            : "no-such-provider" /* NO_SUCH_PROVIDER */;
+            ? "provider-already-linked" /* AuthErrorCode.PROVIDER_ALREADY_LINKED */
+            : "no-such-provider" /* AuthErrorCode.NO_SUCH_PROVIDER */;
         _assert(providerIds.has(provider) === expected, user.auth, code);
     }
 
@@ -6306,22 +7105,21 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     async function _reauthenticate(user, credential, bypassAuthState = false) {
-        var _a;
         const { auth } = user;
-        const operationType = "reauthenticate" /* REAUTHENTICATE */;
+        const operationType = "reauthenticate" /* OperationType.REAUTHENTICATE */;
         try {
             const response = await _logoutIfInvalidated(user, _processCredentialSavingMfaContextIfNecessary(auth, operationType, credential, user), bypassAuthState);
-            _assert(response.idToken, auth, "internal-error" /* INTERNAL_ERROR */);
+            _assert(response.idToken, auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             const parsed = _parseToken(response.idToken);
-            _assert(parsed, auth, "internal-error" /* INTERNAL_ERROR */);
+            _assert(parsed, auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             const { sub: localId } = parsed;
-            _assert(user.uid === localId, auth, "user-mismatch" /* USER_MISMATCH */);
+            _assert(user.uid === localId, auth, "user-mismatch" /* AuthErrorCode.USER_MISMATCH */);
             return UserCredentialImpl._forOperation(user, operationType, response);
         }
         catch (e) {
             // Convert user deleted error into user mismatch
-            if (((_a = e) === null || _a === void 0 ? void 0 : _a.code) === `auth/${"user-not-found" /* USER_DELETED */}`) {
-                _fail(auth, "user-mismatch" /* USER_MISMATCH */);
+            if ((e === null || e === void 0 ? void 0 : e.code) === `auth/${"user-not-found" /* AuthErrorCode.USER_DELETED */}`) {
+                _fail(auth, "user-mismatch" /* AuthErrorCode.USER_MISMATCH */);
             }
             throw e;
         }
@@ -6344,7 +7142,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     async function _signInWithCredential(auth, credential, bypassAuthState = false) {
-        const operationType = "signIn" /* SIGN_IN */;
+        const operationType = "signIn" /* OperationType.SIGN_IN */;
         const response = await _processCredentialSavingMfaContextIfNecessary(auth, operationType, credential);
         const userCredential = await UserCredentialImpl._fromIdTokenResponse(auth, operationType, response);
         if (!bypassAuthState) {
@@ -6415,7 +7213,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     async function signInWithCustomToken$1(auth, request) {
-        return _performSignInRequest(auth, "POST" /* POST */, "/v1/accounts:signInWithCustomToken" /* SIGN_IN_WITH_CUSTOM_TOKEN */, _addTidIfNecessary(auth, request));
+        return _performSignInRequest(auth, "POST" /* HttpMethod.POST */, "/v1/accounts:signInWithCustomToken" /* Endpoint.SIGN_IN_WITH_CUSTOM_TOKEN */, _addTidIfNecessary(auth, request));
     }
 
     /**
@@ -6456,7 +7254,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             token: customToken,
             returnSecureToken: true
         });
-        const cred = await UserCredentialImpl._fromIdTokenResponse(authInternal, "signIn" /* SIGN_IN */, response);
+        const cred = await UserCredentialImpl._fromIdTokenResponse(authInternal, "signIn" /* OperationType.SIGN_IN */, response);
         await authInternal._updateCurrentUser(cred.user);
         return cred;
     }
@@ -6488,12 +7286,12 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             if ('phoneInfo' in enrollment) {
                 return PhoneMultiFactorInfoImpl._fromServerResponse(auth, enrollment);
             }
-            return _fail(auth, "internal-error" /* INTERNAL_ERROR */);
+            return _fail(auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
         }
     }
     class PhoneMultiFactorInfoImpl extends MultiFactorInfoImpl {
         constructor(response) {
-            super("phone" /* PHONE */, response);
+            super("phone" /* FactorId.PHONE */, response);
             this.phoneNumber = response.phoneInfo;
         }
         static _fromServerResponse(_auth, enrollment) {
@@ -6519,18 +7317,18 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     function _setActionCodeSettingsOnRequest(auth, request, actionCodeSettings) {
         var _a;
-        _assert(((_a = actionCodeSettings.url) === null || _a === void 0 ? void 0 : _a.length) > 0, auth, "invalid-continue-uri" /* INVALID_CONTINUE_URI */);
+        _assert(((_a = actionCodeSettings.url) === null || _a === void 0 ? void 0 : _a.length) > 0, auth, "invalid-continue-uri" /* AuthErrorCode.INVALID_CONTINUE_URI */);
         _assert(typeof actionCodeSettings.dynamicLinkDomain === 'undefined' ||
-            actionCodeSettings.dynamicLinkDomain.length > 0, auth, "invalid-dynamic-link-domain" /* INVALID_DYNAMIC_LINK_DOMAIN */);
+            actionCodeSettings.dynamicLinkDomain.length > 0, auth, "invalid-dynamic-link-domain" /* AuthErrorCode.INVALID_DYNAMIC_LINK_DOMAIN */);
         request.continueUrl = actionCodeSettings.url;
         request.dynamicLinkDomain = actionCodeSettings.dynamicLinkDomain;
         request.canHandleCodeInApp = actionCodeSettings.handleCodeInApp;
         if (actionCodeSettings.iOS) {
-            _assert(actionCodeSettings.iOS.bundleId.length > 0, auth, "missing-ios-bundle-id" /* MISSING_IOS_BUNDLE_ID */);
+            _assert(actionCodeSettings.iOS.bundleId.length > 0, auth, "missing-ios-bundle-id" /* AuthErrorCode.MISSING_IOS_BUNDLE_ID */);
             request.iOSBundleId = actionCodeSettings.iOS.bundleId;
         }
         if (actionCodeSettings.android) {
-            _assert(actionCodeSettings.android.packageName.length > 0, auth, "missing-android-pkg-name" /* MISSING_ANDROID_PACKAGE_NAME */);
+            _assert(actionCodeSettings.android.packageName.length > 0, auth, "missing-android-pkg-name" /* AuthErrorCode.MISSING_ANDROID_PACKAGE_NAME */);
             request.androidInstallApp = actionCodeSettings.android.installApp;
             request.androidMinimumVersionCode =
                 actionCodeSettings.android.minimumVersion;
@@ -6589,7 +7387,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     async function sendPasswordResetEmail(auth, email, actionCodeSettings) {
         const authModular = getModularInstance(auth);
         const request = {
-            requestType: "PASSWORD_RESET" /* PASSWORD_RESET */,
+            requestType: "PASSWORD_RESET" /* ActionCodeOperation.PASSWORD_RESET */,
             email
         };
         if (actionCodeSettings) {
@@ -6644,18 +7442,18 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         // Multi-factor info could not be empty if the request type is
         // REVERT_SECOND_FACTOR_ADDITION.
         const operation = response.requestType;
-        _assert(operation, authModular, "internal-error" /* INTERNAL_ERROR */);
+        _assert(operation, authModular, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
         switch (operation) {
-            case "EMAIL_SIGNIN" /* EMAIL_SIGNIN */:
+            case "EMAIL_SIGNIN" /* ActionCodeOperation.EMAIL_SIGNIN */:
                 break;
-            case "VERIFY_AND_CHANGE_EMAIL" /* VERIFY_AND_CHANGE_EMAIL */:
-                _assert(response.newEmail, authModular, "internal-error" /* INTERNAL_ERROR */);
+            case "VERIFY_AND_CHANGE_EMAIL" /* ActionCodeOperation.VERIFY_AND_CHANGE_EMAIL */:
+                _assert(response.newEmail, authModular, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
                 break;
-            case "REVERT_SECOND_FACTOR_ADDITION" /* REVERT_SECOND_FACTOR_ADDITION */:
-                _assert(response.mfaInfo, authModular, "internal-error" /* INTERNAL_ERROR */);
+            case "REVERT_SECOND_FACTOR_ADDITION" /* ActionCodeOperation.REVERT_SECOND_FACTOR_ADDITION */:
+                _assert(response.mfaInfo, authModular, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             // fall through
             default:
-                _assert(response.email, authModular, "internal-error" /* INTERNAL_ERROR */);
+                _assert(response.email, authModular, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
         }
         // The multi-factor info for revert second factor addition
         let multiFactorInfo = null;
@@ -6664,10 +7462,10 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         }
         return {
             data: {
-                email: (response.requestType === "VERIFY_AND_CHANGE_EMAIL" /* VERIFY_AND_CHANGE_EMAIL */
+                email: (response.requestType === "VERIFY_AND_CHANGE_EMAIL" /* ActionCodeOperation.VERIFY_AND_CHANGE_EMAIL */
                     ? response.newEmail
                     : response.email) || null,
-                previousEmail: (response.requestType === "VERIFY_AND_CHANGE_EMAIL" /* VERIFY_AND_CHANGE_EMAIL */
+                previousEmail: (response.requestType === "VERIFY_AND_CHANGE_EMAIL" /* ActionCodeOperation.VERIFY_AND_CHANGE_EMAIL */
                     ? response.email
                     : response.newEmail) || null,
                 multiFactorInfo
@@ -6714,7 +7512,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             email,
             password
         });
-        const userCredential = await UserCredentialImpl._fromIdTokenResponse(authInternal, "signIn" /* SIGN_IN */, response);
+        const userCredential = await UserCredentialImpl._fromIdTokenResponse(authInternal, "signIn" /* OperationType.SIGN_IN */, response);
         await authInternal._updateCurrentUser(userCredential.user);
         return userCredential;
     }
@@ -6795,10 +7593,10 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     async function sendSignInLinkToEmail(auth, email, actionCodeSettings) {
         const authModular = getModularInstance(auth);
         const request = {
-            requestType: "EMAIL_SIGNIN" /* EMAIL_SIGNIN */,
+            requestType: "EMAIL_SIGNIN" /* ActionCodeOperation.EMAIL_SIGNIN */,
             email
         };
-        _assert(actionCodeSettings.handleCodeInApp, authModular, "argument-error" /* ARGUMENT_ERROR */);
+        _assert(actionCodeSettings.handleCodeInApp, authModular, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
         if (actionCodeSettings) {
             _setActionCodeSettingsOnRequest(authModular, request, actionCodeSettings);
         }
@@ -6814,7 +7612,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     function isSignInWithEmailLink(auth, emailLink) {
         const actionCodeUrl = ActionCodeURL.parseLink(emailLink);
-        return (actionCodeUrl === null || actionCodeUrl === void 0 ? void 0 : actionCodeUrl.operation) === "EMAIL_SIGNIN" /* EMAIL_SIGNIN */;
+        return (actionCodeUrl === null || actionCodeUrl === void 0 ? void 0 : actionCodeUrl.operation) === "EMAIL_SIGNIN" /* ActionCodeOperation.EMAIL_SIGNIN */;
     }
     /**
      * Asynchronously signs in using an email and sign-in email link.
@@ -6858,7 +7656,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         const credential = EmailAuthProvider.credentialWithLink(email, emailLink || _getCurrentUrl());
         // Check if the tenant ID in the email link matches the tenant ID on Auth
         // instance.
-        _assert(credential._tenantId === (authModular.tenantId || null), authModular, "tenant-id-mismatch" /* TENANT_ID_MISMATCH */);
+        _assert(credential._tenantId === (authModular.tenantId || null), authModular, "tenant-id-mismatch" /* AuthErrorCode.TENANT_ID_MISMATCH */);
         return signInWithCredential(authModular, credential);
     }
 
@@ -6879,7 +7677,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     async function createAuthUri(auth, request) {
-        return _performApiRequest(auth, "POST" /* POST */, "/v1/accounts:createAuthUri" /* CREATE_AUTH_URI */, _addTidIfNecessary(auth, request));
+        return _performApiRequest(auth, "POST" /* HttpMethod.POST */, "/v1/accounts:createAuthUri" /* Endpoint.CREATE_AUTH_URI */, _addTidIfNecessary(auth, request));
     }
 
     /**
@@ -6958,7 +7756,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         const userInternal = getModularInstance(user);
         const idToken = await user.getIdToken();
         const request = {
-            requestType: "VERIFY_EMAIL" /* VERIFY_EMAIL */,
+            requestType: "VERIFY_EMAIL" /* ActionCodeOperation.VERIFY_EMAIL */,
             idToken
         };
         if (actionCodeSettings) {
@@ -7007,7 +7805,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         const userInternal = getModularInstance(user);
         const idToken = await user.getIdToken();
         const request = {
-            requestType: "VERIFY_AND_CHANGE_EMAIL" /* VERIFY_AND_CHANGE_EMAIL */,
+            requestType: "VERIFY_AND_CHANGE_EMAIL" /* ActionCodeOperation.VERIFY_AND_CHANGE_EMAIL */,
             idToken,
             newEmail
         };
@@ -7039,7 +7837,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     async function updateProfile$1(auth, request) {
-        return _performApiRequest(auth, "POST" /* POST */, "/v1/accounts:update" /* SET_ACCOUNT_INFO */, request);
+        return _performApiRequest(auth, "POST" /* HttpMethod.POST */, "/v1/accounts:update" /* Endpoint.SET_ACCOUNT_INFO */, request);
     }
 
     /**
@@ -7082,7 +7880,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         userInternal.displayName = response.displayName || null;
         userInternal.photoURL = response.photoUrl || null;
         // Update the password provider as well
-        const passwordProvider = userInternal.providerData.find(({ providerId }) => providerId === "password" /* PASSWORD */);
+        const passwordProvider = userInternal.providerData.find(({ providerId }) => providerId === "password" /* ProviderId.PASSWORD */);
         if (passwordProvider) {
             passwordProvider.displayName = userInternal.displayName;
             passwordProvider.photoURL = userInternal.photoURL;
@@ -7171,12 +7969,12 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             ? JSON.parse(idTokenResponse.rawUserInfo)
             : {};
         const isNewUser = idTokenResponse.isNewUser ||
-            idTokenResponse.kind === "identitytoolkit#SignupNewUserResponse" /* SignupNewUser */;
+            idTokenResponse.kind === "identitytoolkit#SignupNewUserResponse" /* IdTokenResponseKind.SignupNewUser */;
         if (!providerId && (idTokenResponse === null || idTokenResponse === void 0 ? void 0 : idTokenResponse.idToken)) {
             const signInProvider = (_b = (_a = _parseToken(idTokenResponse.idToken)) === null || _a === void 0 ? void 0 : _a.firebase) === null || _b === void 0 ? void 0 : _b['sign_in_provider'];
             if (signInProvider) {
-                const filteredProviderId = signInProvider !== "anonymous" /* ANONYMOUS */ &&
-                    signInProvider !== "custom" /* CUSTOM */
+                const filteredProviderId = signInProvider !== "anonymous" /* ProviderId.ANONYMOUS */ &&
+                    signInProvider !== "custom" /* ProviderId.CUSTOM */
                     ? signInProvider
                     : null;
                 // Uses generic class in accordance with the legacy SDK.
@@ -7187,16 +7985,16 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             return null;
         }
         switch (providerId) {
-            case "facebook.com" /* FACEBOOK */:
+            case "facebook.com" /* ProviderId.FACEBOOK */:
                 return new FacebookAdditionalUserInfo(isNewUser, profile);
-            case "github.com" /* GITHUB */:
+            case "github.com" /* ProviderId.GITHUB */:
                 return new GithubAdditionalUserInfo(isNewUser, profile);
-            case "google.com" /* GOOGLE */:
+            case "google.com" /* ProviderId.GOOGLE */:
                 return new GoogleAdditionalUserInfo(isNewUser, profile);
-            case "twitter.com" /* TWITTER */:
+            case "twitter.com" /* ProviderId.TWITTER */:
                 return new TwitterAdditionalUserInfo(isNewUser, profile, idTokenResponse.screenName || null);
-            case "custom" /* CUSTOM */:
-            case "anonymous" /* ANONYMOUS */:
+            case "custom" /* ProviderId.CUSTOM */:
+            case "anonymous" /* ProviderId.ANONYMOUS */:
                 return new GenericAdditionalUserInfo(isNewUser, null);
             default:
                 return new GenericAdditionalUserInfo(isNewUser, providerId, profile);
@@ -7217,22 +8015,22 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     }
     class FacebookAdditionalUserInfo extends GenericAdditionalUserInfo {
         constructor(isNewUser, profile) {
-            super(isNewUser, "facebook.com" /* FACEBOOK */, profile);
+            super(isNewUser, "facebook.com" /* ProviderId.FACEBOOK */, profile);
         }
     }
     class GithubAdditionalUserInfo extends FederatedAdditionalUserInfoWithUsername {
         constructor(isNewUser, profile) {
-            super(isNewUser, "github.com" /* GITHUB */, profile, typeof (profile === null || profile === void 0 ? void 0 : profile.login) === 'string' ? profile === null || profile === void 0 ? void 0 : profile.login : null);
+            super(isNewUser, "github.com" /* ProviderId.GITHUB */, profile, typeof (profile === null || profile === void 0 ? void 0 : profile.login) === 'string' ? profile === null || profile === void 0 ? void 0 : profile.login : null);
         }
     }
     class GoogleAdditionalUserInfo extends GenericAdditionalUserInfo {
         constructor(isNewUser, profile) {
-            super(isNewUser, "google.com" /* GOOGLE */, profile);
+            super(isNewUser, "google.com" /* ProviderId.GOOGLE */, profile);
         }
     }
     class TwitterAdditionalUserInfo extends FederatedAdditionalUserInfoWithUsername {
         constructor(isNewUser, profile, screenName) {
-            super(isNewUser, "twitter.com" /* TWITTER */, profile, screenName);
+            super(isNewUser, "twitter.com" /* ProviderId.TWITTER */, profile, screenName);
         }
     }
     /**
@@ -7404,18 +8202,19 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     }
 
     class MultiFactorSessionImpl {
-        constructor(type, credential) {
+        constructor(type, credential, auth) {
             this.type = type;
             this.credential = credential;
+            this.auth = auth;
         }
-        static _fromIdtoken(idToken) {
-            return new MultiFactorSessionImpl("enroll" /* ENROLL */, idToken);
+        static _fromIdtoken(idToken, auth) {
+            return new MultiFactorSessionImpl("enroll" /* MultiFactorSessionType.ENROLL */, idToken, auth);
         }
         static _fromMfaPendingCredential(mfaPendingCredential) {
-            return new MultiFactorSessionImpl("signin" /* SIGN_IN */, mfaPendingCredential);
+            return new MultiFactorSessionImpl("signin" /* MultiFactorSessionType.SIGN_IN */, mfaPendingCredential);
         }
         toJSON() {
-            const key = this.type === "enroll" /* ENROLL */
+            const key = this.type === "enroll" /* MultiFactorSessionType.ENROLL */
                 ? 'idToken'
                 : 'pendingCredential';
             return {
@@ -7465,7 +8264,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             const auth = _castAuth(authExtern);
             const serverResponse = error.customData._serverResponse;
             const hints = (serverResponse.mfaInfo || []).map(enrollment => MultiFactorInfoImpl._fromServerResponse(auth, enrollment));
-            _assert(serverResponse.mfaPendingCredential, auth, "internal-error" /* INTERNAL_ERROR */);
+            _assert(serverResponse.mfaPendingCredential, auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             const session = MultiFactorSessionImpl._fromMfaPendingCredential(serverResponse.mfaPendingCredential);
             return new MultiFactorResolverImpl(session, hints, async (assertion) => {
                 const mfaResponse = await assertion._process(auth, session);
@@ -7476,15 +8275,15 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 const idTokenResponse = Object.assign(Object.assign({}, serverResponse), { idToken: mfaResponse.idToken, refreshToken: mfaResponse.refreshToken });
                 // TODO: we should collapse this switch statement into UserCredentialImpl._forOperation and have it support the SIGN_IN case
                 switch (error.operationType) {
-                    case "signIn" /* SIGN_IN */:
+                    case "signIn" /* OperationType.SIGN_IN */:
                         const userCredential = await UserCredentialImpl._fromIdTokenResponse(auth, error.operationType, idTokenResponse);
                         await auth._updateCurrentUser(userCredential.user);
                         return userCredential;
-                    case "reauthenticate" /* REAUTHENTICATE */:
-                        _assert(error.user, auth, "internal-error" /* INTERNAL_ERROR */);
+                    case "reauthenticate" /* OperationType.REAUTHENTICATE */:
+                        _assert(error.user, auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
                         return UserCredentialImpl._forOperation(error.user, error.operationType, idTokenResponse);
                     default:
-                        _fail(auth, "internal-error" /* INTERNAL_ERROR */);
+                        _fail(auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
                 }
             });
         }
@@ -7507,8 +8306,8 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         var _a;
         const authModular = getModularInstance(auth);
         const errorInternal = error;
-        _assert(error.customData.operationType, authModular, "argument-error" /* ARGUMENT_ERROR */);
-        _assert((_a = errorInternal.customData._serverResponse) === null || _a === void 0 ? void 0 : _a.mfaPendingCredential, authModular, "argument-error" /* ARGUMENT_ERROR */);
+        _assert(error.customData.operationType, authModular, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
+        _assert((_a = errorInternal.customData._serverResponse) === null || _a === void 0 ? void 0 : _a.mfaPendingCredential, authModular, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
         return MultiFactorResolverImpl._fromError(authModular, errorInternal);
     }
 
@@ -7529,13 +8328,13 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     function startEnrollPhoneMfa(auth, request) {
-        return _performApiRequest(auth, "POST" /* POST */, "/v2/accounts/mfaEnrollment:start" /* START_PHONE_MFA_ENROLLMENT */, _addTidIfNecessary(auth, request));
+        return _performApiRequest(auth, "POST" /* HttpMethod.POST */, "/v2/accounts/mfaEnrollment:start" /* Endpoint.START_MFA_ENROLLMENT */, _addTidIfNecessary(auth, request));
     }
     function finalizeEnrollPhoneMfa(auth, request) {
-        return _performApiRequest(auth, "POST" /* POST */, "/v2/accounts/mfaEnrollment:finalize" /* FINALIZE_PHONE_MFA_ENROLLMENT */, _addTidIfNecessary(auth, request));
+        return _performApiRequest(auth, "POST" /* HttpMethod.POST */, "/v2/accounts/mfaEnrollment:finalize" /* Endpoint.FINALIZE_MFA_ENROLLMENT */, _addTidIfNecessary(auth, request));
     }
     function withdrawMfa(auth, request) {
-        return _performApiRequest(auth, "POST" /* POST */, "/v2/accounts/mfaEnrollment:withdraw" /* WITHDRAW_MFA */, _addTidIfNecessary(auth, request));
+        return _performApiRequest(auth, "POST" /* HttpMethod.POST */, "/v2/accounts/mfaEnrollment:withdraw" /* Endpoint.WITHDRAW_MFA */, _addTidIfNecessary(auth, request));
     }
 
     class MultiFactorUserImpl {
@@ -7552,7 +8351,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             return new MultiFactorUserImpl(user);
         }
         async getSession() {
-            return MultiFactorSessionImpl._fromIdtoken(await this.user.getIdToken());
+            return MultiFactorSessionImpl._fromIdtoken(await this.user.getIdToken(), this.user.auth);
         }
         async enroll(assertionExtern, displayName) {
             const assertion = assertionExtern;
@@ -7567,7 +8366,6 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             return this.user.reload();
         }
         async unenroll(infoOrUid) {
-            var _a;
             const mfaEnrollmentId = typeof infoOrUid === 'string' ? infoOrUid : infoOrUid.uid;
             const idToken = await this.user.getIdToken();
             const idTokenResponse = await _logoutIfInvalidated(this.user, withdrawMfa(this.user.auth, {
@@ -7585,7 +8383,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 await this.user.reload();
             }
             catch (e) {
-                if (((_a = e) === null || _a === void 0 ? void 0 : _a.code) !== `auth/${"user-token-expired" /* TOKEN_EXPIRED */}`) {
+                if ((e === null || e === void 0 ? void 0 : e.code) !== `auth/${"user-token-expired" /* AuthErrorCode.TOKEN_EXPIRED */}`) {
                     throw e;
                 }
             }
@@ -7692,7 +8490,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     const IE10_LOCAL_STORAGE_SYNC_DELAY = 10;
     class BrowserLocalPersistence extends BrowserPersistenceClass {
         constructor() {
-            super(() => window.localStorage, "LOCAL" /* LOCAL */);
+            super(() => window.localStorage, "LOCAL" /* PersistenceType.LOCAL */);
             this.boundEventHandler = (event, poll) => this.onStorageEvent(event, poll);
             this.listeners = {};
             this.localCache = {};
@@ -7893,7 +8691,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     class BrowserSessionPersistence extends BrowserPersistenceClass {
         constructor() {
-            super(() => window.sessionStorage, "SESSION" /* SESSION */);
+            super(() => window.sessionStorage, "SESSION" /* PersistenceType.SESSION */);
         }
         _addListener(_key, _listener) {
             // Listeners are not supported for session storage since it cannot be shared across windows
@@ -8017,14 +8815,14 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 return;
             }
             messageEvent.ports[0].postMessage({
-                status: "ack" /* ACK */,
+                status: "ack" /* _Status.ACK */,
                 eventId,
                 eventType
             });
             const promises = Array.from(handlers).map(async (handler) => handler(messageEvent.origin, data));
             const response = await _allSettled(promises);
             messageEvent.ports[0].postMessage({
-                status: "done" /* DONE */,
+                status: "done" /* _Status.DONE */,
                 eventId,
                 eventType,
                 response
@@ -8141,10 +8939,10 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
          *
          * @returns An array of settled promises from all the handlers that were listening on the receiver.
          */
-        async _send(eventType, data, timeout = 50 /* ACK */) {
+        async _send(eventType, data, timeout = 50 /* _TimeoutDuration.ACK */) {
             const messageChannel = typeof MessageChannel !== 'undefined' ? new MessageChannel() : null;
             if (!messageChannel) {
-                throw new Error("connection_unavailable" /* CONNECTION_UNAVAILABLE */);
+                throw new Error("connection_unavailable" /* _MessageError.CONNECTION_UNAVAILABLE */);
             }
             // Node timers and browser timers return fundamentally different types.
             // We don't actually care what the value is but TS won't accept unknown and
@@ -8156,7 +8954,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 const eventId = _generateEventId('', 20);
                 messageChannel.port1.start();
                 const ackTimer = setTimeout(() => {
-                    reject(new Error("unsupported_event" /* UNSUPPORTED_EVENT */));
+                    reject(new Error("unsupported_event" /* _MessageError.UNSUPPORTED_EVENT */));
                 }, timeout);
                 handler = {
                     messageChannel,
@@ -8166,14 +8964,14 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                             return;
                         }
                         switch (messageEvent.data.status) {
-                            case "ack" /* ACK */:
+                            case "ack" /* _Status.ACK */:
                                 // The receiver should ACK first.
                                 clearTimeout(ackTimer);
                                 completionTimer = setTimeout(() => {
-                                    reject(new Error("timeout" /* TIMEOUT */));
-                                }, 3000 /* COMPLETION */);
+                                    reject(new Error("timeout" /* _MessageError.TIMEOUT */));
+                                }, 3000 /* _TimeoutDuration.COMPLETION */);
                                 break;
-                            case "done" /* DONE */:
+                            case "done" /* _Status.DONE */:
                                 // Once the receiver's handlers are finished we will get the results.
                                 clearTimeout(completionTimer);
                                 resolve(messageEvent.data.response);
@@ -8181,7 +8979,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                             default:
                                 clearTimeout(ackTimer);
                                 clearTimeout(completionTimer);
-                                reject(new Error("invalid_response" /* INVALID_RESPONSE */));
+                                reject(new Error("invalid_response" /* _MessageError.INVALID_RESPONSE */));
                                 break;
                         }
                     }
@@ -8371,7 +9169,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     const _TRANSACTION_RETRY_COUNT = 3;
     class IndexedDBLocalPersistence {
         constructor() {
-            this.type = "LOCAL" /* LOCAL */;
+            this.type = "LOCAL" /* PersistenceType.LOCAL */;
             this._shouldAllowMigration = true;
             this.listeners = {};
             this.localCache = {};
@@ -8426,15 +9224,15 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         async initializeReceiver() {
             this.receiver = Receiver._getInstance(_getWorkerGlobalScope());
             // Refresh from persistence if we receive a KeyChanged message.
-            this.receiver._subscribe("keyChanged" /* KEY_CHANGED */, async (_origin, data) => {
+            this.receiver._subscribe("keyChanged" /* _EventType.KEY_CHANGED */, async (_origin, data) => {
                 const keys = await this._poll();
                 return {
                     keyProcessed: keys.includes(data.key)
                 };
             });
             // Let the sender know that we are listening so they give us more timeout.
-            this.receiver._subscribe("ping" /* PING */, async (_origin, _data) => {
-                return ["keyChanged" /* KEY_CHANGED */];
+            this.receiver._subscribe("ping" /* _EventType.PING */, async (_origin, _data) => {
+                return ["keyChanged" /* _EventType.KEY_CHANGED */];
             });
         }
         /**
@@ -8453,12 +9251,12 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             }
             this.sender = new Sender(this.activeServiceWorker);
             // Ping the service worker to check what events they can handle.
-            const results = await this.sender._send("ping" /* PING */, {}, 800 /* LONG_ACK */);
+            const results = await this.sender._send("ping" /* _EventType.PING */, {}, 800 /* _TimeoutDuration.LONG_ACK */);
             if (!results) {
                 return;
             }
             if (((_a = results[0]) === null || _a === void 0 ? void 0 : _a.fulfilled) &&
-                ((_b = results[0]) === null || _b === void 0 ? void 0 : _b.value.includes("keyChanged" /* KEY_CHANGED */))) {
+                ((_b = results[0]) === null || _b === void 0 ? void 0 : _b.value.includes("keyChanged" /* _EventType.KEY_CHANGED */))) {
                 this.serviceWorkerReceiverAvailable = true;
             }
         }
@@ -8478,11 +9276,11 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 return;
             }
             try {
-                await this.sender._send("keyChanged" /* KEY_CHANGED */, { key }, 
+                await this.sender._send("keyChanged" /* _EventType.KEY_CHANGED */, { key }, 
                 // Use long timeout if receiver has previously responded to a ping from us.
                 this.serviceWorkerReceiverAvailable
-                    ? 800 /* LONG_ACK */
-                    : 50 /* ACK */);
+                    ? 800 /* _TimeoutDuration.LONG_ACK */
+                    : 50 /* _TimeoutDuration.ACK */);
             }
             catch (_a) {
                 // This is a best effort approach. Ignore errors.
@@ -8628,10 +9426,10 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     function startSignInPhoneMfa(auth, request) {
-        return _performApiRequest(auth, "POST" /* POST */, "/v2/accounts/mfaSignIn:start" /* START_PHONE_MFA_SIGN_IN */, _addTidIfNecessary(auth, request));
+        return _performApiRequest(auth, "POST" /* HttpMethod.POST */, "/v2/accounts/mfaSignIn:start" /* Endpoint.START_MFA_SIGN_IN */, _addTidIfNecessary(auth, request));
     }
     function finalizeSignInPhoneMfa(auth, request) {
-        return _performApiRequest(auth, "POST" /* POST */, "/v2/accounts/mfaSignIn:finalize" /* FINALIZE_PHONE_MFA_SIGN_IN */, _addTidIfNecessary(auth, request));
+        return _performApiRequest(auth, "POST" /* HttpMethod.POST */, "/v2/accounts/mfaSignIn:finalize" /* Endpoint.FINALIZE_MFA_SIGN_IN */, _addTidIfNecessary(auth, request));
     }
 
     /**
@@ -8651,7 +9449,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     async function getRecaptchaParams(auth) {
-        return ((await _performApiRequest(auth, "GET" /* GET */, "/v1/recaptchaParams" /* GET_RECAPTCHA_PARAM */)).recaptchaSiteKey || '');
+        return ((await _performApiRequest(auth, "GET" /* HttpMethod.GET */, "/v1/recaptchaParams" /* Endpoint.GET_RECAPTCHA_PARAM */)).recaptchaSiteKey || '');
     }
 
     /**
@@ -8681,7 +9479,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             el.setAttribute('src', url);
             el.onload = resolve;
             el.onerror = e => {
-                const error = _createError("internal-error" /* INTERNAL_ERROR */);
+                const error = _createError("internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
                 error.customData = e;
                 reject(error);
             };
@@ -8755,7 +9553,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             const container = typeof containerOrId === 'string'
                 ? document.getElementById(containerOrId)
                 : containerOrId;
-            _assert(container, "argument-error" /* ARGUMENT_ERROR */, { appName });
+            _assert(container, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */, { appName });
             this.container = container;
             this.isVisible = this.params.size !== 'invisible';
             if (this.isVisible) {
@@ -8848,25 +9646,31 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     class ReCaptchaLoaderImpl {
         constructor() {
+            var _a;
             this.hostLanguage = '';
             this.counter = 0;
-            this.librarySeparatelyLoaded = !!_window().grecaptcha;
+            /**
+             * Check for `render()` method. `window.grecaptcha` will exist if the Enterprise
+             * version of the ReCAPTCHA script was loaded by someone else (e.g. App Check) but
+             * `window.grecaptcha.render()` will not. Another load will add it.
+             */
+            this.librarySeparatelyLoaded = !!((_a = _window().grecaptcha) === null || _a === void 0 ? void 0 : _a.render);
         }
         load(auth, hl = '') {
-            _assert(isHostLanguageValid(hl), auth, "argument-error" /* ARGUMENT_ERROR */);
+            _assert(isHostLanguageValid(hl), auth, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
             if (this.shouldResolveImmediately(hl)) {
                 return Promise.resolve(_window().grecaptcha);
             }
             return new Promise((resolve, reject) => {
                 const networkTimeout = _window().setTimeout(() => {
-                    reject(_createError(auth, "network-request-failed" /* NETWORK_REQUEST_FAILED */));
+                    reject(_createError(auth, "network-request-failed" /* AuthErrorCode.NETWORK_REQUEST_FAILED */));
                 }, NETWORK_TIMEOUT_DELAY.get());
                 _window()[_JSLOAD_CALLBACK] = () => {
                     _window().clearTimeout(networkTimeout);
                     delete _window()[_JSLOAD_CALLBACK];
                     const recaptcha = _window().grecaptcha;
                     if (!recaptcha) {
-                        reject(_createError(auth, "internal-error" /* INTERNAL_ERROR */));
+                        reject(_createError(auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */));
                         return;
                     }
                     // Wrap the greptcha render function so that we know if the developer has
@@ -8887,7 +9691,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             })}`;
                 _loadJS(url).catch(() => {
                     clearTimeout(networkTimeout);
-                    reject(_createError(auth, "internal-error" /* INTERNAL_ERROR */));
+                    reject(_createError(auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */));
                 });
             });
         }
@@ -8895,6 +9699,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             this.counter--;
         }
         shouldResolveImmediately(hl) {
+            var _a;
             // We can resolve immediately if:
             //   • grecaptcha is already defined AND (
             //     1. the requested language codes are the same OR
@@ -8902,7 +9707,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             //     3. the library was already loaded by the app
             // In cases (2) and (3), we _can't_ reload as it would break the recaptchas
             // that are already in the page
-            return (!!_window().grecaptcha &&
+            return (!!((_a = _window().grecaptcha) === null || _a === void 0 ? void 0 : _a.render) &&
                 (hl === this.hostLanguage ||
                     this.counter > 0 ||
                     this.librarySeparatelyLoaded));
@@ -8964,10 +9769,6 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
          * 'invisible'.
          *
          * @param authExtern - The corresponding Firebase {@link Auth} instance.
-         *
-         * @remarks
-         * If none is provided, the default Firebase {@link Auth} instance is used. A Firebase {@link Auth} instance
-         * must be initialized with an API key, otherwise an error will be thrown.
          */
         constructor(containerOrId, parameters = Object.assign({}, DEFAULT_PARAMS), authExtern) {
             this.parameters = parameters;
@@ -8985,11 +9786,11 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             this.recaptcha = null;
             this.auth = _castAuth(authExtern);
             this.isInvisible = this.parameters.size === 'invisible';
-            _assert(typeof document !== 'undefined', this.auth, "operation-not-supported-in-this-environment" /* OPERATION_NOT_SUPPORTED */);
+            _assert(typeof document !== 'undefined', this.auth, "operation-not-supported-in-this-environment" /* AuthErrorCode.OPERATION_NOT_SUPPORTED */);
             const container = typeof containerOrId === 'string'
                 ? document.getElementById(containerOrId)
                 : containerOrId;
-            _assert(container, this.auth, "argument-error" /* ARGUMENT_ERROR */);
+            _assert(container, this.auth, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
             this.container = container;
             this.parameters.callback = this.makeTokenCallback(this.parameters.callback);
             this._recaptchaLoader = this.auth.settings.appVerificationDisabledForTesting
@@ -9070,9 +9871,9 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             }
         }
         validateStartingState() {
-            _assert(!this.parameters.sitekey, this.auth, "argument-error" /* ARGUMENT_ERROR */);
-            _assert(this.isInvisible || !this.container.hasChildNodes(), this.auth, "argument-error" /* ARGUMENT_ERROR */);
-            _assert(typeof document !== 'undefined', this.auth, "operation-not-supported-in-this-environment" /* OPERATION_NOT_SUPPORTED */);
+            _assert(!this.parameters.sitekey, this.auth, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
+            _assert(this.isInvisible || !this.container.hasChildNodes(), this.auth, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
+            _assert(typeof document !== 'undefined', this.auth, "operation-not-supported-in-this-environment" /* AuthErrorCode.OPERATION_NOT_SUPPORTED */);
         }
         makeTokenCallback(existing) {
             return token => {
@@ -9089,7 +9890,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             };
         }
         assertNotDestroyed() {
-            _assert(!this.destroyed, this.auth, "internal-error" /* INTERNAL_ERROR */);
+            _assert(!this.destroyed, this.auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
         }
         async makeRenderPromise() {
             await this.init();
@@ -9105,15 +9906,15 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             return this.widgetId;
         }
         async init() {
-            _assert(_isHttpOrHttps() && !_isWorker(), this.auth, "internal-error" /* INTERNAL_ERROR */);
+            _assert(_isHttpOrHttps() && !_isWorker(), this.auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             await domReady();
             this.recaptcha = await this._recaptchaLoader.load(this.auth, this.auth.languageCode || undefined);
             const siteKey = await getRecaptchaParams(this.auth);
-            _assert(siteKey, this.auth, "internal-error" /* INTERNAL_ERROR */);
+            _assert(siteKey, this.auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             this.parameters.sitekey = siteKey;
         }
         getAssertedRecaptcha() {
-            _assert(this.recaptcha, this.auth, "internal-error" /* INTERNAL_ERROR */);
+            _assert(this.recaptcha, this.auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             return this.recaptcha;
         }
     }
@@ -9209,7 +10010,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     async function linkWithPhoneNumber(user, phoneNumber, appVerifier) {
         const userInternal = getModularInstance(user);
-        await _assertLinkedStatus(false, userInternal, "phone" /* PHONE */);
+        await _assertLinkedStatus(false, userInternal, "phone" /* ProviderId.PHONE */);
         const verificationId = await _verifyPhoneNumber(userInternal.auth, phoneNumber, getModularInstance(appVerifier));
         return new ConfirmationResultImpl(verificationId, cred => linkWithCredential(userInternal, cred));
     }
@@ -9237,8 +10038,8 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         var _a;
         const recaptchaToken = await verifier.verify();
         try {
-            _assert(typeof recaptchaToken === 'string', auth, "argument-error" /* ARGUMENT_ERROR */);
-            _assert(verifier.type === RECAPTCHA_VERIFIER_TYPE, auth, "argument-error" /* ARGUMENT_ERROR */);
+            _assert(typeof recaptchaToken === 'string', auth, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
+            _assert(verifier.type === RECAPTCHA_VERIFIER_TYPE, auth, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
             let phoneInfoOptions;
             if (typeof options === 'string') {
                 phoneInfoOptions = {
@@ -9251,7 +10052,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             if ('session' in phoneInfoOptions) {
                 const session = phoneInfoOptions.session;
                 if ('phoneNumber' in phoneInfoOptions) {
-                    _assert(session.type === "enroll" /* ENROLL */, auth, "internal-error" /* INTERNAL_ERROR */);
+                    _assert(session.type === "enroll" /* MultiFactorSessionType.ENROLL */, auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
                     const response = await startEnrollPhoneMfa(auth, {
                         idToken: session.credential,
                         phoneEnrollmentInfo: {
@@ -9262,10 +10063,10 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                     return response.phoneSessionInfo.sessionInfo;
                 }
                 else {
-                    _assert(session.type === "signin" /* SIGN_IN */, auth, "internal-error" /* INTERNAL_ERROR */);
+                    _assert(session.type === "signin" /* MultiFactorSessionType.SIGN_IN */, auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
                     const mfaEnrollmentId = ((_a = phoneInfoOptions.multiFactorHint) === null || _a === void 0 ? void 0 : _a.uid) ||
                         phoneInfoOptions.multiFactorUid;
-                    _assert(mfaEnrollmentId, auth, "missing-multi-factor-info" /* MISSING_MFA_INFO */);
+                    _assert(mfaEnrollmentId, auth, "missing-multi-factor-info" /* AuthErrorCode.MISSING_MFA_INFO */);
                     const response = await startSignInPhoneMfa(auth, {
                         mfaPendingCredential: session.credential,
                         mfaEnrollmentId,
@@ -9472,9 +10273,9 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         }
     }
     /** Always set to {@link ProviderId}.PHONE. */
-    PhoneAuthProvider.PROVIDER_ID = "phone" /* PHONE */;
+    PhoneAuthProvider.PROVIDER_ID = "phone" /* ProviderId.PHONE */;
     /** Always set to {@link SignInMethod}.PHONE. */
-    PhoneAuthProvider.PHONE_SIGN_IN_METHOD = "phone" /* PHONE */;
+    PhoneAuthProvider.PHONE_SIGN_IN_METHOD = "phone" /* SignInMethod.PHONE */;
 
     /**
      * @license
@@ -9501,7 +10302,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         if (resolverOverride) {
             return _getInstance(resolverOverride);
         }
-        _assert(auth._popupRedirectResolver, auth, "argument-error" /* ARGUMENT_ERROR */);
+        _assert(auth._popupRedirectResolver, auth, "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */);
         return auth._popupRedirectResolver;
     }
 
@@ -9523,7 +10324,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     class IdpCredential extends AuthCredential {
         constructor(params) {
-            super("custom" /* CUSTOM */, "custom" /* CUSTOM */);
+            super("custom" /* ProviderId.CUSTOM */, "custom" /* ProviderId.CUSTOM */);
             this.params = params;
         }
         _getIdTokenResponse(auth) {
@@ -9556,12 +10357,12 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     }
     function _reauth(params) {
         const { auth, user } = params;
-        _assert(user, auth, "internal-error" /* INTERNAL_ERROR */);
+        _assert(user, auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
         return _reauthenticate(user, new IdpCredential(params), params.bypassAuthState);
     }
     async function _link(params) {
         const { auth, user } = params;
-        _assert(user, auth, "internal-error" /* INTERNAL_ERROR */);
+        _assert(user, auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
         return _link$1(user, new IdpCredential(params), params.bypassAuthState);
     }
 
@@ -9635,17 +10436,17 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         }
         getIdpTask(type) {
             switch (type) {
-                case "signInViaPopup" /* SIGN_IN_VIA_POPUP */:
-                case "signInViaRedirect" /* SIGN_IN_VIA_REDIRECT */:
+                case "signInViaPopup" /* AuthEventType.SIGN_IN_VIA_POPUP */:
+                case "signInViaRedirect" /* AuthEventType.SIGN_IN_VIA_REDIRECT */:
                     return _signIn;
-                case "linkViaPopup" /* LINK_VIA_POPUP */:
-                case "linkViaRedirect" /* LINK_VIA_REDIRECT */:
+                case "linkViaPopup" /* AuthEventType.LINK_VIA_POPUP */:
+                case "linkViaRedirect" /* AuthEventType.LINK_VIA_REDIRECT */:
                     return _link;
-                case "reauthViaPopup" /* REAUTH_VIA_POPUP */:
-                case "reauthViaRedirect" /* REAUTH_VIA_REDIRECT */:
+                case "reauthViaPopup" /* AuthEventType.REAUTH_VIA_POPUP */:
+                case "reauthViaRedirect" /* AuthEventType.REAUTH_VIA_REDIRECT */:
                     return _reauth;
                 default:
-                    _fail(this.auth, "internal-error" /* INTERNAL_ERROR */);
+                    _fail(this.auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             }
         }
         resolve(cred) {
@@ -9717,7 +10518,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         const authInternal = _castAuth(auth);
         _assertInstanceOf(auth, provider, FederatedAuthProvider);
         const resolverInternal = _withDefaultResolver(authInternal, resolver);
-        const action = new PopupOperation(authInternal, "signInViaPopup" /* SIGN_IN_VIA_POPUP */, provider, resolverInternal);
+        const action = new PopupOperation(authInternal, "signInViaPopup" /* AuthEventType.SIGN_IN_VIA_POPUP */, provider, resolverInternal);
         return action.executeNotNull();
     }
     /**
@@ -9749,7 +10550,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         const userInternal = getModularInstance(user);
         _assertInstanceOf(userInternal.auth, provider, FederatedAuthProvider);
         const resolverInternal = _withDefaultResolver(userInternal.auth, resolver);
-        const action = new PopupOperation(userInternal.auth, "reauthViaPopup" /* REAUTH_VIA_POPUP */, provider, resolverInternal, userInternal);
+        const action = new PopupOperation(userInternal.auth, "reauthViaPopup" /* AuthEventType.REAUTH_VIA_POPUP */, provider, resolverInternal, userInternal);
         return action.executeNotNull();
     }
     /**
@@ -9780,7 +10581,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         const userInternal = getModularInstance(user);
         _assertInstanceOf(userInternal.auth, provider, FederatedAuthProvider);
         const resolverInternal = _withDefaultResolver(userInternal.auth, resolver);
-        const action = new PopupOperation(userInternal.auth, "linkViaPopup" /* LINK_VIA_POPUP */, provider, resolverInternal, userInternal);
+        const action = new PopupOperation(userInternal.auth, "linkViaPopup" /* AuthEventType.LINK_VIA_POPUP */, provider, resolverInternal, userInternal);
         return action.executeNotNull();
     }
     /**
@@ -9801,7 +10602,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         }
         async executeNotNull() {
             const result = await this.execute();
-            _assert(result, this.auth, "internal-error" /* INTERNAL_ERROR */);
+            _assert(result, this.auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             return result;
         }
         async onExecution() {
@@ -9822,7 +10623,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             });
             this.resolver._isIframeWebStorageSupported(this.auth, isSupported => {
                 if (!isSupported) {
-                    this.reject(_createError(this.auth, "web-storage-unsupported" /* WEB_STORAGE_UNSUPPORTED */));
+                    this.reject(_createError(this.auth, "web-storage-unsupported" /* AuthErrorCode.WEB_STORAGE_UNSUPPORTED */));
                 }
             });
             // Handle user closure. Notice this does *not* use await
@@ -9833,7 +10634,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             return ((_a = this.authWindow) === null || _a === void 0 ? void 0 : _a.associatedEvent) || null;
         }
         cancel() {
-            this.reject(_createError(this.auth, "cancelled-popup-request" /* EXPIRED_POPUP_REQUEST */));
+            this.reject(_createError(this.auth, "cancelled-popup-request" /* AuthErrorCode.EXPIRED_POPUP_REQUEST */));
         }
         cleanUp() {
             if (this.authWindow) {
@@ -9855,8 +10656,8 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                     // call could still be in flight.
                     this.pollId = window.setTimeout(() => {
                         this.pollId = null;
-                        this.reject(_createError(this.auth, "popup-closed-by-user" /* POPUP_CLOSED_BY_USER */));
-                    }, 2000 /* AUTH_EVENT */);
+                        this.reject(_createError(this.auth, "popup-closed-by-user" /* AuthErrorCode.POPUP_CLOSED_BY_USER */));
+                    }, 2000 /* _Timeout.AUTH_EVENT */);
                     return;
                 }
                 this.pollId = window.setTimeout(poll, _POLL_WINDOW_CLOSE_TIMEOUT.get());
@@ -9891,10 +10692,10 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     class RedirectAction extends AbstractPopupRedirectOperation {
         constructor(auth, resolver, bypassAuthState = false) {
             super(auth, [
-                "signInViaRedirect" /* SIGN_IN_VIA_REDIRECT */,
-                "linkViaRedirect" /* LINK_VIA_REDIRECT */,
-                "reauthViaRedirect" /* REAUTH_VIA_REDIRECT */,
-                "unknown" /* UNKNOWN */
+                "signInViaRedirect" /* AuthEventType.SIGN_IN_VIA_REDIRECT */,
+                "linkViaRedirect" /* AuthEventType.LINK_VIA_REDIRECT */,
+                "reauthViaRedirect" /* AuthEventType.REAUTH_VIA_REDIRECT */,
+                "unknown" /* AuthEventType.UNKNOWN */
             ], resolver, undefined, bypassAuthState);
             this.eventId = null;
         }
@@ -9923,10 +10724,10 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             return readyOutcome();
         }
         async onAuthEvent(event) {
-            if (event.type === "signInViaRedirect" /* SIGN_IN_VIA_REDIRECT */) {
+            if (event.type === "signInViaRedirect" /* AuthEventType.SIGN_IN_VIA_REDIRECT */) {
                 return super.onAuthEvent(event);
             }
-            else if (event.type === "unknown" /* UNKNOWN */) {
+            else if (event.type === "unknown" /* AuthEventType.UNKNOWN */) {
                 // This is a sentinel value indicating there's no pending redirect
                 this.resolve(null);
                 return;
@@ -10031,7 +10832,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         _assertInstanceOf(auth, provider, FederatedAuthProvider);
         const resolverInternal = _withDefaultResolver(authInternal, resolver);
         await _setPendingRedirectStatus(resolverInternal, authInternal);
-        return resolverInternal._openRedirect(authInternal, provider, "signInViaRedirect" /* SIGN_IN_VIA_REDIRECT */);
+        return resolverInternal._openRedirect(authInternal, provider, "signInViaRedirect" /* AuthEventType.SIGN_IN_VIA_REDIRECT */);
     }
     /**
      * Reauthenticates the current user with the specified {@link OAuthProvider} using a full-page redirect flow.
@@ -10071,7 +10872,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         const resolverInternal = _withDefaultResolver(userInternal.auth, resolver);
         await _setPendingRedirectStatus(resolverInternal, userInternal.auth);
         const eventId = await prepareUserForRedirect(userInternal);
-        return resolverInternal._openRedirect(userInternal.auth, provider, "reauthViaRedirect" /* REAUTH_VIA_REDIRECT */, eventId);
+        return resolverInternal._openRedirect(userInternal.auth, provider, "reauthViaRedirect" /* AuthEventType.REAUTH_VIA_REDIRECT */, eventId);
     }
     /**
      * Links the {@link OAuthProvider} to the user account using a full-page redirect flow.
@@ -10109,15 +10910,14 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         await _assertLinkedStatus(false, userInternal, provider.providerId);
         await _setPendingRedirectStatus(resolverInternal, userInternal.auth);
         const eventId = await prepareUserForRedirect(userInternal);
-        return resolverInternal._openRedirect(userInternal.auth, provider, "linkViaRedirect" /* LINK_VIA_REDIRECT */, eventId);
+        return resolverInternal._openRedirect(userInternal.auth, provider, "linkViaRedirect" /* AuthEventType.LINK_VIA_REDIRECT */, eventId);
     }
     /**
      * Returns a {@link UserCredential} from the redirect-based sign-in flow.
      *
      * @remarks
      * If sign-in succeeded, returns the signed in user. If sign-in was unsuccessful, fails with an
-     * error. If no redirect operation was called, returns a {@link UserCredential}
-     * with a null `user`.
+     * error. If no redirect operation was called, returns `null`.
      *
      * @example
      * ```javascript
@@ -10244,7 +11044,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             var _a;
             if (event.error && !isNullRedirectEvent(event)) {
                 const code = ((_a = event.error.code) === null || _a === void 0 ? void 0 : _a.split('auth/')[1]) ||
-                    "internal-error" /* INTERNAL_ERROR */;
+                    "internal-error" /* AuthErrorCode.INTERNAL_ERROR */;
                 consumer.onError(_createError(this.auth, code));
             }
             else {
@@ -10272,16 +11072,16 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         return [e.type, e.eventId, e.sessionId, e.tenantId].filter(v => v).join('-');
     }
     function isNullRedirectEvent({ type, error }) {
-        return (type === "unknown" /* UNKNOWN */ &&
-            (error === null || error === void 0 ? void 0 : error.code) === `auth/${"no-auth-event" /* NO_AUTH_EVENT */}`);
+        return (type === "unknown" /* AuthEventType.UNKNOWN */ &&
+            (error === null || error === void 0 ? void 0 : error.code) === `auth/${"no-auth-event" /* AuthErrorCode.NO_AUTH_EVENT */}`);
     }
     function isRedirectEvent(event) {
         switch (event.type) {
-            case "signInViaRedirect" /* SIGN_IN_VIA_REDIRECT */:
-            case "linkViaRedirect" /* LINK_VIA_REDIRECT */:
-            case "reauthViaRedirect" /* REAUTH_VIA_REDIRECT */:
+            case "signInViaRedirect" /* AuthEventType.SIGN_IN_VIA_REDIRECT */:
+            case "linkViaRedirect" /* AuthEventType.LINK_VIA_REDIRECT */:
+            case "reauthViaRedirect" /* AuthEventType.REAUTH_VIA_REDIRECT */:
                 return true;
-            case "unknown" /* UNKNOWN */:
+            case "unknown" /* AuthEventType.UNKNOWN */:
                 return isNullRedirectEvent(event);
             default:
                 return false;
@@ -10305,7 +11105,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     async function _getProjectConfig(auth, request = {}) {
-        return _performApiRequest(auth, "GET" /* GET */, "/v1/projects" /* GET_PROJECT_CONFIG */, request);
+        return _performApiRequest(auth, "GET" /* HttpMethod.GET */, "/v1/projects" /* Endpoint.GET_PROJECT_CONFIG */, request);
     }
 
     /**
@@ -10343,7 +11143,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             }
         }
         // In the old SDK, this error also provides helpful messages.
-        _fail(auth, "unauthorized-domain" /* INVALID_ORIGIN */);
+        _fail(auth, "unauthorized-domain" /* AuthErrorCode.INVALID_ORIGIN */);
     }
     function matchDomain(expected) {
         const currentUrl = _getCurrentUrl();
@@ -10440,7 +11240,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                         // failed attempt.
                         // Timeout when gapi.iframes.Iframe not loaded.
                         resetUnloadedGapiModules();
-                        reject(_createError(auth, "network-request-failed" /* NETWORK_REQUEST_FAILED */));
+                        reject(_createError(auth, "network-request-failed" /* AuthErrorCode.NETWORK_REQUEST_FAILED */));
                     },
                     timeout: NETWORK_TIMEOUT.get()
                 });
@@ -10468,11 +11268,12 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                     }
                     else {
                         // Gapi loader failed, throw error.
-                        reject(_createError(auth, "network-request-failed" /* NETWORK_REQUEST_FAILED */));
+                        reject(_createError(auth, "network-request-failed" /* AuthErrorCode.NETWORK_REQUEST_FAILED */));
                     }
                 };
                 // Load GApi loader.
-                return _loadJS(`https://apis.google.com/js/api.js?onload=${cbName}`).catch(e => reject(e));
+                return _loadJS(`https://apis.google.com/js/api.js?onload=${cbName}`)
+                    .catch(e => reject(e));
             }
         }).catch(error => {
             // Reset cached promise to allow for retrial.
@@ -10518,13 +11319,13 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     // Map from apiHost to endpoint ID for passing into iframe. In current SDK, apiHost can be set to
     // anything (not from a list of endpoints with IDs as in legacy), so this is the closest we can get.
     const EID_FROM_APIHOST = new Map([
-        ["identitytoolkit.googleapis.com" /* API_HOST */, 'p'],
+        ["identitytoolkit.googleapis.com" /* DefaultConfig.API_HOST */, 'p'],
         ['staging-identitytoolkit.sandbox.googleapis.com', 's'],
         ['test-identitytoolkit.sandbox.googleapis.com', 't'] // test
     ]);
     function getIframeUrl(auth) {
         const config = auth.config;
-        _assert(config.authDomain, auth, "auth-domain-config-required" /* MISSING_AUTH_DOMAIN */);
+        _assert(config.authDomain, auth, "auth-domain-config-required" /* AuthErrorCode.MISSING_AUTH_DOMAIN */);
         const url = config.emulator
             ? _emulatorUrl(config, EMULATED_IFRAME_PATH)
             : `https://${auth.config.authDomain}/${IFRAME_PATH}`;
@@ -10546,7 +11347,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     async function _openIframe(auth) {
         const context = await _loadGapi(auth);
         const gapi = _window().gapi;
-        _assert(gapi, auth, "internal-error" /* INTERNAL_ERROR */);
+        _assert(gapi, auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
         return context.open({
             where: document.body,
             url: getIframeUrl(auth),
@@ -10558,7 +11359,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 // Prevent iframe from closing on mouse out.
                 setHideOnLeave: false
             });
-            const networkError = _createError(auth, "network-request-failed" /* NETWORK_REQUEST_FAILED */);
+            const networkError = _createError(auth, "network-request-failed" /* AuthErrorCode.NETWORK_REQUEST_FAILED */);
             // Confirm iframe is correctly loaded.
             // To fallback on failure, set a timeout.
             const networkErrorTimer = _window().setTimeout(() => {
@@ -10644,7 +11445,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         // about:blank getting sanitized causing browsers like IE/Edge to display
         // brief error message before redirecting to handler.
         const newWin = window.open(url || '', target, optionsString);
-        _assert(newWin, auth, "popup-blocked" /* POPUP_BLOCKED */);
+        _assert(newWin, auth, "popup-blocked" /* AuthErrorCode.POPUP_BLOCKED */);
         // Flaky on IE edge, encapsulate with a try and catch.
         try {
             newWin.focus();
@@ -10690,8 +11491,8 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     const EMULATOR_WIDGET_PATH = 'emulator/auth/handler';
     function _getRedirectUrl(auth, provider, authType, redirectUrl, eventId, additionalParams) {
-        _assert(auth.config.authDomain, auth, "auth-domain-config-required" /* MISSING_AUTH_DOMAIN */);
-        _assert(auth.config.apiKey, auth, "invalid-api-key" /* INVALID_API_KEY */);
+        _assert(auth.config.authDomain, auth, "auth-domain-config-required" /* AuthErrorCode.MISSING_AUTH_DOMAIN */);
+        _assert(auth.config.apiKey, auth, "invalid-api-key" /* AuthErrorCode.INVALID_API_KEY */);
         const params = {
             apiKey: auth.config.apiKey,
             appName: auth.name,
@@ -10805,10 +11606,10 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             const iframe = await _openIframe(auth);
             const manager = new AuthEventManager(auth);
             iframe.register('authEvent', (iframeEvent) => {
-                _assert(iframeEvent === null || iframeEvent === void 0 ? void 0 : iframeEvent.authEvent, auth, "invalid-auth-event" /* INVALID_AUTH_EVENT */);
+                _assert(iframeEvent === null || iframeEvent === void 0 ? void 0 : iframeEvent.authEvent, auth, "invalid-auth-event" /* AuthErrorCode.INVALID_AUTH_EVENT */);
                 // TODO: Consider splitting redirect and popup events earlier on
                 const handled = manager.onEvent(iframeEvent.authEvent);
-                return { status: handled ? "ACK" /* ACK */ : "ERROR" /* ERROR */ };
+                return { status: handled ? "ACK" /* GapiOutcome.ACK */ : "ERROR" /* GapiOutcome.ERROR */ };
             }, gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER);
             this.eventManagers[auth._key()] = { manager };
             this.iframes[auth._key()] = iframe;
@@ -10822,7 +11623,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 if (isSupported !== undefined) {
                     cb(!!isSupported);
                 }
-                _fail(auth, "internal-error" /* INTERNAL_ERROR */);
+                _fail(auth, "internal-error" /* AuthErrorCode.INTERNAL_ERROR */);
             }, gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER);
         }
         _originValidation(auth) {
@@ -10851,9 +11652,9 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         }
         _process(auth, session, displayName) {
             switch (session.type) {
-                case "enroll" /* ENROLL */:
+                case "enroll" /* MultiFactorSessionType.ENROLL */:
                     return this._finalizeEnroll(auth, session.credential, displayName);
-                case "signin" /* SIGN_IN */:
+                case "signin" /* MultiFactorSessionType.SIGN_IN */:
                     return this._finalizeSignIn(auth, session.credential);
                 default:
                     return debugFail('unexpected MultiFactorSessionType');
@@ -10868,7 +11669,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     class PhoneMultiFactorAssertionImpl extends MultiFactorAssertionImpl {
         constructor(credential) {
-            super("phone" /* PHONE */);
+            super("phone" /* FactorId.PHONE */);
             this.credential = credential;
         }
         /** @internal */
@@ -10915,7 +11716,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     PhoneMultiFactorGenerator.FACTOR_ID = 'phone';
 
     var name = "@firebase/auth";
-    var version = "0.20.4";
+    var version = "0.21.0";
 
     /**
      * @license
@@ -10958,8 +11759,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 return;
             }
             const unsubscribe = this.auth.onIdTokenChanged(user => {
-                var _a;
-                listener(((_a = user) === null || _a === void 0 ? void 0 : _a.stsTokenManager.accessToken) || null);
+                listener((user === null || user === void 0 ? void 0 : user.stsTokenManager.accessToken) || null);
             });
             this.internalListeners.set(listener, unsubscribe);
             this.updateProactiveRefresh();
@@ -10975,7 +11775,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             this.updateProactiveRefresh();
         }
         assertAuthConfigured() {
-            _assert(this.auth._initializationPromise, "dependent-sdk-initialized-before-auth" /* DEPENDENT_SDK_INIT_BEFORE_AUTH */);
+            _assert(this.auth._initializationPromise, "dependent-sdk-initialized-before-auth" /* AuthErrorCode.DEPENDENT_SDK_INIT_BEFORE_AUTH */);
         }
         updateProactiveRefresh() {
             if (this.internalListeners.size > 0) {
@@ -11005,13 +11805,13 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     function getVersionForPlatform(clientPlatform) {
         switch (clientPlatform) {
-            case "Node" /* NODE */:
+            case "Node" /* ClientPlatform.NODE */:
                 return 'node';
-            case "ReactNative" /* REACT_NATIVE */:
+            case "ReactNative" /* ClientPlatform.REACT_NATIVE */:
                 return 'rn';
-            case "Worker" /* WORKER */:
+            case "Worker" /* ClientPlatform.WORKER */:
                 return 'webworker';
-            case "Cordova" /* CORDOVA */:
+            case "Cordova" /* ClientPlatform.CORDOVA */:
                 return 'cordova';
             default:
                 return undefined;
@@ -11019,47 +11819,47 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     }
     /** @internal */
     function registerAuth(clientPlatform) {
-        _registerComponent(new Component("auth" /* AUTH */, (container, { options: deps }) => {
+        _registerComponent(new Component("auth" /* _ComponentName.AUTH */, (container, { options: deps }) => {
             const app = container.getProvider('app').getImmediate();
             const heartbeatServiceProvider = container.getProvider('heartbeat');
             const { apiKey, authDomain } = app.options;
             return ((app, heartbeatServiceProvider) => {
-                _assert(apiKey && !apiKey.includes(':'), "invalid-api-key" /* INVALID_API_KEY */, { appName: app.name });
+                _assert(apiKey && !apiKey.includes(':'), "invalid-api-key" /* AuthErrorCode.INVALID_API_KEY */, { appName: app.name });
                 // Auth domain is optional if IdP sign in isn't being used
-                _assert(!(authDomain === null || authDomain === void 0 ? void 0 : authDomain.includes(':')), "argument-error" /* ARGUMENT_ERROR */, {
+                _assert(!(authDomain === null || authDomain === void 0 ? void 0 : authDomain.includes(':')), "argument-error" /* AuthErrorCode.ARGUMENT_ERROR */, {
                     appName: app.name
                 });
                 const config = {
                     apiKey,
                     authDomain,
                     clientPlatform,
-                    apiHost: "identitytoolkit.googleapis.com" /* API_HOST */,
-                    tokenApiHost: "securetoken.googleapis.com" /* TOKEN_API_HOST */,
-                    apiScheme: "https" /* API_SCHEME */,
+                    apiHost: "identitytoolkit.googleapis.com" /* DefaultConfig.API_HOST */,
+                    tokenApiHost: "securetoken.googleapis.com" /* DefaultConfig.TOKEN_API_HOST */,
+                    apiScheme: "https" /* DefaultConfig.API_SCHEME */,
                     sdkClientVersion: _getClientVersion(clientPlatform)
                 };
                 const authInstance = new AuthImpl(app, heartbeatServiceProvider, config);
                 _initializeAuthInstance(authInstance, deps);
                 return authInstance;
             })(app, heartbeatServiceProvider);
-        }, "PUBLIC" /* PUBLIC */)
+        }, "PUBLIC" /* ComponentType.PUBLIC */)
             /**
              * Auth can only be initialized by explicitly calling getAuth() or initializeAuth()
              * For why we do this, See go/firebase-next-auth-init
              */
-            .setInstantiationMode("EXPLICIT" /* EXPLICIT */)
+            .setInstantiationMode("EXPLICIT" /* InstantiationMode.EXPLICIT */)
             /**
              * Because all firebase products that depend on auth depend on auth-internal directly,
              * we need to initialize auth-internal after auth is initialized to make it available to other firebase products.
              */
             .setInstanceCreatedCallback((container, _instanceIdentifier, _instance) => {
-            const authInternalProvider = container.getProvider("auth-internal" /* AUTH_INTERNAL */);
+            const authInternalProvider = container.getProvider("auth-internal" /* _ComponentName.AUTH_INTERNAL */);
             authInternalProvider.initialize();
         }));
-        _registerComponent(new Component("auth-internal" /* AUTH_INTERNAL */, container => {
-            const auth = _castAuth(container.getProvider("auth" /* AUTH */).getImmediate());
+        _registerComponent(new Component("auth-internal" /* _ComponentName.AUTH_INTERNAL */, container => {
+            const auth = _castAuth(container.getProvider("auth" /* _ComponentName.AUTH */).getImmediate());
             return (auth => new AuthInterop(auth))(auth);
-        }, "PRIVATE" /* PRIVATE */).setInstantiationMode("EXPLICIT" /* EXPLICIT */));
+        }, "PRIVATE" /* ComponentType.PRIVATE */).setInstantiationMode("EXPLICIT" /* InstantiationMode.EXPLICIT */));
         registerVersion(name, version, getVersionForPlatform(clientPlatform));
         // BUILD_TARGET will be replaced by values like esm5, esm2017, cjs5, etc during the compilation
         registerVersion(name, version, 'esm2017');
@@ -11081,6 +11881,31 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+    const DEFAULT_ID_TOKEN_MAX_AGE = 5 * 60;
+    const authIdTokenMaxAge = getExperimentalSetting('authIdTokenMaxAge') || DEFAULT_ID_TOKEN_MAX_AGE;
+    let lastPostedIdToken = null;
+    const mintCookieFactory = (url) => async (user) => {
+        const idTokenResult = user && (await user.getIdTokenResult());
+        const idTokenAge = idTokenResult &&
+            (new Date().getTime() - Date.parse(idTokenResult.issuedAtTime)) / 1000;
+        if (idTokenAge && idTokenAge > authIdTokenMaxAge) {
+            return;
+        }
+        // Specifically trip null => undefined when logged out, to delete any existing cookie
+        const idToken = idTokenResult === null || idTokenResult === void 0 ? void 0 : idTokenResult.token;
+        if (lastPostedIdToken === idToken) {
+            return;
+        }
+        lastPostedIdToken = idToken;
+        await fetch(url, {
+            method: idToken ? 'POST' : 'DELETE',
+            headers: idToken
+                ? {
+                    'Authorization': `Bearer ${idToken}`
+                }
+                : {}
+        });
+    };
     /**
      * Returns the Auth instance associated with the provided {@link @firebase/app#FirebaseApp}.
      * If no instance exists, initializes an Auth instance with platform-specific default dependencies.
@@ -11094,7 +11919,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         if (provider.isInitialized()) {
             return provider.getImmediate();
         }
-        return initializeAuth(app, {
+        const auth = initializeAuth(app, {
             popupRedirectResolver: browserPopupRedirectResolver,
             persistence: [
                 indexedDBLocalPersistence,
@@ -11102,8 +11927,19 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 browserSessionPersistence
             ]
         });
+        const authTokenSyncUrl = getExperimentalSetting('authTokenSyncURL');
+        if (authTokenSyncUrl) {
+            const mintCookie = mintCookieFactory(authTokenSyncUrl);
+            beforeAuthStateChanged(auth, mintCookie, () => mintCookie(auth.currentUser));
+            onIdTokenChanged(auth, user => mintCookie(user));
+        }
+        const authEmulatorHost = getDefaultEmulatorHost('auth');
+        if (authEmulatorHost) {
+            connectAuthEmulator(auth, `http://${authEmulatorHost}`);
+        }
+        return auth;
     }
-    registerAuth("Browser" /* BROWSER */);
+    registerAuth("Browser" /* ClientPlatform.BROWSER */);
 
     exports.ActionCodeOperation = ActionCodeOperation;
     exports.ActionCodeURL = ActionCodeURL;

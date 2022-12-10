@@ -694,7 +694,7 @@ sap.ui.define([
 			 * Returns the route with the given name or <code>undefined</code> if no route is found.
 			 *
 			 * @param {string} sName Name of the route
-			 * @returns {sap.ui.core.routing.Route} Route with the provided name or <code>undefined</code>.
+			 * @returns {sap.ui.core.routing.Route|undefined} Route with the provided name or <code>undefined</code>.
 			 * @public
 			 * @since 1.25.1
 			 */
@@ -886,9 +886,9 @@ sap.ui.define([
 
 			/**
 			 * Returns the name of the last matched route.
-			 * If there's no route matched before, it returns undefined
+			 * If there's no route matched before, it returns <code>undefined</code>
 			 *
-			 * @returns {string} The name of the last matched route
+			 * @returns {string|undefined} The name of the last matched route
 			 */
 			_getLastMatchedRouteName: function() {
 				return this._oMatchedRoute && this._oMatchedRoute._oConfig.name;
@@ -1624,7 +1624,7 @@ sap.ui.define([
 		 * Get a registered router.
 		 *
 		 * @param {string} sName Name of the router
-		 * @returns {sap.ui.core.routing.Router} The router with the specified name, else undefined
+		 * @returns {sap.ui.core.routing.Router|undefined} The router with the specified name, else <code>undefined</code>
 		 * @public
 		 */
 		Router.getRouter = function (sName) {

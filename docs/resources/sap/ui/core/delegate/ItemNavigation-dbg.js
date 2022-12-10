@@ -17,10 +17,10 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	// jQuery custom selectors ":sapFocusable"
-	"sap/ui/dom/jquery/Selectors"
+	"sap/ui/core/Configuration",
+	"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ":sapFocusable"
 ],
-	function(EventProvider, assert, Log, KeyCodes, jQuery) {
+	function(EventProvider, assert, Log, KeyCodes, jQuery, Configuration) {
 	"use strict";
 	/* eslint-disable no-lonely-if */
 
@@ -81,7 +81,7 @@ sap.ui.define([
 	 * @param {Element[]} aItemDomRefs Array of DOM references representing the items for the navigation
 	 * @param {boolean} [bNotInTabChain=false] Whether the selected element should be in the tab chain or not
 	 *
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @alias sap.ui.core.delegate.ItemNavigation
 	 * @public
 	 */
@@ -257,7 +257,7 @@ sap.ui.define([
 	/**
 	 * Sets the root DOM reference surrounding the items
 	 *
-	 * @param {object} oDomRef Root DOM reference
+	 * @param {Element} oDomRef Root DOM reference
 	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -465,7 +465,7 @@ sap.ui.define([
 	ItemNavigation.prototype.setTableMode = function(bTableMode, bTableList) {
 		this.bTableMode = bTableMode;
 		if (this.oConfiguration === undefined) {
-			this.oConfiguration = sap.ui.getCore().getConfiguration();
+			this.oConfiguration = Configuration;
 		}
 		this.bTableList = bTableMode ? bTableList : false;
 		return this;

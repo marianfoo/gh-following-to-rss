@@ -66,6 +66,9 @@ sap.ui.define([
 							return null;
 						}
 					},
+					remove : {
+						removeLastElement: true
+					},
 					createContainer :  function(oForm){
 						if (fnIsLayoutSupported(oForm)){
 							return {

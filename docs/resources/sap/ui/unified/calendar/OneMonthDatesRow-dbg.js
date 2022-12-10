@@ -34,7 +34,7 @@ sap.ui.define([
 	 * Other usages are not supported.
 	 *
 	 * @extends sap.ui.unified.calendar.DatesRow
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @private
@@ -115,7 +115,7 @@ sap.ui.define([
 		if (this.iMode === 2) {
 			return 31;
 		} else {
-			return CalendarUtils._daysInMonth(CalendarDate.fromLocalJSDate(this.getStartDate()));
+			return CalendarUtils._daysInMonth(CalendarDate.fromLocalJSDate(this.getStartDate(), this.getPrimaryCalendarType()));
 		}
 	};
 

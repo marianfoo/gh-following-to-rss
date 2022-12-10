@@ -46,88 +46,91 @@ function(
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.12
 	 * @deprecated as of version 1.50, replaced by a container of your choice with {@link sap.m.GenericTile} instances
 	 * @alias sap.m.TileContainer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var TileContainer = Control.extend("sap.m.TileContainer", /** @lends sap.m.TileContainer.prototype */ { metadata : {
+	var TileContainer = Control.extend("sap.m.TileContainer", /** @lends sap.m.TileContainer.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		deprecated: true,
-		properties : {
+			library : "sap.m",
+			deprecated: true,
+			properties : {
 
-			/**
-			 * Defines the width of the TileContainer in px.
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
+				/**
+				 * Defines the width of the TileContainer in px.
+				 */
+				width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
 
-			/**
-			 * Defines the height of the TileContainer in px.
-			 */
-			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
+				/**
+				 * Defines the height of the TileContainer in px.
+				 */
+				height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
 
-			/**
-			 * Determines whether the TileContainer is editable so you can move, delete or add tiles.
-			 */
-			editable : {type : "boolean", group : "Misc", defaultValue : null},
+				/**
+				 * Determines whether the TileContainer is editable so you can move, delete or add tiles.
+				 */
+				editable : {type : "boolean", group : "Misc", defaultValue : null},
 
-			/**
-			 * Determines whether the user is allowed to add Tiles in Edit mode (editable = true).
-			 */
-			allowAdd : {type : "boolean", group : "Misc", defaultValue : null}
-		},
-		defaultAggregation : "tiles",
-		aggregations : {
-
-			/**
-			 * The Tiles to be displayed by the TileContainer.
-			 */
-			tiles : {type : "sap.m.Tile", multiple : true, singularName : "tile"}
-		},
-		events : {
-
-			/**
-			 * Fires if a Tile is moved.
-			 */
-			tileMove : {
-				parameters : {
-
-					/**
-					 * The Tile that has been moved.
-					 */
-					tile : {type : "sap.m.Tile"},
-
-					/**
-					 * The new index of the Tile in the tiles aggregation.
-					 */
-					newIndex : {type : "int"}
-				}
+				/**
+				 * Determines whether the user is allowed to add Tiles in Edit mode (editable = true).
+				 */
+				allowAdd : {type : "boolean", group : "Misc", defaultValue : null}
 			},
+			defaultAggregation : "tiles",
+			aggregations : {
 
-			/**
-			 * Fires if a Tile is deleted in Edit mode.
-			 */
-			tileDelete : {
-				parameters : {
-
-					/**
-					 * The deleted Tile.
-					 */
-					tile : {type : "sap.m.Tile"}
-				}
+				/**
+				 * The Tiles to be displayed by the TileContainer.
+				 */
+				tiles : {type : "sap.m.Tile", multiple : true, singularName : "tile"}
 			},
+			events : {
 
-			/**
-			 * Fires when a Tile is added.
-			 */
-			tileAdd : {}
-		}
-	}});
+				/**
+				 * Fires if a Tile is moved.
+				 */
+				tileMove : {
+					parameters : {
+
+						/**
+						 * The Tile that has been moved.
+						 */
+						tile : {type : "sap.m.Tile"},
+
+						/**
+						 * The new index of the Tile in the tiles aggregation.
+						 */
+						newIndex : {type : "int"}
+					}
+				},
+
+				/**
+				 * Fires if a Tile is deleted in Edit mode.
+				 */
+				tileDelete : {
+					parameters : {
+
+						/**
+						 * The deleted Tile.
+						 */
+						tile : {type : "sap.m.Tile"}
+					}
+				},
+
+				/**
+				 * Fires when a Tile is added.
+				 */
+				tileAdd : {}
+			}
+		},
+
+		renderer: TileContainerRenderer
+	});
 
 
 	IconPool.insertFontFaceStyle();
@@ -776,7 +779,6 @@ function(
 	 *
 	 * @returns {int} The index of the first Tile that is visible in the current page
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TileContainer.prototype.getPageFirstTileIndex = function() {
 		return this._iCurrentTileStartIndex || 0;
@@ -789,7 +791,6 @@ function(
 	 * @param {int} iNewIndex The new Tile position in the tiles aggregation
 	 * @returns {this} this pointer for chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TileContainer.prototype.moveTile = function(vTile, iNewIndex) {
 		if (!isNaN(vTile)) {
@@ -1122,7 +1123,6 @@ function(
 	 * @param {boolean} bAnimated Whether the scroll should be animated
 	 * @param {sap.m.Tile[]} [aVisibleTiles] optional list of visible tiles in order to avoid filtering them again.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TileContainer.prototype.scrollIntoView = function(vTile, bAnimated, aVisibleTiles) {
 

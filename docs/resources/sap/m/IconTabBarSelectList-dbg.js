@@ -38,39 +38,42 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @private
 	 * @since 1.42.0
 	 * @alias sap.m.IconTabBarSelectList
-	 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 	 */
-	var IconTabBarSelectList = Control.extend("sap.m.IconTabBarSelectList", /** @lends sap.m.IconTabBarSelectList.prototype */ { metadata: {
-		library: "sap.m",
-		aggregations : {
-			/**
-			 * The items displayed in the list.
-			 */
-			items : {type : "sap.m.IconTab", multiple : true, singularName : "item", dnd : true}
-		},
-		events: {
-			/**
-			 * This event is fired when the selection has changed.
-			 *
-			 * <b>Note: </b> The selection can be changed by pressing a non-selected item,
-			 * via keyboard and after the Enter or Space key is pressed.
-			 */
-			selectionChange: {
-				parameters: {
-					/**
-					 * The selected item.
-					 */
-					selectedItem: { type: "sap.m.IconTabFilter" }
+	var IconTabBarSelectList = Control.extend("sap.m.IconTabBarSelectList", /** @lends sap.m.IconTabBarSelectList.prototype */ {
+		metadata: {
+			library: "sap.m",
+			aggregations : {
+				/**
+				 * The items displayed in the list.
+				 */
+				items : {type : "sap.m.IconTab", multiple : true, singularName : "item", dnd : true}
+			},
+			events: {
+				/**
+				 * This event is fired when the selection has changed.
+				 *
+				 * <b>Note: </b> The selection can be changed by pressing a non-selected item,
+				 * via keyboard and after the Enter or Space key is pressed.
+				 */
+				selectionChange: {
+					parameters: {
+						/**
+						 * The selected item.
+						 */
+						selectedItem: { type: "sap.m.IconTabFilter" }
+					}
 				}
 			}
-		}
-	}});
+		},
+
+		renderer: IconTabBarSelectListRenderer
+	});
 
 	/**
 	 * Initializes the control.

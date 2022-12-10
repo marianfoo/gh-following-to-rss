@@ -40,7 +40,7 @@ sap.ui.define([
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @private
@@ -48,7 +48,6 @@ sap.ui.define([
 		 *
 		 * @since 1.48
 		 * @alias sap.ui.layout.AlignedFlowLayout
-		 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 		 */
 		var AlignedFlowLayout = Control.extend("sap.ui.layout.AlignedFlowLayout", {
 			metadata: {
@@ -96,7 +95,9 @@ sap.ui.define([
 						multiple: true
 					}
 				}
-			}
+			},
+
+			renderer: AlignedFlowLayoutRenderer
 		});
 
 		/**
