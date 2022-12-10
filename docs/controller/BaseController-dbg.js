@@ -25,6 +25,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller", "sap/ui/core/UIComponent", "sap/ui/
     },
     onNavBack: function _onNavBack() {
       const sPreviousHash = History.getInstance().getPreviousHash();
+
       if (sPreviousHash !== undefined) {
         window.history.go(-1);
       } else {

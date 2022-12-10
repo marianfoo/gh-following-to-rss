@@ -3,15 +3,15 @@ sap.ui.define(["sap/ui/core/UIComponent", "sap/ui/Device"], function (UIComponen
   /**
    * @namespace de.marianzeis.githubfollower
    */
+
   const Component = UIComponent.extend("de.marianzeis.githubfollower.Component", {
     metadata: {
       manifest: "json"
     },
     init: function _init() {
       // call the base component's init function
-      UIComponent.prototype.init.call(this);
+      UIComponent.prototype.init.call(this); // create the views based on the url/hash
 
-      // create the views based on the url/hash
       this.getRouter().initialize();
     },
     getContentDensityClass: function _getContentDensityClass() {
@@ -27,6 +27,7 @@ sap.ui.define(["sap/ui/core/UIComponent", "sap/ui/Device"], function (UIComponen
           this.contentDensityClass = "sapUiSizeCozy";
         }
       }
+
       return this.contentDensityClass;
     }
   });

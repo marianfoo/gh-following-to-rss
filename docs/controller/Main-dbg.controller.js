@@ -2,11 +2,16 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/Message
   function _interopRequireDefault(obj) {
     return obj && obj.__esModule && typeof obj.default !== "undefined" ? obj.default : obj;
   }
+
   /* eslint-disable no-mixed-spaces-and-tabs */
+
   /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
   /* eslint-disable @typescript-eslint/restrict-plus-operands */
+
   /* eslint-disable @typescript-eslint/no-unsafe-assignment */
   const BaseController = _interopRequireDefault(__BaseController);
+
   const Octokit = ___octokit_core["Octokit"];
   const initializeApp = __githubfollower_lib_firebase["initializeApp"];
   const getAuth = __githubfollower_lib_firebase["getAuth"];
@@ -17,23 +22,27 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/Message
   /**
    * @namespace de.marianzeis.githubfollower.controller
    */
+
   const Main = BaseController.extend("de.marianzeis.githubfollower.controller.Main", {
     loadSAPData: async function _loadSAPData() {
       let data = [];
       this.getModel("data").setProperty("/busySAPButton", true);
       this.getModel("data").setProperty("/busyOPMLButton", true);
+
       try {
-        const functions = getFunctions(this.app);
-        // connectFunctionsEmulator(functions, "localhost", 5001);
+        const functions = getFunctions(this.app); // connectFunctionsEmulator(functions, "localhost", 5001);
+
         console.log(functions);
         const addMessage = httpsCallable(functions, "helloWorld");
         const sapUsername = this.getModel("data").getProperty("/SAPCommunityUsername");
+
         if (!sapUsername || sapUsername === "") {
           this.getModel("data").setProperty("/busySAPButton", false);
           this.getModel("data").setProperty("/busyOPMLButton", false);
           MessageBox.error("SAP Username is empty");
           return;
         }
+
         const response = await addMessage({
           userName: sapUsername
         });
@@ -45,6 +54,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/Message
         MessageBox.error("Error while loading SAP Data (maybe User not found)");
         return;
       }
+
       this.getModel("data").setProperty("/SAPFollowing", data.list_items);
       this.getModel("data").setProperty("/typeSAPButton", "Success");
       this.getModel("data").setProperty("/busySAPButton", false);
@@ -59,20 +69,17 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/Message
         storageBucket: "github-followers-281ea.appspot.com",
         messagingSenderId: "576057379323",
         appId: "1:576057379323:web:4fb59feea548cdefa1235e"
-      };
+      }; // Initialize Firebase
 
-      // Initialize Firebase
-      this.app = initializeApp(firebaseConfig);
+      this.app = initializeApp(firebaseConfig); // // // Initialize Firebase Authentication and get a reference to the service
 
-      // // // Initialize Firebase Authentication and get a reference to the service
       this.auth = getAuth(this.app);
       this.provider = new GithubAuthProvider();
       this.provider.setCustomParameters({
         allow_signup: "false"
       });
-      this.token = "";
+      this.token = ""; // create Jsonmodel
 
-      // create Jsonmodel
       this.getView().setModel(new JSONModel({
         token: "",
         busyOPMLButton: false,
@@ -88,21 +95,22 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/Message
       this.getModel("data").setProperty("/busyGitHubButton", true);
       this.getModel("data").setProperty("/busyOPMLButton", true);
       const githubUsername = this.getModel("data").getProperty("/gitHubUsername");
+
       if (!githubUsername || githubUsername === "") {
         this.getModel("data").setProperty("/busyGitHubButton", false);
         this.getModel("data").setProperty("/busyOPMLButton", false);
         MessageBox.error("GitHub Username is empty");
         return;
       }
+
       let page = 1;
       let followers = [];
       let following = [];
       const octokit = new Octokit({
         throttle: {
           onRateLimit: (retryAfter, options) => {
-            this.octokit.log.warn(`Request quota exhausted for request ${options.method} ${options.url}`);
+            this.octokit.log.warn(`Request quota exhausted for request ${options.method} ${options.url}`); // Retry four times after hitting a rate limit error, then give up
 
-            // Retry four times after hitting a rate limit error, then give up
             if (options.request.retryCount <= 4) {
               console.log(`Retrying after ${retryAfter} seconds!`);
               return true;
@@ -115,6 +123,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/Message
         }
       });
       let resultFollowing;
+
       try {
         resultFollowing = await octokit.request(`GET /users/${githubUsername}/following`);
       } catch (error) {
@@ -129,7 +138,9 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/Message
           MessageBox.error(error.message);
         }
       }
+
       following = resultFollowing.data;
+
       while (resultFollowing.data.length >= 30) {
         page += 1;
         resultFollowing = await octokit.request(`GET /users/${githubUsername}/following`, {
@@ -137,12 +148,12 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/Message
         });
         following = [...following, ...resultFollowing.data];
       }
+
       this.getModel("data").setProperty("/GitHubFollowing", following);
       this.getModel("data").setProperty("/typeGitHubButton", "Success");
       this.getModel("data").setProperty("/busyGitHubButton", false);
       this.getModel("data").setProperty("/busyOPMLButton", false);
-      this.getModel("data").setProperty("/OPMLButtonEnabled", true);
-      // MessageBox.success("Your OPML file is ready!");
+      this.getModel("data").setProperty("/OPMLButtonEnabled", true); // MessageBox.success("Your OPML file is ready!");
     },
     opml: function _opml() {
       const GitHubFollowing = this.getModel("data").getProperty("/GitHubFollowing") || [];
@@ -154,6 +165,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/Message
         dateCreated: new Date(2014, 2, 9),
         ownerName: "azu"
       };
+
       for (var i = 0; i < GitHubFollowing.length; i++) {
         outlinesGitHub.push({
           text: GitHubFollowing[i].login,
@@ -163,6 +175,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/Message
           htmlUrl: GitHubFollowing[i].html_url
         });
       }
+
       for (var i = 0; i < SAPFollowing.length; i++) {
         outlinesSAP.push({
           text: SAPFollowing[i].fullName,
@@ -172,24 +185,31 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/Message
           htmlUrl: SAPFollowing[i].profileUrl
         });
       }
+
       let headerXML = "<head><title>Sample OPML file for RSSReader</title></head>";
       let outlinesXMLGitHub = [];
       let outlinesXMLSAP = [];
+
       for (let i = 0; i < outlinesGitHub.length; i++) {
         let outlinesXML = '<outline text="' + outlinesGitHub[i].text + '" title="' + outlinesGitHub[i].title + '" type="' + outlinesGitHub[i].type + '" xmlUrl="' + outlinesGitHub[i].xmlUrl + '" htmlUrl="' + outlinesGitHub[i].htmlUrl + '" />';
         outlinesXMLGitHub.push(outlinesXML);
       }
+
       for (let i = 0; i < outlinesSAP.length; i++) {
         let outlinesXML = '<outline text="' + outlinesSAP[i].text + '" title="' + outlinesSAP[i].title + '" type="' + outlinesSAP[i].type + '" xmlUrl="' + outlinesSAP[i].xmlUrl + '" htmlUrl="' + outlinesSAP[i].htmlUrl + '" />';
         outlinesXMLSAP.push(outlinesXML);
       }
+
       let outlinesXML = "";
+
       if (outlinesXMLSAP.length > 0) {
         outlinesXML = '<outline text="SAP Community Following" title="SAP Community Following">' + outlinesXMLSAP + " </outline>";
       }
+
       if (outlinesXMLGitHub.length > 0) {
         outlinesXML = outlinesXML + '<outline text="GitHub Following" title="GitHub Following">' + outlinesXMLGitHub + " </outline>";
       }
+
       let xml = '<?xml version="1.0" encoding="UTF-8"?><opml version="2.0">' + headerXML + "<body>" + outlinesXML + "</body>" + "</opml>";
       this.downloadFile("opml.xml", xml);
     },
@@ -198,22 +218,18 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/Message
       const auth = getAuth();
       signInWithPopup(auth, provider).then(result => {
         /** @type {firebase.auth.OAuthCredential} */
-
         // This gives you a GitHub Access Token. You can use it to access the GitHub API.
         this.token = result._tokenResponse.oauthAccessToken;
-        this.getModel("data").setProperty("/token", this.token);
-        // ...
+        this.getModel("data").setProperty("/token", this.token); // ...
       }).catch(error => {
         // Handle Errors here.
         var errorCode = error.code;
-        var errorMessage = error.message;
-        // The email of the user's account used.
-        var email = error.email;
-        // The firebase.auth.AuthCredential type that was used.
-        var credential = error.credential;
-        // ...
-      });
-      // [END auth_github_signin_popup]
+        var errorMessage = error.message; // The email of the user's account used.
+
+        var email = error.email; // The firebase.auth.AuthCredential type that was used.
+
+        var credential = error.credential; // ...
+      }); // [END auth_github_signin_popup]
     },
     downloadFile: function _downloadFile(filename, text) {
       var element = document.createElement("a");

@@ -4,11 +4,6 @@
 	xmlns:u="sap.ui.unified"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-
-	<!-- <MessagePage title="{i18n>appTitle}" text="{i18n>appTitle}" icon="sap-icon://feed" id="page" description="{i18n>appDescription}">
-		<buttons> <Button text="Generate OPML from GitHub Following" press=".createAndDownloadOPMLFile" busyIndicatorDelay="50" busy="{data>/busyOPMLButton}" />
-		</buttons>
-	</MessagePage> -->
 	<Page title="Following to RSS" titleAlignment="Center" showNavButton="false">
 		<headerContent>
 			<!-- <Button icon="sap-icon://action" tooltip="Share" /> -->
@@ -24,13 +19,13 @@
 				<core:Icon src="sap-icon://feed" color="#EF8021" size="150px" height="250px">
 
 				</core:Icon>
-				<FlexBox direction="Row" width="700px" alignItems="Start" class="sapUiTinyMarginBottom">
-					<Label text="GitHub Username" width="200px">
+				<FlexBox direction="Row" alignItems="Start" class="sapUiTinyMarginBottom">
+					<Label text="GitHub Username" >
 						<layoutData>
 							<FlexItemData growFactor="1" />
 						</layoutData>
 					</Label>
-					<Input id="gitHubUsernameInput" width="200px"
+					<Input id="gitHubUsernameInput"
 						value="{
 							path : 'data>/gitHubUsername',
 							type : 'sap.ui.model.type.String',
@@ -43,19 +38,19 @@
 							<FlexItemData growFactor="1" />
 						</layoutData>
 					</Input>
-					<Button text="Load GitHub Data" width="300px" press="loadGitHubData" busyIndicatorDelay="50" busy="{data>/busyGitHubButton}" type="{data>/typeGitHubButton}">
+					<Button text="Load GitHub Data"  press="loadGitHubData" busyIndicatorDelay="50" busy="{data>/busyGitHubButton}" type="{data>/typeGitHubButton}">
 						<layoutData>
 							<FlexItemData growFactor="1" />
 						</layoutData>
 					</Button>
 				</FlexBox>
-				<FlexBox direction="Row" width="700px" alignItems="Start" class="sapUiTinyMarginBottom">
-					<Label text="SAP Community Username" width="200px">
+				<FlexBox direction="Row"  alignItems="Start" class="sapUiTinyMarginBottom">
+					<Label text="SAP Community Username" wrapping="true">
 						<layoutData>
 							<FlexItemData growFactor="1" />
 						</layoutData>
 					</Label>
-					<Input id="SAPCommunityUsernameInput" width="200px"
+					<Input id="SAPCommunityUsernameInput" 
 						value="{
 							path : 'data>/SAPCommunityUsername',
 							type : 'sap.ui.model.type.String',
@@ -68,13 +63,13 @@
 							<FlexItemData growFactor="1" />
 						</layoutData>
 					</Input>
-					<Button text="Load SAP Community Data" width="300px" press="loadSAPData" busyIndicatorDelay="50" busy="{data>/busySAPButton}" type="{data>/typeSAPButton}">
+					<Button text="Load SAP Data"  press="loadSAPData" busyIndicatorDelay="50" busy="{data>/busySAPButton}" type="{data>/typeSAPButton}">
 						<layoutData>
 							<FlexItemData growFactor="1" />
 						</layoutData>
 					</Button>
 				</FlexBox>
-				<Button text="Generate and Download OPML File" width="300px" press="opml" busyIndicatorDelay="50" busy="{data>/busyOPMLButton}" enabled="{data>/OPMLButtonEnabled}">
+				<Button text="Generate and Download OPML File"  press="opml" busyIndicatorDelay="50" busy="{data>/busyOPMLButton}" enabled="{data>/OPMLButtonEnabled}">
 					<layoutData>
 						<FlexItemData growFactor="1" />
 					</layoutData>
