@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/performance/trace/Interaction",
 	"sap/base/Log",
 	"sap/ui/events/jquery/EventSimulation",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
 ],
 	function(
 		Device,
@@ -23,7 +24,8 @@ sap.ui.define([
 		Interaction,
 		Log,
 		EventSimulation,
-		jQuery
+		jQuery,
+		Configuration
 	) {
 	"use strict";
 
@@ -42,12 +44,11 @@ sap.ui.define([
 	 * The ScrollBar control can be used for virtual scrolling of a certain area.
 	 * This means: to simulate a very large scrollable area when technically the area is small and the control takes care of displaying the respective part only. E.g. a Table control can take care of only rendering the currently visible rows and use this ScrollBar control to make the user think he actually scrolls through a long list.
 	 * @extends sap.ui.core.Control
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @public
 	 * @deprecated as of version 1.56
 	 * @alias sap.ui.core.ScrollBar
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ScrollBar = Control.extend("sap.ui.core.ScrollBar", /** @lends sap.ui.core.ScrollBar.prototype */ {
 		metadata : {
@@ -146,7 +147,7 @@ sap.ui.define([
 		this._bScrollPosIsChecked = false;
 
 		// RTL mode
-		this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
+		this._bRTL = Configuration.getRTL();
 
 		// suppress scroll event
 		this._bSuppressScroll = false;
@@ -523,7 +524,6 @@ sap.ui.define([
 	 * @param {string} oOwnerDomRef
 	 *         Dom ref of the Control that uses the scrollbar
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ScrollBar.prototype.unbind = function (oOwnerDomRef) {
 		if (oOwnerDomRef) {
@@ -547,7 +547,6 @@ sap.ui.define([
 	 * @param {string} oOwnerDomRef
 	 *         Dom ref of the control that uses the scrollbar
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ScrollBar.prototype.bind = function (oOwnerDomRef) {
 		if (oOwnerDomRef) {
@@ -581,7 +580,6 @@ sap.ui.define([
 	 * Page Up is used to scroll one page back.
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ScrollBar.prototype.pageUp = function() {
 		// call on scroll
@@ -592,7 +590,6 @@ sap.ui.define([
 	 * Page Down is used to scroll one page forward.
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ScrollBar.prototype.pageDown = function() {
 		// call on scroll

@@ -4,8 +4,8 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/Device'],
-	function(coreLibrary, ValueStateSupport, Device) {
+sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/Device', "sap/ui/core/Configuration"],
+	function(coreLibrary, ValueStateSupport, Device, Configuration) {
 	"use strict";
 
 
@@ -48,6 +48,7 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 		// CheckBox wrapper
 		oRm.openStart("div", oCheckBox);
 		oRm.class("sapMCb");
+		oRm.attr("data-ui5-accesskey", oCheckBox.getProperty("accesskey"));
 
 		if (!bEditable) {
 			oRm.class("sapMCbRo");
@@ -158,7 +159,7 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 		oRm.close("div");
 		oRm.renderControl(oCbLabel);
 
-		if (sTooltip && sap.ui.getCore().getConfiguration().getAccessibility() && bEditableAndEnabled) {
+		if (sTooltip && Configuration.getAccessibility() && bEditableAndEnabled) {
 			// for ARIA, the tooltip must be in a separate SPAN and assigned via aria-describedby.
 			// otherwise, JAWS does not read it.
 			oRm.openStart("span", sId + "-Descr");

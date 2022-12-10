@@ -20,14 +20,11 @@ sap.ui.define([
 		"sap/ui/events/KeyCodes",
 		"sap/ui/events/PseudoEvents",
 		"sap/ui/thirdparty/jquery",
-		// jQuery Plugin "control"
-		"sap/ui/dom/jquery/control",
-		// jQuery Plugin "scrollLeftRTL"
-		"sap/ui/dom/jquery/scrollLeftRTL",
-		// jQuery Plugin "scrollRightRTL"
-		"sap/ui/dom/jquery/scrollRightRTL",
-		// jQuery custom selectors ":sapTabbable"
-		"sap/ui/dom/jquery/Selectors"
+		"sap/ui/core/Configuration",
+		"sap/ui/dom/jquery/control", // jQuery Plugin "control"
+		"sap/ui/dom/jquery/scrollLeftRTL", // jQuery Plugin "scrollLeftRTL"
+		"sap/ui/dom/jquery/scrollRightRTL", // jQuery Plugin "scrollRightRTL"
+		"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ":sapTabbable"
 	],
 	function (
 		library,
@@ -45,7 +42,8 @@ sap.ui.define([
 		Log,
 		KeyCodes,
 		PseudoEvents,
-		jQuery
+		jQuery,
+		Configuration
 	) {
 		"use strict";
 
@@ -125,11 +123,10 @@ sap.ui.define([
 		 * @since 1.44.0
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @public
 		 * @alias sap.m.HeaderContainer
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var HeaderContainer = Control.extend("sap.m.HeaderContainer", /** @lends sap.m.HeaderContainer.prototype */ {
 			metadata: {
@@ -268,7 +265,9 @@ sap.ui.define([
 
 					}
 				}
-			}
+			},
+
+			renderer: HeaderContainerRenderer
 		});
 
 		/* ============================================================ */
@@ -277,7 +276,7 @@ sap.ui.define([
 
 		HeaderContainer.prototype.init = function () {
 			this._aItemEnd = [];
-			this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
+			this._bRtl = Configuration.getRTL();
 			this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			this._oScrollCntr = new ScrollContainer(this.getId() + "-scrl-cntnr", {
 				width: "100%",
@@ -315,11 +314,11 @@ sap.ui.define([
 				if (!this._isMobileView()) {
 					this._oArrowPrev = new Icon({
 						id: this.getId() + "-scrl-prev-button"
-					}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrLeft");
+					}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrLeft").addStyleClass("sapMHdrCntrBtnIcon");
 					this.setAggregation("_prevButton", this._oArrowPrev, true);
 					this._oArrowNext = new Icon({
 						id: this.getId() + "-scrl-next-button"
-					}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrRight");
+					}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrRight").addStyleClass("sapMHdrCntrBtnIcon");
 					this.setAggregation("_nextButton", this._oArrowNext, true);
 				}
 			}
@@ -369,40 +368,42 @@ sap.ui.define([
 								var aItems = this._filterVisibleItems();
 								this.triggerScrollStop = true;
 								var iScrollValue = 0, iScrollOffset = 15;
-
-								var iScrollContainerScrollLeft = this._oScrollCntr.getDomRef().scrollLeft;
-								var iScrollContainerWidth = iScrollContainerScrollLeft + this._oScrollCntr.getDomRef().clientWidth;
-
 								var oFinalItem = aItems[aItems.length - 1];
+								var oScrollCntrDomRef = this._oScrollCntr.getDomRef();
+								if ( oScrollCntrDomRef && oFinalItem){
+									var oFinalItemParentDomRef = oFinalItem.getParent().getDomRef();
+									var oFinalItemDomRef = oFinalItem.getDomRef();
+									var iScrollContainerScrollLeft = oScrollCntrDomRef.scrollLeft;
+									var iScrollContainerWidth = iScrollContainerScrollLeft + oScrollCntrDomRef.clientWidth;
+									var iFinalElementScrollLeft = oFinalItemParentDomRef.offsetLeft;
+									var iFinalElementContainerWidth = iFinalElementScrollLeft + oFinalItemDomRef.clientWidth;
 
-								var iFinalElementScrollLeft = oFinalItem.getParent().getDomRef().offsetLeft;
-								var iFinalElementContainerWidth = iFinalElementScrollLeft + oFinalItem.getDomRef().clientWidth;
+									var bIsFinalItemVisible = ((iFinalElementContainerWidth <= iScrollContainerWidth) && (iFinalElementScrollLeft >= iScrollContainerScrollLeft));
+									var iCurrectScrollValue = this._bRtl ? Math.abs(oEvent.currentTarget.scrollLeft) : oEvent.currentTarget.scrollLeft;
 
-								var bIsFinalItemVisible = ((iFinalElementContainerWidth <= iScrollContainerWidth) && (iFinalElementScrollLeft >= iScrollContainerScrollLeft));
-								var iCurrectScrollValue = this._bRtl ? Math.abs(oEvent.currentTarget.scrollLeft) : oEvent.currentTarget.scrollLeft;
-
-								if (bIsFinalItemVisible) {
-									iScrollValue = this.aItemScrollValue[aItems.length - 1] - iScrollOffset - iCurrectScrollValue;
-									this.triggerScrollStop = false;
-								} else {
-									var value = this.aItemScrollValue.reduce(function(a, b) {
-										var aDiff = Math.abs(a - iCurrectScrollValue);
-										var bDiff = Math.abs(b - iCurrectScrollValue);
-										if (aDiff == bDiff) {
-											return a > b ? a : b;
-										} else {
-											return bDiff < aDiff ? b : a;
-										}
-									});
-									if (iCurrectScrollValue == 0) {
-										iScrollValue = 0;
+									if (bIsFinalItemVisible) {
+										iScrollValue = this.aItemScrollValue[aItems.length - 1] - iScrollOffset - iCurrectScrollValue;
 										this.triggerScrollStop = false;
 									} else {
-										iScrollValue = value - iScrollOffset - iCurrectScrollValue;
+										var value = this.aItemScrollValue.reduce(function(a, b) {
+											var aDiff = Math.abs(a - iCurrectScrollValue);
+											var bDiff = Math.abs(b - iCurrectScrollValue);
+											if (aDiff == bDiff) {
+												return a > b ? a : b;
+											} else {
+												return bDiff < aDiff ? b : a;
+											}
+										});
+										if (iCurrectScrollValue == 0) {
+											iScrollValue = 0;
+											this.triggerScrollStop = false;
+										} else {
+											iScrollValue = value - iScrollOffset - iCurrectScrollValue;
+										}
 									}
-								}
-								this._scroll(iScrollValue, this.getScrollTime());
+									this._scroll(iScrollValue, this.getScrollTime());
 							}
+						}
 						}.bind(this));
 					}
 				}.bind(this)
@@ -433,7 +434,7 @@ sap.ui.define([
 		};
 
 		HeaderContainer.prototype.onAfterRendering = function () {
-			this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
+			this._bRtl = Configuration.getRTL();
 			this._checkOverflow();
 		};
 

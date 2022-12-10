@@ -37,6 +37,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
+	"sap/ui/core/Configuration",
 	"sap/ui/dom/jquery/selectText" // jQuery Plugin "selectText"
 ], function(
 	Library,
@@ -70,7 +71,8 @@ sap.ui.define([
 	UploadCollectionRenderer,
 	jQuery,
 	KeyCodes,
-	Log
+	Log,
+	Configuration
 ) {
 	"use strict";
 
@@ -90,13 +92,12 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @deprecated as of version 1.88, replaced by {@link sap.m.upload.UploadSet}
 	 * @alias sap.m.UploadCollection
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var UploadCollection = Control.extend("sap.m.UploadCollection", /** @lends sap.m.UploadCollection.prototype */ {
 
@@ -126,7 +127,7 @@ sap.ui.define([
 				if (bInstantUpload === false) {
 					this.bInstantUpload = bInstantUpload;
 					this._oFormatDecimal = FileSizeFormat.getInstance({
-						binaryFilesize: true,
+						binaryFilesize: false,
 						maxFractionDigits: 1,
 						maxIntegerDigits: 4
 					});
@@ -617,7 +618,9 @@ sap.ui.define([
 					}
 				}
 			}
-		}
+		},
+
+		renderer: UploadCollectionRenderer
 	});
 
 	UploadCollection._uploadingStatus = "uploading";
@@ -2961,7 +2964,7 @@ sap.ui.define([
 		// set application language to request headers
 		oLangRequestHeader = {
 			name: this._headerParamConst.acceptLanguage,
-			value: sap.ui.getCore().getConfiguration().getLanguage()
+			value: Configuration.getLanguage()
 		};
 		event.getParameter("requestHeaders").push(oLangRequestHeader);
 

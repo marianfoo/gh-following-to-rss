@@ -119,14 +119,13 @@ function(
 		 * @implements sap.ui.core.IFormContent
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @public
 		 * @since 1.40
 		 * @alias sap.m.StepInput
 		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/step-input/ Step Input}
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var StepInput = Control.extend("sap.m.StepInput", /** @lends sap.m.StepInput.prototype */ {
 			metadata: {
@@ -294,13 +293,10 @@ function(
 				if (mSettings && mSettings.value === undefined){
 					this.setValue(this._getDefaultValue(undefined, mSettings.max, mSettings.min));
 				}
-			}
-		});
+			},
 
-		// get resource translation bundle;
-		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		StepInput.STEP_INPUT_INCREASE_BTN_TOOLTIP = oLibraryResourceBundle.getText("STEP_INPUT_INCREASE_BTN");
-		StepInput.STEP_INPUT_DECREASE_BTN_TOOLTIP = oLibraryResourceBundle.getText("STEP_INPUT_DECREASE_BTN");
+			renderer: StepInputRenderer
+		});
 
 		StepInput.INITIAL_WAIT_TIMEOUT = 500;
 		StepInput.ACCELLERATION = 0.8;
@@ -346,7 +342,6 @@ function(
 
 			this._getInput().setValue(this._getFormattedValue(vValue));
 			this._getInput().setValueState(this.getValueState());
-			this._getInput().setTooltip(this.getTooltip());
 			this._getOrCreateDecrementButton().setVisible(bEditable);
 			this._getOrCreateIncrementButton().setVisible(bEditable);
 
@@ -510,7 +505,7 @@ function(
 					noTabStop: true,
 					decorative: false,
 					press: this._handleButtonPress.bind(this, 1),
-					tooltip: StepInput.STEP_INPUT_INCREASE_BTN_TOOLTIP
+					useIconTooltip: false
 				});
 
 			oIcon.getEnabled = function () {
@@ -543,7 +538,7 @@ function(
 					noTabStop: true,
 					decorative: false,
 					press: this._handleButtonPress.bind(this, -1),
-					tooltip: StepInput.STEP_INPUT_DECREASE_BTN_TOOLTIP
+					useIconTooltip: false
 				});
 
 			oIcon.getEnabled = function () {

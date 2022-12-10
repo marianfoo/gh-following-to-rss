@@ -29,13 +29,12 @@ function(View, TemplateViewRenderer, ViewType, Log) {
 	 * @extends sap.ui.core.mvc.View
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @public
 	 * @deprecated Since version 1.56.0, use {@link sap.ui.core.mvc.XMLView} in combination with
 	 *             {@link topic:5ee619fc1370463ea674ee04b65ed83b XML Templating} instead.
 	 * @alias sap.ui.core.mvc.TemplateView
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TemplateView = View.extend("sap.ui.core.mvc.TemplateView", /** @lends sap.ui.core.mvc.TemplateView.prototype */ {
 		metadata : {

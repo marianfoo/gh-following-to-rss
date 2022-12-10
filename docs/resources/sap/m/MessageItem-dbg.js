@@ -8,10 +8,9 @@ sap.ui.define([
 	"./library",
 	"sap/ui/core/Item",
 	"sap/ui/core/library",
-	"sap/base/Log",
-	"sap/base/security/sanitizeHTML"
+	"sap/base/Log"
 ],
-	function(library, Item, coreLibrary, Log, sanitizeHTML) {
+	function(library, Item, coreLibrary, Log) {
 		"use strict";
 
 		// shortcut for sap.ui.core.MessageType
@@ -37,13 +36,12 @@ sap.ui.define([
 		 *
 		 * @extends sap.ui.core.Item
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @public
 		 * @since 1.46
 		 * @alias sap.m.MessageItem
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		var MessageItem = Item.extend("sap.m.MessageItem", /** @lends sap.m.MessageItem.prototype */ {

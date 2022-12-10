@@ -11,16 +11,15 @@ sap.ui.define([
 	'sap/ui/core/support/controls/ObjectViewer',
 	'sap/ui/Device',
 	'sap/base/Log',
-	'sap/base/security/encodeXML',
 	'sap/ui/thirdparty/jquery'
-], function(Plugin, TreeViewer, ObjectViewer, Device, Log, encodeXML, $) {
+], function(Plugin, TreeViewer, ObjectViewer, Device, Log, $) {
 	"use strict";
 
 		/**
 		 * Creates an instance of sap.ui.core.support.plugins.ViewInfo.
 		 * @class This class represents the ViewInfo plugin for the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
 		 * @extends sap.ui.core.support.Plugin
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 * @private
 		 * @alias sap.ui.core.support.plugins.ViewInfo
 		 */
@@ -678,7 +677,7 @@ sap.ui.define([
 
 		};
 
-		ViewInfo.DemokitUrl = "https://openui5.hana.ondemand.com/api/";
+		ViewInfo.DemokitUrl = "https://sdk.openui5.org/api/";
 
 		ViewInfo.prototype.updateObjectInfo = function(oData, iIdx, sReason) {
 			var oObjectViewer = this.aObjectViewers[iIdx],

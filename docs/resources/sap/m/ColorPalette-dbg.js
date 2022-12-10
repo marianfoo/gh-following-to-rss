@@ -104,13 +104,12 @@ sap.ui.define([
 		 * To prevent this, apps using the <code>ColorPalette</code> should also load the <code>sap.ui.unified</code> library in advance.
 		 *
 		 * @extends sap.ui.core.Control
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @public
 		 * @since 1.54
 		 * @alias sap.m.ColorPalette
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var ColorPalette = Control.extend("sap.m.ColorPalette", /** @lends sap.m.ColorPalette.prototype */ {
 			metadata: {
@@ -220,7 +219,9 @@ sap.ui.define([
 						}
 					}
 				}
-			}
+			},
+
+			renderer: ColorPaletteRenderer
 		});
 
 		ColorPalette.prototype.init = function () {

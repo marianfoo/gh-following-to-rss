@@ -14,7 +14,7 @@ sap.ui.define(["sap/m/library", "sap/ui/core/Core"],
 	/**
 	 * Currency renderer.
 	 *
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @namespace
 	 */
 	var CurrencyRenderer = {

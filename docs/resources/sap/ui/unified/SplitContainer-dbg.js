@@ -11,8 +11,9 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/library',
 	'./SplitContainerRenderer',
-	"sap/base/Log"
-], function(Control, Parameters, library, coreLibrary, SplitContainerRenderer, Log ) {
+	"sap/base/Log",
+	"sap/ui/core/Configuration"
+], function(Control, Parameters, library, coreLibrary, SplitContainerRenderer, Log, Configuration ) {
 	"use strict";
 
 
@@ -33,7 +34,7 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
@@ -42,7 +43,6 @@ sap.ui.define([
 	 * API is not yet finished and might change completely
 	 * @deprecated Since version 1.44.0.
 	 * @alias sap.ui.unified.SplitContainer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SplitContainer = Control.extend("sap.ui.unified.SplitContainer", /** @lends sap.ui.unified.SplitContainer.prototype */ { metadata : {
 
@@ -95,7 +95,7 @@ sap.ui.define([
 	////////////////////////////////////////// Public Methods //////////////////////////////////////////
 
 	SplitContainer.prototype.init = function(){
-		this.bRtl  = sap.ui.getCore().getConfiguration().getRTL();
+		this.bRtl  = Configuration.getRTL();
 
 		this._paneRenderer = new library._ContentRenderer(this, this.getId() + "-panecntnt", "secondaryContent");
 		this._canvasRenderer = new library._ContentRenderer(this, this.getId() + "-canvascntnt", "content");
@@ -129,7 +129,7 @@ sap.ui.define([
 
 	SplitContainer.prototype.onAfterRendering = function() {
 		//Refetch RTL setting (might have changed which leads to global rerendering, see Core.fireLocalizationChanged
-		this.bRtl  = sap.ui.getCore().getConfiguration().getRTL();
+		this.bRtl  = Configuration.getRTL();
 
 		// Shortcuts to the main DOM containers
 		this._contentContainer 			= this.$("canvas");

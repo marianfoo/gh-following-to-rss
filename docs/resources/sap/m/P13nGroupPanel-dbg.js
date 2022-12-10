@@ -1,5 +1,5 @@
-/*
- * ! OpenUI5
+/*!
+ * OpenUI5
  * (c) Copyright 2009-2022 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
@@ -27,13 +27,12 @@ sap.ui.define([
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The P13nGroupPanel control is used to define group-specific settings for table personalization.
 	 * @extends sap.m.P13nPanel
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @constructor
 	 * @deprecated as of version 1.98. Use the {@link sap.m.p13n.GroupPanel} instead.
 	 * @public
 	 * @since 1.26.0
 	 * @alias sap.m.P13nGroupPanel
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nGroupPanel = P13nPanel.extend("sap.m.P13nGroupPanel", /** @lends sap.m.P13nGroupPanel.prototype */
 	{

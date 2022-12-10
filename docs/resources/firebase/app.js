@@ -12,6 +12,232 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         globalThis.process = { env:env };
     })();
 
+    var global$1 = (typeof global !== "undefined" ? global :
+      typeof self !== "undefined" ? self :
+      typeof window !== "undefined" ? window : {});
+
+    // shim for using process in browser
+    // based off https://github.com/defunctzombie/node-process/blob/master/browser.js
+
+    function defaultSetTimout() {
+        throw new Error('setTimeout has not been defined');
+    }
+    function defaultClearTimeout () {
+        throw new Error('clearTimeout has not been defined');
+    }
+    var cachedSetTimeout = defaultSetTimout;
+    var cachedClearTimeout = defaultClearTimeout;
+    if (typeof global$1.setTimeout === 'function') {
+        cachedSetTimeout = setTimeout;
+    }
+    if (typeof global$1.clearTimeout === 'function') {
+        cachedClearTimeout = clearTimeout;
+    }
+
+    function runTimeout(fun) {
+        if (cachedSetTimeout === setTimeout) {
+            //normal enviroments in sane situations
+            return setTimeout(fun, 0);
+        }
+        // if setTimeout wasn't available but was latter defined
+        if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+            cachedSetTimeout = setTimeout;
+            return setTimeout(fun, 0);
+        }
+        try {
+            // when when somebody has screwed with setTimeout but no I.E. maddness
+            return cachedSetTimeout(fun, 0);
+        } catch(e){
+            try {
+                // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+                return cachedSetTimeout.call(null, fun, 0);
+            } catch(e){
+                // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+                return cachedSetTimeout.call(this, fun, 0);
+            }
+        }
+
+
+    }
+    function runClearTimeout(marker) {
+        if (cachedClearTimeout === clearTimeout) {
+            //normal enviroments in sane situations
+            return clearTimeout(marker);
+        }
+        // if clearTimeout wasn't available but was latter defined
+        if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+            cachedClearTimeout = clearTimeout;
+            return clearTimeout(marker);
+        }
+        try {
+            // when when somebody has screwed with setTimeout but no I.E. maddness
+            return cachedClearTimeout(marker);
+        } catch (e){
+            try {
+                // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+                return cachedClearTimeout.call(null, marker);
+            } catch (e){
+                // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+                // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+                return cachedClearTimeout.call(this, marker);
+            }
+        }
+
+
+
+    }
+    var queue = [];
+    var draining = false;
+    var currentQueue;
+    var queueIndex = -1;
+
+    function cleanUpNextTick() {
+        if (!draining || !currentQueue) {
+            return;
+        }
+        draining = false;
+        if (currentQueue.length) {
+            queue = currentQueue.concat(queue);
+        } else {
+            queueIndex = -1;
+        }
+        if (queue.length) {
+            drainQueue();
+        }
+    }
+
+    function drainQueue() {
+        if (draining) {
+            return;
+        }
+        var timeout = runTimeout(cleanUpNextTick);
+        draining = true;
+
+        var len = queue.length;
+        while(len) {
+            currentQueue = queue;
+            queue = [];
+            while (++queueIndex < len) {
+                if (currentQueue) {
+                    currentQueue[queueIndex].run();
+                }
+            }
+            queueIndex = -1;
+            len = queue.length;
+        }
+        currentQueue = null;
+        draining = false;
+        runClearTimeout(timeout);
+    }
+    function nextTick(fun) {
+        var args = new Array(arguments.length - 1);
+        if (arguments.length > 1) {
+            for (var i = 1; i < arguments.length; i++) {
+                args[i - 1] = arguments[i];
+            }
+        }
+        queue.push(new Item(fun, args));
+        if (queue.length === 1 && !draining) {
+            runTimeout(drainQueue);
+        }
+    }
+    // v8 likes predictible objects
+    function Item(fun, array) {
+        this.fun = fun;
+        this.array = array;
+    }
+    Item.prototype.run = function () {
+        this.fun.apply(null, this.array);
+    };
+    var title = 'browser';
+    var platform = 'browser';
+    var browser = true;
+    var env = {};
+    var argv = [];
+    var version$3 = ''; // empty string to avoid regexp issues
+    var versions = {};
+    var release = {};
+    var config = {};
+
+    function noop() {}
+
+    var on = noop;
+    var addListener = noop;
+    var once = noop;
+    var off = noop;
+    var removeListener = noop;
+    var removeAllListeners = noop;
+    var emit = noop;
+
+    function binding(name) {
+        throw new Error('process.binding is not supported');
+    }
+
+    function cwd () { return '/' }
+    function chdir (dir) {
+        throw new Error('process.chdir is not supported');
+    }function umask() { return 0; }
+
+    // from https://github.com/kumavis/browser-process-hrtime/blob/master/index.js
+    var performance = global$1.performance || {};
+    var performanceNow =
+      performance.now        ||
+      performance.mozNow     ||
+      performance.msNow      ||
+      performance.oNow       ||
+      performance.webkitNow  ||
+      function(){ return (new Date()).getTime() };
+
+    // generate timestamp or delta
+    // see http://nodejs.org/api/process.html#process_process_hrtime
+    function hrtime(previousTimestamp){
+      var clocktime = performanceNow.call(performance)*1e-3;
+      var seconds = Math.floor(clocktime);
+      var nanoseconds = Math.floor((clocktime%1)*1e9);
+      if (previousTimestamp) {
+        seconds = seconds - previousTimestamp[0];
+        nanoseconds = nanoseconds - previousTimestamp[1];
+        if (nanoseconds<0) {
+          seconds--;
+          nanoseconds += 1e9;
+        }
+      }
+      return [seconds,nanoseconds]
+    }
+
+    var startTime = new Date();
+    function uptime() {
+      var currentTime = new Date();
+      var dif = currentTime - startTime;
+      return dif / 1000;
+    }
+
+    var browser$1 = {
+      nextTick: nextTick,
+      title: title,
+      browser: browser,
+      env: env,
+      argv: argv,
+      version: version$3,
+      versions: versions,
+      on: on,
+      addListener: addListener,
+      once: once,
+      off: off,
+      removeListener: removeListener,
+      removeAllListeners: removeAllListeners,
+      emit: emit,
+      binding: binding,
+      cwd: cwd,
+      chdir: chdir,
+      umask: umask,
+      hrtime: hrtime,
+      platform: platform,
+      release: release,
+      config: config,
+      uptime: uptime
+    };
+
     const stringToByteArray$1 = function (str) {
       const out = [];
       let p = 0;
@@ -170,6 +396,93 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     const base64urlEncodeWithoutPadding = function (str) {
       return base64Encode(str).replace(/\./g, "");
     };
+    const base64Decode = function (str) {
+      try {
+        return base64.decodeString(str, true);
+      } catch (e) {
+        console.error("base64Decode failed: ", e);
+      }
+      return null;
+    };
+    function isIndexedDBAvailable() {
+      try {
+        return typeof indexedDB === "object";
+      } catch (e) {
+        return false;
+      }
+    }
+    function validateIndexedDBOpenable() {
+      return new Promise((resolve, reject) => {
+        try {
+          let preExist = true;
+          const DB_CHECK_NAME = "validate-browser-context-for-indexeddb-analytics-module";
+          const request = self.indexedDB.open(DB_CHECK_NAME);
+          request.onsuccess = () => {
+            request.result.close();
+            if (!preExist) {
+              self.indexedDB.deleteDatabase(DB_CHECK_NAME);
+            }
+            resolve(true);
+          };
+          request.onupgradeneeded = () => {
+            preExist = false;
+          };
+          request.onerror = () => {
+            var _a;
+            reject(((_a = request.error) === null || _a === void 0 ? void 0 : _a.message) || "");
+          };
+        } catch (error) {
+          reject(error);
+        }
+      });
+    }
+    function getGlobal() {
+      if (typeof self !== "undefined") {
+        return self;
+      }
+      if (typeof window !== "undefined") {
+        return window;
+      }
+      if (typeof global$1 !== "undefined") {
+        return global$1;
+      }
+      throw new Error("Unable to locate global object.");
+    }
+    const getDefaultsFromGlobal = () => getGlobal().__FIREBASE_DEFAULTS__;
+    const getDefaultsFromEnvVariable = () => {
+      if (typeof browser$1 === "undefined" || typeof browser$1.env === "undefined") {
+        return;
+      }
+      const defaultsJsonString = browser$1.env.__FIREBASE_DEFAULTS__;
+      if (defaultsJsonString) {
+        return JSON.parse(defaultsJsonString);
+      }
+    };
+    const getDefaultsFromCookie = () => {
+      if (typeof document === "undefined") {
+        return;
+      }
+      let match;
+      try {
+        match = document.cookie.match(/__FIREBASE_DEFAULTS__=([^;]+)/);
+      } catch (e) {
+        return;
+      }
+      const decoded = match && base64Decode(match[1]);
+      return decoded && JSON.parse(decoded);
+    };
+    const getDefaults = () => {
+      try {
+        return getDefaultsFromGlobal() || getDefaultsFromEnvVariable() || getDefaultsFromCookie();
+      } catch (e) {
+        console.info(`Unable to get __FIREBASE_DEFAULTS__ due to: ${e}`);
+        return;
+      }
+    };
+    const getDefaultAppConfig = () => {
+      var _a;
+      return (_a = getDefaults()) === null || _a === void 0 ? void 0 : _a.config;
+    };
     class Deferred {
       constructor() {
         this.reject = () => {};
@@ -196,34 +509,6 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
           }
         };
       }
-    }
-    function isIndexedDBAvailable() {
-      return typeof indexedDB === "object";
-    }
-    function validateIndexedDBOpenable() {
-      return new Promise((resolve, reject) => {
-        try {
-          let preExist = true;
-          const DB_CHECK_NAME = "validate-browser-context-for-indexeddb-analytics-module";
-          const request = self.indexedDB.open(DB_CHECK_NAME);
-          request.onsuccess = () => {
-            request.result.close();
-            if (!preExist) {
-              self.indexedDB.deleteDatabase(DB_CHECK_NAME);
-            }
-            resolve(true);
-          };
-          request.onupgradeneeded = () => {
-            preExist = false;
-          };
-          request.onerror = () => {
-            var _a;
-            reject(((_a = request.error) === null || _a === void 0 ? void 0 : _a.message) || "");
-          };
-        } catch (error) {
-          reject(error);
-        }
-      });
     }
     const ERROR_NAME = "FirebaseError";
     class FirebaseError extends Error {
@@ -311,7 +596,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
              * Properties to be added to the service namespace
              */
             this.serviceProps = {};
-            this.instantiationMode = "LAZY" /* LAZY */;
+            this.instantiationMode = "LAZY" /* InstantiationMode.LAZY */;
             this.onInstanceCreated = null;
         }
         setInstantiationMode(mode) {
@@ -617,7 +902,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         }
         shouldAutoInitialize() {
             return (!!this.component &&
-                this.component.instantiationMode !== "EXPLICIT" /* EXPLICIT */);
+                this.component.instantiationMode !== "EXPLICIT" /* InstantiationMode.EXPLICIT */);
         }
     }
     // undefined should be passed to the service factory for the default instance
@@ -625,7 +910,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         return identifier === DEFAULT_ENTRY_NAME$1 ? undefined : identifier;
     }
     function isComponentEager(component) {
-        return component.instantiationMode === "EAGER" /* EAGER */;
+        return component.instantiationMode === "EAGER" /* InstantiationMode.EAGER */;
     }
 
     /**
@@ -1221,11 +1506,11 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     function isVersionServiceProvider(provider) {
         const component = provider.getComponent();
-        return (component === null || component === void 0 ? void 0 : component.type) === "VERSION" /* VERSION */;
+        return (component === null || component === void 0 ? void 0 : component.type) === "VERSION" /* ComponentType.VERSION */;
     }
 
     const name$o = "@firebase/app";
-    const version$1 = "0.7.27";
+    const version$1 = "0.9.0";
 
     /**
      * @license
@@ -1292,7 +1577,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     const name$1 = "@firebase/firestore-compat";
 
     const name$p = "firebase";
-    const version$2 = "9.8.4";
+    const version$2 = "9.15.0";
 
     /**
      * @license
@@ -1467,18 +1752,19 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     const ERRORS = {
-        ["no-app" /* NO_APP */]: "No Firebase App '{$appName}' has been created - " +
+        ["no-app" /* AppError.NO_APP */]: "No Firebase App '{$appName}' has been created - " +
             'call Firebase App.initializeApp()',
-        ["bad-app-name" /* BAD_APP_NAME */]: "Illegal App name: '{$appName}",
-        ["duplicate-app" /* DUPLICATE_APP */]: "Firebase App named '{$appName}' already exists with different options or config",
-        ["app-deleted" /* APP_DELETED */]: "Firebase App named '{$appName}' already deleted",
-        ["invalid-app-argument" /* INVALID_APP_ARGUMENT */]: 'firebase.{$appName}() takes either no argument or a ' +
+        ["bad-app-name" /* AppError.BAD_APP_NAME */]: "Illegal App name: '{$appName}",
+        ["duplicate-app" /* AppError.DUPLICATE_APP */]: "Firebase App named '{$appName}' already exists with different options or config",
+        ["app-deleted" /* AppError.APP_DELETED */]: "Firebase App named '{$appName}' already deleted",
+        ["no-options" /* AppError.NO_OPTIONS */]: 'Need to provide options, when not being deployed to hosting via source.',
+        ["invalid-app-argument" /* AppError.INVALID_APP_ARGUMENT */]: 'firebase.{$appName}() takes either no argument or a ' +
             'Firebase App instance.',
-        ["invalid-log-argument" /* INVALID_LOG_ARGUMENT */]: 'First argument to `onLog` must be null or a function.',
-        ["storage-open" /* STORAGE_OPEN */]: 'Error thrown when opening storage. Original error: {$originalErrorMessage}.',
-        ["storage-get" /* STORAGE_GET */]: 'Error thrown when reading from storage. Original error: {$originalErrorMessage}.',
-        ["storage-set" /* STORAGE_WRITE */]: 'Error thrown when writing to storage. Original error: {$originalErrorMessage}.',
-        ["storage-delete" /* STORAGE_DELETE */]: 'Error thrown when deleting from storage. Original error: {$originalErrorMessage}.'
+        ["invalid-log-argument" /* AppError.INVALID_LOG_ARGUMENT */]: 'First argument to `onLog` must be null or a function.',
+        ["idb-open" /* AppError.IDB_OPEN */]: 'Error thrown when opening IndexedDB. Original error: {$originalErrorMessage}.',
+        ["idb-get" /* AppError.IDB_GET */]: 'Error thrown when reading from IndexedDB. Original error: {$originalErrorMessage}.',
+        ["idb-set" /* AppError.IDB_WRITE */]: 'Error thrown when writing to IndexedDB. Original error: {$originalErrorMessage}.',
+        ["idb-delete" /* AppError.IDB_DELETE */]: 'Error thrown when deleting from IndexedDB. Original error: {$originalErrorMessage}.'
     };
     const ERROR_FACTORY = new ErrorFactory('app', 'Firebase', ERRORS);
 
@@ -1507,7 +1793,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             this._automaticDataCollectionEnabled =
                 config.automaticDataCollectionEnabled;
             this._container = container;
-            this.container.addComponent(new Component('app', () => this, "PUBLIC" /* PUBLIC */));
+            this.container.addComponent(new Component('app', () => this, "PUBLIC" /* ComponentType.PUBLIC */));
         }
         get automaticDataCollectionEnabled() {
             this.checkDestroyed();
@@ -1544,7 +1830,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
          */
         checkDestroyed() {
             if (this.isDeleted) {
-                throw ERROR_FACTORY.create("app-deleted" /* APP_DELETED */, { appName: this._name });
+                throw ERROR_FACTORY.create("app-deleted" /* AppError.APP_DELETED */, { appName: this._name });
             }
         }
     }
@@ -1571,7 +1857,8 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * @public
      */
     const SDK_VERSION = version$2;
-    function initializeApp(options, rawConfig = {}) {
+    function initializeApp(_options, rawConfig = {}) {
+        let options = _options;
         if (typeof rawConfig !== 'object') {
             const name = rawConfig;
             rawConfig = { name };
@@ -1579,9 +1866,13 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         const config = Object.assign({ name: DEFAULT_ENTRY_NAME, automaticDataCollectionEnabled: false }, rawConfig);
         const name = config.name;
         if (typeof name !== 'string' || !name) {
-            throw ERROR_FACTORY.create("bad-app-name" /* BAD_APP_NAME */, {
+            throw ERROR_FACTORY.create("bad-app-name" /* AppError.BAD_APP_NAME */, {
                 appName: String(name)
             });
+        }
+        options || (options = getDefaultAppConfig());
+        if (!options) {
+            throw ERROR_FACTORY.create("no-options" /* AppError.NO_OPTIONS */);
         }
         const existingApp = _apps.get(name);
         if (existingApp) {
@@ -1591,7 +1882,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 return existingApp;
             }
             else {
-                throw ERROR_FACTORY.create("duplicate-app" /* DUPLICATE_APP */, { appName: name });
+                throw ERROR_FACTORY.create("duplicate-app" /* AppError.DUPLICATE_APP */, { appName: name });
             }
         }
         const container = new ComponentContainer(name);
@@ -1633,8 +1924,11 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     function getApp(name = DEFAULT_ENTRY_NAME) {
         const app = _apps.get(name);
+        if (!app && name === DEFAULT_ENTRY_NAME) {
+            return initializeApp();
+        }
         if (!app) {
-            throw ERROR_FACTORY.create("no-app" /* NO_APP */, { appName: name });
+            throw ERROR_FACTORY.create("no-app" /* AppError.NO_APP */, { appName: name });
         }
         return app;
     }
@@ -1706,7 +2000,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             logger.warn(warning.join(' '));
             return;
         }
-        _registerComponent(new Component(`${library}-version`, () => ({ library, version }), "VERSION" /* VERSION */));
+        _registerComponent(new Component(`${library}-version`, () => ({ library, version }), "VERSION" /* ComponentType.VERSION */));
     }
     /**
      * Sets log handler for all Firebase SDKs.
@@ -1717,7 +2011,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      */
     function onLog(logCallback, options) {
         if (logCallback !== null && typeof logCallback !== 'function') {
-            throw ERROR_FACTORY.create("invalid-log-argument" /* INVALID_LOG_ARGUMENT */);
+            throw ERROR_FACTORY.create("invalid-log-argument" /* AppError.INVALID_LOG_ARGUMENT */);
         }
         setUserLogHandler(logCallback, options);
     }
@@ -1769,7 +2063,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                     }
                 }
             }).catch(e => {
-                throw ERROR_FACTORY.create("storage-open" /* STORAGE_OPEN */, {
+                throw ERROR_FACTORY.create("idb-open" /* AppError.IDB_OPEN */, {
                     originalErrorMessage: e.message
                 });
             });
@@ -1777,7 +2071,6 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         return dbPromise;
     }
     async function readHeartbeatsFromIndexedDB(app) {
-        var _a;
         try {
             const db = await getDbPromise();
             return db
@@ -1786,13 +2079,18 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 .get(computeKey(app));
         }
         catch (e) {
-            throw ERROR_FACTORY.create("storage-get" /* STORAGE_GET */, {
-                originalErrorMessage: (_a = e) === null || _a === void 0 ? void 0 : _a.message
-            });
+            if (e instanceof FirebaseError) {
+                logger.warn(e.message);
+            }
+            else {
+                const idbGetError = ERROR_FACTORY.create("idb-get" /* AppError.IDB_GET */, {
+                    originalErrorMessage: e === null || e === void 0 ? void 0 : e.message
+                });
+                logger.warn(idbGetError.message);
+            }
         }
     }
     async function writeHeartbeatsToIndexedDB(app, heartbeatObject) {
-        var _a;
         try {
             const db = await getDbPromise();
             const tx = db.transaction(STORE_NAME, 'readwrite');
@@ -1801,9 +2099,15 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             return tx.done;
         }
         catch (e) {
-            throw ERROR_FACTORY.create("storage-set" /* STORAGE_WRITE */, {
-                originalErrorMessage: (_a = e) === null || _a === void 0 ? void 0 : _a.message
-            });
+            if (e instanceof FirebaseError) {
+                logger.warn(e.message);
+            }
+            else {
+                const idbGetError = ERROR_FACTORY.create("idb-set" /* AppError.IDB_WRITE */, {
+                    originalErrorMessage: e === null || e === void 0 ? void 0 : e.message
+                });
+                logger.warn(idbGetError.message);
+            }
         }
     }
     function computeKey(app) {
@@ -2059,8 +2363,8 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
      * limitations under the License.
      */
     function registerCoreComponents(variant) {
-        _registerComponent(new Component('platform-logger', container => new PlatformLoggerServiceImpl(container), "PRIVATE" /* PRIVATE */));
-        _registerComponent(new Component('heartbeat', container => new HeartbeatServiceImpl(container), "PRIVATE" /* PRIVATE */));
+        _registerComponent(new Component('platform-logger', container => new PlatformLoggerServiceImpl(container), "PRIVATE" /* ComponentType.PRIVATE */));
+        _registerComponent(new Component('heartbeat', container => new HeartbeatServiceImpl(container), "PRIVATE" /* ComponentType.PRIVATE */));
         // Register `app` package.
         registerVersion(name$o, version$1, variant);
         // BUILD_TARGET will be replaced by values like esm5, esm2017, cjs5, etc during the compilation
@@ -2078,7 +2382,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
     registerCoreComponents('');
 
     var name = "firebase";
-    var version = "9.8.4";
+    var version = "9.15.0";
 
     /**
      * @license

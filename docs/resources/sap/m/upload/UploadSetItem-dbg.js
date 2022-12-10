@@ -11,9 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/HTML",
-	"sap/ui/core/util/File",
 	"sap/m/library",
-	"sap/m/BusyIndicator",
 	"sap/m/Button",
 	"sap/m/CustomListItem",
 	"sap/m/Image",
@@ -23,8 +21,8 @@ sap.ui.define([
 	"sap/m/ProgressIndicator",
 	"sap/m/VBox",
 	"sap/m/HBox"
-], function (Log, CoreLibrary, Element, Icon, IconPool, HTML, FileUtil,
-			 MobileLibrary, BusyIndicator, Button, CustomListItem, Image, Input, Label, Link, ProgressIndicator, VBox,
+], function (Log, CoreLibrary, Element, Icon, IconPool, HTML,
+			 MobileLibrary, Button, CustomListItem, Image, Input, Label, Link, ProgressIndicator, VBox,
 			 HBox) {
 	"use strict";
 
@@ -36,12 +34,11 @@ sap.ui.define([
 	 * @class Item that represents one file to be uploaded using the {@link sap.m.upload.UploadSet} control.
 	 * @extends sap.ui.core.Element
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @constructor
 	 * @public
 	 * @since 1.63
 	 * @alias sap.m.upload.UploadSetItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel.
 	 */
 	var UploadSetItem = Element.extend("sap.m.upload.UploadSetItem", {
 		metadata: {
@@ -177,8 +174,8 @@ sap.ui.define([
 				if (this._bInEditMode) {
 					oRm.class("sapMUCEditMode");
 				}
+				oRm.attr("id", oControl.getId());
 				oRm.openEnd();
-
 				oRm.openStart("div").class("sapMUSTextInnerContainer").openEnd();
 				oRm.renderControl(oItem._bInEditMode ? oItem._getFileNameEdit() : oItem._getFileNameLink());
 				oItem._renderMarkers(oRm);
@@ -452,12 +449,24 @@ sap.ui.define([
 	 * Validates if the item is restricted, which means that it is restricted for the file type, media type, maximum file name length and maximum file size limit.
 	 *
 	 * @public
-         * @since 1.98
+	 * @since 1.98
 	 * @returns {boolean} <code>true</code> if item is restricted, <code>false</code> otherwise.
 	 *
 	 */
 	 UploadSetItem.prototype.isRestricted = function () {
 		return this._isRestricted();
+	};
+
+	/**
+	 * Returns edit state of the item.
+	 *
+	 * @public
+	 * @since 1.104.0
+	 * @returns {boolean} edit state of uploadSetItem
+	 *
+	 */
+	UploadSetItem.prototype.getEditState = function () {
+		return this._bInEditMode;
 	};
 
 	/* ============== */
@@ -483,6 +492,7 @@ sap.ui.define([
 				]
 			});
 			this._oListItem.addStyleClass("sapMUCItem");
+			this._oListItem.setTooltip(this.getTooltip_Text());
 		}
 
 		return this._oListItem;
@@ -514,7 +524,9 @@ sap.ui.define([
 				this._oIcon.addStyleClass("sapMUCItemImage sapMUCItemIcon");
 			} else {
 				this._oIcon = new Icon(this.getId() + "-icon", {
-					src: this._getIconByMimeType(this.getMediaType())
+					src: this._getIconByMimeType(this.getMediaType()),
+					decorative: false,
+					useIconTooltip: false
 				});
 				this._oIcon.addStyleClass("sapMUCItemIcon");
 			}
@@ -699,7 +711,7 @@ sap.ui.define([
 	 * Retrieves the sap.m.ListItem from the internal sap.m.List based on the ID
 	 * @param {string} listItemId The item ID used for finding the UploadSetItem
 	 * @param {sap.m.ListItemBase[]} listItems The array of list items to search in
-	 * @returns {sap.m.UploadSetItem|null} The matching UploadSetItem or null if none is found
+	 * @returns {sap.m.upload.UploadSetItem|null} The matching UploadSetItem or null if none is found
 	 * @private
 	 */
 	UploadSetItem._findById = function(listItemId, listItems) {

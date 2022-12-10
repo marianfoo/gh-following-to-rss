@@ -24,7 +24,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.SimpleType
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @public
 	 * @param {object} [oFormatOptions] formatting options. Supports the same options as {@link sap.ui.core.format.FileSizeFormat.getInstance FileSizeFormat.getInstance}

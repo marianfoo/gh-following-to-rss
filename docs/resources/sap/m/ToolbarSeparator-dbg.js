@@ -23,22 +23,25 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ToolbarSeparatorRenderer']
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.26
 	 * @alias sap.m.ToolbarSeparator
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ToolbarSeparator = Control.extend("sap.m.ToolbarSeparator", /** @lends sap.m.ToolbarSeparator.prototype */ { metadata : {
+	var ToolbarSeparator = Control.extend("sap.m.ToolbarSeparator", /** @lends sap.m.ToolbarSeparator.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		interfaces : [
-			"sap.m.IOverflowToolbarContent"
-		]
+			library : "sap.m",
+			interfaces : [
+				"sap.m.IOverflowToolbarContent"
+			]
 
-	}});
+		},
+
+		renderer: ToolbarSeparatorRenderer
+	});
 
 	/**
 	 * Classname to be used, when the control is inside <code>OverflowToolbar</code>.

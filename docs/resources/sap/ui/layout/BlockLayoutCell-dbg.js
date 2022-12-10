@@ -9,10 +9,9 @@ sap.ui.define([
 	'./library',
 	"./BlockLayoutCellRenderer",
 	"sap/base/Log",
-	"./BlockLayoutCellData",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(Control, library, BlockLayoutCellRenderer, Log, BlockLayoutCellData, jQuery) {
+	function(Control, library, BlockLayoutCellRenderer, Log, jQuery) {
 		"use strict";
 
 		/**
@@ -27,13 +26,12 @@ sap.ui.define([
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @public
 		 * @since 1.34
 		 * @alias sap.ui.layout.BlockLayoutCell
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var BlockLayoutCell = Control.extend("sap.ui.layout.BlockLayoutCell", {
 			metadata: {
@@ -99,7 +97,9 @@ sap.ui.define([
 					titleLink: {type: "sap.ui.core.Control", multiple : false}
 				},
 				designtime: "sap/ui/layout/designtime/BlockLayoutCell.designtime"
-			}
+			},
+
+			renderer: BlockLayoutCellRenderer
 		});
 
 		BlockLayoutCell.prototype.setLayoutData = function (oLayoutData) {

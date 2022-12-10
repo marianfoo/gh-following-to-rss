@@ -87,7 +87,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @alias sap.ui.model.odata.type.Boolean
 	 * @param {object} [oFormatOptions]

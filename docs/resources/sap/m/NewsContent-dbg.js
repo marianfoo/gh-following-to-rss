@@ -7,13 +7,12 @@
 sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
-	'sap/m/Text',
 	'sap/m/FormattedText',
 	'sap/ui/Device',
 	'./NewsContentRenderer',
 	"sap/ui/events/KeyCodes"
 ],
-	function(library, Control, Text, FormattedText, Device, NewsContentRenderer, KeyCodes) {
+	function(library, Control, FormattedText, Device, NewsContentRenderer, KeyCodes) {
 	"use strict";
 
 	/**
@@ -26,12 +25,11 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @since 1.34
 	 *
 	 * @public
 	 * @alias sap.m.NewsContent
-	 * @ui5-metamodel This control will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NewsContent = Control.extend("sap.m.NewsContent", /** @lends sap.m.NewsContent.prototype */ {
 		metadata : {
@@ -69,7 +67,9 @@ sap.ui.define([
 				 */
 				"press" : {}
 			}
-		}
+		},
+
+		renderer: NewsContentRenderer
 	});
 
 	/* --- Lifecycle methods --- */

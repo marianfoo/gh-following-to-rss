@@ -6,28 +6,18 @@
 
 // Provides the implementation for a MessageManager
 sap.ui.define([
-	'sap/ui/base/EventProvider',
-	'sap/ui/base/ManagedObject',
-	'sap/ui/model/message/MessageModel',
-	'./Message',
-	'./ControlMessageProcessor',
-	'sap/ui/core/message/MessageProcessor',
-	"sap/base/util/deepEqual",
+	"./ControlMessageProcessor",
+	"./Message",
 	"sap/base/Log",
-	'sap/base/util/merge'
-],
-	function(
-		EventProvider,
-		ManagedObject,
-		MessageModel,
-		Message,
-		ControlMessageProcessor,
-		MessageProcessor,
-		deepEqual,
-		Log,
-		merge
-	) {
-
+	"sap/base/util/deepEqual",
+	"sap/base/util/merge",
+	"sap/ui/base/EventProvider",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Configuration",
+	"sap/ui/core/message/MessageProcessor",
+	"sap/ui/model/message/MessageModel"
+], function (ControlMessageProcessor, Message, Log, deepEqual, merge, EventProvider, ManagedObject,
+		Configuration, MessageProcessor, MessageModel) {
 	"use strict";
 	/*global Map */
 
@@ -46,7 +36,7 @@ sap.ui.define([
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @public
 	 * @alias sap.ui.core.message.MessageManager
@@ -60,7 +50,7 @@ sap.ui.define([
 			this.mObjects = {};
 			this.mMessages = {};
 
-			var bHandleValidation = sap.ui.getCore().getConfiguration().getHandleValidation();
+			var bHandleValidation = Configuration.getHandleValidation();
 			if (bHandleValidation) {
 				sap.ui.getCore().attachValidationSuccess(bHandleValidation, this._handleSuccess, this);
 				sap.ui.getCore().attachValidationError(bHandleValidation, this._handleError, this);

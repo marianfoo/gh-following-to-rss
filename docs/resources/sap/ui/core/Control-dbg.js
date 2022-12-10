@@ -7,6 +7,7 @@
 // Provides base class sap.ui.core.Control for all controls
 sap.ui.define([
 	'./CustomStyleClassSupport',
+	'./Core',
 	'./Element',
 	'./UIArea',
 	'./RenderManager',
@@ -18,6 +19,7 @@ sap.ui.define([
 ],
 	function(
 		CustomStyleClassSupport,
+		Core,
 		Element,
 		UIArea,
 		RenderManager,
@@ -77,9 +79,8 @@ sap.ui.define([
 	 * @extends sap.ui.core.Element
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @alias sap.ui.core.Control
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Control = Element.extend("sap.ui.core.Control", /** @lends sap.ui.core.Control.prototype */ {
 
@@ -180,7 +181,7 @@ sap.ui.define([
 
 			Element.apply(this,arguments);
 			this.bOutput = this.getDomRef() != null; // whether this control has already produced output
-
+			this._bOnBeforeRenderingPhase = false; // whether the control is in the onBeforeRendering phase
 		},
 
 		renderer : null // Control has no renderer
@@ -325,6 +326,13 @@ sap.ui.define([
 	 */
 	Control.prototype.invalidate = function(oOrigin) {
 		var oUIArea;
+
+		// invalidations that happen in the onBeforeRendering hook of controls can be ignored
+		// since the rendering of the control has not yet been started
+		if ( this._bOnBeforeRenderingPhase ) {
+			return;
+		}
+
 		if ( this.bOutput && (oUIArea = this.getUIArea()) ) {
 			// if this control has been rendered before (bOutput)
 			// and if it is contained in a UIArea (!!oUIArea)
@@ -619,19 +627,18 @@ sap.ui.define([
 	 * @public
 	 */
 	Control.prototype.placeAt = function(oRef, vPosition) {
-		var oCore = sap.ui.getCore();
-		if (oCore.isInitialized()) {
+		if (Core.isInitialized()) {
 			// core already initialized, do it now
 
 			// 1st try to resolve the oRef as a Container control
 			var oContainer = oRef;
 			if (typeof oContainer === "string") {
-				oContainer = oCore.byId(oRef);
+				oContainer = Core.byId(oRef);
 			}
 			// if no container control is found use the corresponding UIArea
 			var bIsUIArea = false;
 			if (!(oContainer instanceof Element)) {
-				oContainer = oCore._createUIArea(oRef);
+				oContainer = UIArea.create(oRef);
 				bIsUIArea = true;
 			}
 
@@ -683,7 +690,7 @@ sap.ui.define([
 		} else {
 			// core not yet initialized, defer execution
 			var that = this;
-			oCore.attachInit(function () {
+			Core.attachInit(function () {
 				that.placeAt(oRef, vPosition);
 			});
 		}
@@ -785,10 +792,18 @@ sap.ui.define([
 
 	// ---- local busy indicator handling ---------------------------------------------------------------------------------------
 	var oRenderingDelegate = {
+		/**
+		 * @this {sap.ui.core.Control}
+		 * @private
+		 */
 		onBeforeRendering: function() {
 			// remove all block-layers to prevent leftover DOM elements and eventhandlers
 			fnRemoveAllBlockLayers.call(this);
 		},
+		/**
+		 * @this {sap.ui.core.Control}
+		 * @private
+		 */
 		onAfterRendering: function () {
 			if (this.getBlocked() && this.getDomRef() && !this.getDomRef("blockedLayer")) {
 				this._oBlockState = BlockLayerUtils.block(this, this.getId() + "-blockedLayer", this._sBlockSection);
@@ -1199,6 +1214,9 @@ sap.ui.define([
 	 *                            // <code>null</code> can be provided.
 	 *      editable: true,       // Boolean which describes whether the control is editable. If not relevant it must not be set or
 	 *                            // <code>null</code> can be provided.
+	 *      required: true,       // Boolean which describes whether the control is mandatory. If not relevant it must not be set or
+	 *                            // <code>null</code> can be provided. The required state might also be handled as part of the description. In this
+	 *                            // case this flag should not be used.
 	 *      children: []          // Aggregations of the given control (e.g. when the control is a layout). Primitive aggregations will be ignored.
 	 *                            // Note: Children should only be provided when it is helpful to understand the accessibility context
 	 *                            //       (e.g. a form control must not provide details of its internals (fields, labels, ...) but a

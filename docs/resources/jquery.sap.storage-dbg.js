@@ -37,7 +37,7 @@ sap.ui.define([
 	 * @param {string} [sIdPrefix] Prefix used for the Ids. If not set a default prefix is used.
 	 * @returns {jQuery.sap.storage.Storage}
 	 *
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @since 0.11.0
 	 * @namespace
 	 * @public
@@ -97,7 +97,7 @@ sap.ui.define([
 	 * should be deleted the method {@link #removeAll} should be used.
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @since 0.11.0
 	 * @public
 	 * @name jQuery.sap.storage.Storage
@@ -134,7 +134,7 @@ sap.ui.define([
 	 * sStorageKeyPrefix is the id prefix defined for the storage instance (@see jQuery.sap#storage)
 	 *
 	 * @param {string} sId Id for the state to retrieve
-	 * @return {string} the string from the storage, if the retrieval
+	 * @return {string|null} the string from the storage, if the retrieval
 	 * was successful, and null otherwise
 	 * @public
 	 * @name jQuery.sap.storage.Storage#get
@@ -201,7 +201,7 @@ sap.ui.define([
 	 * Enumeration of the storage types supported by {@link jQuery.sap.storage.Storage}
 	 * @enum {string}
 	 * @public
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @since 0.11.0
 	 */
 	jQuery.sap.storage.Type = Storage.Type;

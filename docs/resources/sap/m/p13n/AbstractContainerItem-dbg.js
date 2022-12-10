@@ -4,8 +4,8 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(['sap/ui/core/Element', "sap/ui/core/Control"],
-	function (Element, Control) {
+sap.ui.define(['sap/ui/core/Element'],
+	function (Element) {
 		"use strict";
 
 		/**
@@ -20,12 +20,12 @@ sap.ui.define(['sap/ui/core/Element', "sap/ui/core/Control"],
 		 * @extends sap.ui.core.Element
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @alias sap.m.p13n.AbstractContainerItem
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 * @experimental Since 1.96.
 	 	 * @since 1.96
 		 * @ui5-restricted

@@ -11,9 +11,10 @@ sap.ui.define([
 	'sap/ui/Device',
 	"sap/ui/events/KeyCodes",
 	"sap/m/Button",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
 ],
-	function(Control, WheelSliderRenderer, IconPool, Device, KeyCodes, Button, jQuery) {
+	function(Control, WheelSliderRenderer, IconPool, Device, KeyCodes, Button, jQuery, Configuration) {
 		"use strict";
 
 		/**
@@ -28,7 +29,7 @@ sap.ui.define([
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @public
@@ -102,7 +103,7 @@ sap.ui.define([
 			renderer: WheelSliderRenderer
 		});
 
-		var SCROLL_ANIMATION_DURATION = sap.ui.getCore().getConfiguration().getAnimation() ? 200 : 0;
+		var SCROLL_ANIMATION_DURATION = Configuration.getAnimation() ? 200 : 0;
 		var LABEL_HEIGHT = 32;
 		var ARROW_HEIGHT = 32;
 		var MAX_SCROLL_SPEED = 1.0; // px/ms

@@ -37,13 +37,12 @@ sap.ui.define([
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @public
 		 * @since 1.26.0
 		 * @alias sap.m.SelectList
-		 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 		 */
 		var SelectList = Control.extend("sap.m.SelectList", /** @lends sap.m.SelectList.prototype */ {
 			metadata: {
@@ -225,7 +224,9 @@ sap.ui.define([
 						}
 					}
 				}
-			}
+			},
+
+			renderer: SelectListRenderer
 		});
 
 		/* =========================================================== */

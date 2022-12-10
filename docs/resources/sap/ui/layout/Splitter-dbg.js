@@ -14,7 +14,8 @@ sap.ui.define([
 	'./SplitterRenderer',
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/layout/SplitterLayoutData"
+	"sap/ui/layout/SplitterLayoutData",
+	"sap/ui/core/Configuration"
 ],
 	function(
 		Control,
@@ -26,7 +27,8 @@ sap.ui.define([
 		SplitterRenderer,
 		Log,
 		jQuery,
-		SplitterLayoutData
+		SplitterLayoutData,
+		Configuration
 	) {
 	"use strict";
 
@@ -68,13 +70,12 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.22.0
 	 * @alias sap.ui.layout.Splitter
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Splitter = Control.extend("sap.ui.layout.Splitter", /** @lends sap.ui.layout.Splitter.prototype */ {
 		metadata: {
@@ -161,7 +162,7 @@ sap.ui.define([
 		// Switch resizing parameters based on orientation - this must be done to initialize the values
 		this._initOrientationProperties();
 
-		this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		this._bRtl = Configuration.getRTL();
 
 		// Create bound listener functions for keyboard event handling
 		this._keyListeners = {

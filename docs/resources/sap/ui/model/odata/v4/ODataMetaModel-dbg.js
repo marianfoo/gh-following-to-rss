@@ -157,7 +157,7 @@ sap.ui.define([
 		 * @hideconstructor
 		 * @public
 		 * @since 1.37.0
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 */
 		ODataMetaModel = MetaModel.extend("sap.ui.model.odata.v4.ODataMetaModel", {
 				constructor : constructor
@@ -696,13 +696,16 @@ sap.ui.define([
 	 *   Whether <code>&lt;edmx:Reference></code> and <code>&lt;edmx:Include></code> directives are
 	 *   supported in order to load schemas on demand from other $metadata documents and include
 	 *   them into the current service ("cross-service references").
+	 * @param {string} [sLanguage]
+	 *   The "sap-language" URL parameter
 	 */
-	function constructor(oRequestor, sUrl, vAnnotationUri, oModel, bSupportReferences) {
+	function constructor(oRequestor, sUrl, vAnnotationUri, oModel, bSupportReferences, sLanguage) {
 		MetaModel.call(this);
 		this.aAnnotationUris = vAnnotationUri && !Array.isArray(vAnnotationUri)
 			? [vAnnotationUri] : vAnnotationUri;
 		this.sDefaultBindingMode = BindingMode.OneTime;
 		this.mETags = {};
+		this.sLanguage = sLanguage;
 		this.oLastModified = new Date(0);
 		this.oMetadataPromise = null;
 		this.oModel = oModel;
@@ -1673,7 +1676,7 @@ sap.ui.define([
 	 * @param {string} sPropertyPath
 	 *   A path of a property in the OData data model, absolute or relative to <code>oContext</code>
 	 * @param {sap.ui.model.odata.v4.Context} oContext
-	 *   A context, used for building the path and for fetching key predicates
+	 *   A context, used for building the path and for determining the key predicate
 	 * @param {boolean} [bNoEditUrl]
 	 *   Whether no edit URL is required
 	 * @returns {sap.ui.base.SyncPromise}
@@ -2221,7 +2224,7 @@ sap.ui.define([
 	/**
 	 * Returns a map of entity tags for each $metadata or annotation file loaded so far.
 	 *
-	 * @returns {object}
+	 * @returns {Object<string,string|null>}
 	 *   A map which contains one entry for each $metadata or annotation file loaded so far: the key
 	 *   is the file's URL as a <code>string</code> and the value is the <code>string</code> value
 	 *   of the "ETag" response header for that file. Initially, the map is empty. If no "ETag"
@@ -2305,7 +2308,7 @@ sap.ui.define([
 	 *   Optional (binding) parameters; if they are given, <code>oContext</code> cannot be omitted
 	 * @param {object} [mParameters.scope]
 	 *   Optional scope for lookup of aliases for computed annotations (since 1.43.0)
-	 * @returns {any}
+	 * @returns {any|undefined}
 	 *   The requested metadata object if it is already available, or <code>undefined</code>
 	 *
 	 * @function
@@ -2345,6 +2348,7 @@ sap.ui.define([
 				autoExpandSelect : bAutoExpandSelect,
 				groupId : sGroupId,
 				httpHeaders : this.oModel.getHttpHeaders(),
+				metadataUrlParams : this.sLanguage && {"sap-language" : this.sLanguage},
 				operationMode : OperationMode.Server,
 				serviceUrl : sUrl,
 				sharedRequests : true,
@@ -2442,8 +2446,9 @@ sap.ui.define([
 	 * @param {string} sPropertyPath
 	 *   An absolute path to an OData property within the OData data model
 	 * @returns {string|undefined}
-	 *   The path of the property's unit or currency relative to the property's entity, or
-	 *   <code>undefined</code> in case the property has no associated unit or currency
+	 *   The path of the property's unit or currency relative to the (entity or complex) type which
+	 *   contains the original property, or <code>undefined</code> in case the property has no
+	 *   associated unit or currency
 	 *
 	 * @private
 	 */
@@ -2555,24 +2560,20 @@ sap.ui.define([
 
 		return this.requestObject("/@com.sap.vocabularies.CodeList.v1." + sTerm)
 			.then(function (oCodeList) {
-				var sCacheKey,
-					oCodeListMetaModel,
-					oCodeListModel,
-					oPromise,
-					sTypePath;
+				var sCacheKey, oCodeListMetaModel, oCodeListModel, oPromise, sTypePath, sUrl;
 
 				if (!oCodeList) {
 					return null;
 				}
 
-				sCacheKey = that.getAbsoluteServiceUrl(oCodeList.Url)
-					+ "#" + oCodeList.CollectionPath;
+				sUrl = _Helper.setLanguage(oCodeList.Url, that.sLanguage);
+				sCacheKey = that.getAbsoluteServiceUrl(sUrl) + "#" + oCodeList.CollectionPath;
 				oPromise = mCodeListUrl2Promise.get(sCacheKey);
 				if (oPromise) {
 					return oPromise;
 				}
 
-				oCodeListModel = that.getOrCreateSharedModel(oCodeList.Url, "$direct");
+				oCodeListModel = that.getOrCreateSharedModel(sUrl, "$direct");
 				oCodeListMetaModel = oCodeListModel.getMetaModel();
 				sTypePath = "/" + oCodeList.CollectionPath + "/";
 				oPromise = oCodeListMetaModel.requestObject(sTypePath).then(function (oType) {
@@ -2697,7 +2698,7 @@ sap.ui.define([
 	 *   If present, it must point to this meta model's root entity container, that is,
 	 *   <code>oDetails.context.getModel() === this</code> and
 	 *   <code>oDetails.context.getPath() === "/"</code>
-	 * @returns {Promise}
+	 * @returns {Promise<Object<string,{StandardCode: string, Text: string, UnitSpecificScale: string}>|null>}
 	 *   A promise resolving with the currency customizing which is a map from currency key to an
 	 *   object with the following properties:
 	 *   <ul>
@@ -2773,9 +2774,11 @@ sap.ui.define([
 	 * &lt;/template:with>
 	 * </pre>
 	 *
-	 * The basic idea is that every path described in "14.2.1 Attribute Target" in specification
-	 * "OData Version 4.0 Part 3: Common Schema Definition Language" is a valid absolute path
-	 * within the metadata model if a leading slash is added; for example
+	 * The basic idea is that every path described in <a href=
+	 * "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part3-csdl.html#_Attribute_Target"
+	 * >"14.2.1 Attribute Target"</a> in specification "OData Version 4.0 Part 3: Common Schema
+	 * Definition Language" is a valid absolute path within the metadata model if a leading slash is
+	 * added; for example
 	 * "/" + "MySchema.MyEntityContainer/MyEntitySet/MyComplexProperty/MyNavigationProperty". Also,
 	 * every path described in "14.5.2 Expression edm:AnnotationPath",
 	 * "14.5.11 Expression edm:NavigationPropertyPath", "14.5.12 Expression edm:Path", and
@@ -2850,8 +2853,9 @@ sap.ui.define([
 	 * "14.5.14.2 Element edm:PropertyValue" are addressed by segments like
 	 * "&lt;7.2.1 Attribute Property>@...", "$OnDelete@...", "&lt;10.2.1 Attribute Name>@..." and
 	 * "&lt;14.5.14.2.1 Attribute Property>@..." (where angle brackets denote a variable part and
-	 * sections refer to specification "OData Version 4.0 Part 3: Common Schema Definition
-	 * Language").
+	 * sections refer to specification <a href=
+	 * "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part3-csdl.htm"
+	 * >"OData Version 4.0 Part 3: Common Schema Definition Language"</a>).
 	 *
 	 * Annotations starting with "@@", for example
 	 * "@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple" or "@@.AH.isMultiple" or
@@ -3030,7 +3034,7 @@ sap.ui.define([
 	 *   If present, it must point to this meta model's root entity container, that is,
 	 *   <code>oDetails.context.getModel() === this</code> and
 	 *   <code>oDetails.context.getPath() === "/"</code>
-	 * @returns {Promise}
+	 * @returns {Promise<Object<string,{StandardCode: string, Text: string, UnitSpecificScale: string}>|null>}
 	 *   A promise resolving with the unit customizing which is a map from unit key to an object
 	 *   with the following properties:
 	 *   <ul>
@@ -3423,7 +3427,7 @@ sap.ui.define([
 	 * Returns a string representation of this object including the URL to the $metadata document of
 	 * the service.
 	 *
-	 * @return {string} A string description of this model
+	 * @returns {string} A string description of this model
 	 *
 	 * @public
 	 * @since 1.37.0

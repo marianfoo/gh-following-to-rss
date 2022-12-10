@@ -23,7 +23,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/unified/CalendarAppointment",
 	'sap/ui/core/InvisibleMessage',
-	'sap/ui/core/library'
+	'sap/ui/core/library',
+	'sap/ui/core/Configuration'
 ], function(
 	Control,
 	Device,
@@ -42,7 +43,8 @@ sap.ui.define([
 	jQuery,
 	CalendarAppointment,
 	InvisibleMessage,
-	corelibrary
+	corelibrary,
+	Configuration
 ) {
 	"use strict";
 
@@ -84,13 +86,12 @@ sap.ui.define([
 	 * @class
 	 * A calendar row with a header and appointments. The Appointments will be placed in the defined interval.
 	 * @extends sap.ui.core.Control
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.34.0
 	 * @alias sap.ui.unified.CalendarRow
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CalendarRow = Control.extend("sap.ui.unified.CalendarRow", /** @lends sap.ui.unified.CalendarRow.prototype */ { metadata : {
 
@@ -358,7 +359,7 @@ sap.ui.define([
 
 	CalendarRow.prototype.init = function(){
 
-		this._bRTL  = sap.ui.getCore().getConfiguration().getRTL();
+		this._bRTL  = Configuration.getRTL();
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 
 		this._oFormatAria = DateFormat.getDateTimeInstance({
@@ -1027,7 +1028,7 @@ sap.ui.define([
 	function _getLocale(){
 
 		if (!this._sLocale) {
-			this._sLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
+			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
 		}
 
 		return this._sLocale;

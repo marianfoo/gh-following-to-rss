@@ -25,7 +25,7 @@ function (library, SinglePlanningCalendarView) {
 	 * @extends sap.m.SinglePlanningCalendarView
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public

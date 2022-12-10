@@ -63,40 +63,43 @@ sap.ui.define([
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @public
 		 * @since 1.34
 		 * @alias sap.ui.layout.BlockLayout
 		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/block-layout/ Block Layout}
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var BlockLayout = Control.extend("sap.ui.layout.BlockLayout", { metadata : {
+		var BlockLayout = Control.extend("sap.ui.layout.BlockLayout", {
+			metadata : {
 
-			library : "sap.ui.layout",
-			properties : {
-				/**
-				 * Determines the background used for the Layout
-				 * @since 1.42
-				 */
-				background: { type: "sap.ui.layout.BlockBackgroundType", group: "Appearance", defaultValue: "Default" },
+				library : "sap.ui.layout",
+				properties : {
+					/**
+					 * Determines the background used for the Layout
+					 * @since 1.42
+					 */
+					background: { type: "sap.ui.layout.BlockBackgroundType", group: "Appearance", defaultValue: "Default" },
 
-				/**
-				 * Keeps the font-size of the contents as is, independent from the screen size.
-				 * @since 1.52
-				 */
-				keepFontSize: { type: "boolean", group:"Behavior", defaultValue: false}
+					/**
+					 * Keeps the font-size of the contents as is, independent from the screen size.
+					 * @since 1.52
+					 */
+					keepFontSize: { type: "boolean", group:"Behavior", defaultValue: false}
+				},
+				defaultAggregation : "content",
+				aggregations : {
+					/**
+					 * The Rows to be included in the content of the control
+					 */
+					content: { type: "sap.ui.layout.BlockLayoutRow", multiple: true }
+				},
+				designtime: "sap/ui/layout/designtime/BlockLayout.designtime"
 			},
-			defaultAggregation : "content",
-			aggregations : {
-				/**
-				 * The Rows to be included in the content of the control
-				 */
-				content: { type: "sap.ui.layout.BlockLayoutRow", multiple: true }
-			},
-			designtime: "sap/ui/layout/designtime/BlockLayout.designtime"
-		}});
+
+			renderer: BlockLayoutRenderer
+		});
 
 		/**
 		 * Breakpoints used for the parent container of the Layout, to determine the inner representation of the rows.

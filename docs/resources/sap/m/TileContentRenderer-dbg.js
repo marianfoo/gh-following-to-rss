@@ -4,8 +4,8 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile", "sap/ui/core/library"],
-	function(library, encodeCSS, GenericTile, Core) {
+sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile"],
+	function(library, encodeCSS, GenericTile) {
 	"use strict";
 
 	var GenericTileMode = library.GenericTileMode,
@@ -111,7 +111,7 @@ sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile", 
 			sPriorityText = oControl.getPriorityText(),
 			bRenderPriority = bIsActionMode && oPriority && oPriority !== Priority.None && sPriorityText,
 			sPriority = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TEXT_CONTENT_PRIORITY"),
-			iMaxLines = (oPriority && sPriorityText) ? 1 : 3; //if the Priority is present then the text should have 1 line else 3 lines in ActionMode
+			iMaxLines = (oPriority !== Priority.None && sPriorityText) ? 1 : 3; //if the Priority is present then the text should have 1 line else 3 lines in ActionMode
 
 		if (oContent) {
 			if (bRenderPriority) {

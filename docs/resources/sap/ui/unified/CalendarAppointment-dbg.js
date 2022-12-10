@@ -5,8 +5,8 @@
  */
 
 // Provides control sap.ui.unified.CalendarAppointment.
-sap.ui.define(['./DateTypeRange', 'sap/ui/core/format/DateFormat', 'sap/ui/core/format/NumberFormat', 'sap/ui/core/format/TimezoneUtil', 'sap/ui/core/Core', './calendar/CalendarUtils', './library', "sap/base/Log"],
-	function(DateTypeRange, DateFormat, NumberFormat, TimezoneUtil, Core, CalendarUtils, library, Log) {
+sap.ui.define(['./DateTypeRange', 'sap/ui/core/format/DateFormat', 'sap/ui/core/format/NumberFormat', 'sap/ui/core/format/TimezoneUtil', 'sap/ui/core/Core', './calendar/CalendarUtils', './library', "sap/base/Log", "sap/ui/core/Configuration"],
+	function(DateTypeRange, DateFormat, NumberFormat, TimezoneUtil, Core, CalendarUtils, library, Log, Configuration) {
 	"use strict";
 
 	/**
@@ -21,13 +21,12 @@ sap.ui.define(['./DateTypeRange', 'sap/ui/core/format/DateFormat', 'sap/ui/core/
 	 *
 	 * Applications could inherit from this element to add own fields.
 	 * @extends sap.ui.unified.DateTypeRange
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.34.0
 	 * @alias sap.ui.unified.CalendarAppointment
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CalendarAppointment = DateTypeRange.extend("sap.ui.unified.CalendarAppointment", /** @lends sap.ui.unified.CalendarAppointment.prototype */ { metadata : {
 
@@ -135,10 +134,10 @@ sap.ui.define(['./DateTypeRange', 'sap/ui/core/format/DateFormat', 'sap/ui/core/
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 			oHourFormat = NumberFormat.getUnitInstance({
 				allowedUnits: ["duration-hour"]
-			}, sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()),
+			}, Configuration.getFormatSettings().getFormatLocale()),
 			oMinuteFormat = NumberFormat.getUnitInstance({
 				allowedUnits: ["duration-minute"]
-			}, sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()),
+			}, Configuration.getFormatSettings().getFormatLocale()),
 			iHour, iMinute, sHour, sMinute;
 
 		//have no intersection with the given day

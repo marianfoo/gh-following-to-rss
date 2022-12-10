@@ -4,8 +4,8 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(["sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/core/mvc/View", "sap/ui/core/Component"],
-	function(Log, ObjectPath, View, Component) {
+sap.ui.define(["sap/base/Log", "sap/ui/core/mvc/View", "sap/ui/core/Component"],
+	function(Log, View, Component) {
 
 	"use strict";
 

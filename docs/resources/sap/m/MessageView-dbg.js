@@ -112,7 +112,7 @@ sap.ui.define([
 	 * The responsiveness of the <code>MessageView</code> is determined by the container in which it is embedded. For that reason the control could not be visualized if the
 	 * container’s sizes are not defined.
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @extends sap.ui.core.Control
 	 * @constructor
@@ -120,7 +120,6 @@ sap.ui.define([
 	 * @since 1.46
 	 * @alias sap.m.MessageView
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/message-view/ Message View}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MessageView = Control.extend("sap.m.MessageView", /** @lends sap.m.MessageView.prototype */ {
 		metadata: {
@@ -135,7 +134,7 @@ sap.ui.define([
 				 * @param {function} config.promise.resolve Method to resolve promise
 				 * @param {function} config.promise.reject Method to reject promise
 				 */
-				asyncDescriptionHandler: {type: "any", group: "Behavior", defaultValue: null},
+				asyncDescriptionHandler: {type: "function", group: "Behavior", defaultValue: null},
 
 				/**
 				 * Callback function for resolving a promise after a link has been asynchronously validated inside this function.
@@ -147,7 +146,7 @@ sap.ui.define([
 				 * @param {function} config.promise.resolve Method to resolve promise
 				 * @param {function} config.promise.reject Method to reject promise
 				 */
-				asyncURLHandler: {type: "any", group: "Behavior", defaultValue: null},
+				asyncURLHandler: {type: "function", group: "Behavior", defaultValue: null},
 
 				/**
 				 * Defines whether the MessageItems are grouped or not.
@@ -240,7 +239,9 @@ sap.ui.define([
 					}
 				}
 			}
-		}
+		},
+
+		renderer: MessageViewRenderer
 	});
 
 	var CSS_CLASS = "sapMMsgView";

@@ -16,9 +16,8 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/m/library",
 	"sap/m/OverflowToolbarLayoutData",
-	"sap/ui/core/IconPool",
-	"sap/ui/core/InvisibleText"
-], function(BaseObject, library, OverflowToolbarLayoutData, IconPool, InvisibleText) {
+	"sap/ui/core/IconPool"
+], function(BaseObject, library, OverflowToolbarLayoutData, IconPool) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -36,11 +35,10 @@ sap.ui.define([
 	 * Constructor for an sap.m.semantic.SemanticConfiguration.
 	 *
 	 * @class Defines the visual properties and positioning for each supported semantic type
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @private
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.SemanticConfiguration
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	var SemanticConfiguration = BaseObject.extend("sap.m.semantic.SemanticConfiguration", {

@@ -28,13 +28,13 @@ sap.ui.define([
 	 * @namespace
 	 * @alias sap.ui.unified
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @since 1.28
 	 * @public
 	 */
 	var thisLib = sap.ui.getCore().initLibrary({
 		name : "sap.ui.unified",
-		version: "1.103.0",
+		version: "1.108.1",
 		dependencies : ["sap.ui.core"],
 		designtime: "sap/ui/unified/designtime/library.designtime",
 		types: [
@@ -107,7 +107,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.13
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.CalendarDayType = {
 
@@ -260,7 +259,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.50
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.StandardCalendarLegendItem = {
 		/**
@@ -294,7 +292,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.34.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.CalendarIntervalType = {
 
@@ -343,7 +340,6 @@ sap.ui.define([
 	 * @alias sap.ui.unified.CalendarAppointmentHeight
 	 * @public
 	 * @since 1.80.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.CalendarAppointmentHeight = {
 
@@ -381,7 +377,6 @@ sap.ui.define([
 	 * @public
 	 * @experimental Since 1.81.0
 	 * @since 1.81.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.CalendarAppointmentRoundWidth = {
 
@@ -405,7 +400,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.48.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.GroupAppointmentsMode = {
 
@@ -430,7 +424,6 @@ sap.ui.define([
 	 * @alias sap.ui.unified.FileUploaderHttpRequestMethod
 	 * @public
 	 * @since 1.81.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.FileUploaderHttpRequestMethod = FileUploaderHttpRequestMethod;
 
@@ -440,7 +433,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.40.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.CalendarAppointmentVisualization = {
 
@@ -466,7 +458,6 @@ sap.ui.define([
 	 * @since 1.16.0
 	 * @experimental Since version 1.16.0.
 	 * API is not yet finished and might change completely
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ContentSwitcherAnimation = {
 
@@ -519,7 +510,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ColorPickerMode = {
 
@@ -550,7 +540,6 @@ sap.ui.define([
 	 * @name sap.ui.unified.IProcessableBlobs
 	 * @interface
 	 * @public
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**

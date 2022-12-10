@@ -6,12 +6,12 @@
 
 sap.ui.define([
 	"sap/m/table/columnmenu/QuickActionBase",
-	"sap/m/HBox",
-	"sap/m/ToggleButton"
+	"sap/m/ToggleButton",
+	"sap/m/library"
 ], function (
 	QuickActionBase,
-	HBox,
-	ToggleButton
+	ToggleButton,
+	library
 ) {
 	"use strict";
 
@@ -27,7 +27,7 @@ sap.ui.define([
 	 * @extends sap.m.table.columnmenu.QuickActionBase
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @private
 	 * @experimental
@@ -127,10 +127,34 @@ sap.ui.define([
 		}
 	};
 
+	QuickGroup.prototype._updateContent = function() {
+		var aItems = this.getItems();
+		var aContent = this.getContent();
+		var oItem, oButton;
+
+		for (var i = 0; i < aItems.length; i++) {
+			oItem = aItems[i];
+			oButton = aContent[i];
+			if (!oButton) {
+				oButton = new ToggleButton({press: [oItem, this.onChange, this]});
+			}
+			oButton.setText(oItem.getLabel());
+			oButton.setPressed(oItem.getGrouped());
+		}
+
+		for (var i = aItems.length; i < aContent.length; i++) {
+			aContent[i].destroy();
+		}
+	};
+
 	QuickGroup.prototype.onChange = function(oEvent, oItem) {
 		oItem.setProperty("grouped", oEvent.getParameters().pressed, true);
 		this.fireChange({item: oItem});
 		this.getMenu().close();
+	};
+
+	QuickGroup.prototype.getCategory = function() {
+		return library.table.columnmenu.Category.Group;
 	};
 
 	return QuickGroup;

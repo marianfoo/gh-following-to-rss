@@ -42,7 +42,7 @@ sap.ui.define([
 		 * @mixes sap.ui.model.odata.v4.ODataBinding
 		 * @public
 		 * @since 1.37.0
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 * @borrows sap.ui.model.odata.v4.ODataBinding#getGroupId as #getGroupId
 		 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
 		 * @borrows sap.ui.model.odata.v4.ODataBinding#getUpdateGroupId as #getUpdateGroupId
@@ -228,6 +228,9 @@ sap.ui.define([
 	 *   The change reason for the change event
 	 * @param {string} [sGroupId=getGroupId()]
 	 *   The group ID to be used for the read.
+	 * @param {boolean} [bPreventBubbling]
+	 *   Whether the dataRequested and dataReceived events related to the refresh must not be
+	 *   bubbled up to the model
 	 * @param {any} [vValue]
 	 *   The new value obtained from the cache, see {@link #onChange}
 	 * @returns {sap.ui.base.SyncPromise}
@@ -241,7 +244,7 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.odata.v4.ODataBinding#checkUpdateInternal
 	ODataPropertyBinding.prototype.checkUpdateInternal = function (bForceUpdate, sChangeReason,
-			sGroupId, vValue) {
+			sGroupId, bPreventBubbling, vValue) {
 		var bDataRequested = false,
 			iHashHash = this.sPath.indexOf("##"),
 			bIsMeta = iHashHash >= 0,
@@ -278,7 +281,7 @@ sap.ui.define([
 					return oCache.fetchValue(that.lockGroup(sGroupId || that.getGroupId()),
 							/*sPath*/undefined, function () {
 								bDataRequested = true;
-								that.fireDataRequested();
+								that.fireDataRequested(bPreventBubbling);
 							}, that)
 						.then(function (vResult) {
 							that.assertSameCache(oCache);
@@ -352,7 +355,7 @@ sap.ui.define([
 				that.checkDataState();
 			}
 			if (bDataRequested) {
-				that.fireDataReceived(mParametersForDataReceived);
+				that.fireDataReceived(mParametersForDataReceived, bPreventBubbling);
 			}
 			if (mParametersForDataReceived.error) {
 				throw mParametersForDataReceived.error;
@@ -365,7 +368,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataPropertyBinding.prototype.deregisterChange = function () {
+	ODataPropertyBinding.prototype.deregisterChangeListener = function () {
 		var that = this;
 
 		this.withCache(function (_oCache, sPath, oBinding) {
@@ -383,7 +386,7 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#destroy
 	ODataPropertyBinding.prototype.destroy = function () {
-		this.deregisterChange();
+		this.deregisterChangeListener();
 		this.oModel.bindingDestroyed(this);
 		this.oCheckUpdateCallToken = undefined;
 		this.mQueryOptions = undefined;
@@ -493,11 +496,13 @@ sap.ui.define([
 	 *
 	 * @param {any} vValue
 	 *   The new value
+	 * @param {boolean} [bForceUpdate]
+	 *   Update the bound control even if no data have been changed.
 	 *
 	 * @private
 	 */
-	ODataPropertyBinding.prototype.onChange = function (vValue) {
-		this.checkUpdateInternal(undefined, undefined, undefined, vValue)
+	ODataPropertyBinding.prototype.onChange = function (vValue, bForceUpdate) {
+		this.checkUpdateInternal(bForceUpdate, undefined, undefined, false, vValue)
 			.catch(this.oModel.getReporter());
 	};
 
@@ -529,7 +534,8 @@ sap.ui.define([
 			}
 
 			if (bCheckUpdate) {
-				return that.checkUpdateInternal(undefined, ChangeReason.Refresh, sGroupId);
+				return that.checkUpdateInternal(undefined, ChangeReason.Refresh, sGroupId,
+					/*bPreventBubbling*/bKeepCacheOnError);
 			}
 		});
 	};
@@ -537,7 +543,7 @@ sap.ui.define([
 	/**
 	 * Requests the value of the property binding.
 	 *
-	 * @returns {Promise}
+	 * @returns {Promise<any|undefined>}
 	 *   A promise resolving with the resulting value or <code>undefined</code> if it could not be
 	 *   determined, or rejecting in case of an error
 	 *
@@ -672,7 +678,7 @@ sap.ui.define([
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
 				this.checkSuspended(true);
-				this.deregisterChange();
+				this.deregisterChangeListener();
 			}
 			this.oContext = oContext;
 			this.sResumeChangeReason = undefined;
@@ -740,11 +746,11 @@ sap.ui.define([
 	 */
 	ODataPropertyBinding.prototype.setValue = function (vValue, sGroupId) {
 		var oGroupLock,
+			sResolvedPath = this.getResolvedPath(),
 			that = this;
 
 		function reportError(oError) {
-			that.oModel.reportError("Failed to update path " + that.getResolvedPath(), sClassName,
-				oError);
+			that.oModel.reportError("Failed to update path " + sResolvedPath, sClassName, oError);
 
 			return oError;
 		}
@@ -754,7 +760,7 @@ sap.ui.define([
 			throw reportError(new Error("Must not specify a group ID (" + sGroupId
 				+ ") with $$noPatch"));
 		}
-		this.oModel.checkGroupId(sGroupId);
+		_Helper.checkGroupId(sGroupId);
 		if (typeof vValue === "function" || (vValue && typeof vValue === "object")) {
 			throw reportError(new Error("Not a primitive value"));
 		}

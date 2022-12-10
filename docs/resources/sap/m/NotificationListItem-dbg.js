@@ -64,13 +64,12 @@ function(
 	 * @extends sap.m.NotificationListBase
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.34
 	 * @alias sap.m.NotificationListItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NotificationListItem = NotificationListBase.extend('sap.m.NotificationListItem', /** @lends sap.m.NotificationListItem.prototype */ {
 		metadata: {
@@ -116,7 +115,9 @@ function(
 				 */
 				_showMoreButton: {type: 'sap.m.Link', multiple: false, visibility: "hidden"}
 			}
-		}
+		},
+
+		renderer: NotificationListItemRenderer
 	});
 
 	/**
@@ -144,15 +145,6 @@ function(
 
 			return this._avatar;
 		}
-	};
-
-	/**
-	 * Handles the internal event onBeforeRendering.
-	 *
-	 * @private
-	 */
-	NotificationListItem.prototype.onBeforeRendering = function() {
-		NotificationListBase.prototype.onBeforeRendering.call(this);
 	};
 
 	NotificationListItem.prototype.onAfterRendering = function() {
@@ -244,7 +236,8 @@ function(
 				press: function () {
 					var truncate = !this.getTruncate();
 					this._getShowMoreButton().setText(truncate ? EXPAND_TEXT : COLLAPSE_TEXT);
-					this.setTruncate(truncate);
+					this.setProperty("truncate", truncate, true);
+					this.$().find(".sapMNLITitleText, .sapMNLIDescription").toggleClass("sapMNLIItemTextLineClamp", truncate);
 				}.bind(this)
 			});
 

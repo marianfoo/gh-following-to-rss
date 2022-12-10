@@ -23,11 +23,10 @@ sap.ui.define(['./Element', "sap/ui/thirdparty/jquery", './library'],
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @public
 	 * @alias sap.ui.core.LayoutData
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var LayoutData = Element.extend("sap.ui.core.LayoutData", /** @lends sap.ui.core.LayoutData.prototype */ { metadata : {
 

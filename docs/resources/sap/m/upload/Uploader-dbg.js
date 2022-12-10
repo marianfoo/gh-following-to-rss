@@ -10,10 +10,9 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/util/File",
 	"sap/ui/Device",
-	"sap/ui/core/Item",
 	"sap/m/upload/UploadSetItem",
 	"sap/m/upload/UploaderHttpRequestMethod"
-], function (Log, MobileLibrary, Element, FileUtil, Device, HeaderField, UploadSetItem, UploaderHttpRequestMethod) {
+], function (Log, MobileLibrary, Element, FileUtil, Device, UploadSetItem, UploaderHttpRequestMethod) {
 	"use strict";
 
 	/**
@@ -28,7 +27,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.63
 	 * @alias sap.m.upload.Uploader
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Uploader = Element.extend("sap.m.upload.Uploader", {
 		metadata: {

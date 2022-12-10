@@ -4,8 +4,8 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define([],
-	function () {
+sap.ui.define(["sap/base/Log"],
+	function (Log) {
 		"use strict";
 
 		/**
@@ -20,6 +20,9 @@ sap.ui.define([],
 		 */
 		var CacheManagerNOP = {
 			name: "CacheManagerNOP",
+			logResolved: function(sFnName) {
+				Log.debug("Cache Manager is not supported on this environment.");
+			},
 			set: function () {
 				return Promise.resolve();
 			},

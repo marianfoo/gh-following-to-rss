@@ -10,15 +10,16 @@ sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/base/util/ObjectPath",
 	"sap/base/assert",
-	"sap/base/util/extend"
-], function(Log, isPlainObject, ObjectPath, assert, extend) {
+	"sap/base/util/extend",
+	"sap/ui/core/Configuration"
+], function(Log, isPlainObject, ObjectPath, assert, extend, Configuration) {
 	"use strict";
 
 	/**
 	 * @classdesc Base Class for a Renderer.
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @namespace
 	 * @public
 	 * @alias sap.ui.core.Renderer
@@ -237,7 +238,7 @@ sap.ui.define([
 		var TextDirection = sapUiCore.TextDirection;
 
 		var sTextAlign = "",
-			bRTL = sap.ui.getCore().getConfiguration().getRTL();
+			bRTL = Configuration.getRTL();
 
 		switch (oTextAlign) {
 		case TextAlign.End:

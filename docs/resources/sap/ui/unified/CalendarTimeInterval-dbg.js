@@ -25,7 +25,6 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/Calendar"
 ], function(
@@ -48,7 +47,6 @@ sap.ui.define([
 	containsOrEquals,
 	deepEqual,
 	Log,
-	jQuery,
 	DateRange,
 	Calendar
 ) {
@@ -68,13 +66,12 @@ sap.ui.define([
 	 * @class
 	 * Calendar with granularity of time items displayed in one line.
 	 * @extends sap.ui.core.Control
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.32.0
 	 * @alias sap.ui.unified.CalendarTimeInterval
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CalendarTimeInterval = Control.extend("sap.ui.unified.CalendarTimeInterval", /** @lends sap.ui.unified.CalendarTimeInterval.prototype */ { metadata : {
 
@@ -593,7 +590,6 @@ sap.ui.define([
 	 * @param {object} oDate JavaScript date object for focused item.
 	 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	CalendarTimeInterval.prototype.focusDate = function(oDate){
 
@@ -621,7 +617,6 @@ sap.ui.define([
 	 * @param {object} oDate JavaScript date object for displayed item.
 	 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	CalendarTimeInterval.prototype.displayDate = function(oDate){
 

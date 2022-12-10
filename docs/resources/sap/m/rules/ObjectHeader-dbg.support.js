@@ -33,7 +33,7 @@ sap.ui.define(["sap/ui/support/library"],
 			resolution: "Use markers aggregation",
 			resolutionurls: [{
 				text: "API Reference: sap.m.ObjectHeader",
-				href: "https://openui5.hana.ondemand.com/api/sap.m.ObjectHeader"
+				href: "https://sdk.openui5.org/api/sap.m.ObjectHeader"
 			}],
 			check: function (oIssueManager, oCoreFacade, oScope) {
 				oScope.getElementsByClassName("sap.m.ObjectHeader")
@@ -70,7 +70,7 @@ sap.ui.define(["sap/ui/support/library"],
 			resolution: "Use statuses aggregation",
 			resolutionurls: [{
 				text: "API Reference: sap.m.ObjectHeader",
-				href: "https://openui5.hana.ondemand.com/api/sap.m.ObjectHeader"
+				href: "https://sdk.openui5.org/api/sap.m.ObjectHeader"
 			}],
 			check: function (oIssueManager, oCoreFacade, oScope) {
 				oScope.getElementsByClassName("sap.m.ObjectHeader")
@@ -106,7 +106,7 @@ sap.ui.define(["sap/ui/support/library"],
 			resolution: "Change the responsive property to false",
 			resolutionurls: [{
 				text: "API Reference: sap.m.ObjectHeader",
-				href: "https://openui5.hana.ondemand.com/api/sap.m.ObjectHeader"
+				href: "https://sdk.openui5.org/api/sap.m.ObjectHeader"
 			}],
 			check: function (oIssueManager, oCoreFacade, oScope) {
 				oScope.getElementsByClassName("sap.m.ObjectHeader")
@@ -142,7 +142,7 @@ sap.ui.define(["sap/ui/support/library"],
 			resolution: "Change the responsive property to true",
 			resolutionurls: [{
 				text: "API Reference: sap.m.ObjectHeader",
-				href: "https://openui5.hana.ondemand.com/api/sap.m.ObjectHeader"
+				href: "https://sdk.openui5.org/api/sap.m.ObjectHeader"
 			}],
 			check: function (oIssueManager, oCoreFacade, oScope) {
 				oScope.getElementsByClassName("sap.m.ObjectHeader")
@@ -178,7 +178,7 @@ sap.ui.define(["sap/ui/support/library"],
 			resolution: "Change the responsive property to false",
 			resolutionurls: [{
 				text: "API Reference: sap.m.ObjectHeader",
-				href: "https://openui5.hana.ondemand.com/api/sap.m.ObjectHeader"
+				href: "https://sdk.openui5.org/api/sap.m.ObjectHeader"
 			}],
 			check: function (oIssueManager, oCoreFacade, oScope) {
 				oScope.getElementsByClassName("sap.m.ObjectHeader")
@@ -214,7 +214,7 @@ sap.ui.define(["sap/ui/support/library"],
 			resolution: "Change the responsive property to true",
 			resolutionurls: [{
 				text: "API Reference: sap.m.ObjectHeader",
-				href: "https://openui5.hana.ondemand.com/api/sap.m.ObjectHeader"
+				href: "https://sdk.openui5.org/api/sap.m.ObjectHeader"
 			}],
 			check: function (oIssueManager, oCoreFacade, oScope) {
 				oScope.getElementsByClassName("sap.m.ObjectHeader")

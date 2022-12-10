@@ -6,11 +6,12 @@
 
 // Provides control sap.ui.core.InvisibleText.
 sap.ui.define([
-	"./Control",
 	"sap/base/Log",
 	"sap/base/security/encodeXML",
+	"./Configuration",
+	"./Control",
 	"./library" // ensure loading of CSS
-], function(Control, Log, encodeXML) {
+], function(Log, encodeXML, Configuration, Control) {
 	"use strict";
 
 
@@ -29,12 +30,11 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @public
 	 * @since 1.27.0
 	 * @alias sap.ui.core.InvisibleText
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var InvisibleText = Control.extend("sap.ui.core.InvisibleText", /** @lends sap.ui.core.InvisibleText.prototype */ {
 		metadata : {
@@ -180,7 +180,7 @@ sap.ui.define([
 	InvisibleText.getStaticId = function(sLibrary, sTextKey) {
 		var sTextId = "", sKey, oBundle, oText;
 
-		if ( sap.ui.getCore().getConfiguration().getAccessibility() && sTextKey ) {
+		if ( Configuration.getAccessibility() && sTextKey ) {
 			// Note: identify by lib and text key, not by text to avoid conflicts after a language change
 			sKey = sLibrary + "|" + sTextKey;
 			sTextId = mTextIds[sKey];
@@ -189,6 +189,9 @@ sap.ui.define([
 				oText = new InvisibleText().setText( oBundle.getText(sTextKey) );
 				oText.toStatic();
 				sTextId = mTextIds[sKey] = oText.getId();
+				// A potential component-owner ID is unwanted for InvisibleTexts since its DOM is cached
+				// for infinity, its lifecycle needs to be decoupled from any currently active owner component.
+				delete oText._sOwnerId;
 			}
 		}
 

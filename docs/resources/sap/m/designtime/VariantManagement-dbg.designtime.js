@@ -1,5 +1,5 @@
-/*
- * ! OpenUI5
+/*!
+ * OpenUI5
  * (c) Copyright 2009-2022 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
@@ -13,16 +13,43 @@ sap.ui.define([
 	return {
 		annotations: {},
 		properties: {
-			showSetAsDefault: {
+			supportDefault: {
+				ignore: false
+			},
+			supportFavorites: {
+				ignore: false
+			},
+			supportApplyAutomatically: {
+				ignore: false
+			},
+			supportPublic: {
+				ignore: false
+			},
+			supportContexts: {
+				ignore: false
+			},
+			selectedKey: {
+				ignore: false
+			},
+			defaultKey: {
+				ignore: false
+			},
+			showSaveAs: {
+				ignore: false
+			},
+			creationAllowed: {
+				ignore: false
+			},
+			showFooter: {
+				ignore: false
+			},
+			modified: {
+				ignore: false
+			},
+			popoverTitle: {
 				ignore: false
 			},
 			inErrorState: {
-				ignore: false
-			},
-			editable: {
-				ignore: false
-			},
-			modelName: {
 				ignore: false
 			},
 			executeOnSelectionForStandardDefault: {
@@ -30,27 +57,10 @@ sap.ui.define([
 			},
 			displayTextForExecuteOnSelectionForStandardVariant: {
 				ignore: false
+			},
+			level: {
+				ignore: false
 			}
-		},
-		actions: {
-//			controlVariant: function(oVariantManagement) {
-//				var oAppComponent = flUtils.getAppComponentForControl(oVariantManagement);
-//				var sControlId = oVariantManagement.getId();
-//				var oModel = oAppComponent.getModel(flUtils.VARIANT_MODEL_NAME);
-//				var sVariantManagementReference = oAppComponent.getLocalId(sControlId) || sControlId;
-//				return {
-//					validators: [
-//						"noEmptyText",
-//						{
-//							validatorFunction: function(sNewText) {
-//								var iDuplicateCount = oModel._getVariantTitleCount(sNewText, sVariantManagementReference) || 0;
-//								return iDuplicateCount === 0;
-//							},
-//							errorMessage: sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl").getText("VARIANT_MANAGEMENT_ERROR_DUPLICATE")
-//						}
-//					]
-//				};
-//			}
 		}
 	};
 });

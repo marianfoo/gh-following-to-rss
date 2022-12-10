@@ -1,17 +1,15 @@
-/*
- * ! OpenUI5
+/*!
+ * OpenUI5
  * (c) Copyright 2009-2022 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 sap.ui.define([
-	'sap/ui/core/Core',
 	'./ColumnPopoverItem',
 	'sap/m/ToggleButton',
 	'sap/m/Button',
 	'sap/m/StandardListItem',
 	'sap/m/List'],
 	function(
-		Core,
 		ColumnPopoverItem,
 		ToggleButton,
 		Button,
@@ -29,7 +27,7 @@ sap.ui.define([
 	 * @extends sap.m.ColumnPopoverItem
 	 *
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 *
 	 * @constructor
 	 * @since 1.86

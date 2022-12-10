@@ -8,20 +8,22 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Core",
 	"sap/ui/core/theming/Parameters",
-	"sap/m/IllustratedMessage"
-], function(MLibrary, Core, ThemeParameters, IllustratedMessage) {
+	"sap/m/IllustratedMessage",
+	"sap/m/Button"
+], function(MLibrary, Core, ThemeParameters, IllustratedMessage, Button) {
 	"use strict";
 	/*global Intl*/
 
 	/**
 	 * Provides utility functions for tables.
+	 *
 	 * @namespace
 	 * @alias module:sap/m/table/Util
 	 * @author SAP SE
-	 * @version 1.103.0
+	 * @version 1.108.1
 	 * @since 1.96.0
 	 * @private
-	 * @experimental Since 1.96.0. This class is experimental and the API might be changed in future.
+	 * @ui5-restricted sap.fe, sap.ui.mdc, sap.ui.comp
 	 */
 	var Util = {};
 
@@ -103,7 +105,7 @@ sap.ui.define([
 
 				var fSampleWidth = Util.measureText("A".repeat(iMaxLength));
 				if (iMaxLength < iMaxWidth || iMaxWidth < 10) {
-					return Math.min(fSampleWidth, iMaxWidth);
+					return applySettings(fSampleWidth);
 				}
 
 				var fWidth = Math.log(fSampleWidth - iMaxWidth * 0.16) / Math.log(iMaxWidth / 3) * (iMaxWidth / 2) * Math.pow(iMaxWidth / 19, 1 / fSampleWidth);
@@ -147,7 +149,7 @@ sap.ui.define([
 	 * Calculates the width of the column header width according to calculated cell content and min/max width restrictions.
 	 *
 	 * @param {string} sHeader The header text
-	 * @param {float} fContentWidth The calculated width of the cell in rem
+	 * @param {float} [fContentWidth] The calculated width of the cell in rem
 	 * @param {int} [iMaxWidth=19] The maximum header width in rem
 	 * @param {int} [iMinWidth=2] The minimum header width in rem
 	 * @returns {float} The calculated header width in rem
@@ -174,6 +176,9 @@ sap.ui.define([
 			}
 			if (iMinWidth > iHeaderLength) {
 				return iMinWidth;
+			}
+			if (!fContentWidth) {
+				return Util.measureText(sHeader, fnGetHeaderFont());
 			}
 
 			fContentWidth = Math.max(fContentWidth, iMinWidth);
@@ -203,6 +208,8 @@ sap.ui.define([
 	 * @param {int} [mSettings.maxWidth=19] The maximum content width of the field in rem
 	 * @param {int} [mSettings.padding=1] The sum of column padding and border in rem
 	 * @param {float} [mSettings.gap=0] The additional content width in rem
+	 * @param {boolean} [mSettings.headerGap=false] Whether icons in the header should be taken into account
+	 * @param {boolean} [mSettings.truncateLabel=true] Whether the header of the column can be truncated or not
 	 * @param {boolean} [mSettings.verticalArrangement=false] Whether the fields are arranged vertically
 	 * @param {int} [mSettings.defaultWidth=8] The default column content width when type check fails
 	 * @returns {string} The calculated width of the column
@@ -219,9 +226,9 @@ sap.ui.define([
 			minWidth: 2,
 			maxWidth: 19,
 			defaultWidth: 8,
+			truncateLabel: true,
 			padding: 1,
-			gap: 0,
-			verticalArrangement: false
+			gap: 0
 		}, mSettings);
 
 		var fHeaderWidth = 0;
@@ -246,7 +253,8 @@ sap.ui.define([
 		}, 0);
 
 		if (sHeader) {
-			fHeaderWidth = Util.calcHeaderWidth(sHeader, fContentWidth, iMaxWidth, iMinWidth);
+			fHeaderWidth = Util.calcHeaderWidth(sHeader, (mSettings.truncateLabel ? fContentWidth : 0), iMaxWidth, iMinWidth);
+			fHeaderWidth += mSettings.headerGap ? (8 /* padding */ + 14 /* icon width */) / fBaseFontSize : 0;
 		}
 
 		fContentWidth = Math.max(iMinWidth, fContentWidth, fHeaderWidth);
@@ -260,16 +268,27 @@ sap.ui.define([
 	 * Returns an instance of <code>sap.m.IllustratedMessage</code> in case there are no visible columns in the table.
 	 *
 	 * @returns {sap.m.IllustratedMessage} The message to be displayed when the table has no visible columns
+	 * @param {function} [fnAddColumn] The handler to be executed when the additional add column button is pressed
 	 * @private
 	 */
-	Util.getNoColumnsIllustratedMessage = function() {
+	Util.getNoColumnsIllustratedMessage = function(fnAddColumn) {
 		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
-		return new IllustratedMessage({
+		var oIllustratedMessage = new IllustratedMessage({
 			illustrationType: MLibrary.IllustratedMessageType.AddColumn,
 			title: oResourceBundle.getText("TABLE_NO_COLUMNS_TITLE"),
 			description: oResourceBundle.getText("TABLE_NO_COLUMNS_DESCRIPTION")
 		});
+
+		if (fnAddColumn) {
+			var oAddButton = new Button({
+				icon: "sap-icon://action-settings",
+				press: fnAddColumn
+			});
+			oIllustratedMessage.addAdditionalContent(oAddButton);
+		}
+
+		return oIllustratedMessage;
 	};
 
 	return Util;

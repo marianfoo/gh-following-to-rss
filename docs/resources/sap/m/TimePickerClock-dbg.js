@@ -9,10 +9,9 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	"./TimePickerClockRenderer",
 	"sap/ui/Device",
-	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(Control, Configuration, TimePickerClockRenderer, Device, KeyCodes, jQuery) {
+	function(Control, Configuration, TimePickerClockRenderer, Device, jQuery) {
 		"use strict";
 
 		/**
@@ -26,7 +25,7 @@ sap.ui.define([
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @private
@@ -536,7 +535,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerClock.prototype._onTouchEnd = function(oEvent) {
-			var oAnimationMode = sap.ui.getCore().getConfiguration().getAnimationMode(),
+			var oAnimationMode = Configuration.getAnimationMode(),
 				bSkipAnimation = oAnimationMode === Configuration.AnimationMode.none || oAnimationMode === Configuration.AnimationMode.minimal;
 
 			if (!this._mouseOrTouchDown) {

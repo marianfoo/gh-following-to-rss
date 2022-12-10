@@ -21,18 +21,19 @@ function(Control, Library, SliderTooltipBaseRenderer) {
 		 * @abstract
 		 *
 		 * @author SAP SE
-		 * @version 1.103.0
+		 * @version 1.108.1
 		 *
 		 * @constructor
 		 * @public
 		 * @since 1.56
 		 * @alias sap.m.SliderTooltipBase
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var SliderTooltipBase = Control.extend("sap.m.SliderTooltipBase", /** @lends sap.m.SliderTooltipBase.prototype */ {
 			metadata: {
 				library: "sap.m"
-			}
+			},
+
+			renderer: SliderTooltipBaseRenderer
 		});
 
 		SliderTooltipBase.prototype.init = function () {
