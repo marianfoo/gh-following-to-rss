@@ -350,6 +350,10 @@ export default class Main extends BaseController {
         FilterOperator.Contains,
         sInputValue
       )]);
+	  let aSorter = [];
+
+            aSorter.push(new sap.ui.model.Sorter("count", true));
+	  oValueHelpDialog.getBinding("items").sort(aSorter)
       // open value help dialog filtered by the input value
       oValueHelpDialog.open(sInputValue);
     });

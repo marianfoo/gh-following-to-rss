@@ -1,13 +1,13 @@
 {
 	"name": "de.marianzeis.githubfollower",
 	"version": "1.0.0",
-	"buildTimestamp": "202212102154",
+	"buildTimestamp": "202212111744",
 	"scmRevision": "",
 	"libraries": [
 		{
 			"name": "sap.m",
 			"version": "1.108.1",
-			"buildTimestamp": "202212102154",
+			"buildTimestamp": "202212111744",
 			"scmRevision": "",
 			"manifestHints": {
 				"dependencies": {
@@ -26,13 +26,13 @@
 		{
 			"name": "sap.ui.core",
 			"version": "1.108.1",
-			"buildTimestamp": "202212102154",
+			"buildTimestamp": "202212111744",
 			"scmRevision": ""
 		},
 		{
 			"name": "sap.ui.layout",
 			"version": "1.108.1",
-			"buildTimestamp": "202212102154",
+			"buildTimestamp": "202212111744",
 			"scmRevision": "",
 			"manifestHints": {
 				"dependencies": {
@@ -45,7 +45,7 @@
 		{
 			"name": "sap.ui.unified",
 			"version": "1.108.1",
-			"buildTimestamp": "202212102154",
+			"buildTimestamp": "202212111744",
 			"scmRevision": "",
 			"manifestHints": {
 				"dependencies": {

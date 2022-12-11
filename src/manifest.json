@@ -12,7 +12,7 @@
 		},
 		"dataSources": {
 			"tags": {
-			  "uri": "https://marianfoo.github.io/gh-following-to-rss/data/tags.json",
+			  "uri": "./data/tags.json",
 			  "type": "JSON"
 			}
 		  }

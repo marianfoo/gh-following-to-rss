@@ -759,9 +759,6 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
                 if (Object.keys(remainingParameters).length) {
                     body = remainingParameters;
                 }
-                else {
-                    headers["content-length"] = 0;
-                }
             }
         }
         // default content-type for JSON if body is set
@@ -792,7 +789,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         });
     }
 
-    const VERSION$3 = "6.0.12";
+    const VERSION$3 = "7.0.3";
 
     const userAgent = `octokit-endpoint.js/${VERSION$3} ${getUserAgent()}`;
     // DEFAULTS has all properties set that EndpointOptions has, except url.
@@ -991,7 +988,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         }
     }
 
-    const VERSION$2 = "5.6.3";
+    const VERSION$2 = "6.2.2";
 
     function getBufferResponse(response) {
         return response.arrayBuffer();
@@ -1008,7 +1005,9 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         let headers = {};
         let status;
         let url;
-        const fetch = (requestOptions.request && requestOptions.request.fetch) || nodeFetch;
+        const fetch = (requestOptions.request && requestOptions.request.fetch) ||
+            globalThis.fetch ||
+            /* istanbul ignore next */ nodeFetch;
         return fetch(requestOptions.url, Object.assign({
             method: requestOptions.method,
             body: requestOptions.body,
@@ -1084,6 +1083,8 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
             .catch((error) => {
             if (error instanceof RequestError)
                 throw error;
+            else if (error.name === "AbortError")
+                throw error;
             throw new RequestError(error.message, 500, {
                 request: requestOptions,
             });
@@ -1141,7 +1142,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         },
     });
 
-    const VERSION$1 = "4.8.0";
+    const VERSION$1 = "5.0.4";
 
     function _buildMessageForResponseErrors(data) {
         return (`Request failed due to following response errors:\n` +
@@ -1217,14 +1218,14 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         });
     }
 
-    function withDefaults(request$1, newDefaults) {
-        const newRequest = request$1.defaults(newDefaults);
+    function withDefaults(request, newDefaults) {
+        const newRequest = request.defaults(newDefaults);
         const newApi = (query, options) => {
             return graphql(newRequest, query, options);
         };
         return Object.assign(newApi, {
             defaults: withDefaults.bind(null, newRequest),
-            endpoint: request.endpoint,
+            endpoint: newRequest.endpoint,
         });
     }
 
@@ -1295,7 +1296,7 @@ sap.ui.define(['exports'], (function (exports) { 'use strict';
         });
     };
 
-    const VERSION = "3.6.0";
+    const VERSION = "4.1.0";
 
     class Octokit {
         constructor(options = {}) {

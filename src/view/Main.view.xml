@@ -65,7 +65,7 @@
 						</layoutData>
 					</Button>
 				</FlexBox>
-				<FlexBox direction="Row" alignItems="Start" class="sapUiTinyMarginBottom">
+				<FlexBox direction="Row" alignItems="Center" class="sapUiTinyMarginBottom">
 					<Label text="SAP Blogs Tags" wrapping="true">
 						<layoutData>
 							<FlexItemData growFactor="1" />
@@ -73,10 +73,15 @@
 					</Label>
 					<MultiInput id="multiInput" suggestionItems="{
 									path: 'tags>/',
-									sorter: { path: 'title' }
+									sorter: { path: 'count', descending: true}
 								}" valueHelpRequest="handleValueHelp" tokenUpdate="onTokenUpdate">
 						<core:Item key="{tags>tag}" text="{tags>title}" />
 					</MultiInput>
+					<ObjectStatus
+			class="sapUiSmallMarginBottom"
+			text="sorted by relevance"
+			icon="sap-icon://information"
+			state="Information" />
 				</FlexBox>
 
 				<Button text="Generate and Download OPML File" press="opml" busyIndicatorDelay="50" busy="{data>/busyOPMLButton}" enabled="{data>/OPMLButtonEnabled}">

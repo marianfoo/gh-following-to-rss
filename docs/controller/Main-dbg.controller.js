@@ -261,6 +261,9 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/m/Message
       this._pValueHelpDialog.then(function (oValueHelpDialog) {
         // create a filter for the binding
         oValueHelpDialog.getBinding("items").filter([new Filter("title", FilterOperator.Contains, sInputValue)]);
+        let aSorter = [];
+        aSorter.push(new sap.ui.model.Sorter("count", true));
+        oValueHelpDialog.getBinding("items").sort(aSorter);
         // open value help dialog filtered by the input value
         oValueHelpDialog.open(sInputValue);
       });
