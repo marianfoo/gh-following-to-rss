@@ -202,7 +202,7 @@ export default class Main extends BaseController {
         text: SAPBlogs[i].getText(),
         title: SAPBlogs[i].getText(),
         type: "rss",
-        xmlUrl: `https://content.services.sap.com/feed?type=blogpost&amp;tags=&amp;${SAPBlogs[i].getKey()}`,
+        xmlUrl: `https://content.services.sap.com/feed?type=blogpost&amp;tags=${SAPBlogs[i].getKey()}`,
         htmlUrl: `https://blogs.sap.com/tags/${SAPBlogs[i].getKey()}`,
       });
     }
