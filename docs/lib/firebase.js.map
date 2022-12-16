@@ -1,1 +1,0 @@
-{"version":3,"file":"firebase.js","names":["initializeApp","getAuth"],"sources":["../../src/lib/firebase.js"],"sourcesContent":["import { initializeApp } from 'firebase/app';\r\nimport { getAuth } from \"firebase/auth\";\r\n\r\nexport  {\r\n    initializeApp,getAuth\r\n}"],"mappings":";QAASA,a;QACAC,O;;;;YAGLD,a;YAAcC,O"}
