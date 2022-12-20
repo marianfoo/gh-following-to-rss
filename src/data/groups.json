@@ -1,0 +1,147 @@
+[
+    {
+        "tag": "dallas",
+        "subgroup" : "Location > Americas",
+        "title" : "Dallas"
+    },
+    {
+        "tag": "saopaulo",
+        "subgroup" : "Location > Americas",
+        "title" : "São Paulo"
+    },
+    {
+        "tag": "bangalore",
+        "subgroup" : "Location > Asia Pacific",
+        "title" : "Bengaluru"
+    },
+    {
+        "tag": "sydney",
+        "subgroup" : "Location > Asia Pacific",
+        "title" : "Sydney"
+    },
+    {
+        "tag": "tokyo",
+        "subgroup" : "Location > Asia Pacific",
+        "title" : "Tokyo"
+    },
+    {
+        "tag": "barcelona",
+        "subgroup" : "Location > Europe",
+        "title" : "Barcelona"
+    },
+    {
+        "tag": "copenhagen",
+        "subgroup" : "Location > Europe",
+        "title" : "Copenhagen"
+    },
+    {
+        "tag": "galway",
+        "subgroup" : "Location > Europe",
+        "title" : "Galway"
+    },
+    {
+        "tag": "lingen",
+        "subgroup" : "Location > Europe",
+        "title" : "Lingen"
+    },
+    {
+        "tag": "katowice",
+        "subgroup" : "Location > Europe",
+        "title" : "Katowice"
+    },
+    {
+        "tag": "hannover",
+        "subgroup" : "Location > Europe",
+        "title" : "Hannover"
+    },
+    {
+        "tag": "magdeburg",
+        "subgroup" : "Location > Europe",
+        "title" : "Magdeburg"
+    },
+    {
+        "tag": "warsaw",
+        "subgroup" : "Location > Europe",
+        "title" : "Warsaw"
+    },
+    {
+        "tag": "wroclaw",
+        "subgroup" : "Location > Europe",
+        "title" : "Wroclaw"
+    },
+    {
+        "tag": "yerevan",
+        "subgroup" : "Location > Europe",
+        "title" : "Yerevan"
+    },
+    {
+        "tag": "SAP-BTP-Learning",
+        "subgroup" : "Interests > SAP Learning Groups",
+        "title" : "SAP BTP Learning"
+    },
+    {
+        "tag": "students-corner",
+        "subgroup" : "Interests > SAP Learning Groups",
+        "title" : "The Students' Corner"
+    },
+    {
+        "tag": "application-development",
+        "subgroup" : "Interests",
+        "title" : "Application Development"
+    },
+    {
+        "tag": "career-corner",
+        "subgroup" : "Interests",
+        "title" : "Career Corner"
+    },
+    {
+        "tag": "Coffee-Corner",
+        "subgroup" : "Interests",
+        "title" : "Coffee Corner"
+    },
+    {
+        "tag": "Enterprise-Architecture",
+        "subgroup" : "Interests",
+        "title" : "Enterprise Architecture"
+    },
+    {
+        "tag": "builders",
+        "subgroup" : "Interests",
+        "title" : "SAP Builders"
+    },
+    {
+        "tag": "Women-in-Tech",
+        "subgroup" : "Interests",
+        "title" : "SAP Women in Tech"
+    },
+    {
+        "tag": "welcome-corner",
+        "subgroup" : "Interests",
+        "title" : "Welcome Corner"
+    },
+    {
+        "tag": "Devtoberfest",
+        "subgroup" : "Activities",
+        "title" : "Devtoberfest"
+    },
+    {
+        "tag": "SAP-TechEd-Group",
+        "subgroup" : "Activities",
+        "title" : "SAP TechEd"
+    },
+    {
+        "tag": "codejam-abap",
+        "subgroup" : "Activities > SAP CodeJam Groups",
+        "title" : "SAP CodeJam ABAP"
+    },
+    {
+        "tag": "codejam-btp",
+        "subgroup" : "Activities > SAP CodeJam Groups",
+        "title" : "SAP CodeJam BTP"
+    },
+    {
+        "tag": "codejam-ui5",
+        "subgroup" : "Activities > SAP CodeJam Groups",
+        "title" : "SAP CodeJam UI5"
+    }
+]

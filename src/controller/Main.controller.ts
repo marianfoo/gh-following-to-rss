@@ -108,7 +108,7 @@ export default class Main extends BaseController {
 		return;
 	}
     let page = 1;
-    let followers = [];
+    const followers = [];
     let following = [];
     const octokit = new Octokit({
       throttle: {
@@ -171,10 +171,12 @@ export default class Main extends BaseController {
     const SAPFollowing =
       this.getModel("data").getProperty("/SAPFollowing") || [];
     const SAPBlogs = this.byId("multiInput").getTokens();
-    let outlinesGitHub = [];
-    let outlinesSAP = [];
-    let outlinesSAPBlogs = [];
-    var header = {
+    const SAPGroups = this.byId("multiInputGroup").getTokens();
+    const outlinesGitHub = [];
+    const outlinesSAP = [];
+    const outlinesSAPBlogs = [];
+    const outlinesSAPGroups = [];
+    const header = {
       title: "title-text",
       dateCreated: new Date(2014, 2, 9),
       ownerName: "azu",
@@ -206,56 +208,21 @@ export default class Main extends BaseController {
         htmlUrl: `https://blogs.sap.com/tags/${SAPBlogs[i].getKey()}`,
       });
     }
-    let headerXML =
+    for (var i = 0; i < SAPGroups.length; i++) {
+      outlinesSAPGroups.push({
+        text: SAPGroups[i].getText(),
+        title: SAPGroups[i].getText(),
+        type: "rss",
+        xmlUrl: `https://groups.community.sap.com/khhcw49343/rss/Category?category.id=${SAPGroups[i].getKey()}&amp;interaction.style=forum&amp;feeds.replies=true`,
+        htmlUrl: `https://groups.community.sap.com/t5/${SAPGroups[i].getKey()}/ct-p/${SAPGroups[i].getKey()}`,
+      });
+    }
+    const headerXML =
       "<head><title>Sample OPML file for RSSReader</title></head>";
-    let outlinesXMLGitHub = [];
-    let outlinesXMLSAP = [];
-    let outlinesXMLSAPBlogs = [];
-    for (let i = 0; i < outlinesGitHub.length; i++) {
-      let outlinesXML =
-        '<outline text="' +
-        outlinesGitHub[i].text +
-        '" title="' +
-        outlinesGitHub[i].title +
-        '" type="' +
-        outlinesGitHub[i].type +
-        '" xmlUrl="' +
-        outlinesGitHub[i].xmlUrl +
-        '" htmlUrl="' +
-        outlinesGitHub[i].htmlUrl +
-        '" />';
-      outlinesXMLGitHub.push(outlinesXML);
-    }
-    for (let i = 0; i < outlinesSAP.length; i++) {
-      let outlinesXML =
-        '<outline text="' +
-        outlinesSAP[i].text +
-        '" title="' +
-        outlinesSAP[i].title +
-        '" type="' +
-        outlinesSAP[i].type +
-        '" xmlUrl="' +
-        outlinesSAP[i].xmlUrl +
-        '" htmlUrl="' +
-        outlinesSAP[i].htmlUrl +
-        '" />';
-      outlinesXMLSAP.push(outlinesXML);
-    }
-    for (let i = 0; i < outlinesSAPBlogs.length; i++) {
-      let outlinesXML =
-        '<outline text="' +
-        outlinesSAPBlogs[i].text +
-        '" title="' +
-        outlinesSAPBlogs[i].title +
-        '" type="' +
-        outlinesSAPBlogs[i].type +
-        '" xmlUrl="' +
-        outlinesSAPBlogs[i].xmlUrl +
-        '" htmlUrl="' +
-        outlinesSAPBlogs[i].htmlUrl +
-        '" />';
-      outlinesXMLSAPBlogs.push(outlinesXML);
-    }
+    const outlinesXMLGitHub = this._generateOpmlLine(outlinesGitHub);
+    const outlinesXMLSAP = this._generateOpmlLine(outlinesSAP);
+    const outlinesXMLSAPBlogs = this._generateOpmlLine(outlinesSAPBlogs);
+    const outlinesXMLSAPGroups = this._generateOpmlLine(outlinesSAPGroups);
     let outlinesXML = "";
     if (outlinesXMLSAP.length > 0) {
       outlinesXML =
@@ -277,7 +244,14 @@ export default class Main extends BaseController {
         outlinesXMLSAPBlogs +
         " </outline>";
     }
-    let xml =
+    if (outlinesXMLSAPGroups.length > 0) {
+      outlinesXML =
+        outlinesXML +
+        '<outline text="SAP Groups" title="SAP Groups">' +
+        outlinesXMLSAPGroups +
+        " </outline>";
+    }
+    const xml =
       '<?xml version="1.0" encoding="UTF-8"?><opml version="2.0">' +
       headerXML +
       "<body>" +
@@ -300,19 +274,19 @@ export default class Main extends BaseController {
       })
       .catch((error) => {
         // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
+        const errorCode = error.code;
+        const errorMessage = error.message;
         // The email of the user's account used.
-        var email = error.email;
+        const email = error.email;
         // The firebase.auth.AuthCredential type that was used.
-        var credential = error.credential;
+        const credential = error.credential;
         // ...
       });
     // [END auth_github_signin_popup]
   }
 
   public downloadFile(filename, text): void {
-    var element = document.createElement("a");
+    const element = document.createElement("a");
     element.setAttribute(
       "href",
       "data:text/plain;charset=utf-8," + encodeURIComponent(text)
@@ -328,7 +302,7 @@ export default class Main extends BaseController {
   }
 
   public handleValueHelp(oEvent): any {
-    var sInputValue = oEvent.getSource().getValue(),
+    const sInputValue = oEvent.getSource().getValue(),
       oView = this.getView();
 
     // create value help dialog
@@ -350,7 +324,7 @@ export default class Main extends BaseController {
         FilterOperator.Contains,
         sInputValue
       )]);
-	  let aSorter = [];
+	  const aSorter = [];
 
             aSorter.push(new sap.ui.model.Sorter("count", true));
 	  oValueHelpDialog.getBinding("items").sort(aSorter)
@@ -360,13 +334,8 @@ export default class Main extends BaseController {
   }
 
   public _handleValueHelpSearch(evt):any {
-    var sValue = evt.getParameter("value");
-    var oFilter = new Filter(
-      "title",
-      FilterOperator.Contains,
-      sValue
-    );
-    var oddIdFilter = new Filter({
+    const sValue = evt.getParameter("value");
+    const oddIdFilter = new Filter({
       path: 'title',
       test: function(value) {
           return value.toLowerCase().indexOf(sValue.toLowerCase()) !== -1
@@ -381,7 +350,7 @@ export default class Main extends BaseController {
 
   public _handleValueHelpClose(evt):any {
     this.getModel("data").setProperty("/OPMLButtonEnabled", true);
-    var aSelectedItems = evt.getParameter("selectedItems"),
+    const aSelectedItems = evt.getParameter("selectedItems"),
       oMultiInput = this.byId("multiInput");
 
     if (aSelectedItems && aSelectedItems.length > 0) {
@@ -392,6 +361,88 @@ export default class Main extends BaseController {
         }));
       });
     }
+  }
+
+  public handleValueHelpGroup(oEvent): any {
+    const sInputValue = oEvent.getSource().getValue(),
+      oView = this.getView();
+
+    // create value help dialog
+    if (!this._pValueHelpDialogGroup) {
+      this._pValueHelpDialogGroup = Fragment.load({
+        id: oView.getId(),
+        name: "de.marianzeis.githubfollower.view.DialogGroup",
+        controller: this
+      }).then(function (oValueHelpDialogGroup) {
+        oView.addDependent(oValueHelpDialogGroup);
+        return oValueHelpDialogGroup;
+      });
+    }
+
+    this._pValueHelpDialogGroup.then(function (oValueHelpDialogGroup) {
+      // create a filter for the binding
+      oValueHelpDialogGroup.getBinding("items").filter([new Filter(
+        "title",
+        FilterOperator.Contains,
+        sInputValue
+      )]);
+	  const aSorter = [];
+
+            aSorter.push(new sap.ui.model.Sorter("count", true));
+            oValueHelpDialogGroup.getBinding("items").sort(aSorter)
+      // open value help dialog filtered by the input value
+      oValueHelpDialogGroup.open(sInputValue);
+    });
+  }
+
+  public _handleValueHelpSearchGroup(evt):any {
+    const sValue = evt.getParameter("value");
+    const oddIdFilter = new Filter({
+      path: 'title',
+      test: function(value) {
+          return value.toLowerCase().indexOf(sValue.toLowerCase()) !== -1
+      }
+  });
+    evt.getSource().getBinding("items").filter(oddIdFilter);
+  }
+
+  public onTokenUpdateGroup(evt):any {
+    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
+  }
+
+  public _handleValueHelpCloseGroup(evt):any {
+    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
+    const aSelectedItems = evt.getParameter("selectedItems"),
+      oMultiInput = this.byId("multiInputGroup");
+
+    if (aSelectedItems && aSelectedItems.length > 0) {
+      aSelectedItems.forEach(function (oItem) {
+        oMultiInput.addToken(new Token({
+          text: oItem.getTitle(),
+          key: oItem.getBindingContext("groups").getObject().tag
+        }));
+      });
+    }
+  }
+
+  private _generateOpmlLine(array: string | any[]):any{
+    const outlines = [];
+    for (let i = 0; i < array.length; i++) {
+      const outlinesXML =
+        '<outline text="' +
+        array[i].text +
+        '" title="' +
+        array[i].title +
+        '" type="' +
+        array[i].type +
+        '" xmlUrl="' +
+        array[i].xmlUrl +
+        '" htmlUrl="' +
+        array[i].htmlUrl +
+        '" />';
+        outlines.push(outlinesXML);
+    }
+    return outlines
   }
 
 }

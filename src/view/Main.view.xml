@@ -77,13 +77,21 @@
 								}" valueHelpRequest="handleValueHelp" tokenUpdate="onTokenUpdate">
 						<core:Item key="{tags>tag}" text="{tags>title}" />
 					</MultiInput>
-					<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="sorted by relevance"
-			icon="sap-icon://information"
-			state="Information" />
+					<ObjectStatus class="sapUiSmallMarginBottom" text="sorted by relevance" icon="sap-icon://information" state="Information" />
 				</FlexBox>
-
+				<FlexBox direction="Row" alignItems="Center" class="sapUiTinyMarginBottom">
+					<Label text="SAP Groups" wrapping="true">
+						<layoutData>
+							<FlexItemData growFactor="1" />
+						</layoutData>
+					</Label>
+					<MultiInput id="multiInputGroup" suggestionItems="{
+						path: 'groups>/',
+						sorter: { path: 'count', descending: true}
+					}" valueHelpRequest="handleValueHelpGroup" tokenUpdate="onTokenUpdateGroup">
+						<core:Item key="{groups>tag}" text="{groups>title}" />
+					</MultiInput>
+				</FlexBox>
 				<Button text="Generate and Download OPML File" press="opml" busyIndicatorDelay="50" busy="{data>/busyOPMLButton}" enabled="{data>/OPMLButtonEnabled}">
 					<layoutData>
 						<FlexItemData growFactor="1" />
