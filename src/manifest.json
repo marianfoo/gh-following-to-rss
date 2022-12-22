@@ -22,6 +22,10 @@
       "youtube": {
         "uri": "./data/youtube.json",
         "type": "JSON"
+      },
+      "sap-podcasts": {
+        "uri": "./data/sap-podcasts.json",
+        "type": "JSON"
       }
     }
   },
@@ -79,6 +83,10 @@
       "youtube": {
         "type": "sap.ui.model.json.JSONModel",
         "dataSource": "youtube"
+      },
+      "sap-podcasts": {
+        "type": "sap.ui.model.json.JSONModel",
+        "dataSource": "sap-podcasts"
       }
     },
 

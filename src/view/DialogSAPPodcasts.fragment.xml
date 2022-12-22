@@ -1,0 +1,6 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <SelectDialog id="valueHelpDialogSAPPodcasts" title="Products" items="{path: 'sap-podcasts>/'}" search="_handleValueHelpSearchSAPPodcasts" confirm="_handleValueHelpCloseSAPPodcasts" cancel="_handleValueHelpCloseSAPPodcasts" multiSelect="true">
+        <StandardListItem iconDensityAware="false" iconInset="false" title="{sap-podcasts>title}"/>
+    </SelectDialog>
+</core:FragmentDefinition>
