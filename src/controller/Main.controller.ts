@@ -173,11 +173,13 @@ export default class Main extends BaseController {
       this.getModel("data").getProperty("/SAPFollowing") || [];
     const SAPBlogs = this.byId("multiInput").getTokens();
     const SAPGroups = this.byId("multiInputGroup").getTokens();
+    const SAPYoutube = this.byId("multiInputYoutube").getTokens();
     const SAPEvents = this.byId("SAPEventCheckbox").getSelected();
     const outlinesGitHub = [];
     const outlinesSAP = [];
     const outlinesSAPBlogs = [];
     const outlinesSAPGroups = [];
+    const outlinesSAPYoutube = [];
     const header = {
       title: "title-text",
       dateCreated: new Date(2014, 2, 9),
@@ -225,12 +227,22 @@ export default class Main extends BaseController {
         htmlUrl: `https://groups.community.sap.com/t5/${htmlKey}/gh-p/${htmlKey}`,
       });
     }
+    for (var i = 0; i < SAPYoutube.length; i++) {
+      outlinesSAPYoutube.push({
+        text: SAPYoutube[i].getText(),
+        title: SAPYoutube[i].getText(),
+        type: "rss",
+        xmlUrl: `https://www.youtube.com/feeds/videos.xml?channel_id=${SAPYoutube[i].getKey()}`,
+        htmlUrl: `https://www.youtube.com/channel/${SAPYoutube[i].getKey()}`,
+      });
+    }
     const headerXML =
       "<head><title>Sample OPML file for RSSReader</title></head>";
     const outlinesXMLGitHub = this._generateOpmlLine(outlinesGitHub);
     const outlinesXMLSAP = this._generateOpmlLine(outlinesSAP);
     const outlinesXMLSAPBlogs = this._generateOpmlLine(outlinesSAPBlogs);
     const outlinesXMLSAPGroups = this._generateOpmlLine(outlinesSAPGroups);
+    const outlinesXMLSAPYoutube = this._generateOpmlLine(outlinesSAPYoutube);
     let outlinesXML = "";
     if (outlinesXMLSAP.length > 0) {
       outlinesXML =
@@ -269,6 +281,13 @@ export default class Main extends BaseController {
         '" xmlUrl="https://groups.community.sap.com/khhcw49343/rss/Category?category.id=events&amp;interaction.style=occasion' +
         '" htmlUrl="https://groups.community.sap.com/t5/events/ct-p/events' +
         '" />' +
+        " </outline>";
+    }
+    if (outlinesXMLSAPYoutube.length > 0) {
+      outlinesXML =
+        outlinesXML +
+        '<outline text="SAP Youtube Channels" title="SAP Youtube Channels">' +
+        outlinesXMLSAPYoutube +
         " </outline>";
     }
     const xml =
@@ -439,6 +458,63 @@ export default class Main extends BaseController {
           new Token({
             text: oItem.getTitle(),
             key: oItem.getBindingContext("groups").getObject().tag,
+          })
+        );
+      });
+    }
+  }
+
+  public handleValueHelpYoutube(oEvent): any {
+    const sInputValue = oEvent.getSource().getValue(),
+      oView = this.getView();
+
+    // create value help dialog
+    if (!this._pValueHelpDialogYoutube) {
+      this._pValueHelpDialogYoutube = Fragment.load({
+        id: oView.getId(),
+        name: "de.marianzeis.githubfollower.view.DialogYoutube",
+        controller: this,
+      }).then(function (oValueHelpDialogYoutube) {
+        oView.addDependent(oValueHelpDialogYoutube);
+        return oValueHelpDialogYoutube;
+      });
+    }
+
+    this._pValueHelpDialogYoutube.then(function (oValueHelpDialogYoutube) {
+      // create a filter for the binding
+      oValueHelpDialogYoutube
+        .getBinding("items")
+        .filter([new Filter("title", FilterOperator.Contains, sInputValue)]);
+      oValueHelpDialogYoutube.open(sInputValue);
+    });
+  }
+
+  public _handleValueHelpSearchYoutube(evt): any {
+    const sValue = evt.getParameter("value");
+    const oddIdFilter = new Filter({
+      path: "title",
+      test: function (value) {
+        return value.toLowerCase().indexOf(sValue.toLowerCase()) !== -1;
+      },
+    });
+    evt.getSource().getBinding("items").filter(oddIdFilter);
+  }
+
+  public onTokenUpdateYoutube(evt): any {
+    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
+  }
+
+  public _handleValueHelpCloseYoutube(evt): any {
+    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
+    const aSelectedItems = evt.getParameter("selectedItems"),
+      oMultiInput = this.byId("multiInputYoutube");
+
+    if (aSelectedItems && aSelectedItems.length > 0) {
+      aSelectedItems.forEach(function (oItem) {
+        oMultiInput.addToken(
+          new Token({
+            text: oItem.getTitle(),
+            key: oItem.getBindingContext("youtube").getObject().id,
           })
         );
       });
