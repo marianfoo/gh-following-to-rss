@@ -18,6 +18,10 @@
       "groups": {
         "uri": "./data/groups.json",
         "type": "JSON"
+      },
+      "youtube": {
+        "uri": "./data/youtube.json",
+        "type": "JSON"
       }
     }
   },
@@ -71,6 +75,10 @@
       "groups": {
         "type": "sap.ui.model.json.JSONModel",
         "dataSource": "groups"
+      },
+      "youtube": {
+        "type": "sap.ui.model.json.JSONModel",
+        "dataSource": "youtube"
       }
     },
 

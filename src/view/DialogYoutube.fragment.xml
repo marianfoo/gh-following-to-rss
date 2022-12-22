@@ -1,0 +1,6 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <SelectDialog id="valueHelpDialogYoutube" title="Products" items="{path: 'youtube>/'}" search="_handleValueHelpSearchYoutube" confirm="_handleValueHelpCloseYoutube" cancel="_handleValueHelpCloseYoutube" multiSelect="true">
+        <StandardListItem iconDensityAware="false" iconInset="false" title="{youtube>title}"/>
+    </SelectDialog>
+</core:FragmentDefinition>
