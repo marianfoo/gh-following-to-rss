@@ -19,13 +19,13 @@
 				<core:Icon src="sap-icon://feed" color="#EF8021" size="150px" height="250px">
 
 				</core:Icon>
-				<FlexBox direction="Row" alignItems="Start" class="sapUiTinyMarginBottom">
-					<Label text="GitHub Username">
+				<FlexBox direction="Row" alignItems="Center" class="sapUiTinyMarginBottom">
+					<Label text="GitHub Username" textAlign="Center">
 						<layoutData>
-							<FlexItemData growFactor="1" />
+							<FlexItemData growFactor="1" baseSize="0" />
 						</layoutData>
 					</Label>
-					<Input id="gitHubUsernameInput" value="{
+					<Input id="gitHubUsernameInput"  width="100%" value="{
 							path : 'data>/gitHubUsername',
 							type : 'sap.ui.model.type.String',
 							constraints : {
@@ -33,22 +33,22 @@
 							}
 						}">
 						<layoutData>
-							<FlexItemData growFactor="1" />
+							<FlexItemData growFactor="2" baseSize="0" />
 						</layoutData>
 					</Input>
-					<Button text="Load GitHub Data" press="loadGitHubData" busyIndicatorDelay="50" busy="{data>/busyGitHubButton}" type="{data>/typeGitHubButton}">
+					<Button text="Load GitHub Data" press="loadGitHubData" busyIndicatorDelay="50" busy="{data>/busyGitHubButton}" type="{data>/typeGitHubButton}" width="100%">
 						<layoutData>
-							<FlexItemData growFactor="1" />
+							<FlexItemData growFactor="1" baseSize="0" />
 						</layoutData>
 					</Button>
 				</FlexBox>
-				<FlexBox direction="Row" alignItems="Start" class="sapUiTinyMarginBottom">
-					<Label text="SAP Community Username" wrapping="true">
+				<FlexBox direction="Row" alignItems="Center" class="sapUiTinyMarginBottom">
+					<Label text="SAP Community Username" wrapping="true"  textAlign="Center">
 						<layoutData>
-							<FlexItemData growFactor="1" />
+							<FlexItemData growFactor="1" baseSize="0" />
 						</layoutData>
 					</Label>
-					<Input id="SAPCommunityUsernameInput" value="{
+					<Input id="SAPCommunityUsernameInput"  width="100%" value="{
 							path : 'data>/SAPCommunityUsername',
 							type : 'sap.ui.model.type.String',
 							constraints : {
@@ -56,19 +56,19 @@
 							}
 						}">
 						<layoutData>
-							<FlexItemData growFactor="1" />
+							<FlexItemData growFactor="2" baseSize="0" />
 						</layoutData>
 					</Input>
-					<Button text="Load SAP Data" press="loadSAPData" busyIndicatorDelay="50" busy="{data>/busySAPButton}" type="{data>/typeSAPButton}">
+					<Button text="Load SAP Data" press="loadSAPData" busyIndicatorDelay="50" busy="{data>/busySAPButton}" type="{data>/typeSAPButton}" width="100%">
 						<layoutData>
-							<FlexItemData growFactor="1" />
+							<FlexItemData growFactor="1" baseSize="0" />
 						</layoutData>
 					</Button>
 				</FlexBox>
 				<FlexBox direction="Row" alignItems="Center" class="sapUiTinyMarginBottom">
 					<Label text="SAP Blogs Tags" wrapping="true">
 						<layoutData>
-							<FlexItemData growFactor="1" />
+							<FlexItemData growFactor="1" baseSize="0"  />
 						</layoutData>
 					</Label>
 					<MultiInput id="multiInput" suggestionItems="{
@@ -76,13 +76,20 @@
 									sorter: { path: 'count', descending: true}
 								}" valueHelpRequest="handleValueHelp" tokenUpdate="onTokenUpdate">
 						<core:Item key="{tags>tag}" text="{tags>title}" />
+							<layoutData>
+								<FlexItemData growFactor="2" baseSize="0"  />
+							</layoutData>
 					</MultiInput>
-					<ObjectStatus class="sapUiSmallMarginBottom" text="sorted by relevance" icon="sap-icon://information" state="Information" />
+					<ObjectStatus class="sapUiSmallMarginBottom" text="sorted by relevance" icon="sap-icon://information" state="Information">
+						<layoutData>
+							<FlexItemData growFactor="1" baseSize="0"  />
+						</layoutData>
+					</ObjectStatus>
 				</FlexBox>
 				<FlexBox direction="Row" alignItems="Center" class="sapUiTinyMarginBottom">
 					<Label text="SAP Groups" wrapping="true">
 						<layoutData>
-							<FlexItemData growFactor="1" />
+							<FlexItemData growFactor="1" baseSize="0"  />
 						</layoutData>
 					</Label>
 					<MultiInput id="multiInputGroup" suggestionItems="{
@@ -90,11 +97,14 @@
 						sorter: { path: 'count', descending: true}
 					}" valueHelpRequest="handleValueHelpGroup" tokenUpdate="onTokenUpdateGroup">
 						<core:Item key="{groups>tag}" text="{groups>title}" />
+							<layoutData>
+								<FlexItemData growFactor="2" baseSize="0"  />
+							</layoutData>
 					</MultiInput>
 				</FlexBox>
 				<Button text="Generate and Download OPML File" press="opml" busyIndicatorDelay="50" busy="{data>/busyOPMLButton}" enabled="{data>/OPMLButtonEnabled}">
 					<layoutData>
-						<FlexItemData growFactor="1" />
+						<FlexItemData growFactor="1" baseSize="0"  />
 					</layoutData>
 				</Button>
 			</VBox>
