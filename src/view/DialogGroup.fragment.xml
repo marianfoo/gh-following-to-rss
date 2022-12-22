@@ -1,0 +1,6 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <SelectDialog id="valueHelpDialogGroup" title="Products" items="{path: 'groups>/'}" search="_handleValueHelpSearchGroup" confirm="_handleValueHelpCloseGroup" cancel="_handleValueHelpCloseGroup" multiSelect="true">
+        <StandardListItem iconDensityAware="false" iconInset="false" title="{groups>title}" description="{groups>subgroup}"/>
+    </SelectDialog>
+</core:FragmentDefinition>
