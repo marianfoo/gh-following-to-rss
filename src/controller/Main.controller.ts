@@ -173,6 +173,7 @@ export default class Main extends BaseController {
       this.getModel("data").getProperty("/SAPFollowing") || [];
     const SAPBlogs = this.byId("multiInput").getTokens();
     const SAPGroups = this.byId("multiInputGroup").getTokens();
+    const SAPEvents = this.byId("SAPEventCheckbox").getSelected();
     const outlinesGitHub = [];
     const outlinesSAP = [];
     const outlinesSAPBlogs = [];
@@ -256,6 +257,18 @@ export default class Main extends BaseController {
         outlinesXML +
         '<outline text="SAP Groups" title="SAP Groups">' +
         outlinesXMLSAPGroups +
+        " </outline>";
+    }
+    if(SAPEvents){
+      outlinesXML =
+        outlinesXML +
+        '<outline text="SAP Group Events" title="SAP Group Events">' +
+        '<outline text="SAP Group Events' +
+        '" title="SAP Group Events' +
+        '" type="rss' +
+        '" xmlUrl="https://groups.community.sap.com/khhcw49343/rss/Category?category.id=events&amp;interaction.style=occasion' +
+        '" htmlUrl="https://groups.community.sap.com/t5/events/ct-p/events' +
+        '" />' +
         " </outline>";
     }
     const xml =
@@ -430,6 +443,10 @@ export default class Main extends BaseController {
         );
       });
     }
+  }
+
+  public onCheckboxSelected():void{
+    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
   }
 
   private _generateOpmlLine(array: string | any[]): any {
