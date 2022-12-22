@@ -174,12 +174,14 @@ export default class Main extends BaseController {
     const SAPBlogs = this.byId("multiInput").getTokens();
     const SAPGroups = this.byId("multiInputGroup").getTokens();
     const SAPYoutube = this.byId("multiInputYoutube").getTokens();
+    const SAPPodcasts = this.byId("multiInputSAPPodcasts").getTokens();
     const SAPEvents = this.byId("SAPEventCheckbox").getSelected();
     const outlinesGitHub = [];
     const outlinesSAP = [];
     const outlinesSAPBlogs = [];
     const outlinesSAPGroups = [];
     const outlinesSAPYoutube = [];
+    const outlinesSAPPodcasts = [];
     const header = {
       title: "title-text",
       dateCreated: new Date(2014, 2, 9),
@@ -236,6 +238,15 @@ export default class Main extends BaseController {
         htmlUrl: `https://www.youtube.com/channel/${SAPYoutube[i].getKey()}`,
       });
     }
+    for (var i = 0; i < SAPPodcasts.length; i++) {
+      outlinesSAPPodcasts.push({
+        text: SAPPodcasts[i].getText(),
+        title: SAPPodcasts[i].getText(),
+        type: "rss",
+        xmlUrl: `https://podcast.opensap.info/${SAPPodcasts[i].getKey()}/feed/mp3/`,
+        htmlUrl: `https://podcast.opensap.info/${SAPPodcasts[i].getKey()}/`,
+      });
+    }
     const headerXML =
       "<head><title>Sample OPML file for RSSReader</title></head>";
     const outlinesXMLGitHub = this._generateOpmlLine(outlinesGitHub);
@@ -243,6 +254,7 @@ export default class Main extends BaseController {
     const outlinesXMLSAPBlogs = this._generateOpmlLine(outlinesSAPBlogs);
     const outlinesXMLSAPGroups = this._generateOpmlLine(outlinesSAPGroups);
     const outlinesXMLSAPYoutube = this._generateOpmlLine(outlinesSAPYoutube);
+    const outlinesXMLSAPPodcasts = this._generateOpmlLine(outlinesSAPPodcasts);
     let outlinesXML = "";
     if (outlinesXMLSAP.length > 0) {
       outlinesXML =
@@ -288,6 +300,13 @@ export default class Main extends BaseController {
         outlinesXML +
         '<outline text="SAP Youtube Channels" title="SAP Youtube Channels">' +
         outlinesXMLSAPYoutube +
+        " </outline>";
+    }
+    if (outlinesXMLSAPPodcasts.length > 0) {
+      outlinesXML =
+        outlinesXML +
+        '<outline text="SAP Podcasts" title="SAP Podcasts">' +
+        outlinesXMLSAPPodcasts +
         " </outline>";
     }
     const xml =
@@ -515,6 +534,63 @@ export default class Main extends BaseController {
           new Token({
             text: oItem.getTitle(),
             key: oItem.getBindingContext("youtube").getObject().id,
+          })
+        );
+      });
+    }
+  }
+
+  public handleValueHelpSAPPodcasts(oEvent): any {
+    const sInputValue = oEvent.getSource().getValue(),
+      oView = this.getView();
+
+    // create value help dialog
+    if (!this._pValueHelpDialogSAPPodcasts) {
+      this._pValueHelpDialogSAPPodcasts = Fragment.load({
+        id: oView.getId(),
+        name: "de.marianzeis.githubfollower.view.DialogSAPPodcasts",
+        controller: this,
+      }).then(function (oValueHelpDialogSAPPodcasts) {
+        oView.addDependent(oValueHelpDialogSAPPodcasts);
+        return oValueHelpDialogSAPPodcasts;
+      });
+    }
+
+    this._pValueHelpDialogSAPPodcasts.then(function (oValueHelpDialogSAPPodcasts) {
+      // create a filter for the binding
+      oValueHelpDialogSAPPodcasts
+        .getBinding("items")
+        .filter([new Filter("title", FilterOperator.Contains, sInputValue)]);
+      oValueHelpDialogSAPPodcasts.open(sInputValue);
+    });
+  }
+
+  public _handleValueHelpSearchSAPPodcasts(evt): any {
+    const sValue = evt.getParameter("value");
+    const oddIdFilter = new Filter({
+      path: "title",
+      test: function (value) {
+        return value.toLowerCase().indexOf(sValue.toLowerCase()) !== -1;
+      },
+    });
+    evt.getSource().getBinding("items").filter(oddIdFilter);
+  }
+
+  public onTokenUpdateSAPPodcasts(evt): any {
+    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
+  }
+
+  public _handleValueHelpCloseSAPPodcasts(evt): any {
+    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
+    const aSelectedItems = evt.getParameter("selectedItems"),
+      oMultiInput = this.byId("multiInputSAPPodcasts");
+
+    if (aSelectedItems && aSelectedItems.length > 0) {
+      aSelectedItems.forEach(function (oItem) {
+        oMultiInput.addToken(
+          new Token({
+            text: oItem.getTitle(),
+            key: oItem.getBindingContext("sap-podcasts").getObject().key,
           })
         );
       });

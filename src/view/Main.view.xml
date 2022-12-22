@@ -124,6 +124,21 @@
 							</layoutData>
 					</MultiInput>
 				</FlexBox>
+				<FlexBox direction="Row" alignItems="Center" class="sapUiTinyMarginBottom">
+					<Label text="SAP Podcasts" wrapping="true">
+						<layoutData>
+							<FlexItemData growFactor="1" baseSize="0"  />
+						</layoutData>
+					</Label>
+					<MultiInput id="multiInputSAPPodcasts" suggestionItems="{
+									path: 'sap-podcasts>/'
+								}" valueHelpRequest="handleValueHelpSAPPodcasts" tokenUpdate="onTokenUpdateSAPPodcasts">
+						<core:Item key="{sap-podcasts>key}" text="{sap-podcasts>title}" />
+							<layoutData>
+								<FlexItemData growFactor="2" baseSize="0"  />
+							</layoutData>
+					</MultiInput>
+				</FlexBox>
 				<Button text="Generate and Download OPML File" press="opml" busyIndicatorDelay="50" busy="{data>/busyOPMLButton}" enabled="{data>/OPMLButtonEnabled}">
 					<layoutData>
 						<FlexItemData growFactor="1" baseSize="0"  />
