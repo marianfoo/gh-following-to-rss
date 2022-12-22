@@ -24,6 +24,7 @@ jobs:
           npm install
       - name: build ui
         run: |
+          npm run build:ts
           npm run build:ui5:self
       - name: Commit/Push build to docs branch
         run: |
