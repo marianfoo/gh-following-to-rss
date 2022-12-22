@@ -1,7 +1,0 @@
-<core:FragmentDefinition
-	xmlns="sap.m"
-	xmlns:core="sap.ui.core">
-    <SelectDialog id="valueHelpDialog" title="Products" items="{path: 'tags>/', sorter: { path: 'count', descending: true}}"  search="_handleValueHelpSearch" confirm="_handleValueHelpClose" cancel="_handleValueHelpClose" multiSelect="true">
-        <StandardListItem iconDensityAware="false" iconInset="false" title="{tags>title}"/>
-    </SelectDialog>
-</core:FragmentDefinition>

@@ -3,6 +3,7 @@ webapp
 dist
 functions
 functions/
+docs
 
 # Logs
 logs
