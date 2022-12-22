@@ -4,7 +4,7 @@
 	xmlns:u="sap.ui.unified"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<Page title="Following to RSS" titleAlignment="Center" showNavButton="false">
+	<Page title="SAP RSS Feeds Generator" titleAlignment="Center" showNavButton="false">
 		<headerContent>
 			<!-- <Button icon="sap-icon://action" tooltip="Share" /> -->
 		</headerContent>
