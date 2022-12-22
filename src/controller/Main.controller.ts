@@ -209,12 +209,14 @@ export default class Main extends BaseController {
       });
     }
     for (var i = 0; i < SAPGroups.length; i++) {
+      // remove forum or blog in the end of string
+      const htmlKey = SAPGroups[i].getKey().replace(/blog|forum$/, '');
       outlinesSAPGroups.push({
         text: SAPGroups[i].getText(),
         title: SAPGroups[i].getText(),
         type: "rss",
-        xmlUrl: `https://groups.community.sap.com/khhcw49343/rss/Category?category.id=${SAPGroups[i].getKey()}&amp;interaction.style=forum&amp;feeds.replies=true`,
-        htmlUrl: `https://groups.community.sap.com/t5/${SAPGroups[i].getKey()}/ct-p/${SAPGroups[i].getKey()}`,
+        xmlUrl: `https://groups.community.sap.com/khhcw49343/rss/board?board.id=${SAPGroups[i].getKey()}-board&amp;interaction.style=forum&amp;feeds.replies=true`,
+        htmlUrl: `https://groups.community.sap.com/t5/${htmlKey}/gh-p/${htmlKey}`,
       });
     }
     const headerXML =
