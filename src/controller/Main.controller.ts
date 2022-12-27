@@ -20,26 +20,31 @@ import Fragment from "sap/ui/core/Fragment";
 import FilterOperator from "sap/ui/model/FilterOperator";
 import Token from "sap/m/Token";
 import Filter from "sap/ui/model/Filter";
+import MultiInput from "sap/m/MultiInput";
+import CheckBox from "sap/m/CheckBox";
+import Event from "sap/ui/base/Event";
+import Sorter from "sap/ui/model/Sorter";
+import File from "sap/ui/core/util/File";
+import { ButtonType } from "sap/m/library";
 
 /**
  * @namespace de.marianzeis.githubfollower.controller
  */
 export default class Main extends BaseController {
-  public async loadSAPData(): void {
+  private _dataModel: JSONModel;
+  public async loadSAPData(): Promise<void> {
     let data = [];
-    this.getModel("data").setProperty("/busySAPButton", true);
-    this.getModel("data").setProperty("/busyOPMLButton", true);
+    this._dataModel.setProperty("/busySAPButton", true);
+    this._dataModel.setProperty("/busyOPMLButton", true);
     try {
       const functions = getFunctions(this.app);
       // connectFunctionsEmulator(functions, "localhost", 5001);
       console.log(functions);
       const addMessage = httpsCallable(functions, "helloWorld");
-      const sapUsername = this.getModel("data").getProperty(
-        "/SAPCommunityUsername"
-      );
+      const sapUsername = this._dataModel.getProperty("/SAPCommunityUsername");
       if (!sapUsername || sapUsername === "") {
-        this.getModel("data").setProperty("/busySAPButton", false);
-        this.getModel("data").setProperty("/busyOPMLButton", false);
+        this._dataModel.setProperty("/busySAPButton", false);
+        this._dataModel.setProperty("/busyOPMLButton", false);
         MessageBox.error("SAP Username is empty");
         return;
       }
@@ -47,16 +52,16 @@ export default class Main extends BaseController {
       data = JSON.parse(response.data);
       console.log(data);
     } catch (error) {
-      this.getModel("data").setProperty("/busySAPButton", false);
-      this.getModel("data").setProperty("/busyOPMLButton", false);
+      this._dataModel.setProperty("/busySAPButton", false);
+      this._dataModel.setProperty("/busyOPMLButton", false);
       MessageBox.error("Error while loading SAP Data (maybe User not found)");
       return;
     }
-    this.getModel("data").setProperty("/SAPFollowing", data.list_items);
-    this.getModel("data").setProperty("/typeSAPButton", "Success");
-    this.getModel("data").setProperty("/busySAPButton", false);
-    this.getModel("data").setProperty("/busyOPMLButton", false);
-    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
+    this._dataModel.setProperty("/SAPFollowing", data.list_items);
+    this._dataModel.setProperty("/typeSAPButton", ButtonType.Success);
+    this._dataModel.setProperty("/busySAPButton", false);
+    this._dataModel.setProperty("/busyOPMLButton", false);
+    this._dataModel.setProperty("/OPMLButtonEnabled", true);
   }
 
   public onInit(): void {
@@ -80,17 +85,17 @@ export default class Main extends BaseController {
     });
     this.token = "";
 
-    // create Jsonmodel
-    this.getView().setModel(
-      new JSONModel({
+    this._dataModel = new JSONModel(
+      {
         token: "",
         busyOPMLButton: false,
         typeGitHubButton: "Default",
         typeSAPButton: "Default",
         OPMLButtonEnabled: false,
-      }),
-      "data"
+      },
+      true
     );
+    this.getView().setModel(this._dataModel, "data");
   }
 
   public signInToGitHub(): void {
@@ -98,13 +103,15 @@ export default class Main extends BaseController {
   }
 
   public async loadGitHubData(): Promise<void> {
-    this.getModel("data").setProperty("/busyGitHubButton", true);
-    this.getModel("data").setProperty("/busyOPMLButton", true);
+    this._dataModel.setProperty("/busyGitHubButton", true);
+    this._dataModel.setProperty("/busyOPMLButton", true);
 
-    const githubUsername = this.getModel("data").getProperty("/gitHubUsername");
+    const githubUsername = <string>(
+      this.getModel("data").getProperty("/gitHubUsername")
+    );
     if (!githubUsername || githubUsername === "") {
-      this.getModel("data").setProperty("/busyGitHubButton", false);
-      this.getModel("data").setProperty("/busyOPMLButton", false);
+      this._dataModel.setProperty("/busyGitHubButton", false);
+      this._dataModel.setProperty("/busyOPMLButton", false);
       MessageBox.error("GitHub Username is empty");
       return;
     }
@@ -140,12 +147,12 @@ export default class Main extends BaseController {
     } catch (error: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (error.status === 404) {
-        this.getModel("data").setProperty("/busyGitHubButton", false);
-        this.getModel("data").setProperty("/busyOPMLButton", false);
+        this._dataModel.setProperty("/busyGitHubButton", false);
+        this._dataModel.setProperty("/busyOPMLButton", false);
         MessageBox.error(`User ${githubUsername} not found`);
       } else {
-        this.getModel("data").setProperty("/busyGitHubButton", false);
-        this.getModel("data").setProperty("/busyOPMLButton", false);
+        this._dataModel.setProperty("/busyGitHubButton", false);
+        this._dataModel.setProperty("/busyOPMLButton", false);
         MessageBox.error(error.message);
       }
     }
@@ -158,24 +165,27 @@ export default class Main extends BaseController {
       );
       following = [...following, ...resultFollowing.data];
     }
-    this.getModel("data").setProperty("/GitHubFollowing", following);
-    this.getModel("data").setProperty("/typeGitHubButton", "Success");
-    this.getModel("data").setProperty("/busyGitHubButton", false);
-    this.getModel("data").setProperty("/busyOPMLButton", false);
-    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
+    this._dataModel.setProperty("/GitHubFollowing", following);
+    this._dataModel.setProperty("/typeGitHubButton", ButtonType.Success);
+    this._dataModel.setProperty("/busyGitHubButton", false);
+    this._dataModel.setProperty("/busyOPMLButton", false);
+    this._dataModel.setProperty("/OPMLButtonEnabled", true);
     // MessageBox.success("Your OPML file is ready!");
   }
 
   public opml(): void {
     const GitHubFollowing =
-      this.getModel("data").getProperty("/GitHubFollowing") || [];
-    const SAPFollowing =
-      this.getModel("data").getProperty("/SAPFollowing") || [];
-    const SAPBlogs = this.byId("multiInput").getTokens();
-    const SAPGroups = this.byId("multiInputGroup").getTokens();
-    const SAPYoutube = this.byId("multiInputYoutube").getTokens();
-    const SAPPodcasts = this.byId("multiInputSAPPodcasts").getTokens();
-    const SAPEvents = this.byId("SAPEventCheckbox").getSelected();
+      this._dataModel.getProperty("/GitHubFollowing") || [];
+    const SAPFollowing = this._dataModel.getProperty("/SAPFollowing") || [];
+    const SAPBlogs = (this.byId("multiInput") as MultiInput).getTokens();
+    const SAPGroups = (this.byId("multiInputGroup") as MultiInput).getTokens();
+    const SAPYoutube = (
+      this.byId("multiInputYoutube") as MultiInput
+    ).getTokens();
+    const SAPPodcasts = (
+      this.byId("multiInputSAPPodcasts") as MultiInput
+    ).getTokens();
+    const SAPEvents = (this.byId("SAPEventCheckbox") as CheckBox).getSelected();
     const outlinesGitHub = [];
     const outlinesSAP = [];
     const outlinesSAPBlogs = [];
@@ -187,7 +197,7 @@ export default class Main extends BaseController {
       dateCreated: new Date(2014, 2, 9),
       ownerName: "azu",
     };
-    for (var i = 0; i < GitHubFollowing.length; i++) {
+    for (let i = 0; i < GitHubFollowing.length; i++) {
       outlinesGitHub.push({
         text: GitHubFollowing[i].login,
         title: GitHubFollowing[i].login,
@@ -196,7 +206,7 @@ export default class Main extends BaseController {
         htmlUrl: GitHubFollowing[i].html_url,
       });
     }
-    for (var i = 0; i < SAPFollowing.length; i++) {
+    for (let i = 0; i < SAPFollowing.length; i++) {
       outlinesSAP.push({
         text: SAPFollowing[i].fullName,
         title: SAPFollowing[i].fullName,
@@ -205,7 +215,7 @@ export default class Main extends BaseController {
         htmlUrl: SAPFollowing[i].profileUrl,
       });
     }
-    for (var i = 0; i < SAPBlogs.length; i++) {
+    for (let i = 0; i < SAPBlogs.length; i++) {
       outlinesSAPBlogs.push({
         text: SAPBlogs[i].getText(),
         title: SAPBlogs[i].getText(),
@@ -216,7 +226,7 @@ export default class Main extends BaseController {
         htmlUrl: `https://blogs.sap.com/tags/${SAPBlogs[i].getKey()}`,
       });
     }
-    for (var i = 0; i < SAPGroups.length; i++) {
+    for (let i = 0; i < SAPGroups.length; i++) {
       // remove forum or blog in the end of string
       const htmlKey = SAPGroups[i].getKey().replace(/blog|forum$/, "");
       outlinesSAPGroups.push({
@@ -229,21 +239,25 @@ export default class Main extends BaseController {
         htmlUrl: `https://groups.community.sap.com/t5/${htmlKey}/gh-p/${htmlKey}`,
       });
     }
-    for (var i = 0; i < SAPYoutube.length; i++) {
+    for (let i = 0; i < SAPYoutube.length; i++) {
       outlinesSAPYoutube.push({
         text: SAPYoutube[i].getText(),
         title: SAPYoutube[i].getText(),
         type: "rss",
-        xmlUrl: `https://www.youtube.com/feeds/videos.xml?channel_id=${SAPYoutube[i].getKey()}`,
+        xmlUrl: `https://www.youtube.com/feeds/videos.xml?channel_id=${SAPYoutube[
+          i
+        ].getKey()}`,
         htmlUrl: `https://www.youtube.com/channel/${SAPYoutube[i].getKey()}`,
       });
     }
-    for (var i = 0; i < SAPPodcasts.length; i++) {
+    for (let i = 0; i < SAPPodcasts.length; i++) {
       outlinesSAPPodcasts.push({
         text: SAPPodcasts[i].getText(),
         title: SAPPodcasts[i].getText(),
         type: "rss",
-        xmlUrl: `https://podcast.opensap.info/${SAPPodcasts[i].getKey()}/feed/mp3/`,
+        xmlUrl: `https://podcast.opensap.info/${SAPPodcasts[
+          i
+        ].getKey()}/feed/mp3/`,
         htmlUrl: `https://podcast.opensap.info/${SAPPodcasts[i].getKey()}/`,
       });
     }
@@ -283,7 +297,7 @@ export default class Main extends BaseController {
         outlinesXMLSAPGroups +
         " </outline>";
     }
-    if(SAPEvents){
+    if (SAPEvents) {
       outlinesXML =
         outlinesXML +
         '<outline text="SAP Group Events" title="SAP Group Events">' +
@@ -316,7 +330,7 @@ export default class Main extends BaseController {
       outlinesXML +
       "</body>" +
       "</opml>";
-    this.downloadFile("opml.xml", xml);
+    this.downloadFile("opml", xml);
   }
   public githubSignInPopup(provider): void {
     // [START auth_github_signin_popup]
@@ -327,7 +341,7 @@ export default class Main extends BaseController {
 
         // This gives you a GitHub Access Token. You can use it to access the GitHub API.
         this.token = result._tokenResponse.oauthAccessToken;
-        this.getModel("data").setProperty("/token", this.token);
+        this._dataModel.setProperty("/token", this.token);
         // ...
       })
       .catch((error) => {
@@ -343,24 +357,12 @@ export default class Main extends BaseController {
     // [END auth_github_signin_popup]
   }
 
-  public downloadFile(filename, text): void {
-    const element = document.createElement("a");
-    element.setAttribute(
-      "href",
-      "data:text/plain;charset=utf-8," + encodeURIComponent(text)
-    );
-    element.setAttribute("download", filename);
-
-    element.style.display = "none";
-    document.body.appendChild(element);
-
-    element.click();
-
-    document.body.removeChild(element);
+  public downloadFile(filename: string, filecontent: string): void {
+    File.save(filecontent, filename, "xml", "text/plain", "utf-8");
   }
 
-  public handleValueHelp(oEvent): any {
-    const sInputValue = oEvent.getSource().getValue(),
+  public handleValueHelp(oEvent: Event): any {
+    const sInputValue = (oEvent.getSource() as MultiInput).getValue(),
       oView = this.getView();
 
     // create value help dialog
@@ -382,7 +384,7 @@ export default class Main extends BaseController {
         .filter([new Filter("title", FilterOperator.Contains, sInputValue)]);
       const aSorter = [];
 
-      aSorter.push(new sap.ui.model.Sorter("count", true));
+      aSorter.push(new Sorter("count", true));
       oValueHelpDialog.getBinding("items").sort(aSorter);
       // open value help dialog filtered by the input value
       oValueHelpDialog.open(sInputValue);
@@ -401,11 +403,11 @@ export default class Main extends BaseController {
   }
 
   public onTokenUpdate(evt): any {
-    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
+    this._dataModel.setProperty("/OPMLButtonEnabled", true);
   }
 
-  public _handleValueHelpClose(evt): any {
-    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
+  public _handleValueHelpClose(evt: Event): any {
+    this._dataModel.setProperty("/OPMLButtonEnabled", true);
     const aSelectedItems = evt.getParameter("selectedItems"),
       oMultiInput = this.byId("multiInput");
 
@@ -444,7 +446,7 @@ export default class Main extends BaseController {
         .filter([new Filter("title", FilterOperator.Contains, sInputValue)]);
       const aSorter = [];
 
-      aSorter.push(new sap.ui.model.Sorter("count", true));
+      aSorter.push(new Sorter("count", true));
       oValueHelpDialogGroup.getBinding("items").sort(aSorter);
       // open value help dialog filtered by the input value
       oValueHelpDialogGroup.open(sInputValue);
@@ -463,13 +465,13 @@ export default class Main extends BaseController {
   }
 
   public onTokenUpdateGroup(evt): any {
-    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
+    this._dataModel.setProperty("/OPMLButtonEnabled", true);
   }
 
   public _handleValueHelpCloseGroup(evt): any {
-    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
+    this._dataModel.setProperty("/OPMLButtonEnabled", true);
     const aSelectedItems = evt.getParameter("selectedItems"),
-      oMultiInput = this.byId("multiInputGroup");
+      oMultiInput = <MultiInput>this.byId("multiInputGroup");
 
     if (aSelectedItems && aSelectedItems.length > 0) {
       aSelectedItems.forEach(function (oItem) {
@@ -520,11 +522,11 @@ export default class Main extends BaseController {
   }
 
   public onTokenUpdateYoutube(evt): any {
-    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
+    this._dataModel.setProperty("/OPMLButtonEnabled", true);
   }
 
   public _handleValueHelpCloseYoutube(evt): any {
-    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
+    this._dataModel.setProperty("/OPMLButtonEnabled", true);
     const aSelectedItems = evt.getParameter("selectedItems"),
       oMultiInput = this.byId("multiInputYoutube");
 
@@ -556,7 +558,9 @@ export default class Main extends BaseController {
       });
     }
 
-    this._pValueHelpDialogSAPPodcasts.then(function (oValueHelpDialogSAPPodcasts) {
+    this._pValueHelpDialogSAPPodcasts.then(function (
+      oValueHelpDialogSAPPodcasts
+    ) {
       // create a filter for the binding
       oValueHelpDialogSAPPodcasts
         .getBinding("items")
@@ -577,13 +581,13 @@ export default class Main extends BaseController {
   }
 
   public onTokenUpdateSAPPodcasts(evt): any {
-    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
+    this._dataModel.setProperty("/OPMLButtonEnabled", true);
   }
 
   public _handleValueHelpCloseSAPPodcasts(evt): any {
-    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
+    this._dataModel.setProperty("/OPMLButtonEnabled", true);
     const aSelectedItems = evt.getParameter("selectedItems"),
-      oMultiInput = this.byId("multiInputSAPPodcasts");
+      oMultiInput = <MultiInput>this.byId("multiInputSAPPodcasts");
 
     if (aSelectedItems && aSelectedItems.length > 0) {
       aSelectedItems.forEach(function (oItem) {
@@ -597,8 +601,8 @@ export default class Main extends BaseController {
     }
   }
 
-  public onCheckboxSelected():void{
-    this.getModel("data").setProperty("/OPMLButtonEnabled", true);
+  public onCheckboxSelected(): void {
+    this._dataModel.setProperty("/OPMLButtonEnabled", true);
   }
 
   private _generateOpmlLine(array: string | any[]): any {
