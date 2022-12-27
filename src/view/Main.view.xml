@@ -16,7 +16,7 @@
 		<content>
 			<VBox height="100%" justifyContent="Center" alignItems="Center">
 				<core:Icon src="sap-icon://feed" color="#EF8021" size="150px" height="250px" />
-				<form:Form width="550px" editable="true">
+				<form:Form class="form" editable="true">
 					<form:layout>
 						<form:ResponsiveGridLayout
 							labelSpanL="12"
@@ -24,7 +24,6 @@
 							emptySpanXL="4"
 							emptySpanL="4"
 							emptySpanM="4"
-							columnsXL="1"
 							columnsL="1"
 							singleContainerFullSize="false" />
 					</form:layout>
@@ -37,7 +36,7 @@
 											value="{path: 'data>/gitHubUsername',
 													type: 'sap.ui.model.type.String',
 													constraints: {minLength: 1}}"
-												submit=".onGithubUserNameInputEnter">
+											submit=".onGithubUserNameInputEnter">
 											<layoutData>
 												<l:GridData span="XL8 L8 M8 S8" />
 											</layoutData>
