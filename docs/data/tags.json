@@ -1,0 +1,834 @@
+[
+    {
+      "tag": "01200314690800000236",
+      "count": 69,
+      "title": "SAP NetWeaver Application Server for Java"
+    },
+    {
+      "tag": "571267881358674984386133031541144",
+      "count": 69,
+      "title": "SAP MaxDB"
+    },
+    {
+      "tag": "01200615320800000352",
+      "count": 101,
+      "title": "SAP NetWeaver Application Server"
+    },
+    {
+      "tag": "22197834566642743784643",
+      "count": 101,
+      "title": "Consumer Products"
+    },
+    {
+      "tag": "73554900100700001143",
+      "count": 114,
+      "title": "SAP Real Estate Management"
+    },
+    {
+      "tag": "264894377039418246026069369078331",
+      "count": 114,
+      "title": "FIN Real Estate"
+    },
+    {
+      "tag": "67837800100800004901",
+      "count": 114,
+      "title": "SAP Connectivity service"
+    },
+    {
+      "tag": "264113000323749692806973999948926",
+      "count": 114,
+      "title": "LE (Logistics Execution)"
+    },
+    {
+      "tag": "67837800100800004903",
+      "count": 114,
+      "title": "SAP Event Stream Processor"
+    },
+    {
+      "tag": "01200615320800000726",
+      "count": 114,
+      "title": "SAP Business Planning and Consolidation, version for the Microsoft platform"
+    },
+    {
+      "tag": "334558737810127171897316045257708",
+      "count": 114,
+      "title": "NW ABAP Print and Output Management"
+    },
+    {
+      "tag": "01200615320800001376",
+      "count": 114,
+      "title": "SAP NetWeaver Process Integration, adapters"
+    },
+    {
+      "tag": "01200314690800000395",
+      "count": 114,
+      "title": "SAP Data Services"
+    },
+    {
+      "tag": "67838200100800005660",
+      "count": 114,
+      "title": "SAP PowerBuilder"
+    },
+    {
+      "tag": "145882333770114278757787",
+      "count": 114,
+      "title": "Healthcare"
+    },
+    {
+      "tag": "586312128200821976331791678902156",
+      "count": 114,
+      "title": "HCM Payroll India"
+    },
+    {
+      "tag": "443595830163800786360189759964915",
+      "count": 114,
+      "title": "SOLMAN IT Service Management"
+    },
+    {
+      "tag": "318021688820573698933533760680517",
+      "count": 114,
+      "title": "PLM Document Management System (DMS)"
+    },
+    {
+      "tag": "10027901995226543076552839495060",
+      "count": 114,
+      "title": "SAP Business Rules Management"
+    },
+    {
+      "tag": "73554900100800000372",
+      "count": 114,
+      "title": "SAP Process Mining by Celonis"
+    },
+    {
+      "tag": "67837800100800006741",
+      "count": 114,
+      "title": "SAP Cloud Applications Studio"
+    },
+    {
+      "tag": "337652377312707847655034343398545",
+      "count": 114,
+      "title": "FIN Travel Management"
+    },
+    {
+      "tag": "779894725716749961564009526411777",
+      "count": 114,
+      "title": "NW Java Development Infrastructure (NWDI)"
+    },
+    {
+      "tag": "523757421691906837442183267052576",
+      "count": 114,
+      "title": "SAP CodeJam"
+    },
+    {
+      "tag": "67838200100800005437",
+      "count": 114,
+      "title": "SAP Advantage Database Server"
+    },
+    {
+      "tag": "95174915017257381839339",
+      "count": 114,
+      "title": "Life Sciences"
+    },
+    {
+      "tag": "01200615320800000708",
+      "count": 114,
+      "title": "SAP Electronic Invoicing for Brazil (SAP Nota Fiscal Eletronica)"
+    },
+    {
+      "tag": "01200314690800000221",
+      "count": 114,
+      "title": "SAP NetWeaver Enterprise Search"
+    },
+    {
+      "tag": "506578197626473234529624753618175",
+      "count": 114,
+      "title": "FIN Treasury"
+    },
+    {
+      "tag": "73555000100800000131",
+      "count": 114,
+      "title": "SAP Fiori for SAP S/4HANA"
+    },
+    {
+      "tag": "103751587389184923742461",
+      "count": 114,
+      "title": "Internet of Things"
+    },
+    {
+      "tag": "73555000100800000776",
+      "count": 114,
+      "title": "SAP SuccessFactors Succession & Development"
+    },
+    {
+      "tag": "411295671235448601330173655419575",
+      "count": 114,
+      "title": "PLM Variant Configuration"
+    },
+    {
+      "tag": "73555000100800000256",
+      "count": 114,
+      "title": "IoT SIM management for SAP HANA"
+    },
+    {
+      "tag": "73555000100800000568",
+      "count": 114,
+      "title": "SAP Leonardo Machine Learning Foundation"
+    },
+    {
+      "tag": "67838200100800006884",
+      "count": 114,
+      "title": "SAP Analytics Cloud"
+    },
+    {
+      "tag": "350991270579841525753072979612318",
+      "count": 114,
+      "title": "NW AS Java Administrator (NWA)"
+    },
+    {
+      "tag": "67838200100800005412",
+      "count": 114,
+      "title": "SAP Screen Personas"
+    },
+    {
+      "tag": "01200615320800001016",
+      "count": 114,
+      "title": "SAP Business Planning and Consolidation, version for SAP NetWeaver"
+    },
+    {
+      "tag": "01200615320800000681",
+      "count": 114,
+      "title": "SAP Test Data Migration Server"
+    },
+    {
+      "tag": "477916618626075516391832082074785",
+      "count": 114,
+      "title": "SAP Process Orchestration"
+    },
+    {
+      "tag": "67837800100800005166",
+      "count": 114,
+      "title": "SAP Adaptive Server Enterprise"
+    },
+    { "tag": "01200314690800002024", "count": 114, "title": "SAP IQ" },
+    {
+      "tag": "67837800100800007361",
+      "count": 114,
+      "title": "SAP HANA Live for SAP Business Suite foundation component"
+    },
+    {
+      "tag": "01200615320800000574",
+      "count": 114,
+      "title": "SAP Global Trade Services"
+    },
+    {
+      "tag": "01200615320800000702",
+      "count": 114,
+      "title": "SAP Supply Network Collaboration"
+    },
+    {
+      "tag": "73555000100800000012",
+      "count": 114,
+      "title": "SAP Fiori for SAP Solution Manager"
+    },
+    {
+      "tag": "102045428488054002446664744695930",
+      "count": 114,
+      "title": "SD Billing"
+    },
+    {
+      "tag": "506421944534752500398156104608974",
+      "count": 114,
+      "title": "JavaScript"
+    },
+    {
+      "tag": "67837800100800006334",
+      "count": 114,
+      "title": "SAP SuccessFactors Learning"
+    },
+    {
+      "tag": "01200615320800000555",
+      "count": 114,
+      "title": "SAP Learning Solution"
+    },
+    {
+      "tag": "73554900100700001351",
+      "count": 114,
+      "title": "SAP Web IDE"
+    },
+    {
+      "tag": "01200615320800001750",
+      "count": 114,
+      "title": "Crystal Enterprise"
+    },
+    {
+      "tag": "73554900100800000098",
+      "count": 114,
+      "title": "SAP HANA streaming analytics"
+    },
+    {
+      "tag": "73555000100800000215",
+      "count": 114,
+      "title": "SAP Streaming Analytics"
+    },
+    {
+      "tag": "17849765017455686912817263347948",
+      "count": 114,
+      "title": "IBM Db2 for i"
+    },
+    {
+      "tag": "67838200100800004383",
+      "count": 114,
+      "title": "development tools for SAP BTP, Neo environment"
+    },
+    {
+      "tag": "01200314690800001317",
+      "count": 114,
+      "title": "SAP Enterprise Inventory and Service-Level Optimization"
+    },
+    {
+      "tag": "507384024606208929025520724038944",
+      "count": 114,
+      "title": "Windows Server"
+    },
+    {
+      "tag": "399814863717995876203615023559515",
+      "count": 114,
+      "title": "HCM Employee Self-Service"
+    },
+    {
+      "tag": "165905235116577077914579113243106",
+      "count": 114,
+      "title": "FIN Controlling"
+    },
+    {
+      "tag": "01200314690800000353",
+      "count": 114,
+      "title": "SAP Profitability and Cost Management"
+    },
+    {
+      "tag": "73555000100800000651",
+      "count": 114,
+      "title": "SAP HANA, express edition"
+    },
+    {
+      "tag": "99344355152484767572493879299671",
+      "count": 114,
+      "title": "JAVA Development"
+    },
+    {
+      "tag": "330578359126207838347821318366080",
+      "count": 114,
+      "title": "UI Business Server Pages (BSP)"
+    },
+    {
+      "tag": "2521823005136277121291",
+      "count": 114,
+      "title": "Small and Midsize Enterprises"
+    },
+    {
+      "tag": "564272146051092002342823452713708",
+      "count": 114,
+      "title": "Support Services"
+    },
+    {
+      "tag": "124125469642888240532580689115094",
+      "count": 114,
+      "title": "UI WebGUI and Internet Transaction Server (ITS)"
+    },
+    {
+      "tag": "67837800100800007096",
+      "count": 114,
+      "title": "SAP Innovation Management"
+    },
+    {
+      "tag": "67837800100800006356",
+      "count": 114,
+      "title": "SAP SuccessFactors Recruiting"
+    },
+    {
+      "tag": "73555000100800000318",
+      "count": 114,
+      "title": "SAP SuccessFactors Recruiting Posting"
+    },
+    {
+      "tag": "133205901943786179366163043997549",
+      "count": 114,
+      "title": "NW ABAP Business Rule Framework (BRFplus)"
+    },
+    {
+      "tag": "01200314690800001687",
+      "count": 114,
+      "title": "SAP Quality Issue Management"
+    },
+    {
+      "tag": "01200314690800000151",
+      "count": 114,
+      "title": "SAP Manufacturing Integration and Intelligence"
+    },
+    {
+      "tag": "73554900100800000681",
+      "count": 114,
+      "title": "SAP BW/4HANA"
+    },
+    {
+      "tag": "808952988084195139233186926963168",
+      "count": 170,
+      "title": "ABAP Testing and Analysis"
+    },
+    {
+      "tag": "637115821191636376336141602158512",
+      "count": 183,
+      "title": "CRM Sales"
+    },
+    {
+      "tag": "01200615320800000492",
+      "count": 183,
+      "title": "SAP Supply Chain Management"
+    },
+    {
+      "tag": "67837800100800006333",
+      "count": 215,
+      "title": "SAP Jam Collaboration"
+    },
+    {
+      "tag": "01200615320800001270",
+      "count": 215,
+      "title": "SAP Crystal Reports, version for Visual Studio"
+    },
+    {
+      "tag": "140502597117949649788634441139048",
+      "count": 215,
+      "title": "Sustainability"
+    },
+    {
+      "tag": "73555000100800000182",
+      "count": 228,
+      "title": "SAP IoT services for SAP BTP"
+    },
+    {
+      "tag": "01200615320800003185",
+      "count": 228,
+      "title": "SAP Gateway"
+    },
+    {
+      "tag": "67837800100800004488",
+      "count": 228,
+      "title": "SAP Master Data Governance"
+    },
+    {
+      "tag": "88785088356999520628792",
+      "count": 228,
+      "title": "Telecommunications"
+    },
+    {
+      "tag": "279429873667587277925521334820770",
+      "count": 228,
+      "title": "Virtualization"
+    },
+    {
+      "tag": "42513095034597134398119",
+      "count": 228,
+      "title": "Industrial Manufacturing"
+    },
+    {
+      "tag": "01200314690800000342",
+      "count": 228,
+      "title": "SAP BusinessObjects Dashboards"
+    },
+    {
+      "tag": "67838200100800004736",
+      "count": 228,
+      "title": "SAP Operational Process Intelligence"
+    },
+    {
+      "tag": "01200314690800003678",
+      "count": 228,
+      "title": "SAP Cloud Portal service"
+    },
+    {
+      "tag": "378427990965467211484671270864901",
+      "count": 228,
+      "title": "User Interface"
+    },
+    {
+      "tag": "875447220514120987869051937802978",
+      "count": 228,
+      "title": "Digital Transformation"
+    },
+    {
+      "tag": "67838200100800004730",
+      "count": 228,
+      "title": "SAP SuccessFactors HXM Suite"
+    },
+    {
+      "tag": "01200615320800003850",
+      "count": 228,
+      "title": "SAP Marketing"
+    },
+    {
+      "tag": "01200615320800000062",
+      "count": 228,
+      "title": "SAP Environment, Health, and Safety Management"
+    },
+    {
+      "tag": "01200615320800000691",
+      "count": 228,
+      "title": "SAP Business ByDesign"
+    },
+    {
+      "tag": "104367144430565227162334366685847",
+      "count": 228,
+      "title": "Implementation Methodologies"
+    },
+    {
+      "tag": "67837800100800007216",
+      "count": 228,
+      "title": "SAP Commerce"
+    },
+    {
+      "tag": "7369775511208288220041649312782",
+      "count": 228,
+      "title": "CRM Middleware"
+    },
+    {
+      "tag": "01200615320800000542",
+      "count": 228,
+      "title": "SAP E-Recruiting"
+    },
+    {
+      "tag": "97996813156586659752541",
+      "count": 228,
+      "title": "Insurance"
+    },
+    {
+      "tag": "617904475839583685536714765406723",
+      "count": 228,
+      "title": "Design Thinking"
+    },
+    {
+      "tag": "266264953119842772207986043063520",
+      "count": 228,
+      "title": "ABAP Connectivity"
+    },
+    { "tag": "140366652636409988283894", "count": 228, "title": "Mining" },
+    {
+      "tag": "01200314690800001668",
+      "count": 228,
+      "title": "SAP Global Batch Traceability"
+    },
+    {
+      "tag": "266216885309448000234589693334884",
+      "count": 284,
+      "title": "Oracle Database"
+    },
+    {
+      "tag": "462330605920974660730944876913277",
+      "count": 297,
+      "title": "UI Web Dynpro ABAP"
+    },
+    {
+      "tag": "01200245450800000024",
+      "count": 297,
+      "title": "SAP Advanced Planning and Optimization"
+    },
+    {
+      "tag": "01200615320800000686",
+      "count": 329,
+      "title": "SAP Transportation Management"
+    },
+    {
+      "tag": "67838200100800006828",
+      "count": 342,
+      "title": "API Management"
+    },
+    {
+      "tag": "73555000100800000084",
+      "count": 342,
+      "title": "SAP Predictive Analytics"
+    },
+    {
+      "tag": "01200615320800003136",
+      "count": 342,
+      "title": "SAP Cloud for Customer add-ins"
+    },
+    {
+      "tag": "01200615320800003687",
+      "count": 342,
+      "title": "SAP BusinessObjects Design Studio"
+    },
+    {
+      "tag": "907900296036854683333078008146613",
+      "count": 342,
+      "title": "SAP BusinessObjects - Web Intelligence (WebI)"
+    },
+    {
+      "tag": "131623764915182240635655",
+      "count": 342,
+      "title": "Banking"
+    },
+    {
+      "tag": "192814547175000220653543",
+      "count": 342,
+      "title": "Aerospace and Defense"
+    },
+    {
+      "tag": "141065692368283635970801",
+      "count": 342,
+      "title": "High Tech"
+    },
+    {
+      "tag": "237172457501282589953116013994631",
+      "count": 342,
+      "title": "PLM (Product Lifecycle Management)"
+    },
+    {
+      "tag": "156805312755941004032364",
+      "count": 342,
+      "title": "Oil, Gas, and Energy"
+    },
+    {
+      "tag": "148449952393846517506952",
+      "count": 342,
+      "title": "Higher Education and Research"
+    },
+    {
+      "tag": "41698360237425736876524",
+      "count": 342,
+      "title": "Chemicals"
+    },
+    {
+      "tag": "430019464658497915145476514330950",
+      "count": 342,
+      "title": "PLM Enterprise Asset Management (EAM)/Plant Maintenance (PM)"
+    },
+    {
+      "tag": "01200615320800000582",
+      "count": 342,
+      "title": "SAP Supplier Relationship Management"
+    },
+    {
+      "tag": "48826897347003784259801",
+      "count": 342,
+      "title": "Utilities"
+    },
+    {
+      "tag": "785430894859484524744777813922285",
+      "count": 342,
+      "title": "SAP InnoJam"
+    },
+    {
+      "tag": "67837800100800005169",
+      "count": 342,
+      "title": "SAP SQL Anywhere"
+    },
+    {
+      "tag": "01200615320800003800",
+      "count": 342,
+      "title": "SAP Predictive Analysis"
+    },
+    {
+      "tag": "615693459582413452469752593601406",
+      "count": 366,
+      "title": "Java"
+    },
+    {
+      "tag": "01200314690800000341",
+      "count": 398,
+      "title": "SAP Crystal Reports"
+    },
+    {
+      "tag": "72472722867005232775920452375500",
+      "count": 456,
+      "title": "SAP Inside Track"
+    },
+    {
+      "tag": "56387771929354094609172",
+      "count": 456,
+      "title": "Automotive"
+    },
+    {
+      "tag": "271076705480744283548543960420215",
+      "count": 456,
+      "title": "SAP Business Workflow"
+    },
+    {
+      "tag": "01200615320800000719",
+      "count": 456,
+      "title": "SAP Process Integration"
+    },
+    {
+      "tag": "67837800100800007337",
+      "count": 456,
+      "title": "Identity Authentication"
+    },
+    {
+      "tag": "582573882271271216439685697820265",
+      "count": 499,
+      "title": "SAP Interactive Forms by Adobe"
+    },
+    {
+      "tag": "01200615320800000816",
+      "count": 570,
+      "title": "SAP Business One"
+    },
+    {
+      "tag": "724690177700823984208969627109459",
+      "count": 570,
+      "title": "Careers"
+    },
+    {
+      "tag": "9aaa6d7b-e017-4ddc-805d-9bbd02a6c46d",
+      "count": 570,
+      "title": "MAN (Manufacturing)"
+    },
+    {
+      "tag": "111078473504236017141185029856415",
+      "count": 570,
+      "title": "Partnership"
+    },
+    {
+      "tag": "431932400353955532628433796433200",
+      "count": 671,
+      "title": "Cloud"
+    },
+    {
+      "tag": "01200615320800000721",
+      "count": 684,
+      "title": "SAP Identity Management"
+    },
+    {
+      "tag": "648420875567243523242285841826221",
+      "count": 785,
+      "title": "FIN (Finance)"
+    },
+    {
+      "tag": "01200615320800002636",
+      "count": 798,
+      "title": "SAP Mobile Platform"
+    },
+    {
+      "tag": "877902606110120463147070804386975",
+      "count": 798,
+      "title": "MAN Production Planning (PP)"
+    },
+    {
+      "tag": "209057551571413566377230676804921",
+      "count": 798,
+      "title": "SD (Sales and Distribution)"
+    },
+    { "tag": "73554900100700000977", "count": 912, "title": "SAP Fiori" },
+    { "tag": "99624789925257984685885", "count": 923, "title": "Retail" },
+    {
+      "tag": "01200615320800000412",
+      "count": 968,
+      "title": "SAP Enterprise Portal"
+    },
+    {
+      "tag": "500983881501772639608291559920477",
+      "count": 1026,
+      "title": "SAPUI5"
+    },
+    {
+      "tag": "73554900100800000266",
+      "count": 1026,
+      "title": "SAP S/4HANA"
+    },
+    {
+      "tag": "67837800100800006801",
+      "count": 1080,
+      "title": "Cloud Integration"
+    },
+    {
+      "tag": "73555000100800000662",
+      "count": 1140,
+      "title": "SAP Lumira"
+    },
+    {
+      "tag": "01200615320800000636",
+      "count": 1254,
+      "title": "SAP Solution Manager"
+    },
+    {
+      "tag": "01200314690800000134",
+      "count": 1284,
+      "title": "SAP NetWeaver"
+    },
+    {
+      "tag": "01200314690800000337",
+      "count": 1321,
+      "title": "SAP BusinessObjects Business Intelligence platform"
+    },
+    {
+      "tag": "486157991894093153608181816584982",
+      "count": 1355,
+      "title": "SAP Community"
+    },
+    {
+      "tag": "01200615320800000556",
+      "count": 1403,
+      "title": "SAP Customer Relationship Management"
+    },
+    {
+      "tag": "466699512615561483430515645513975",
+      "count": 1420,
+      "title": "SAP Business Process Management"
+    },
+    {
+      "tag": "26220882342286075781792349618930",
+      "count": 1596,
+      "title": "HCM (Human Capital Management)"
+    },
+    {
+      "tag": "31958591515119384139674",
+      "count": 1596,
+      "title": "Mill Products"
+    },
+    {
+      "tag": "346083195931624615410618362498977",
+      "count": 1639,
+      "title": "SAP Sapphire"
+    },
+    {
+      "tag": "833755570260738661924709785639136",
+      "count": 1652,
+      "title": "ABAP Development"
+    },
+    {
+      "tag": "477297786799213261950044802925335",
+      "count": 1697,
+      "title": "MM (Materials Management)"
+    },
+    { "tag": "01200615320800000659", "count": 1811, "title": "SAP ERP" },
+    {
+      "tag": "8077228b-f0b1-4176-ad1b-61a78d61a847",
+      "count": 1938,
+      "title": "SAP Business Technology Platform"
+    },
+    {
+      "tag": "242586194391178517100436979900901",
+      "count": 1949,
+      "title": "BW (SAP Business Warehouse)"
+    },
+    {
+      "tag": "676305042803066886656318788802663",
+      "count": 2166,
+      "title": "Training"
+    },
+    {
+      "tag": "755421404636447943131706525840948",
+      "count": 2205,
+      "title": "SAP TechEd"
+    },
+    {
+      "tag": "246015353107843540080736084568477",
+      "count": 2463,
+      "title": "Mobile"
+    },
+    {
+      "tag": "794576508343477425113395039661827",
+      "count": 3078,
+      "title": "Business Trends"
+    },
+    { "tag": "73554900100700000996", "count": 4104, "title": "SAP HANA" }
+  ]
+  

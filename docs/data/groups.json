@@ -1,0 +1,292 @@
+[
+    {
+        "tag": "dallasforum",
+        "subgroup" : "Location > Americas",
+        "title" : "Dallas Discussions"
+    },
+    {
+        "tag": "dallasblog",
+        "subgroup" : "Location > Americas",
+        "title" : "Dallas Blog"
+    },
+    {
+        "tag": "saopauloforum",
+        "subgroup" : "Location > Americas",
+        "title" : "São Paulo Discussions"
+    },
+    {
+        "tag": "saopauloblog",
+        "subgroup" : "Location > Americas",
+        "title" : "São Paulo Blog"
+    },
+    {
+        "tag": "bangaloreforum",
+        "subgroup" : "Location > Asia Pacific",
+        "title" : "Bengaluru Discussions"
+    },
+    {
+        "tag": "bangaloreblog",
+        "subgroup" : "Location > Asia Pacific",
+        "title" : "Bengaluru Blog"
+    },
+    {
+        "tag": "sydneyforum",
+        "subgroup" : "Location > Asia Pacific",
+        "title" : "Sydney Discussions"
+    },
+    {
+        "tag": "sydneyblog",
+        "subgroup" : "Location > Asia Pacific",
+        "title" : "Sydney Blog"
+    },
+    {
+        "tag": "tokyoforum",
+        "subgroup" : "Location > Asia Pacific",
+        "title" : "Tokyo Discussions"
+    },
+    {
+        "tag": "tokyoblog",
+        "subgroup" : "Location > Asia Pacific",
+        "title" : "Tokyo Blog"
+    },
+    {
+        "tag": "barcelonaforum",
+        "subgroup" : "Location > Europe",
+        "title" : "Barcelona Discussions"
+    },
+    {
+        "tag": "barcelonablog",
+        "subgroup" : "Location > Europe",
+        "title" : "Barcelona Blog"
+    },
+    {
+        "tag": "copenhagenforum",
+        "subgroup" : "Location > Europe",
+        "title" : "Copenhagen Discussions"
+    },
+    {
+        "tag": "copenhagenblog",
+        "subgroup" : "Location > Europe",
+        "title" : "Copenhagen Blog"
+    },
+    {
+        "tag": "galwayforum",
+        "subgroup" : "Location > Europe",
+        "title" : "Galway Discussions"
+    },
+    {
+        "tag": "galwayblog",
+        "subgroup" : "Location > Europe",
+        "title" : "Galway Blog"
+    },
+    {
+        "tag": "lingenforum",
+        "subgroup" : "Location > Europe",
+        "title" : "Lingen Discussions"
+    },
+    {
+        "tag": "lingenblog",
+        "subgroup" : "Location > Europe",
+        "title" : "Lingen Blog"
+    },
+    {
+        "tag": "katowiceforum",
+        "subgroup" : "Location > Europe",
+        "title" : "Katowice Discussions"
+    },
+    {
+        "tag": "katowiceblog",
+        "subgroup" : "Location > Europe",
+        "title" : "Katowice Blog"
+    },
+    {
+        "tag": "hannoverforum",
+        "subgroup" : "Location > Europe",
+        "title" : "Hannover Discussions"
+    },
+    {
+        "tag": "hannoverblog",
+        "subgroup" : "Location > Europe",
+        "title" : "Hannover Blog"
+    },
+    {
+        "tag": "magdeburgforum",
+        "subgroup" : "Location > Europe",
+        "title" : "Magdeburg Discussions"
+    },
+    {
+        "tag": "magdeburgblog",
+        "subgroup" : "Location > Europe",
+        "title" : "Magdeburg Blog"
+    },
+    {
+        "tag": "warsawforum",
+        "subgroup" : "Location > Europe",
+        "title" : "Warsaw Discussions"
+    },
+    {
+        "tag": "warsawblog",
+        "subgroup" : "Location > Europe",
+        "title" : "Warsaw Blog"
+    },
+    {
+        "tag": "wroclawforum",
+        "subgroup" : "Location > Europe",
+        "title" : "Wroclaw Discussions"
+    },
+    {
+        "tag": "wroclawblog",
+        "subgroup" : "Location > Europe",
+        "title" : "Wroclaw Blog"
+    },
+    {
+        "tag": "yerevanforum",
+        "subgroup" : "Location > Europe",
+        "title" : "Yerevan Discussions"
+    },
+    {
+        "tag": "yerevanblog",
+        "subgroup" : "Location > Europe",
+        "title" : "Yerevan Blog"
+    },
+    {
+        "tag": "SAP-BTP-Learningforum",
+        "subgroup" : "Interests > SAP Learning Groups",
+        "title" : "SAP BTP Learning Discussions"
+    },
+    {
+        "tag": "SAP-BTP-Learningblog",
+        "subgroup" : "Interests > SAP Learning Groups",
+        "title" : "SAP BTP Learning Blog"
+    },
+    {
+        "tag": "students-cornerforum",
+        "subgroup" : "Interests > SAP Learning Groups",
+        "title" : "The Students' Corner Discussions"
+    },
+    {
+        "tag": "students-cornerblog",
+        "subgroup" : "Interests > SAP Learning Groups",
+        "title" : "The Students' Corner Blog"
+    },
+    {
+        "tag": "application-developmentforum",
+        "subgroup" : "Interests",
+        "title" : "Application Development Discussions"
+    },
+    {
+        "tag": "application-developmentblog",
+        "subgroup" : "Interests",
+        "title" : "Application Development Blog"
+    },
+    {
+        "tag": "career-cornerforum",
+        "subgroup" : "Interests",
+        "title" : "Career Corner Discussions"
+    },
+    {
+        "tag": "career-cornerblog",
+        "subgroup" : "Interests",
+        "title" : "Career Corner Blog"
+    },
+    {
+        "tag": "Coffee-Cornerforum",
+        "subgroup" : "Interests",
+        "title" : "Coffee Corner Discussions"
+    },
+    {
+        "tag": "Coffee-Cornerblog",
+        "subgroup" : "Interests",
+        "title" : "Coffee Corner Blog"
+    },
+    {
+        "tag": "Enterprise-Architectureforum",
+        "subgroup" : "Interests",
+        "title" : "Enterprise Architecture Discussions"
+    },
+    {
+        "tag": "Enterprise-Architectureblog",
+        "subgroup" : "Interests",
+        "title" : "Enterprise Architecture Blog"
+    },
+    {
+        "tag": "buildersforum",
+        "subgroup" : "Interests",
+        "title" : "SAP Builders Discussions"
+    },
+    {
+        "tag": "buildersblog",
+        "subgroup" : "Interests",
+        "title" : "SAP Builders Blog"
+    },
+    {
+        "tag": "Women-in-Techforum",
+        "subgroup" : "Interests",
+        "title" : "SAP Women in Tech Discussions"
+    },
+    {
+        "tag": "Women-in-Techblog",
+        "subgroup" : "Interests",
+        "title" : "SAP Women in Tech Blog"
+    },
+    {
+        "tag": "welcome-cornerforum",
+        "subgroup" : "Interests",
+        "title" : "Welcome Corner Discussions"
+    },
+    {
+        "tag": "welcome-cornerblog",
+        "subgroup" : "Interests",
+        "title" : "Welcome Corner Blog"
+    },
+    {
+        "tag": "Devtoberfestforum",
+        "subgroup" : "Activities",
+        "title" : "Devtoberfest Discussions"
+    },
+    {
+        "tag": "Devtoberfestblog",
+        "subgroup" : "Activities",
+        "title" : "Devtoberfest Blog"
+    },
+    {
+        "tag": "SAP-TechEd-Groupforum",
+        "subgroup" : "Activities",
+        "title" : "SAP TechEd Discussions"
+    },
+    {
+        "tag": "SAP-TechEd-Groupblog",
+        "subgroup" : "Activities",
+        "title" : "SAP TechEd Blog"
+    },
+    {
+        "tag": "codejam-abapforum",
+        "subgroup" : "Activities > SAP CodeJam Groups",
+        "title" : "SAP CodeJam ABAP Discussions"
+    },
+    {
+        "tag": "codejam-abapblog",
+        "subgroup" : "Activities > SAP CodeJam Groups",
+        "title" : "SAP CodeJam ABAP Blog"
+    },
+    {
+        "tag": "codejam-btpforum",
+        "subgroup" : "Activities > SAP CodeJam Groups",
+        "title" : "SAP CodeJam BTP Discussions"
+    },
+    {
+        "tag": "codejam-btpblog",
+        "subgroup" : "Activities > SAP CodeJam Groups",
+        "title" : "SAP CodeJam BTP Blog"
+    },
+    {
+        "tag": "codejam-ui5forum",
+        "subgroup" : "Activities > SAP CodeJam Groups",
+        "title" : "SAP CodeJam UI5 Discussions"
+    },
+    {
+        "tag": "codejam-ui5blog",
+        "subgroup" : "Activities > SAP CodeJam Groups",
+        "title" : "SAP CodeJam UI5 Blog"
+    }
+]
