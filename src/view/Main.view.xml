@@ -1,160 +1,180 @@
 <mvc:View controllerName="de.marianzeis.githubfollower.controller.Main" displayBlock="true"
 	xmlns:form="sap.ui.layout.form"
+	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
-	xmlns:u="sap.ui.unified"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<Page title="SAP RSS Feeds Generator" titleAlignment="Center" showNavButton="false">
-		<headerContent>
-			<!-- <Button icon="sap-icon://action" tooltip="Share" /> -->
-		</headerContent>
-		<subHeader>
-			<OverflowToolbar>
-				<!-- <SearchField /> -->
-			</OverflowToolbar>
-		</subHeader>
+	<Page titleAlignment="Center" title="SAP RSS Feeds Generator">
+		<!-- <headerContent> -->
+		<!-- <Button icon="sap-icon://action" tooltip="Share" /> -->
+		<!-- </headerContent> -->
+		<!-- <subHeader> -->
+		<!-- <OverflowToolbar> -->
+		<!-- <SearchField /> -->
+		<!-- </OverflowToolbar> -->
+		<!-- </subHeader> -->
 		<content>
-
 			<VBox height="100%" justifyContent="Center" alignItems="Center">
-				<core:Icon src="sap-icon://feed" color="#EF8021" size="150px" height="250px">
-
-				</core:Icon>
-				<FlexBox direction="Row" alignItems="Center" class="sapUiTinyMarginBottom">
-					<Label text="GitHub Username" textAlign="Center">
-						<layoutData>
-							<FlexItemData growFactor="1" baseSize="0" />
-						</layoutData>
-					</Label>
-					<Input id="gitHubUsernameInput"  width="100%" value="{
-							path : 'data>/gitHubUsername',
-							type : 'sap.ui.model.type.String',
-							constraints : {
-								minLength: 1
-							}
-						}">
-						<layoutData>
-							<FlexItemData growFactor="2" baseSize="0" />
-						</layoutData>
-					</Input>
-					<Button text="Load GitHub Data" press="loadGitHubData" busyIndicatorDelay="50" busy="{data>/busyGitHubButton}" type="{data>/typeGitHubButton}" width="100%">
-						<layoutData>
-							<FlexItemData growFactor="1" baseSize="0" />
-						</layoutData>
-					</Button>
-				</FlexBox>
-				<FlexBox direction="Row" alignItems="Center" class="sapUiTinyMarginBottom">
-					<Label text="SAP Community Username" wrapping="true"  textAlign="Center">
-						<layoutData>
-							<FlexItemData growFactor="1" baseSize="0" />
-						</layoutData>
-					</Label>
-					<Input id="SAPCommunityUsernameInput"  width="100%" value="{
-							path : 'data>/SAPCommunityUsername',
-							type : 'sap.ui.model.type.String',
-							constraints : {
-								minLength: 1
-							}
-						}">
-						<layoutData>
-							<FlexItemData growFactor="2" baseSize="0" />
-						</layoutData>
-					</Input>
-					<Button text="Load SAP Data" press="loadSAPData" busyIndicatorDelay="50" busy="{data>/busySAPButton}" type="{data>/typeSAPButton}" width="100%">
-						<layoutData>
-							<FlexItemData growFactor="1" baseSize="0" />
-						</layoutData>
-					</Button>
-				</FlexBox>
-				<FlexBox direction="Row" alignItems="Center" class="sapUiTinyMarginBottom">
-					<Label text="SAP Blogs Tags" wrapping="true">
-						<layoutData>
-							<FlexItemData growFactor="1" baseSize="0"  />
-						</layoutData>
-					</Label>
-					<MultiInput id="multiInput" suggestionItems="{
-									path: 'tags>/',
-									sorter: { path: 'count', descending: true}
-								}" valueHelpRequest="handleValueHelp" tokenUpdate="onTokenUpdate">
-						<core:Item key="{tags>tag}" text="{tags>title}" />
-							<layoutData>
-								<FlexItemData growFactor="2" baseSize="0"  />
-							</layoutData>
-					</MultiInput>
-					<ObjectStatus class="sapUiSmallMarginBottom" text="sorted by relevance" icon="sap-icon://information" state="Information">
-						<layoutData>
-							<FlexItemData growFactor="1" baseSize="0"  />
-						</layoutData>
-					</ObjectStatus>
-				</FlexBox>
-				<FlexBox direction="Row" alignItems="Center" class="sapUiTinyMarginBottom">
-					<Label text="SAP Groups" wrapping="true">
-						<layoutData>
-							<FlexItemData growFactor="1" baseSize="0"  />
-						</layoutData>
-					</Label>
-					<MultiInput id="multiInputGroup" suggestionItems="{
-						path: 'groups>/',
-						sorter: { path: 'count', descending: true}
-					}" valueHelpRequest="handleValueHelpGroup" tokenUpdate="onTokenUpdateGroup">
-						<core:Item key="{groups>tag}" text="{groups>title}" />
-							<layoutData>
-								<FlexItemData growFactor="2" baseSize="0"  />
-							</layoutData>
-					</MultiInput>
-				</FlexBox>
-				<FlexBox direction="Row" alignItems="Center" class="sapUiTinyMarginBottom">
-					<CheckBox id="SAPEventCheckbox" text="SAP Group Events" select="onCheckboxSelected" />
-					<Link
-				text="Open Group Events"
-				target="_blank"
-				href="https://groups.community.sap.com/t5/events/ct-p/events" />
-				</FlexBox>
-				<FlexBox direction="Row" alignItems="Center" class="sapUiTinyMarginBottom">
-					<Label text="SAP Youtube Channels" wrapping="true">
-						<layoutData>
-							<FlexItemData growFactor="1" baseSize="0"  />
-						</layoutData>
-					</Label>
-					<MultiInput id="multiInputYoutube" suggestionItems="{
-									path: 'youtube>/'
-								}" valueHelpRequest="handleValueHelpYoutube" tokenUpdate="onTokenUpdateYoutube">
-						<core:Item key="{youtube>id}" text="{youtube>title}" />
-							<layoutData>
-								<FlexItemData growFactor="2" baseSize="0"  />
-							</layoutData>
-					</MultiInput>
-				</FlexBox>
-				<FlexBox direction="Row" alignItems="Center" class="sapUiTinyMarginBottom">
-					<Label text="SAP Podcasts" wrapping="true">
-						<layoutData>
-							<FlexItemData growFactor="1" baseSize="0"  />
-						</layoutData>
-					</Label>
-					<MultiInput id="multiInputSAPPodcasts" suggestionItems="{
-									path: 'sap-podcasts>/'
-								}" valueHelpRequest="handleValueHelpSAPPodcasts" tokenUpdate="onTokenUpdateSAPPodcasts">
-						<core:Item key="{sap-podcasts>key}" text="{sap-podcasts>title}" />
-							<layoutData>
-								<FlexItemData growFactor="2" baseSize="0"  />
-							</layoutData>
-					</MultiInput>
-				</FlexBox>
-				<Button text="Generate and Download OPML File" press="opml" busyIndicatorDelay="50" busy="{data>/busyOPMLButton}" enabled="{data>/OPMLButtonEnabled}">
-					<layoutData>
-						<FlexItemData growFactor="1" baseSize="0"  />
-					</layoutData>
-				</Button>
+				<core:Icon src="sap-icon://feed" color="#EF8021" size="150px" height="250px" />
+				<form:Form width="550px" editable="true">
+					<form:layout>
+						<form:ResponsiveGridLayout
+							labelSpanL="12"
+							adjustLabelSpan="false"
+							emptySpanXL="4"
+							emptySpanL="4"
+							emptySpanM="4"
+							columnsXL="1"
+							columnsL="1"
+							singleContainerFullSize="false" />
+					</form:layout>
+					<form:formContainers>
+						<form:FormContainer>
+							<form:formElements>
+								<form:FormElement label="Github Username">
+									<form:fields>
+										<Input id="gitHubUsernameInput"
+											value="{path: 'data>/gitHubUsername',
+													type: 'sap.ui.model.type.String',
+													constraints: {minLength: 1}}">
+											<layoutData>
+												<l:GridData span="XL8 L8 M8 S8" />
+											</layoutData>
+										</Input>
+										<Button text="Load GitHub Data" press="loadGitHubData"
+											busyIndicatorDelay="50" busy="{data>/busyGitHubButton}"
+											type="{data>/typeGitHubButton}">
+											<layoutData>
+												<l:GridData span="XL4 L4 M4 S4" />
+											</layoutData>
+										</Button>
+									</form:fields>
+								</form:FormElement>
+								<form:FormElement label="SAP Community Username">
+									<form:fields>
+										<Input id="SAPCommunityUsernameInput"
+											value="{path: 'data>/SAPCommunityUsername',
+													type: 'sap.ui.model.type.String',
+													constraints: {minLength: 1}}">
+											<layoutData>
+												<l:GridData span="XL8 L8 M8 S8" />
+											</layoutData>
+										</Input>
+										<Button text="Load SAP Data" press="loadSAPData"
+											busyIndicatorDelay="50" busy="{data>/busySAPButton}"
+											type="{data>/typeSAPButton}">
+											<layoutData>
+												<l:GridData span="XL4 L4 M4 S4" />
+											</layoutData>
+										</Button>
+									</form:fields>
+								</form:FormElement>
+								<form:FormElement label="SAP Blog Tags">
+									<form:fields>
+										<MultiInput id="multiInput"
+											suggestionItems="{path: 'tags>/', sorter: { path: 'count', descending: true}}"
+											valueHelpRequest="handleValueHelp"
+											tokenUpdate="onTokenUpdate">
+											<core:Item key="{tags>tag}" text="{tags>title}" />
+											<layoutData>
+												<l:GridData span="XL8 L8 M8 S8" />
+											</layoutData>
+										</MultiInput>
+										<ObjectStatus class="sapUiSmallMarginBottom"
+											text="sorted by relevance" icon="sap-icon://information"
+											state="Information">
+											<layoutData>
+												<l:GridData span="XL4 L4 M4 S4" />
+											</layoutData>
+										</ObjectStatus>
+									</form:fields>
+								</form:FormElement>
+								<form:FormElement label="SAP Groups">
+									<form:fields>
+										<MultiInput id="multiInputGroup"
+											suggestionItems="{path: 'groups>/', sorter: { path: 'count', descending: true}}"
+											valueHelpRequest="handleValueHelpGroup"
+											tokenUpdate="onTokenUpdateGroup">
+											<core:Item key="{groups>tag}" text="{groups>title}" />
+											<layoutData>
+												<l:GridData span="XL12 L12 M12 S12" />
+											</layoutData>
+										</MultiInput>
+									</form:fields>
+								</form:FormElement>
+								<form:FormElement label="SAP Group Events">
+									<form:fields>
+										<CheckBox id="SAPEventCheckbox" text="SAP Group Events"
+											select="onCheckboxSelected">
+											<layoutData>
+												<l:GridData span="XL8 L8 M8 S8" />
+											</layoutData>
+										</CheckBox>
+										<Link
+											text="Open Group Events"
+											target="_blank"
+											href="https://groups.community.sap.com/t5/events/ct-p/events">
+											<layoutData>
+												<l:GridData span="XL4 L4 M4 S4" />
+											</layoutData>
+										</Link>
+									</form:fields>
+								</form:FormElement>
+								<form:FormElement label="SAP Youtube Channels">
+									<form:fields>
+										<MultiInput id="multiInputYoutube"
+											suggestionItems="{path: 'youtube>/'}"
+											valueHelpRequest="handleValueHelpYoutube"
+											tokenUpdate="onTokenUpdateYoutube">
+											<core:Item key="{youtube>id}" text="{youtube>title}" />
+											<layoutData>
+												<l:GridData span="XL12 L12 M12 S12" />
+											</layoutData>
+										</MultiInput>
+									</form:fields>
+								</form:FormElement>
+								<form:FormElement label="SAP Podcasts">
+									<form:fields>
+										<MultiInput id="multiInputSAPPodcasts"
+											suggestionItems="{path: 'sap-podcasts>/'}"
+											valueHelpRequest="handleValueHelpSAPPodcasts"
+											tokenUpdate="onTokenUpdateSAPPodcasts">
+											<core:Item key="{sap-podcasts>key}"
+												text="{sap-podcasts>title}" />
+											<layoutData>
+												<l:GridData span="XL12 L12 M12 S12" />
+											</layoutData>
+										</MultiInput>
+									</form:fields>
+								</form:FormElement>
+								<form:FormElement>
+									<form:fields>
+										<Button class="sapUiMediumMarginTop"
+											text="Generate and Download OPML File" press="opml"
+											busyIndicatorDelay="50" busy="{data>/busyOPMLButton}"
+											enabled="{data>/OPMLButtonEnabled}">
+											<layoutData>
+												<l:GridData span="XL12 L12 M12 S12" />
+											</layoutData>
+										</Button>
+									</form:fields>
+								</form:FormElement>
+							</form:formElements>
+						</form:FormContainer>
+					</form:formContainers>
+				</form:Form>
 			</VBox>
 		</content>
-		<footer>
-			<OverflowToolbar>
-				<ToolbarSpacer/>
-				<!-- <Button text="Accept" type="Accept" />
-			<Button text="Reject" type="Reject" />
-			<Button text="Edit" />
+		<!-- <footer> -->
+		<!-- <OverflowToolbar> -->
+		<!-- <ToolbarSpacer /> -->
+		<!-- <Button text="Accept" type="Accept" />
+			<Button text="Reject" type="Reject"
+				/>
+		<Button text="Edit" />
 			<Button text="Delete" /> -->
-			</OverflowToolbar>
-		</footer>
+		<!-- </OverflowToolbar> -->
+		<!-- </footer> -->
 	</Page>
 
 </mvc:View>
