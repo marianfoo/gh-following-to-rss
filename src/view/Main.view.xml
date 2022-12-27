@@ -36,12 +36,13 @@
 										<Input id="gitHubUsernameInput"
 											value="{path: 'data>/gitHubUsername',
 													type: 'sap.ui.model.type.String',
-													constraints: {minLength: 1}}">
+													constraints: {minLength: 1}}"
+												submit=".onGithubUserNameInputEnter">
 											<layoutData>
 												<l:GridData span="XL8 L8 M8 S8" />
 											</layoutData>
 										</Input>
-										<Button text="Load GitHub Data" press="loadGitHubData"
+										<Button text="Load GitHub Data" press=".loadGitHubData"
 											busyIndicatorDelay="50" busy="{data>/busyGitHubButton}"
 											type="{data>/typeGitHubButton}">
 											<layoutData>
@@ -55,12 +56,13 @@
 										<Input id="SAPCommunityUsernameInput"
 											value="{path: 'data>/SAPCommunityUsername',
 													type: 'sap.ui.model.type.String',
-													constraints: {minLength: 1}}">
+													constraints: {minLength: 1}}"
+											submit=".onSAPCommunityUserNameInputEnter">
 											<layoutData>
 												<l:GridData span="XL8 L8 M8 S8" />
 											</layoutData>
 										</Input>
-										<Button text="Load SAP Data" press="loadSAPData"
+										<Button text="Load SAP Data" press=".loadSAPData"
 											busyIndicatorDelay="50" busy="{data>/busySAPButton}"
 											type="{data>/typeSAPButton}">
 											<layoutData>
@@ -73,8 +75,8 @@
 									<form:fields>
 										<MultiInput id="multiInput"
 											suggestionItems="{path: 'tags>/', sorter: { path: 'count', descending: true}}"
-											valueHelpRequest="handleValueHelp"
-											tokenUpdate="onTokenUpdate">
+											valueHelpRequest=".handleValueHelp"
+											tokenUpdate=".onTokenUpdate">
 											<core:Item key="{tags>tag}" text="{tags>title}" />
 											<layoutData>
 												<l:GridData span="XL8 L8 M8 S8" />
@@ -93,8 +95,8 @@
 									<form:fields>
 										<MultiInput id="multiInputGroup"
 											suggestionItems="{path: 'groups>/', sorter: { path: 'count', descending: true}}"
-											valueHelpRequest="handleValueHelpGroup"
-											tokenUpdate="onTokenUpdateGroup">
+											valueHelpRequest=".handleValueHelpGroup"
+											tokenUpdate=".onTokenUpdateGroup">
 											<core:Item key="{groups>tag}" text="{groups>title}" />
 											<layoutData>
 												<l:GridData span="XL12 L12 M12 S12" />
@@ -105,7 +107,7 @@
 								<form:FormElement label="SAP Group Events">
 									<form:fields>
 										<CheckBox id="SAPEventCheckbox" text="SAP Group Events"
-											select="onCheckboxSelected">
+											select=".onCheckboxSelected">
 											<layoutData>
 												<l:GridData span="XL8 L8 M8 S8" />
 											</layoutData>
@@ -124,8 +126,8 @@
 									<form:fields>
 										<MultiInput id="multiInputYoutube"
 											suggestionItems="{path: 'youtube>/'}"
-											valueHelpRequest="handleValueHelpYoutube"
-											tokenUpdate="onTokenUpdateYoutube">
+											valueHelpRequest=".handleValueHelpYoutube"
+											tokenUpdate=".onTokenUpdateYoutube">
 											<core:Item key="{youtube>id}" text="{youtube>title}" />
 											<layoutData>
 												<l:GridData span="XL12 L12 M12 S12" />
@@ -137,8 +139,8 @@
 									<form:fields>
 										<MultiInput id="multiInputSAPPodcasts"
 											suggestionItems="{path: 'sap-podcasts>/'}"
-											valueHelpRequest="handleValueHelpSAPPodcasts"
-											tokenUpdate="onTokenUpdateSAPPodcasts">
+											valueHelpRequest=".handleValueHelpSAPPodcasts"
+											tokenUpdate=".onTokenUpdateSAPPodcasts">
 											<core:Item key="{sap-podcasts>key}"
 												text="{sap-podcasts>title}" />
 											<layoutData>
@@ -150,7 +152,7 @@
 								<form:FormElement>
 									<form:fields>
 										<Button class="sapUiMediumMarginTop"
-											text="Generate and Download OPML File" press="opml"
+											text="Generate and Download OPML File" press=".opml"
 											busyIndicatorDelay="50" busy="{data>/busyOPMLButton}"
 											enabled="{data>/OPMLButtonEnabled}">
 											<layoutData>

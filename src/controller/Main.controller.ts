@@ -26,6 +26,8 @@ import Event from "sap/ui/base/Event";
 import Sorter from "sap/ui/model/Sorter";
 import File from "sap/ui/core/util/File";
 import { ButtonType } from "sap/m/library";
+import SelectDialog from "sap/m/SelectDialog";
+import ListBinding from "sap/ui/model/ListBinding";
 
 /**
  * @namespace de.marianzeis.githubfollower.controller
@@ -423,7 +425,7 @@ export default class Main extends BaseController {
     }
   }
 
-  public handleValueHelpGroup(oEvent): any {
+  public handleValueHelpGroup(oEvent: Event): any {
     const sInputValue = oEvent.getSource().getValue(),
       oView = this.getView();
 
@@ -453,7 +455,7 @@ export default class Main extends BaseController {
     });
   }
 
-  public _handleValueHelpSearchGroup(evt): any {
+  public _handleValueHelpSearchGroup(evt: Event): void {
     const sValue = evt.getParameter("value");
     const oddIdFilter = new Filter({
       path: "title",
@@ -461,14 +463,22 @@ export default class Main extends BaseController {
         return value.toLowerCase().indexOf(sValue.toLowerCase()) !== -1;
       },
     });
-    evt.getSource().getBinding("items").filter(oddIdFilter);
+    ((evt.getSource() as SelectDialog).getBinding("items") as ListBinding).filter(oddIdFilter);
   }
 
-  public onTokenUpdateGroup(evt): any {
+  public onTokenUpdateGroup(): void {
     this._dataModel.setProperty("/OPMLButtonEnabled", true);
   }
 
-  public _handleValueHelpCloseGroup(evt): any {
+  public async onGithubUserNameInputEnter(): Promise<void> {
+    await this.loadGitHubData();
+  }
+
+  public async onSAPCommunityUserNameInputEnter(): Promise<void> {
+    await this.loadSAPData();
+  }
+
+  public _handleValueHelpCloseGroup(evt: Event): void {
     this._dataModel.setProperty("/OPMLButtonEnabled", true);
     const aSelectedItems = evt.getParameter("selectedItems"),
       oMultiInput = <MultiInput>this.byId("multiInputGroup");
@@ -485,8 +495,8 @@ export default class Main extends BaseController {
     }
   }
 
-  public handleValueHelpYoutube(oEvent): any {
-    const sInputValue = oEvent.getSource().getValue(),
+  public handleValueHelpYoutube(oEvent: Event): void {
+    const sInputValue = (oEvent.getSource() as MultiInput).getValue(),
       oView = this.getView();
 
     // create value help dialog
@@ -510,7 +520,7 @@ export default class Main extends BaseController {
     });
   }
 
-  public _handleValueHelpSearchYoutube(evt): any {
+  public _handleValueHelpSearchYoutube(evt: Event): void {
     const sValue = evt.getParameter("value");
     const oddIdFilter = new Filter({
       path: "title",
@@ -518,14 +528,16 @@ export default class Main extends BaseController {
         return value.toLowerCase().indexOf(sValue.toLowerCase()) !== -1;
       },
     });
-    evt.getSource().getBinding("items").filter(oddIdFilter);
+    (
+      (evt.getSource() as SelectDialog).getBinding("items") as ListBinding
+    ).filter(oddIdFilter);
   }
 
-  public onTokenUpdateYoutube(evt): any {
+  public onTokenUpdateYoutube(evt): void {
     this._dataModel.setProperty("/OPMLButtonEnabled", true);
   }
 
-  public _handleValueHelpCloseYoutube(evt): any {
+  public _handleValueHelpCloseYoutube(evt): void {
     this._dataModel.setProperty("/OPMLButtonEnabled", true);
     const aSelectedItems = evt.getParameter("selectedItems"),
       oMultiInput = this.byId("multiInputYoutube");
@@ -542,7 +554,7 @@ export default class Main extends BaseController {
     }
   }
 
-  public handleValueHelpSAPPodcasts(oEvent): any {
+  public handleValueHelpSAPPodcasts(oEvent): void {
     const sInputValue = oEvent.getSource().getValue(),
       oView = this.getView();
 
@@ -569,7 +581,7 @@ export default class Main extends BaseController {
     });
   }
 
-  public _handleValueHelpSearchSAPPodcasts(evt): any {
+  public _handleValueHelpSearchSAPPodcasts(evt: Event): void {
     const sValue = evt.getParameter("value");
     const oddIdFilter = new Filter({
       path: "title",
@@ -577,14 +589,16 @@ export default class Main extends BaseController {
         return value.toLowerCase().indexOf(sValue.toLowerCase()) !== -1;
       },
     });
-    evt.getSource().getBinding("items").filter(oddIdFilter);
+    (
+      (evt.getSource() as SelectDialog).getBinding("items") as ListBinding
+    ).filter(oddIdFilter);
   }
 
-  public onTokenUpdateSAPPodcasts(evt): any {
+  public onTokenUpdateSAPPodcasts(evt): void {
     this._dataModel.setProperty("/OPMLButtonEnabled", true);
   }
 
-  public _handleValueHelpCloseSAPPodcasts(evt): any {
+  public _handleValueHelpCloseSAPPodcasts(evt): void {
     this._dataModel.setProperty("/OPMLButtonEnabled", true);
     const aSelectedItems = evt.getParameter("selectedItems"),
       oMultiInput = <MultiInput>this.byId("multiInputSAPPodcasts");
@@ -605,7 +619,7 @@ export default class Main extends BaseController {
     this._dataModel.setProperty("/OPMLButtonEnabled", true);
   }
 
-  private _generateOpmlLine(array: string | any[]): any {
+  private _generateOpmlLine(array: string | any[]): string[] {
     const outlines = [];
     for (let i = 0; i < array.length; i++) {
       const outlinesXML =
