@@ -1,6 +1,10 @@
 import UIComponent from "sap/ui/core/UIComponent";
 import { support } from "sap/ui/Device";
 
+// improve sap-ui-custom.js bundling
+import "sap/ui/core/ComponentSupport";
+import "sap/ui/core/date/Gregorian";
+import "sap/ui/model/type/String"
 
 /**
  * @namespace de.marianzeis.githubfollower
